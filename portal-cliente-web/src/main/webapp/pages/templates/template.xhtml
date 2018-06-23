@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<ui:include src="/pages/common/head.xhtml" />
+
+	<h:outputScript name="js/nanoscroller.js" library="poseidon-layout" />
+	<h:outputScript name="js/layout.js" library="poseidon-layout" />
+	<h:outputScript name="js/swipe.js" library="poseidon-layout" />
+
+	<h:outputStylesheet name="css/nanoscroller.css" library="poseidon-layout" />
+	<h:outputStylesheet name="css/animate.css" library="poseidon-layout" />
+</h:head>
+
+<h:body styleClass="main-body">
+	<ui:include src="/pages/common/loading.xhtml" />
+
+	<div class="layout-wrapper menu-layout-static menu-layout-horizontal">
+		<ui:include src="/pages/common/topbar.xhtml" />
+		<ui:include src="/pages/common/menu.xhtml" />
+
+		<div class="layout-main">
+			<div class="route-bar">
+				<i class="fa fa-home"></i> <span>/ </span>
+				<ui:insert name="viewname" />
+
+			</div>
+			
+			<div class="layout-main-content">
+				<ui:insert name="content" />
+			</div>
+
+			<p:confirmDialog global="true">
+				<p:commandButton value="#{labels.botao_sim}" type="button" styleClass="ui-confirmdialog-yes" icon="fa fa-fw fa-check" />
+				<p:commandButton value="#{labels.botao_nao}" type="button" styleClass="ui-confirmdialog-no" icon="fa fa-fw fa-close" />
+			</p:confirmDialog>
+		</div>
+
+		<ui:include src="/pages/common/footer.xhtml" />
+	</div>
+</h:body>
+</html>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="true">
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<pattern>%d{HH:mm:ss.SSS}|%logger|%msg%n
+			</pattern>
+		</layout>
+	</appender>
+
+	<!--Daily rolling file appender -->
+	<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>../app_logs/web.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>../app_logs/web.%d{yyyy-MM-dd}.log
+			</FileNamePattern>
+		</rollingPolicy>
+
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>
+				%d{HH:mm:ss.SSS}|%logger|%msg%n
+			</Pattern>
+		</layout>
+	</appender>
+
+	<logger name="org.springframework">
+		<level value="info" />
+		<appender-ref ref="STDOUT" />
+	</logger>
+
+	<logger name="org.hibernate">
+		<level value="info" />
+		<appender-ref ref="FILE" />
+	</logger>
+
+	<logger name="br.com.graflogic">
+		<level value="info" />
+		<appender-ref ref="FILE" />
+	</logger>
+
+	<logger name="br.com.mar">
+		<level value="info" />
+		<appender-ref ref="FILE" />
+	</logger>
+
+	<root>
+		<level value="error" />
+		<appender-ref ref="STDOUT" />
+	</root>
+</configuration>

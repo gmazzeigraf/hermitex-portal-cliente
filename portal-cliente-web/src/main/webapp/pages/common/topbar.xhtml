@@ -1,0 +1,36 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:po="http://primefaces.org/poseidon"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+	<div class="topbar clearfix">
+		<div class="topbar-left">
+			<div class="logo"></div>
+		</div>
+
+		<c:if test="#{sessionController.authenticated}">
+			<div class="topbar-right">
+				<a id="menu-button" href="#"> <i class="fa fa-angle-left"></i>
+				</a> <a id="topbar-menu-button" href="#"> <i class="fa fa-bars"></i>
+				</a>
+				<ul class="topbar-items">
+					<li class="profile-item"><a href="#">
+							<div class="profile-image"></div> <span class="topbar-item-name-mobile">#{sessionController.authenticatedUser.principal.usuario.nome}</span>
+					</a>
+
+						<ul class="poseidon-menu animated">
+							<li role="menuitem"><a href="#{request.contextPath}/pages/usuario/acesso/alteracao_senha.jsf"> <i class="fa fa-fw fa-key"></i> <span>#{labels.menu_usuario_acesso_alteracao_senha}</span>
+							</a></li>
+							<form action="#{request.contextPath}/j_spring_security_logout" method="post" id="logoutForm">
+								<li role="menuitem" onclick="document.getElementById('logoutForm').submit(); PF('statusDialog').show();"><a href="#"> <i
+										class="fa fa-fw fa-sign-out"></i> <span>#{labels.menu_sair}</span>
+								</a></li>
+							</form>
+						</ul></li>
+					<li class="topbar-item-name-web"><span>#{sessionController.authenticatedUser.principal.usuario.email}</span> <span>#{sessionController.authenticatedUser.principal.usuario.nome}</span>
+					</li>
+				</ul>
+			</div>
+		</c:if>
+	</div>
+	
+</ui:composition>

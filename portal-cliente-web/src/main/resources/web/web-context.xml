@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:b="http://www.springframework.org/schema/beans"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd">
+
+	<context:component-scan base-package="br.com.graflogic.hermitex.cliente.web" />
+
+	<context:component-scan base-package="br.com.graflogic.base.web" />
+
+	<bean id="presentationPropertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+		<property name="location" value="classpath:/web/web.properties" />
+	</bean>
+
+	<bean id="versaoPropertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+		<property name="location" value="classpath:/versao.properties" />
+	</bean>
+
+	<import resource="classpath:/service/service-context.xml" />
+
+	<import resource="classpath:/web/security-context.xml" />
+
+	<context:component-scan base-package="br.com.graflogic.utilities.presentationutil.controller" />
+
+	<bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
+		<property name="scopes">
+			<map>
+				<entry key="view">
+					<bean class="br.com.graflogic.utilities.presentationutil.scope.ViewScope" />
+				</entry>
+			</map>
+		</property>
+	</bean>
+</beans>

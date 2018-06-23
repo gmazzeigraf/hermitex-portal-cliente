@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<ui:include src="/pages/common/head.xhtml" />
+</h:head>
+
+<h:body styleClass="exception-body error-page">
+
+	<div class="exception-top">
+		<p:graphicImage name="images/icon-error.png" library="poseidon-layout" />
+	</div>
+
+	<div class="exception-bottom">
+		<div class="exception-wrapper">
+			<span class="exception-summary">Ocorreu um erro inesperado</span> <span class="exception-detail">Entre em contato com o Administrador.</span>
+			<p:button href="/" value="Inicio" icon="fa fa-home" styleClass="black-btn" />
+			<p:graphicImage name="images/logo-icon-colored.png" library="poseidon-layout" styleClass="logo-icon" />
+			<span class="exception-footer">#{labels.rodape}</span>
+		</div>
+	</div>
+</h:body>
+
+</html>

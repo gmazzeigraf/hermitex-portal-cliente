@@ -1,0 +1,31 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+	<p:dataTable id="dtbEntities" widgetVar="dtb" var="entity" value="#{perfilUsuarioController.entities}" rowKey="#{entity.id}" paginator="true"
+		reflow="true" rows="10" emptyMessage="#{null != perfilUsuarioController.entities ? messages.nenhum_resultado_encontrado : ''}">
+
+		<p:column headerText="#" sortBy="#{entity.id}" styleClass="id-column">
+			<h:outputText value="#{entity.id}" />
+		</p:column>
+
+		<p:column headerText="Nome" sortBy="#{entity.nome}">
+			<h:outputText value="#{entity.nome}" />
+		</p:column>
+
+		<p:column headerText="Status" sortBy="#{entity.deStatus}">
+			<h:outputText value="#{entity.deStatus}" />
+		</p:column>
+
+		<p:column styleClass="coluna-edicao">
+			<p:commandButton icon="fa fa-fw fa-pencil" title="#{labels.botao_editar}" update=":searchForm :editForm" process="@this" resetValues="true"
+				styleClass="ui-grid-col-12">
+				<f:setPropertyActionListener value="#{entity}" target="#{perfilUsuarioController.selectedEntity}" />
+			</p:commandButton>
+		</p:column>
+
+		<f:facet name="footer">
+			<h:outputText value="#{fn:length(perfilUsuarioController.entities)} registro(s) encontrado(s)" />
+		</f:facet>
+	</p:dataTable>
+</ui:composition>

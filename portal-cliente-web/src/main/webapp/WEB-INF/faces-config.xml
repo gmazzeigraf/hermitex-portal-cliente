@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<faces-config version="2.2" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
+
+	<application>
+		<el-resolver>org.springframework.web.jsf.el.SpringBeanFacesELResolver</el-resolver>
+
+		<locale-config>
+			<default-locale>pt</default-locale>
+		</locale-config>
+
+		<resource-bundle>
+			<base-name>common/messages</base-name>
+			<var>messages</var>
+		</resource-bundle>
+
+		<resource-bundle>
+			<base-name>common/labels</base-name>
+			<var>labels</var>
+		</resource-bundle>
+
+		<message-bundle>common/messages-prime</message-bundle>
+	</application>
+
+	<factory>
+		<exception-handler-factory>org.primefaces.application.exceptionhandler.PrimeExceptionHandlerFactory</exception-handler-factory>
+	</factory>
+
+	<validator>
+		<validator-id>checkvalidemail</validator-id>
+		<validator-class>br.com.graflogic.utilities.presentationutil.validator.EmailValidator</validator-class>
+	</validator>
+
+	<validator>
+		<validator-id>checkvalidcpf</validator-id>
+		<validator-class>br.com.graflogic.utilities.presentationutil.validator.CPFValidator</validator-class>
+	</validator>
+
+	<validator>
+		<validator-id>checkvalidcnpj</validator-id>
+		<validator-class>br.com.graflogic.utilities.presentationutil.validator.CNPJValidator</validator-class>
+	</validator>
+
+	<validator>
+		<validator-id>checkpastdate</validator-id>
+		<validator-class>br.com.graflogic.utilities.presentationutil.validator.PastDateValidator</validator-class>
+	</validator>
+
+	<validator>
+		<validator-id>checkfuturedate</validator-id>
+		<validator-class>br.com.graflogic.utilities.presentationutil.validator.FutureDateValidator</validator-class>
+	</validator>
+
+	<validator>
+		<validator-id>checkvalidcep</validator-id>
+		<validator-class>br.com.graflogic.utilities.presentationutil.validator.CEPValidator</validator-class>
+	</validator>
+
+	<converter>
+		<converter-id>maskConverter</converter-id>
+		<converter-class>br.com.graflogic.utilities.presentationutil.converter.MaskConverter</converter-class>
+	</converter>
+
+	<converter>
+		<converter-id>dateConverter</converter-id>
+		<converter-class>br.com.graflogic.utilities.presentationutil.converter.DateConverter</converter-class>
+	</converter>
+
+	<component>
+		<component-type>org.primefaces.component.PoseidonMenu</component-type>
+		<component-class>org.primefaces.poseidon.component.menu.PoseidonMenu</component-class>
+	</component>
+
+	<converter>
+		<converter-id>permissaoAcessoConverter</converter-id>
+		<converter-class>br.com.graflogic.hermitex.cliente.web.converter.PermissaoAcessoConverter</converter-class>
+	</converter>
+
+	<render-kit>
+		<renderer>
+			<component-family>org.primefaces.component</component-family>
+			<renderer-type>org.primefaces.component.PoseidonMenuRenderer</renderer-type>
+			<renderer-class>org.primefaces.poseidon.component.menu.PoseidonMenuRenderer</renderer-class>
+		</renderer>
+	</render-kit>
+
+</faces-config>

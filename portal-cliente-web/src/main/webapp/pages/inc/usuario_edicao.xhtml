@@ -1,0 +1,66 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+	<c:if test="#{null != usuarioController.entity}">
+		<div class="ui-g">
+			<div class="ui-g-12">
+				<div class="card card-w-title">
+					<h1>#{labels.informacoes}</h1>
+					<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group">
+						<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+							<p:outputLabel for="email" value="E-mail" styleClass="label" />
+							<p:inputText id="email" styleClass="ui-grid-col-12" required="true" requiredMessage="Favor informar o e-mail"
+								value="#{usuarioController.entity.email}" maxlength="50" validator="checkvalidemail" validatorMessage="E-mail inválido"
+								readonly="#{usuarioController.entity.inativo}" />
+						</p:panelGrid>
+
+						<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+							<p:outputLabel for="nome" value="Nome" styleClass="label" />
+							<p:inputText id="nome" styleClass="ui-grid-col-12" required="true" requiredMessage="Favor informar o nome"
+								value="#{usuarioController.entity.nome}" maxlength="50" readonly="#{usuarioController.entity.inativo}" />
+						</p:panelGrid>
+
+						<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+							<p:outputLabel for="telefone" value="Telefone" styleClass="label" />
+							<p:inputMask id="telefone" styleClass="ui-grid-col-12" mask="(99) 9999?9-9999" value="#{usuarioController.entity.telefone}"
+								converter="maskConverter" readonly="#{usuarioController.entity.inativo}" />
+						</p:panelGrid>
+
+						<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+							<p:outputLabel for="perfil" value="Perfil" styleClass="label" />
+							<p:selectOneMenu id="perfil" value="#{usuarioController.entity.idPerfil}" styleClass="ui-grid-col-12" required="true"
+								requiredMessage="Favor selecionar o perfil" disabled="#{usuarioController.entity.inativo}">
+								<f:selectItem itemLabel="Selecione" itemValue="" />
+								<f:selectItems value="#{usuarioController.perfis}" var="item" itemLabel="#{item.nome}" itemValue="#{item.id}" />
+							</p:selectOneMenu>
+						</p:panelGrid>
+					</p:panelGrid>
+				</div>
+
+				<p:messages />
+
+				<p:panelGrid columns="6" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
+					<p:commandButton id="submitButton" icon="fa fa-fw fa-save" value="#{labels.botao_gravar}" actionListener="#{usuarioController.save}"
+						process=":editForm" update=":editForm :searchForm" styleClass="ui-grid-col-12"
+						disabled="#{usuarioController.editing and !usuarioController.entity.ativo}" />
+
+					<p:commandButton icon="fa fa-fw fa-key" value="#{labels.botao_gera_nova_senha}" actionListener="#{usuarioController.geraNovaSenha}"
+						process="@this" update=":editForm" rendered="#{usuarioController.editing}" styleClass="ui-grid-col-12"
+						disabled="#{!usuarioController.entity.ativo}">
+						<p:confirm header="Confirmação" message="Confirmar geração de nova senha?" icon="ui-icon-alert" />
+					</p:commandButton>
+
+					<p:commandButton id="inativacaoButton" icon="fa fa-fw fa-ban" value="#{labels.botao_inativar}" actionListener="#{usuarioController.inativa}"
+						process="@this" update=":editForm" styleClass="ui-grid-col-12 botao-vermelho" rendered="#{usuarioController.editing}"
+						disabled="#{!usuarioController.entity.ativo}">
+						<p:confirm header="Confirmação" message="Confirmar inativação?" icon="ui-icon-alert" />
+					</p:commandButton>
+
+					<p:commandButton icon="fa fa-fw fa-close" value="#{labels.botao_fechar}" actionListener="#{usuarioController.close}" process="@this"
+						update=":searchForm :editForm" styleClass="ui-grid-col-12 botao-turquesa" />
+				</p:panelGrid>
+			</div>
+		</div>
+	</c:if>
+</ui:composition>

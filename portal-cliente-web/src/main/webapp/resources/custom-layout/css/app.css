@@ -1,0 +1,209 @@
+@media screen and (min-width: 1025px) {
+	.coluna-edicao {
+		width: 50px;
+	}
+	.display-mobile {
+		display: none !important;
+	}
+	.route-bar {
+		margin-top: 10px !important; line-height: 40px !important;
+	}
+	.layout-menu-container {
+		border-top: 2px solid;
+	}
+	.lista-pick .ui-picklist-list {
+		height: 650px !important;
+	}
+	.login-panel {
+		position: relative !important; margin: 0 auto !important; width: 350px !important;
+	}
+	.id-column {
+		width: 100px !important; text-align: center !important;
+	}
+	.min-column {
+		width: 30px !important; text-align: center !important;
+	}
+	.resp-calendar input.hasDatepicker {
+		width: 83%;
+	}
+	.layout-wrapper .topbar .topbar-right .topbar-items>li>a .topbar-item-name-mobile {
+		display: none !important;
+	}
+	.topbar-item-name-web span {
+		display: block !important;
+	}
+	.layout-main {
+		min-height: 90% !important; box-sizing: border-box !important;
+	}
+	.layout-wrapper .topbar .topbar-left {
+		padding-left: 20px !important;
+	}
+	.layout-main-content {
+		padding-top: 0px !important;
+	}
+}
+
+@media ( max-width : 1024px) {
+	.display-desktop {
+		display: none !important;
+	}
+	.resp-dialog {
+		height: 350px !important; border: 0 !important;
+	}
+	.layout-wrapper .topbar .topbar-right .topbar-items>li>a .topbar-item-name-mobile {
+		display: inline-block !important; vertical-align: middle !important;
+	}
+	.topbar-item-name-web {
+		display: none !important;
+	}
+	.layout-main {
+		min-height: 83% !important; box-sizing: border-box !important;
+	}
+}
+
+@media ( max-width : 1245px) {
+	.resp-calendar input.hasDatepicker {
+		width: 75%;
+	}
+}
+
+.coluna-edicao {
+	text-align: center;
+}
+
+.label {
+	font-weight: 700;
+}
+
+.card h1 {
+	font-weight: 700 !important; margin: 10px 0 !important;
+}
+
+.ui-panelgrid.form-group .ui-panelgrid-cell {
+	padding: 4px !important;
+}
+
+.layout-wrapper.menu-layout-horizontal .layout-menu-container .layout-menu>li>ul {
+	width: 275px !important;
+}
+
+.div-botoes {
+	background-color: #2D353C !important; padding: 8px !important;
+}
+
+.botao-pesquisar {
+	float: right !important;
+}
+
+.botao-adicionar {
+	
+}
+
+.resp-dialog {
+	border: 0 !important;
+}
+
+.input-number-resp input {
+	width: 97.5% !important;
+}
+
+.botao-verde {
+	background-color: #46BC6C !important;
+}
+
+.botao-vermelho {
+	background-color: #F06364 !important;
+}
+
+.botao-turquesa {
+	background-color: #00ACAC !important;
+}
+
+.dashboard-panel .ui-panel-titlebar {
+	font-size: 14px !important;
+}
+
+.dashboard-panel .ui-widget-content {
+	background-color: transparent !important; border: none !important; font-weight: 700;
+}
+
+.dashboard-panel .ui-panel {
+	background-color: #fff !important; border: 2px solid #f0f3f5 !important;
+}
+
+body .ui-trigger-calendar .ui-inputfield {
+	border-right: 1px solid #a8acb1 !important;
+}
+
+.ui-trigger-calendar .ui-state-disabled {
+	width: 97% !important;
+}
+
+.ui-state-disabled {
+	opacity: .80 !important; filter: Alpha(Opacity = 80) !important;
+}
+
+input[readonly], input[disabled], textarea[readonly], textarea[disabled] {
+	opacity: .70 !important; filter: Alpha(Opacity = 70) !important;
+}
+
+input[readonly], input[disabled], textarea[readonly], textarea[disabled], div.ui-state-disabled, div.ui-state-disabled label {
+	background-color: #F5F4F4 !important;
+}
+
+button[disabled] {
+	opacity: .30 !important; filter: Alpha(Opacity = 30) !important; cursor: not-allowed !important;
+}
+
+.ui-inputfield.ui-state-focus[readonly] {
+	border: 1px solid #5f666c;
+}
+
+.export-buttons {
+	font-size: 18px;
+}
+
+.ui-selectonemenu {
+	min-width: inherit !important;
+}
+
+.ui-datatable-empty-message {
+	text-align: center; font-weight: 700; line-height: 30px;
+}
+
+.ui-messages-info {
+	background-color: #57c279 !important; border-color: #57c279 !important;
+}
+
+.ui-messages-fatal {
+	background-color: #ff0000 !important; border-color: #ff0000 !important;
+}
+
+body.exception-body .exception-bottom .exception-wrapper .logo-icon {
+	width: 100px; display: block; margin: 0 auto 5px auto;
+}
+
+.layout-wrapper .topbar .logo {
+	background-size: 120px 75px !important;
+}
+
+.layout-wrapper .topbar .topbar-left {
+	padding-top: 5px !important;
+}
+
+.route-bar {
+	font-weight: 700 !important;
+}
+
+.faq .ui-accordion-header {
+	background-color: #f0f3f5 !important; color: #000 !important; font-weight: 700 !important;
+}
+
+/* Fullscren */
+html, body {
+	height: 100% !important;
+}
+
+.layout-wrapper {
+	height: 100% !important;
+}

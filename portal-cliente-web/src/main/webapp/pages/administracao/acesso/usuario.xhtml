@@ -1,0 +1,69 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/pages/templates/crud_template.xhtml"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+	<ui:define name="viewname">#{labels.menu_administracao} / #{labels.menu_administracao_acesso} / #{labels.menu_administracao_acesso_usuario} 
+			</ui:define>
+
+	<ui:define name="search">
+		<c:if test="#{null == usuarioController.entity}">
+			<div class="ui-g">
+				<div class="ui-g-12">
+					<div class="card card-w-title">
+						<h1>#{labels.consulta}</h1>
+						<p:panelGrid columns="1" id="filterGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
+							<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="nomeFilter" value="Nome" styleClass="label" />
+									<p:inputText id="nomeFilter" value="#{usuarioController.filterEntity.nome}" maxlength="50" styleClass="ui-grid-col-12" />
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="perfilFilter" value="Perfil" styleClass="label" />
+									<p:selectOneMenu id="perfilFilter" value="#{usuarioController.filterEntity.idPerfil}" styleClass="ui-grid-col-12">
+										<f:selectItem itemLabel="" itemValue="" />
+										<f:selectItems value="#{usuarioController.perfis}" var="item" itemLabel="#{item.nome}" itemValue="#{item.id}" />
+									</p:selectOneMenu>
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="statusFilter" value="Status" styleClass="label" />
+									<p:selectOneMenu id="statusFilter" value="#{usuarioController.filterEntity.status}" styleClass="ui-grid-col-12">
+										<f:selectItem itemLabel="" itemValue="" />
+										<f:selectItems value="#{domAcessoController.statusUsuarioMap}" />
+									</p:selectOneMenu>
+								</p:panelGrid>
+							</p:panelGrid>
+
+							<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank">
+								<p:spacer styleClass="display-desktop" />
+								<p:commandButton value="#{labels.botao_pesquisar}" id="searchButton" icon="fa fa-fw fa-search" update="dtbEntities searchMessages"
+									actionListener="#{usuarioController.search}" process="@this, filterGrid" oncomplete="PF('dtb').getPaginator().setPage(0);"
+									styleClass="ui-grid-col-4 botao-pesquisar" />
+							</p:panelGrid>
+
+							<p:messages id="searchMessages" />
+
+							<p:separator />
+
+							<p:defaultCommand target="searchButton" scope="filterGrid" />
+
+							<p:commandButton value="#{labels.botao_adicionar}" icon="fa fa-fw fa-plus" actionListener="#{usuarioController.add}"
+								update=":searchForm :editForm" process="@this" resetValues="true" styleClass="ui-grid-col-12 botao-adicionar" />
+						</p:panelGrid>
+
+						<p:spacer styleClass="display-desktop" />
+
+						<ui:include src="/pages/inc/usuario_lista.xhtml" />
+					</div>
+				</div>
+			</div>
+		</c:if>
+
+	</ui:define>
+
+	<ui:define name="edit">
+		<ui:include src="/pages/inc/usuario_edicao.xhtml" />
+	</ui:define>
+
+</ui:composition>

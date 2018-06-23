@@ -1,0 +1,42 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/pages/templates/template.xhtml">
+
+	<ui:define name="viewname">#{labels.menu_usuario} / #{labels.menu_usuario_acesso} / #{labels.menu_usuario_acesso_alteracao_senha}</ui:define>
+
+	<ui:define name="content">
+		<h:form id="mainForm">
+			<div class="ui-g">
+				<div class="ui-g-12">
+					<div class="card card-w-title">
+						<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
+							<p:outputLabel value="Senha Atual" for="senhaAtual" styleClass="label" />
+							<p:password id="senhaAtual" styleClass="ui-grid-col-3" value="#{usuarioController.senhaAtual}" required="true"
+								requiredMessage="Favor informar a senha atual" />
+
+							<p:outputLabel value="Nova Senha" for="novaSenha" styleClass="label" />
+							<p:password id="novaSenha" styleClass="ui-grid-col-3" value="#{usuarioController.novaSenha}" required="true"
+								requiredMessage="Favor informar a nova senha" match="confirmarNovaSenha" validatorMessage="A senha deve ter no mínimo 4 dígitos" />
+
+							<p:outputLabel value="Confirmar Nova Senha" for="confirmarNovaSenha" styleClass="label" />
+							<p:password id="confirmarNovaSenha" styleClass="ui-grid-col-3" value="#{usuarioController.novaSenha}" required="true"
+								requiredMessage="Favor confirmar a nova senha" validatorMessage="Confirmação de senha inválida">
+								<f:validateLength minimum="4" />
+							</p:password>
+
+							<p:spacer />
+
+							<p:commandButton value="Confirmar" icon="fa fa-fw fa-check" actionListener="#{usuarioController.alteraSenha}" process=":mainForm"
+								oncomplete="carregaClose();" styleClass="ui-grid-col-2" />
+
+							<p:spacer />
+
+							<p:messages />
+						</p:panelGrid>
+
+						<input type="password" style="display: none;" />
+					</div>
+				</div>
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

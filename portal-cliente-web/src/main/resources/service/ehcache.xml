@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ehcache.org/ehcache.xsd" updateCheck="false"
+	monitoring="autodetect" dynamicConfig="true">
+	<defaultCache maxElementsInMemory="50" eternal="false" overflowToDisk="false" memoryStoreEvictionPolicy="LFU" />
+
+	<cache name="configuracoes" eternal="true" maxElementsInMemory="100" overflowToDisk="false" memoryStoreEvictionPolicy="LFU" />
+
+	<cache name="bancos" eternal="false" maxElementsInMemory="1" timeToLiveSeconds="1200" overflowToDisk="false" memoryStoreEvictionPolicy="LFU" />
+
+	<cache name="estados" eternal="true" maxElementsInMemory="1" overflowToDisk="false" memoryStoreEvictionPolicy="LFU" />
+
+	<cache name="municipios" eternal="true" maxElementsInMemory="30" overflowToDisk="false" memoryStoreEvictionPolicy="LFU" />
+
+	<cache name="perfisUsuario" eternal="false" maxElementsInMemory="10" timeToLiveSeconds="1200" overflowToDisk="false" memoryStoreEvictionPolicy="LFU" />
+
+	<cache name="permissoesAcesso" eternal="true" maxElementsInMemory="10" overflowToDisk="false" memoryStoreEvictionPolicy="LFU" />
+</ehcache>

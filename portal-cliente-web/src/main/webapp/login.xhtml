@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<ui:include src="/pages/common/head.xhtml" />
+</h:head>
+
+<h:body styleClass="login-body">
+	<ui:include src="/pages/common/loading.xhtml" />
+	<div class="login-panel ui-fluid">
+		<div class="ui-g">
+			<form action="j_spring_security_check" method="post" id="loginForm">
+				<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+
+				<p:focus />
+
+				<div class="ui-g-12 logo-container">
+					<p:graphicImage name="images/logo-colored.png" library="poseidon-layout" />
+				</div>
+
+				<div class="ui-g-12">
+					<p:inputText mask="999.999.999-99" placeholder="#{labels.email}" id="j_username" autocomplete="off" />
+				</div>
+
+				<div class="ui-g-12">
+					<p:password placeholder="#{labels.senha}" feedback="false" id="j_password" autocomplete="off" />
+				</div>
+
+				<div class="ui-g-12 button-container" style="padding-bottom: 0px;">
+					<button onclick="document.getElementById('loginForm').submit(); PF('statusDialog').show(); preencheCookieLogin();"
+						class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only blue-btn" type="submit" role="button" aria-disabled="false">
+						<span class="ui-button-text ui-c">#{labels.botao_acessar}</span>
+					</button>
+				</div>
+
+				<div style="width: 100%; text-align: center;">
+					<h:outputText value="#{sessionScope['SPRING_SECURITY_LAST_EXCEPTION'].message}" />
+				</div>
+
+				<input type="password" style="display: none;" autocomplete="off" />
+			</form>
+		</div>
+	</div>
+</h:body>
+
+<script>
+	document.getElementById('j_username').value = readCookie('last_username');
+
+	function preencheCookieLogin() {
+		createCookie('last_username',
+				document.getElementById('j_username').value, 365);
+	}
+</script>
+
+</html>
