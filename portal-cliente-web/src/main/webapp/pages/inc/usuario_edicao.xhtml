@@ -11,26 +11,25 @@
 						<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 							<p:outputLabel for="email" value="E-mail" styleClass="label" />
 							<p:inputText id="email" styleClass="ui-grid-col-12" required="true" requiredMessage="Favor informar o e-mail"
-								value="#{usuarioController.entity.email}" maxlength="50" validator="checkvalidemail" validatorMessage="E-mail inválido"
-								readonly="#{usuarioController.entity.inativo}" />
+								value="#{usuarioController.entity.email}" maxlength="50" validator="checkvalidemail" validatorMessage="E-mail inválido" />
 						</p:panelGrid>
 
 						<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 							<p:outputLabel for="nome" value="Nome" styleClass="label" />
 							<p:inputText id="nome" styleClass="ui-grid-col-12" required="true" requiredMessage="Favor informar o nome"
-								value="#{usuarioController.entity.nome}" maxlength="50" readonly="#{usuarioController.entity.inativo}" />
+								value="#{usuarioController.entity.nome}" maxlength="50" />
 						</p:panelGrid>
 
 						<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 							<p:outputLabel for="telefone" value="Telefone" styleClass="label" />
 							<p:inputMask id="telefone" styleClass="ui-grid-col-12" mask="(99) 9999?9-9999" value="#{usuarioController.entity.telefone}"
-								converter="maskConverter" readonly="#{usuarioController.entity.inativo}" />
+								converter="maskConverter" />
 						</p:panelGrid>
 
 						<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 							<p:outputLabel for="perfil" value="Perfil" styleClass="label" />
 							<p:selectOneMenu id="perfil" value="#{usuarioController.entity.idPerfil}" styleClass="ui-grid-col-12" required="true"
-								requiredMessage="Favor selecionar o perfil" disabled="#{usuarioController.entity.inativo}">
+								requiredMessage="Favor selecionar o perfil">
 								<f:selectItem itemLabel="Selecione" itemValue="" />
 								<f:selectItems value="#{usuarioController.perfis}" var="item" itemLabel="#{item.nome}" itemValue="#{item.id}" />
 							</p:selectOneMenu>
@@ -43,7 +42,7 @@
 				<p:panelGrid columns="6" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
 					<p:commandButton id="submitButton" icon="fa fa-fw fa-save" value="#{labels.botao_gravar}" actionListener="#{usuarioController.save}"
 						process=":editForm" update=":editForm :searchForm" styleClass="ui-grid-col-12"
-						disabled="#{usuarioController.editing and !usuarioController.entity.ativo}" />
+						 />
 
 					<p:commandButton icon="fa fa-fw fa-key" value="#{labels.botao_gera_nova_senha}" actionListener="#{usuarioController.geraNovaSenha}"
 						process="@this" update=":editForm" rendered="#{usuarioController.editing}" styleClass="ui-grid-col-12"
@@ -52,8 +51,8 @@
 					</p:commandButton>
 
 					<p:commandButton id="inativacaoButton" icon="fa fa-fw fa-ban" value="#{labels.botao_inativar}" actionListener="#{usuarioController.inativa}"
-						process="@this" update=":editForm" styleClass="ui-grid-col-12 botao-vermelho" rendered="#{usuarioController.editing}"
-						disabled="#{!usuarioController.entity.ativo}">
+						process="@this" update=":searchForm :editForm" styleClass="ui-grid-col-12 botao-vermelho"
+						rendered="#{usuarioController.editing and usuarioController.entity.ativo}">
 						<p:confirm header="Confirmação" message="Confirmar inativação?" icon="ui-icon-alert" />
 					</p:commandButton>
 

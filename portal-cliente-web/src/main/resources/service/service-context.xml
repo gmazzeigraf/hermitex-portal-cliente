@@ -16,6 +16,10 @@
 
 	<import resource="classpath:/data/data-context.xml" />
 
+	<bean id="cepCliente" class="br.com.graflogic.utilities.cep.CEPClient">
+		<constructor-arg name="key" value="${cep.key}" />
+	</bean>
+
 	<!-- CACHE -->
 	<cache:annotation-driven />
 

@@ -53,29 +53,19 @@ public class PerfilUsuarioService {
 	}
 
 	public void atualiza(PerfilUsuario entity) {
-		try {
-			executaAtualiza(entity);
+		executaAtualiza(entity);
 
-			registraAuditoria(entity.getId(), entity, DomEventoAuditoriaPerfilUsuario.ATUALIZACAO, null);
+		registraAuditoria(entity.getId(), entity, DomEventoAuditoriaPerfilUsuario.ATUALIZACAO, null);
 
-			cacheUtil.clearCache(CACHE_NAME);
-
-		} catch (OptimisticLockException e) {
-			throw new DadosDesatualizadosException();
-		}
+		cacheUtil.clearCache(CACHE_NAME);
 	}
 
 	public void inativa(PerfilUsuario entity) {
-		try {
-			entity.setStatus(DomStatusPerfilUsuario.INATIVO);
+		entity.setStatus(DomStatusPerfilUsuario.INATIVO);
 
-			executaAtualiza(entity);
+		executaAtualiza(entity);
 
-			registraAuditoria(entity.getId(), null, DomEventoAuditoriaPerfilUsuario.INATIVACAO, null);
-
-		} catch (OptimisticLockException e) {
-			throw new DadosDesatualizadosException();
-		}
+		registraAuditoria(entity.getId(), null, DomEventoAuditoriaPerfilUsuario.INATIVACAO, null);
 	}
 
 	private void executaAtualiza(PerfilUsuario entity) {

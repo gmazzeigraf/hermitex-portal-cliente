@@ -70,7 +70,6 @@ public class UsuarioService {
 		// TODO Enviar email com senha
 
 		registraAuditoria(entity.getId(), entity, DomEventoAuditoriaUsuario.CADASTRO, null);
-
 	}
 
 	public void atualiza(Usuario entity) {
@@ -79,22 +78,17 @@ public class UsuarioService {
 		registraAuditoria(entity.getId(), entity, DomEventoAuditoriaUsuario.ATUALIZACAO, null);
 	}
 
+	public void inativa(Usuario entity) {
+		entity.setStatus(DomStatusUsuario.INATIVO);
+
+		executaAtualiza(entity);
+
+		registraAuditoria(entity.getId(), null, DomEventoAuditoriaUsuario.INATIVACAO, null);
+	}
+
 	private void executaAtualiza(Usuario entity) {
 		try {
 			repository.update(entity);
-
-		} catch (OptimisticLockException e) {
-			throw new DadosDesatualizadosException();
-		}
-	}
-
-	public void inativa(Usuario entity) {
-		try {
-			entity.setStatus(DomStatusUsuario.INATIVO);
-
-			executaAtualiza(entity);
-
-			registraAuditoria(entity.getId(), null, DomEventoAuditoriaUsuario.INATIVACAO, null);
 
 		} catch (OptimisticLockException e) {
 			throw new DadosDesatualizadosException();

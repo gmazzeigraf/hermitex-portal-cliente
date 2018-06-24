@@ -8,6 +8,8 @@ TRUNCATE tb_permissao_acesso;
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_ADM_ACESSO_USUARIO', 'Administração / Acesso / Usuário', 'A');
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_ADM_ACESSO_PERFIL', 'Administração / Acesso / Perfil', 'A');
 
+INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_CLI_CADASTRO', 'Cliente / Cadastro', 'A');
+
 
 -- Cria  FK
 ALTER TABLE tb_perfil_usuario_permissao_acesso ADD CONSTRAINT fk_permissao_acesso_perfil_usuario

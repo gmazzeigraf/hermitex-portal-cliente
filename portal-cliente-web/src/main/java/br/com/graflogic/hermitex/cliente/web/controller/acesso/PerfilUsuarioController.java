@@ -14,6 +14,7 @@ import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuario;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuarioAdministrador;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.PermissaoAcesso;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
+import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
 import br.com.graflogic.hermitex.cliente.service.impl.acesso.PerfilUsuarioService;
 import br.com.graflogic.hermitex.cliente.service.impl.acesso.PermissaoAcessoService;
 import br.com.graflogic.utilities.presentationutil.controller.CrudBaseController;
@@ -60,24 +61,31 @@ public class PerfilUsuarioController extends CrudBaseController<PerfilUsuario, P
 
 	@Override
 	protected boolean executeSave() {
-		getEntity().setPermissoes(permissoes.getTarget());
+		try {
+			getEntity().setPermissoes(permissoes.getTarget());
 
-		if (isEditing()) {
-			try {
-				service.atualiza(getEntity());
+			if (isEditing()) {
+				try {
+					service.atualiza(getEntity());
 
-				returnInfoMessage("Perfil atualizado com sucesso", null);
+					returnInfoMessage("Perfil atualizado com sucesso", null);
 
-			} catch (DadosDesatualizadosException e) {
-				returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Registro com dados desatualizados, altere novamente", null);
+				} catch (DadosDesatualizadosException e) {
+					returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Registro com dados desatualizados, altere novamente", null);
 
-				edit(getEntity());
+				}
+
+			} else {
+				service.cadastra(getEntity());
+
+				returnInfoMessage("Perfil cadastrado com sucesso", null);
 			}
 
-		} else {
-			service.cadastra(getEntity());
+			edit(getEntity());
 
-			returnInfoMessage("Perfil cadastrado com sucesso", null);
+		} catch (DadosInvalidosException e) {
+			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), e.getMessage(), null);
+			return false;
 		}
 
 		return true;
@@ -100,7 +108,7 @@ public class PerfilUsuarioController extends CrudBaseController<PerfilUsuario, P
 
 	@Override
 	protected void executeEdit(PerfilUsuario entity) {
-		setEntity(entity);
+		setEntity(service.consultaPorId(entity.getId()));
 
 		List<PermissaoAcesso> permissoesSelecionadas = permissaoService.consultaPorPerfilUsuario(getEntity().getId());
 
@@ -135,6 +143,8 @@ public class PerfilUsuarioController extends CrudBaseController<PerfilUsuario, P
 			service.inativa(getEntity());
 
 			returnInfoMessage("Perfil inativado com sucesso", null);
+
+			edit(getEntity());
 
 			search();
 

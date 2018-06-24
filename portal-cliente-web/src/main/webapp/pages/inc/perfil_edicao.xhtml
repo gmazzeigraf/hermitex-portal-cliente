@@ -30,9 +30,9 @@
 					<p:commandButton id="submitButton" icon="fa fa-fw fa-save" value="#{labels.botao_gravar}" actionListener="#{perfilUsuarioController.save}"
 						process=":editForm" update=":editForm :searchForm" styleClass="ui-grid-col-12" />
 
-					<p:commandButton id="inativacaoButton" icon="fa fa-fw fa-ban" value="#{labels.botao_inativar}" actionListener="#{perfilUsuarioController.inativa}"
-						process="@this" update=":editForm" styleClass="ui-grid-col-12 botao-vermelho" rendered="#{perfilUsuarioController.editing}"
-						disabled="#{!perfilUsuarioController.entity.ativo}">
+					<p:commandButton id="inativacaoButton" icon="fa fa-fw fa-ban" value="#{labels.botao_inativar}"
+						actionListener="#{perfilUsuarioController.inativa}" process="@this" update=":searchForm :editForm" styleClass="ui-grid-col-12 botao-vermelho"
+						rendered="#{perfilUsuarioController.editing and perfilUsuarioController.entity.ativo}">
 						<p:confirm header="Confirmação" message="Confirmar inativação?" icon="ui-icon-alert" />
 					</p:commandButton>
 

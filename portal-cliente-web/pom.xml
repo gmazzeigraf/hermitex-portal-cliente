@@ -9,6 +9,13 @@
 	<packaging>war</packaging>
 
 	<dependencies>
+		<!-- GSON -->
+		<dependency>
+			<groupId>org.danilopianini</groupId>
+			<artifactId>gson-extras</artifactId>
+			<version>0.1.0</version>
+		</dependency>
+
 		<!-- LOG -->
 		<dependency>
 			<groupId>org.slf4j</groupId>

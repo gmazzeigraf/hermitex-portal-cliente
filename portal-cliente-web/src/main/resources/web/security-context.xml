@@ -17,6 +17,9 @@
 		<intercept-url pattern="/pages/administracao/acesso/perfil.jsf" access="hasAnyRole('ROLE_ADM_ACESSO_PERFIL')" />
 		<intercept-url pattern="/pages/administracao/acesso/usuario.jsf" access="hasAnyRole('ROLE_ADM_ACESSO_USUARIO')" />
 
+		<!-- Cliente -->
+		<intercept-url pattern="/pages/cliente/cadastro.jsf" access="hasAnyRole('ROLE_CLI_CADASTRO')" />
+
 		<!-- Misc -->
 		<intercept-url pattern="/pages/publico/**" access="permitAll" />
 		<intercept-url pattern="/pages/exception/**" access="permitAll" />

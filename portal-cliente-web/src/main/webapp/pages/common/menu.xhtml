@@ -20,6 +20,11 @@
 									url="/pages/administracao/acesso/perfil.jsf" rendered="#{sec:isAllowed('/pages/administracao/acesso/perfil.jsf', '')}" />
 							</p:submenu>
 						</p:submenu>
+
+						<p:submenu id="menu_cliente" icon="fa fa-fw fa-truck" label="#{labels.menu_cliente}">
+							<p:menuitem id="menu_cliente_cadastro" icon="fa fa-fw fa-edit" value="#{labels.menu_cliente_cadastro}" url="/pages/cliente/cadastro.jsf"
+								rendered="#{sec:isAllowed('/pages/cliente/cadastro.jsf', '')}" />
+						</p:submenu>
 					</pp:menu>
 				</div>
 			</div>

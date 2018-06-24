@@ -86,9 +86,15 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 	protected boolean executeSave() {
 		try {
 			if (isEditing()) {
-				service.atualiza(getEntity());
+				try {
+					service.atualiza(getEntity());
 
-				returnInfoMessage("Usuário atualizado com sucesso", null);
+					returnInfoMessage("Usuário atualizado com sucesso", null);
+
+				} catch (DadosDesatualizadosException e) {
+					returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Registro com dados desatualizados, altere novamente", null);
+
+				}
 
 			} else {
 				service.cadastra(getEntity());
@@ -96,12 +102,13 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 				returnInfoMessage("Usuário cadastrado com sucesso", null);
 
 			}
+
+			edit(getEntity());
+
 		} catch (DadosInvalidosException e) {
 			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), e.getMessage(), null);
 			return false;
 		}
-
-		executeEdit(getEntity());
 
 		return true;
 	}
@@ -121,7 +128,7 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 
 	@Override
 	protected void executeEdit(Usuario entity) {
-		setEntity(entity);
+		setEntity(service.consultaPorId(entity.getId()));
 	}
 
 	@Override
@@ -135,6 +142,8 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 			service.inativa(getEntity());
 
 			returnInfoMessage("Usuário inativado com sucesso", null);
+			
+			edit(getEntity());
 
 			search();
 
