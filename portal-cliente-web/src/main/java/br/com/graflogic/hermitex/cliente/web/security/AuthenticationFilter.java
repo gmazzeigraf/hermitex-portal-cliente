@@ -27,6 +27,7 @@ import br.com.graflogic.hermitex.cliente.data.dom.DomAcesso.DomStatusSenhaUsuari
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.Usuario;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioAdministrador;
 import br.com.graflogic.hermitex.cliente.service.impl.acesso.UsuarioService;
+import br.com.graflogic.hermitex.cliente.service.impl.aud.AuditoriaService;
 
 /**
  * 
@@ -46,6 +47,9 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
 
 	@Autowired
 	private UsuarioService usuarioService;
+
+	@Autowired
+	private AuditoriaService auditoriaService;
 
 	public AuthenticationFilter() {
 		super("/j_spring_security_check");
@@ -113,9 +117,8 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
 
 			autenticacao = new UsernamePasswordAuthenticationToken(principal, autenticacao.getCredentials(), authorities);
 
-			// TODO Auditar o login
-			//			String idLogin = auditoriaService.registraLogin(usuario.getId(), ipOrigem);
-			//			principal.setIdLogin(idLogin);
+			String idLogin = auditoriaService.registraLogin(usuario.getId(), ipOrigem);
+			principal.setIdLogin(idLogin);
 			principal.setIpOrigem(ipOrigem);
 
 			// Remove o cookie do menu selecionado
