@@ -158,6 +158,26 @@ public class PerfilUsuarioController extends CrudBaseController<PerfilUsuario, P
 		}
 	}
 
+	public void ativa() {
+		try {
+			service.ativa(getEntity());
+
+			returnInfoMessage("Perfil ativado com sucesso", null);
+
+			edit(getEntity());
+
+			search();
+
+		} catch (DadosDesatualizadosException e) {
+			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Registro com dados desatualizados, altere novamente", null);
+
+			edit(getEntity());
+
+		} catch (Throwable t) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao ativar perfil, contate o administrador", t);
+		}
+	}
+
 	// Getters e Setters
 	public void setPermissoes(DualListModel<PermissaoAcesso> permissoes) {
 		this.permissoes = permissoes;

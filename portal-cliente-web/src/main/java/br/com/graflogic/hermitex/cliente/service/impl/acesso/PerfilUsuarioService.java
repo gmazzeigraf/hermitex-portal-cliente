@@ -68,6 +68,14 @@ public class PerfilUsuarioService {
 		registraAuditoria(entity.getId(), null, DomEventoAuditoriaPerfilUsuario.INATIVACAO, null);
 	}
 
+	public void ativa(PerfilUsuario entity) {
+		entity.setStatus(DomStatusPerfilUsuario.ATIVO);
+
+		executaAtualiza(entity);
+
+		registraAuditoria(entity.getId(), null, DomEventoAuditoriaPerfilUsuario.ATIVACAO, null);
+	}
+
 	private void executaAtualiza(PerfilUsuario entity) {
 		try {
 			repository.update(entity);

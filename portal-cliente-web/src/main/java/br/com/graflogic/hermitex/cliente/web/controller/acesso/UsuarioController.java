@@ -156,6 +156,26 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao invativar usuário, contate o administrador", t);
 		}
 	}
+	
+	public void ativa() {
+		try {
+			service.ativa(getEntity());
+
+			returnInfoMessage("Usuário ativado com sucesso", null);
+			
+			edit(getEntity());
+
+			search();
+
+		} catch (DadosDesatualizadosException e) {
+			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Registro com dados desatualizados, altere novamente", null);
+
+			edit(getEntity());
+
+		} catch (Throwable t) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao ativar usuário, contate o administrador", t);
+		}
+	}
 
 	public void geraNovaSenha() {
 		try {

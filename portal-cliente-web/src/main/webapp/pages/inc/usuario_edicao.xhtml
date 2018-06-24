@@ -56,6 +56,12 @@
 						<p:confirm header="Confirmação" message="Confirmar inativação?" icon="ui-icon-alert" />
 					</p:commandButton>
 
+					<p:commandButton id="ativacaoButton" icon="fa fa-fw fa-check-circle" value="#{labels.botao_ativar}" actionListener="#{usuarioController.ativa}"
+						process="@this" update=":searchForm :editForm" styleClass="ui-grid-col-12"
+						rendered="#{usuarioController.editing and usuarioController.entity.inativo}">
+						<p:confirm header="Confirmação" message="Confirmar ativação?" icon="ui-icon-alert" />
+					</p:commandButton>
+
 					<p:commandButton icon="fa fa-fw fa-close" value="#{labels.botao_fechar}" actionListener="#{usuarioController.close}" process="@this"
 						update=":searchForm :editForm" styleClass="ui-grid-col-12 botao-turquesa" />
 				</p:panelGrid>

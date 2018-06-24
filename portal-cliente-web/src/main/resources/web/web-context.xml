@@ -22,6 +22,8 @@
 	<import resource="classpath:/service/service-context.xml" />
 
 	<import resource="classpath:/web/security-context.xml" />
+	
+	<import resource="classpath:/job/job-context.xml" />
 
 	<context:component-scan base-package="br.com.graflogic.utilities.presentationutil.controller" />
 

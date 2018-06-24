@@ -1,5 +1,6 @@
 package br.com.graflogic.hermitex.cliente.service.impl.acesso;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -18,10 +19,12 @@ import br.com.graflogic.hermitex.cliente.data.entity.acesso.Usuario;
 import br.com.graflogic.hermitex.cliente.data.entity.aud.UsuarioAuditoria;
 import br.com.graflogic.hermitex.cliente.data.impl.acesso.UsuarioRepository;
 import br.com.graflogic.hermitex.cliente.data.impl.aud.UsuarioAuditoriaRepository;
+import br.com.graflogic.hermitex.cliente.data.util.ConfiguracaoEnum;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
 import br.com.graflogic.hermitex.cliente.service.exception.ResultadoNaoEncontradoException;
 import br.com.graflogic.hermitex.cliente.service.impl.auxiliar.ConfiguracaoService;
+import br.com.graflogic.hermitex.cliente.service.impl.auxiliar.NotificacaoService;
 import br.com.graflogic.hermitex.cliente.service.util.EncryptHelper;
 import br.com.graflogic.hermitex.cliente.service.util.Generator;
 import br.com.graflogic.hermitex.cliente.web.util.SessionUtil;
@@ -43,6 +46,9 @@ public class UsuarioService {
 	@Autowired
 	private ConfiguracaoService configuracaoService;
 
+	@Autowired
+	private NotificacaoService notificacaoService;
+
 	// Fluxo
 	public void cadastra(Usuario entity) {
 		String senha = Generator.geraSenhaUsuario();
@@ -62,12 +68,13 @@ public class UsuarioService {
 
 		repository.store(entity);
 
-		// Envia a senha para o usuario
-		//		String tituloNotificacao = configuracaoService.consulta(ConfiguracaoEnum.USUARIO_EMAIL_SENHA_TITULO);
-		//		String conteudoNotificacao = configuracaoService.consulta(ConfiguracaoEnum.USUARIO_EMAIL_SENHA_CONTEUDO);
-		//
-		//		conteudoNotificacao = conteudoNotificacao.replace("#NOME#", entity.getNome()).replace("#SENHA#", senha);
-		// TODO Enviar email com senha
+		//		 Envia a senha para o usuario
+		String tituloNotificacao = configuracaoService.consulta(ConfiguracaoEnum.USUARIO_EMAIL_SENHA_TITULO);
+		String conteudoNotificacao = configuracaoService.consulta(ConfiguracaoEnum.USUARIO_EMAIL_SENHA_CONTEUDO);
+
+		conteudoNotificacao = conteudoNotificacao.replace("#NOME#", entity.getNome()).replace("#SENHA#", senha);
+
+		notificacaoService.enviaEmail(tituloNotificacao, conteudoNotificacao, Arrays.asList(new String[] { entity.getEmail() }), null);
 
 		registraAuditoria(entity.getId(), entity, DomEventoAuditoriaUsuario.CADASTRO, null);
 	}
@@ -84,6 +91,14 @@ public class UsuarioService {
 		executaAtualiza(entity);
 
 		registraAuditoria(entity.getId(), null, DomEventoAuditoriaUsuario.INATIVACAO, null);
+	}
+	
+	public void ativa(Usuario entity) {
+		entity.setStatus(DomStatusUsuario.ATIVO);
+
+		executaAtualiza(entity);
+
+		registraAuditoria(entity.getId(), null, DomEventoAuditoriaUsuario.ATIVACAO, null);
 	}
 
 	private void executaAtualiza(Usuario entity) {
@@ -133,11 +148,12 @@ public class UsuarioService {
 		executaAtualiza(entity);
 
 		//  Envia a nova senha para o usuario
-		//		String tituloNotificacao = configuracaoService.consulta(ConfiguracaoEnum.USUARIO_EMAIL_NOVA_SENHA_TITULO);
-		//		String conteudoNotificacao = configuracaoService.consulta(ConfiguracaoEnum.USUARIO_EMAIL_NOVA_SENHA_CONTEUDO);
-		//
-		//		conteudoNotificacao = conteudoNotificacao.replace("#NOME#", entity.getNome()).replace("#SENHA#", senha);
-		// TODO Enviar email com senha
+		String tituloNotificacao = configuracaoService.consulta(ConfiguracaoEnum.USUARIO_EMAIL_NOVA_SENHA_TITULO);
+		String conteudoNotificacao = configuracaoService.consulta(ConfiguracaoEnum.USUARIO_EMAIL_NOVA_SENHA_CONTEUDO);
+
+		conteudoNotificacao = conteudoNotificacao.replace("#NOME#", entity.getNome()).replace("#SENHA#", senha);
+
+		notificacaoService.enviaEmail(tituloNotificacao, conteudoNotificacao, Arrays.asList(new String[] { entity.getEmail() }), null);
 
 		registraAuditoria(entity.getId(), null, DomEventoAuditoriaUsuario.GERACAO_NOVA_SENHA, null);
 	}
