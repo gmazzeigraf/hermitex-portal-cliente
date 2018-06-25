@@ -59,9 +59,6 @@ public class Cliente implements Serializable {
 	@Column(name = "telefone", nullable = false)
 	private String telefone;
 
-	@Column(name = "logotipo")
-	private String logotipo;
-
 	@Column(name = "status", nullable = false)
 	private String status;
 
@@ -130,14 +127,6 @@ public class Cliente implements Serializable {
 
 	public void setTelefone(String telefone) {
 		this.telefone = telefone;
-	}
-
-	public String getLogotipo() {
-		return logotipo;
-	}
-
-	public void setLogotipo(String logotipo) {
-		this.logotipo = logotipo;
 	}
 
 	public String getStatus() {

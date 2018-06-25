@@ -29,7 +29,7 @@ import br.com.graflogic.utilities.datautil.copy.ObjectCopier;
 
 /**
  * 
- * @author ggraf
+ * @author gmazz
  *
  */
 @Service

@@ -57,6 +57,16 @@ public class DomAuditoria {
 		}
 	}
 
+	public static class DomEventoAuditoriaCorProduto extends DomBase {
+		public static final String CADASTRO = "C";
+		public static final String ATUALIZACAO = "A";
+
+		DomEventoAuditoriaCorProduto() {
+			mapa.put(CADASTRO, "Cadastro");
+			mapa.put(ATUALIZACAO, "Atualização");
+		}
+	}
+
 	public static class DomStatusProcessamento extends DomBase {
 		public static final String ERRO = "E";
 		public static final String FINALIZADO = "F";

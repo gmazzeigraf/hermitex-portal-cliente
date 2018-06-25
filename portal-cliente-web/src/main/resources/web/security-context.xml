@@ -19,6 +19,10 @@
 
 		<!-- Cliente -->
 		<intercept-url pattern="/pages/cliente/cadastro.jsf" access="hasAnyRole('ROLE_CLI_CADASTRO')" />
+		
+		<!-- Produto -->
+		<intercept-url pattern="/pages/produto/cadastro.jsf" access="hasAnyRole('ROLE_PRO_CADASTRO')" />
+		<intercept-url pattern="/pages/produto/cor.jsf" access="hasAnyRole('ROLE_PRO_COR')" />
 
 		<!-- Misc -->
 		<intercept-url pattern="/pages/publico/**" access="permitAll" />

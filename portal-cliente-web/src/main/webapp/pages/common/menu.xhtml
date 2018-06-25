@@ -14,16 +14,23 @@
 
 						<p:submenu id="menu_administracao" icon="fa fa-fw fa-gears" label="#{labels.menu_administracao}">
 							<p:submenu id="menu_administracao_acesso" icon="fa fa-fw fa-unlock" label="#{labels.menu_administracao_acesso}">
-								<p:menuitem id="menu_administracao_acesso_usuario" icon="fa fa-fw fa-user" value="#{labels.menu_administracao_acesso_usuario}"
-									url="/pages/administracao/acesso/usuario.jsf" rendered="#{sec:isAllowed('/pages/administracao/acesso/usuario.jsf', '')}" />
 								<p:menuitem id="menu_administracao_acesso_perfil" icon="fa fa-fw fa-magic" value="#{labels.menu_administracao_acesso_perfil}"
 									url="/pages/administracao/acesso/perfil.jsf" rendered="#{sec:isAllowed('/pages/administracao/acesso/perfil.jsf', '')}" />
+								<p:menuitem id="menu_administracao_acesso_usuario" icon="fa fa-fw fa-user" value="#{labels.menu_administracao_acesso_usuario}"
+									url="/pages/administracao/acesso/usuario.jsf" rendered="#{sec:isAllowed('/pages/administracao/acesso/usuario.jsf', '')}" />
 							</p:submenu>
 						</p:submenu>
 
 						<p:submenu id="menu_cliente" icon="fa fa-fw fa-truck" label="#{labels.menu_cliente}">
 							<p:menuitem id="menu_cliente_cadastro" icon="fa fa-fw fa-edit" value="#{labels.menu_cliente_cadastro}" url="/pages/cliente/cadastro.jsf"
 								rendered="#{sec:isAllowed('/pages/cliente/cadastro.jsf', '')}" />
+						</p:submenu>
+
+						<p:submenu id="menu_produto" icon="fa fa-fw fa-tags" label="#{labels.menu_produto}">
+							<p:menuitem id="menu_produto_cadastro" icon="fa fa-fw fa-edit" value="#{labels.menu_produto_cadastro}" url="/pages/produto/cadastro.jsf"
+								rendered="#{sec:isAllowed('/pages/produto/cadastro.jsf', '')}" />
+							<p:menuitem id="menu_produto_cor" icon="fa fa-fw fa-paint-brush" value="#{labels.menu_produto_cor}" url="/pages/produto/cor.jsf"
+								rendered="#{sec:isAllowed('/pages/produto/cor.jsf', '')}" />
 						</p:submenu>
 					</pp:menu>
 				</div>

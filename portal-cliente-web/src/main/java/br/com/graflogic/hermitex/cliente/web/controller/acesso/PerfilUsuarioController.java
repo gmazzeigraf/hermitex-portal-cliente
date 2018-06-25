@@ -133,10 +133,6 @@ public class PerfilUsuarioController extends CrudBaseController<PerfilUsuario, P
 		permissoes.getTarget().clear();
 	}
 
-	public DualListModel<PermissaoAcesso> getPermissoes() {
-		return permissoes;
-	}
-
 	// Util
 	public void inativa() {
 		try {
@@ -181,5 +177,9 @@ public class PerfilUsuarioController extends CrudBaseController<PerfilUsuario, P
 	// Getters e Setters
 	public void setPermissoes(DualListModel<PermissaoAcesso> permissoes) {
 		this.permissoes = permissoes;
+	}
+
+	public DualListModel<PermissaoAcesso> getPermissoes() {
+		return permissoes;
 	}
 }
