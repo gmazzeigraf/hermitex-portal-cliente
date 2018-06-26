@@ -15,6 +15,8 @@ public enum ConfiguracaoEnum {
 
 	WEB_URL("web.url"),
 
+	PRODUTO_DIRETORIO_IMAGENS("produto.diretorio_imagens"),
+
 	;
 
 	private final String codigo;

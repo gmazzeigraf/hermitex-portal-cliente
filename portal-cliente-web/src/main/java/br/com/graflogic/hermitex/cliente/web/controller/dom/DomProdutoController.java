@@ -19,15 +19,23 @@ public class DomProdutoController implements Serializable {
 
 	private static final long serialVersionUID = 8011957357238708834L;
 
+	public Map<String, Object> getStatusMap() {
+		return DomProduto.domStatus.getMap();
+	}
+
 	public Map<String, Object> getStatusTamanhoMap() {
 		return DomProduto.domStatusTamanho.getMap();
 	}
-	
+
 	public Map<String, Object> getStatusCategoriaMap() {
 		return DomProduto.domStatusCategoria.getMap();
 	}
-	
+
 	public Map<String, Object> getStatusSetorMap() {
 		return DomProduto.domStatusSetor.getMap();
+	}
+
+	public Map<String, Object> getGeneroMap() {
+		return DomProduto.domGenero.getMap();
 	}
 }

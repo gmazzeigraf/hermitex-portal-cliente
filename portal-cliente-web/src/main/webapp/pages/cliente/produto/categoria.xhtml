@@ -23,7 +23,7 @@
 
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 									<p:outputLabel for="nomeFilter" value="Nome" styleClass="label" />
-									<p:inputText id="nomeFilter" value="#{categoriaProdutoController.filterEntity.nome}" maxlength="20" styleClass="ui-grid-col-12" />
+									<p:inputText id="nomeFilter" value="#{categoriaProdutoController.filterEntity.nome}" maxlength="50" styleClass="ui-grid-col-12" />
 								</p:panelGrid>
 
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
@@ -96,7 +96,7 @@
 						<p:panelGrid columns="2" id="informacoesGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 								<p:outputLabel for="nome" value="Nome" styleClass="label" />
-								<p:inputText id="nome" value="#{categoriaProdutoController.entity.nome}" maxlength="20" styleClass="ui-grid-col-12" required="true"
+								<p:inputText id="nome" value="#{categoriaProdutoController.entity.nome}" maxlength="50" styleClass="ui-grid-col-12" required="true"
 									requiredMessage="Favor informar o nome" />
 							</p:panelGrid>
 						</p:panelGrid>

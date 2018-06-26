@@ -1,0 +1,252 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/pages/templates/crud_template.xhtml"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+	<ui:define name="viewname">#{labels.menu_cliente} / #{labels.menu_cliente_produto} / #{labels.menu_cliente_produto_cadastro} </ui:define>
+
+	<ui:define name="search">
+		<c:if test="#{null == produtoController.entity}">
+			<div class="ui-g">
+				<div class="ui-g-12">
+					<div class="card card-w-title">
+						<h1>#{labels.consulta}</h1>
+						<p:panelGrid columns="1" id="filterGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
+							<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="clienteFilter" value="Cliente *" styleClass="label" />
+									<p:selectOneMenu id="clienteFilter" value="#{produtoController.filterEntity.idCliente}" styleClass="ui-grid-col-12">
+										<f:selectItem itemLabel="" itemValue="" />
+										<f:selectItems value="#{produtoController.clientes}" var="item" itemLabel="#{item.razaoSocial}" itemValue="#{item.id}" />
+										<p:ajax process="@this" update=":searchForm" listener="#{produtoController.changeCliente}" />
+									</p:selectOneMenu>
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="categoriaFilter" value="Categoria" styleClass="label" />
+									<p:selectOneMenu id="categoriaFilter" value="#{produtoController.filterEntity.idCategoria}" styleClass="ui-grid-col-12"
+										disabled="#{!produtoController.clienteSelecionado}">
+										<f:selectItem itemLabel="" itemValue="" />
+										<f:selectItems value="#{produtoController.categorias}" var="item" itemLabel="#{item.nome}" itemValue="#{item.id}" />
+									</p:selectOneMenu>
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="setorFilter" value="Setor" styleClass="label" />
+									<p:selectOneMenu id="setorFilter" value="#{produtoController.filterEntity.idSetor}" styleClass="ui-grid-col-12"
+										disabled="#{!produtoController.clienteSelecionado}">
+										<f:selectItem itemLabel="" itemValue="" />
+										<f:selectItems value="#{produtoController.setores}" var="item" itemLabel="#{item.nome}" itemValue="#{item.id}" />
+									</p:selectOneMenu>
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="tituloFilter" value="Título" styleClass="label" />
+									<p:inputText id="tituloFilter" value="#{produtoController.filterEntity.titulo}" maxlength="20" styleClass="ui-grid-col-12" />
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="generoFilter" value="Gênero" styleClass="label" />
+									<p:selectOneMenu id="generoFilter" value="#{produtoController.filterEntity.genero}" styleClass="ui-grid-col-12">
+										<f:selectItem itemLabel="" itemValue="" />
+										<f:selectItems value="#{domProdutoController.generoMap}" />
+									</p:selectOneMenu>
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="statusFilter" value="Status" styleClass="label" />
+									<p:selectOneMenu id="statusFilter" value="#{produtoController.filterEntity.status}" styleClass="ui-grid-col-12">
+										<f:selectItem itemLabel="" itemValue="" />
+										<f:selectItems value="#{domProdutoController.statusMap}" />
+									</p:selectOneMenu>
+								</p:panelGrid>
+							</p:panelGrid>
+
+							<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank">
+								<p:spacer styleClass="display-desktop" />
+								<p:commandButton value="#{labels.botao_pesquisar}" id="searchButton" icon="fa fa-fw fa-search" update="dtbEntities searchMessages"
+									actionListener="#{produtoController.search}" process="@this, filterGrid" oncomplete="PF('dtb').getPaginator().setPage(0);"
+									styleClass="ui-grid-col-4 botao-pesquisar" disabled="#{!produtoController.clienteSelecionado}" />
+							</p:panelGrid>
+
+							<p:messages id="searchMessages" />
+
+							<p:separator />
+
+							<p:defaultCommand target="searchButton" scope="filterGrid" />
+
+							<p:commandButton value="#{labels.botao_adicionar}" icon="fa fa-fw fa-plus" actionListener="#{produtoController.add}"
+								update=":searchForm :editForm" process="@this" resetValues="true" styleClass="ui-grid-col-12 botao-adicionar"
+								disabled="#{!produtoController.clienteSelecionado}" />
+						</p:panelGrid>
+
+						<p:spacer styleClass="display-desktop" />
+
+						<p:dataTable id="dtbEntities" widgetVar="dtb" var="entity" value="#{produtoController.entities}" rowKey="#{entity.id}" paginator="true"
+							reflow="true" rows="10" emptyMessage="#{null != produtoController.entities ? messages.nenhum_resultado_encontrado : ''}">
+
+							<p:column headerText="#" sortBy="#{entity.id}" styleClass="id-column">
+								<h:outputText value="#{entity.id}" />
+							</p:column>
+
+							<p:column headerText="Código" sortBy="#{entity.codigo}">
+								<h:outputText value="#{entity.codigo}" />
+							</p:column>
+
+							<p:column headerText="Título" sortBy="#{entity.titulo}">
+								<h:outputText value="#{entity.titulo}" />
+							</p:column>
+
+							<p:column headerText="Status" sortBy="#{entity.deStatus}">
+								<h:outputText value="#{entity.deStatus}" />
+							</p:column>
+
+							<p:column styleClass="coluna-edicao">
+								<p:commandButton icon="fa fa-fw fa-pencil" title="#{labels.botao_editar}" update=":searchForm :editForm" process="@this" resetValues="true"
+									styleClass="ui-grid-col-12">
+									<f:setPropertyActionListener value="#{entity}" target="#{produtoController.selectedEntity}" />
+								</p:commandButton>
+							</p:column>
+
+							<f:facet name="footer">
+								<h:outputText value="#{fn:length(produtoController.entities)} registro(s) encontrado(s)" />
+							</f:facet>
+						</p:dataTable>
+					</div>
+				</div>
+			</div>
+		</c:if>
+	</ui:define>
+
+	<ui:define name="edit">
+		<c:if test="#{null != produtoController.entity}">
+			<div class="ui-g">
+				<div class="ui-g-12">
+					<div class="card card-w-title">
+						<h1>#{labels.informacoes}</h1>
+						<p:panelGrid columns="1" id="informacoesGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel for="codigo" value="Código" styleClass="label" />
+								<p:inputText id="codigo" value="#{produtoController.entity.codigo}" maxlength="20" styleClass="ui-grid-col-12" required="true"
+									requiredMessage="Favor informar o código" disabled="#{produtoController.editing}" />
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel for="categoria" value="Categoria" styleClass="label" />
+								<p:selectOneMenu id="categoria" value="#{produtoController.entity.idCategoria}" styleClass="ui-grid-col-12" required="true"
+									requiredMessage="Favor selecionar a categoria">
+									<f:selectItem itemLabel="Selecione" itemValue="" />
+									<f:selectItems value="#{produtoController.categorias}" var="item" itemLabel="#{item.nome}" itemValue="#{item.id}" />
+								</p:selectOneMenu>
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel for="setor" value="Setor" styleClass="label" />
+								<p:selectOneMenu id="setor" value="#{produtoController.entity.idSetor}" styleClass="ui-grid-col-12" required="true"
+									requiredMessage="Favor selecionar o setor">
+									<f:selectItem itemLabel="Selecione" itemValue="" />
+									<f:selectItems value="#{produtoController.setores}" var="item" itemLabel="#{item.nome}" itemValue="#{item.id}" />
+								</p:selectOneMenu>
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel for="titulo" value="Título" styleClass="label" />
+								<p:inputText id="titulo" value="#{produtoController.entity.titulo}" maxlength="100" styleClass="ui-grid-col-12" required="true"
+									requiredMessage="Favor informar o título" />
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel for="descricao" value="Descrição" styleClass="label" />
+								<p:editor id="descricao" value="#{produtoController.entity.descricao}" height="300" styleClass="ui-grid-col-12" required="true"
+									requiredMessage="Favor informar a descrição" />
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel for="garantia" value="Garantia" styleClass="label" />
+								<p:inputTextarea id="garantia" value="#{produtoController.entity.garantia}" rows="3" maxlength="300" styleClass="ui-grid-col-12"
+									autoResize="false" />
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel for="genero" value="Gênero" styleClass="label" />
+								<p:selectOneMenu id="genero" value="#{produtoController.entity.genero}" styleClass="ui-grid-col-12" required="true"
+									requiredMessage="Favor selecionar o gênero">
+									<f:selectItem itemLabel="Selecione" itemValue="" />
+									<f:selectItems value="#{domProdutoController.generoMap}" />
+								</p:selectOneMenu>
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel for="linkYoutube" value="Link Youtube" styleClass="label" />
+								<p:inputText id="linkYoutube" value="#{produtoController.entity.linkYoutube}" maxlength="100" styleClass="ui-grid-col-12" required="true"
+									requiredMessage="Favor informar o link do Youtube" />
+							</p:panelGrid>
+
+							<c:if test="#{fn:length(produtoController.entity.linkYoutube) > 0}">
+								<iframe width="420" height="315" src="#{produtoController.entity.linkYoutube}"> </iframe>
+							</c:if>
+						</p:panelGrid>
+					</div>
+
+					<div class="card card-w-title">
+						<h1>Imagens</h1>
+
+						<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank">
+							<p:fileUpload fileUploadListener="#{produtoController.uploadImagem}" mode="advanced" dragDropSupport="false" sizeLimit="200000"
+								cancelLabel="Cancelar" label="Adicionar" invalidSizeMessage="O tamanho do máximo da imagem é de 200 Kb" update="editForm:dtbImagens"
+								auto="true" allowTypes="/(\.|\/)(jpg)$/" invalidFileMessage="A imagem deve ser JPG" accept="application/jpg" />
+						</p:panelGrid>
+
+						<p:spacer styleClass="display-desktop" />
+
+						<p:dataTable id="dtbImagens" var="imagem" value="#{produtoController.imagens}" paginator="true" emptyMessage="Nenhuma imagem encontrada"
+							rowIndexVar="index" reflow="true" filterEvent="enter">
+							<p:column style="text-align: center;" headerText="Imagem">
+								<h:outputText value="#{imagem.name}" />
+							</p:column>
+							<p:column style="width:70px; text-align: center;" headerText="Download">
+								<p:commandButton icon="fa fa-fw fa-download" title="Download" process="@this" ajax="false" immediate="true"
+									onclick="liberaRefresh(); PrimeFaces.monitorDownload(showStatus, hideStatus)">
+									<f:param name="index" value="#{index}" />
+									<p:fileDownload value="#{produtoController.imagem}" />
+								</p:commandButton>
+							</p:column>
+
+							<p:column style="width:70px; text-align: center;" headerText="Excluir">
+								<p:commandButton icon="fa fa-fw fa-trash" title="Excluir" process="@this" actionListener="#{produtoController.excluiImagem}"
+									update="editForm:dtbImagens">
+									<p:confirm header="Confirmação" message="Confirmar exclusão?" icon="ui-icon-alert" />
+									<f:param name="index" value="#{index}" />
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+					</div>
+
+					<p:messages />
+
+					<p:panelGrid columns="6" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
+						<p:commandButton id="submitButton" icon="fa fa-fw fa-save" value="#{labels.botao_gravar}" actionListener="#{produtoController.save}"
+							process=":editForm:informacoesGrid" update=":editForm :searchForm" styleClass="ui-grid-col-12" />
+
+						<p:commandButton id="inativacaoButton" icon="fa fa-fw fa-ban" value="#{labels.botao_inativar}" actionListener="#{produtoController.inativa}"
+							process="@this" update=":searchForm :editForm" styleClass="ui-grid-col-12 botao-vermelho"
+							rendered="#{produtoController.editing and produtoController.entity.ativo}">
+							<p:confirm header="Confirmação" message="Confirmar inativação?" icon="ui-icon-alert" />
+						</p:commandButton>
+
+						<p:commandButton id="ativacaoButton" icon="fa fa-fw fa-check-circle" value="#{labels.botao_ativar}" actionListener="#{produtoController.ativa}"
+							process="@this" update=":searchForm :editForm" styleClass="ui-grid-col-12"
+							rendered="#{produtoController.editing and produtoController.entity.inativo}">
+							<p:confirm header="Confirmação" message="Confirmar ativação?" icon="ui-icon-alert" />
+						</p:commandButton>
+
+						<p:commandButton icon="fa fa-fw fa-close" value="#{labels.botao_fechar}" actionListener="#{produtoController.close}" process="@this"
+							update=":searchForm :editForm" styleClass="ui-grid-col-12 botao-turquesa" />
+					</p:panelGrid>
+				</div>
+			</div>
+		</c:if>
+	</ui:define>
+
+	<ui:define name="complement">
+	</ui:define>
+</ui:composition>

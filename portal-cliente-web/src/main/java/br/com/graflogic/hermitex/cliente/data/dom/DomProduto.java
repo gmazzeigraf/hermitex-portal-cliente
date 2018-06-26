@@ -9,6 +9,18 @@ import br.com.graflogic.base.data.dom.DomBase;
  */
 public class DomProduto {
 
+	public static class DomStatus extends DomBase {
+		public static final String ATIVO = "A";
+		public static final String INATIVO = "I";
+
+		DomStatus() {
+			mapa.put(ATIVO, "Ativo");
+			mapa.put(INATIVO, "Inativo");
+		}
+	}
+
+	public static DomStatus domStatus = new DomStatus();
+
 	public static class DomStatusTamanho extends DomBase {
 		public static final String ATIVO = "A";
 		public static final String INATIVO = "I";
@@ -44,4 +56,18 @@ public class DomProduto {
 	}
 
 	public static DomStatusSetor domStatusSetor = new DomStatusSetor();
+
+	public static class DomGenero extends DomBase {
+		public static final String MASCULINO = "M";
+		public static final String FEMININO = "F";
+		public static final String UNISSEX = "U";
+
+		DomGenero() {
+			mapa.put(MASCULINO, "Masculino");
+			mapa.put(FEMININO, "Feminino");
+			mapa.put(UNISSEX, "Unissex");
+		}
+	}
+
+	public static DomGenero domGenero = new DomGenero();
 }
