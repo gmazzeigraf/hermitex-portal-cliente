@@ -97,9 +97,6 @@ public class ClienteController extends CrudBaseController<Cliente, Cliente> impl
 				returnInfoMessage("Cliente cadastrado com sucesso", null);
 
 			}
-
-			edit(getEntity());
-
 		} catch (DadosInvalidosException e) {
 			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), e.getMessage(), null);
 			return false;
@@ -254,7 +251,7 @@ public class ClienteController extends CrudBaseController<Cliente, Cliente> impl
 			service.inativa(getEntity());
 
 			returnInfoMessage("Cliente inativado com sucesso", null);
-			
+
 			edit(getEntity());
 
 			search();
@@ -274,7 +271,7 @@ public class ClienteController extends CrudBaseController<Cliente, Cliente> impl
 			service.ativa(getEntity());
 
 			returnInfoMessage("Cliente ativado com sucesso", null);
-			
+
 			edit(getEntity());
 
 			search();

@@ -1,20 +1,24 @@
 -- Remove a FK
-ALTER TABLE tb_perfil_usuario_permissao_acesso DROP CONSTRAINT fk_permissao_acesso_perfil_usuario;
+ALTER TABLE tb_perfil_usuario_permissao_acesso DROP CONSTRAINT fk_perfil_usuario_permissao_acesso_permissao;
 
 -- Limpa a tabela
+TRUNCATE tb_perfil_usuario_permissao_acesso;
 TRUNCATE tb_permissao_acesso;
 
 -- Administracao
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_ADM_ACESSO_PERFIL', 'Administração / Acesso / Perfil', 'A');
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_ADM_ACESSO_USUARIO', 'Administração / Acesso / Usuário', 'A');
 
-INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_CLI_CADASTRO', 'Cliente / Cadastro', 'A');
+INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_ADM_PRODUTO_TAMANHO', 'Administração / Produto / Tamanho', 'A');
 
-INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_PRO_CADASTRO', 'Produto / Cadastro', 'A');
-INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_PRO_COR', 'Produto / Cor', 'A');
+INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_CLI_CADASTRO', 'Cliente / Cadastro', 'A');
+INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_CLI_PRODUTO_CATEGORIA', 'Cliente / Produto / Categoria', 'A');
+INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_CLI_PRODUTO_SETOR', 'Cliente / Produto / Setor', 'A');
+INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_CLI_PRODUTO_CADASTRO', 'Cliente / Produto / Cadastro', 'A');
+INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_CLI_PRODUTO_ESTOQUE', 'Cliente / Produto / Estoque', 'A');
 
 -- Cria  FK
-ALTER TABLE tb_perfil_usuario_permissao_acesso ADD CONSTRAINT fk_permissao_acesso_perfil_usuario
+ALTER TABLE tb_perfil_usuario_permissao_acesso ADD CONSTRAINT fk_perfil_usuario_permissao_acesso_permissao
 	FOREIGN KEY (cd_permissao) REFERENCES tb_permissao_acesso (codigo)
 	ON UPDATE NO ACTION ON DELETE NO ACTION;
 

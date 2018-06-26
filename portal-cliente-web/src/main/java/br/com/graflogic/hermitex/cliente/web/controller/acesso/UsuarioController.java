@@ -102,9 +102,6 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 				returnInfoMessage("Usuário cadastrado com sucesso", null);
 
 			}
-
-			edit(getEntity());
-
 		} catch (DadosInvalidosException e) {
 			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), e.getMessage(), null);
 			return false;
@@ -115,7 +112,7 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 
 	@Override
 	protected void afterSave() {
-		setEntity(service.consultaPorId(getEntity().getId()));
+		edit(getEntity());
 	}
 
 	@Override
@@ -142,7 +139,7 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 			service.inativa(getEntity());
 
 			returnInfoMessage("Usuário inativado com sucesso", null);
-			
+
 			edit(getEntity());
 
 			search();
@@ -156,13 +153,13 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao invativar usuário, contate o administrador", t);
 		}
 	}
-	
+
 	public void ativa() {
 		try {
 			service.ativa(getEntity());
 
 			returnInfoMessage("Usuário ativado com sucesso", null);
-			
+
 			edit(getEntity());
 
 			search();

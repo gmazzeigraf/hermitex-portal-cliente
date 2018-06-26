@@ -14,10 +14,10 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name = "tb_cor_produto_aud")
-public class CorProdutoAuditoria implements Serializable {
+@Table(name = "tb_setor_produto_aud")
+public class SetorProdutoAuditoria implements Serializable {
 
-	private static final long serialVersionUID = 6431315308697796434L;
+	private static final long serialVersionUID = 888730072928761613L;
 
 	@Id
 	@Column(name = "id", nullable = false)

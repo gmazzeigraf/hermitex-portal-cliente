@@ -11,9 +11,19 @@
 					<div class="card card-w-title">
 						<h1>#{labels.consulta}</h1>
 						<p:panelGrid columns="1" id="filterGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
-							<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
-								<p:outputLabel for="nomeFilter" value="Nome" styleClass="label" />
-								<p:inputText id="nomeFilter" value="#{perfilUsuarioController.filterEntity.nome}" maxlength="50" styleClass="ui-grid-col-12" />
+							<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group">
+								<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
+									<p:outputLabel for="nomeFilter" value="Nome" styleClass="label" />
+									<p:inputText id="nomeFilter" value="#{perfilUsuarioController.filterEntity.nome}" maxlength="50" styleClass="ui-grid-col-12" />
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="statusFilter" value="Status" styleClass="label" />
+									<p:selectOneMenu id="statusFilter" value="#{perfilUsuarioController.filterEntity.status}" styleClass="ui-grid-col-12">
+										<f:selectItem itemLabel="" itemValue="" />
+										<f:selectItems value="#{domAcessoController.statusPerfilUsuarioMap}" />
+									</p:selectOneMenu>
+								</p:panelGrid>
 							</p:panelGrid>
 
 							<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank">
@@ -29,9 +39,8 @@
 
 							<p:defaultCommand target="searchButton" scope="filterGrid" />
 
-							<p:commandButton id="adicionarButton" value="#{labels.botao_adicionar}" icon="fa fa-fw fa-plus"
-								actionListener="#{perfilUsuarioController.add}" update=":searchForm :editForm" process="@this" resetValues="true"
-								styleClass="ui-grid-col-12 botao-adicionar" />
+							<p:commandButton id="adicionarButton" value="#{labels.botao_adicionar}" icon="fa fa-fw fa-plus" actionListener="#{perfilUsuarioController.add}"
+								update=":searchForm :editForm" process="@this" resetValues="true" styleClass="ui-grid-col-12 botao-adicionar" />
 
 						</p:panelGrid>
 

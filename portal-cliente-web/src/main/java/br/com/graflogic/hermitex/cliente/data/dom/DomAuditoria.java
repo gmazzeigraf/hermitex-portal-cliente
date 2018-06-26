@@ -57,16 +57,49 @@ public class DomAuditoria {
 		}
 	}
 
-	public static class DomEventoAuditoriaCorProduto extends DomBase {
+	public static class DomEventoAuditoriaTamanhoProduto extends DomBase {
 		public static final String CADASTRO = "C";
 		public static final String ATUALIZACAO = "A";
+		public static final String INATIVACAO = "I";
+		public static final String ATIVACAO = "T";
 
-		DomEventoAuditoriaCorProduto() {
+		DomEventoAuditoriaTamanhoProduto() {
 			mapa.put(CADASTRO, "Cadastro");
 			mapa.put(ATUALIZACAO, "Atualização");
+			mapa.put(INATIVACAO, "Inativação");
+			mapa.put(ATIVACAO, "Ativação");
 		}
 	}
 
+	public static class DomEventoAuditoriaCategoriaProduto extends DomBase {
+		public static final String CADASTRO = "C";
+		public static final String ATUALIZACAO = "A";
+		public static final String INATIVACAO = "I";
+		public static final String ATIVACAO = "T";
+
+		DomEventoAuditoriaCategoriaProduto() {
+			mapa.put(CADASTRO, "Cadastro");
+			mapa.put(ATUALIZACAO, "Atualização");
+			mapa.put(INATIVACAO, "Inativação");
+			mapa.put(ATIVACAO, "Ativação");
+		}
+	}
+
+	public static class DomEventoAuditoriaSetorProduto extends DomBase {
+		public static final String CADASTRO = "C";
+		public static final String ATUALIZACAO = "A";
+		public static final String INATIVACAO = "I";
+		public static final String ATIVACAO = "T";
+
+		DomEventoAuditoriaSetorProduto() {
+			mapa.put(CADASTRO, "Cadastro");
+			mapa.put(ATUALIZACAO, "Atualização");
+			mapa.put(INATIVACAO, "Inativação");
+			mapa.put(ATIVACAO, "Ativação");
+		}
+	}
+
+	//	Processamento
 	public static class DomStatusProcessamento extends DomBase {
 		public static final String ERRO = "E";
 		public static final String FINALIZADO = "F";

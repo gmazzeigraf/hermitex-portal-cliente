@@ -80,9 +80,6 @@ public class PerfilUsuarioController extends CrudBaseController<PerfilUsuario, P
 
 				returnInfoMessage("Perfil cadastrado com sucesso", null);
 			}
-
-			edit(getEntity());
-
 		} catch (DadosInvalidosException e) {
 			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), e.getMessage(), null);
 			return false;
@@ -93,7 +90,7 @@ public class PerfilUsuarioController extends CrudBaseController<PerfilUsuario, P
 
 	@Override
 	protected void afterSave() {
-		setEntity(service.consultaPorId(getEntity().getId()));
+		edit(getEntity());
 	}
 
 	@Override

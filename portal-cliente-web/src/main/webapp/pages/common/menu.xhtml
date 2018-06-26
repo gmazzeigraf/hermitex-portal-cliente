@@ -19,18 +19,27 @@
 								<p:menuitem id="menu_administracao_acesso_usuario" icon="fa fa-fw fa-user" value="#{labels.menu_administracao_acesso_usuario}"
 									url="/pages/administracao/acesso/usuario.jsf" rendered="#{sec:isAllowed('/pages/administracao/acesso/usuario.jsf', '')}" />
 							</p:submenu>
+
+							<p:submenu id="menu_administracao_produto" icon="fa fa-fw fa-tags" label="#{labels.menu_administracao_produto}">
+								<p:menuitem id="menu_administracao_produto_tamanho" icon="fa fa-fw fa-arrows" value="#{labels.menu_administracao_produto_tamanho}"
+									url="/pages/administracao/produto/tamanho.jsf" rendered="#{sec:isAllowed('/pages/administracao/produto/tamanho.jsf', '')}" />
+							</p:submenu>
 						</p:submenu>
 
 						<p:submenu id="menu_cliente" icon="fa fa-fw fa-truck" label="#{labels.menu_cliente}">
 							<p:menuitem id="menu_cliente_cadastro" icon="fa fa-fw fa-edit" value="#{labels.menu_cliente_cadastro}" url="/pages/cliente/cadastro.jsf"
 								rendered="#{sec:isAllowed('/pages/cliente/cadastro.jsf', '')}" />
-						</p:submenu>
 
-						<p:submenu id="menu_produto" icon="fa fa-fw fa-tags" label="#{labels.menu_produto}">
-							<p:menuitem id="menu_produto_cadastro" icon="fa fa-fw fa-edit" value="#{labels.menu_produto_cadastro}" url="/pages/produto/cadastro.jsf"
-								rendered="#{sec:isAllowed('/pages/produto/cadastro.jsf', '')}" />
-							<p:menuitem id="menu_produto_cor" icon="fa fa-fw fa-paint-brush" value="#{labels.menu_produto_cor}" url="/pages/produto/cor.jsf"
-								rendered="#{sec:isAllowed('/pages/produto/cor.jsf', '')}" />
+							<p:submenu id="menu_cliente_produto" icon="fa fa-fw fa-tags" label="#{labels.menu_cliente_produto}">
+								<p:menuitem id="menu_cliente_produto_categoria" icon="fa fa-fw fa-bookmark" value="#{labels.menu_cliente_produto_categoria}"
+									url="/pages/cliente/produto/categoria.jsf" rendered="#{sec:isAllowed('/pages/cliente/produto/categoria.jsf', '')}" />
+								<p:menuitem id="menu_cliente_produto_setor" icon="fa fa-fw fa-suitcase" value="#{labels.menu_cliente_produto_setor}"
+									url="/pages/cliente/produto/setor.jsf" rendered="#{sec:isAllowed('/pages/cliente/produto/setor.jsf', '')}" />
+								<p:menuitem id="menu_cliente_produto_cadastro" icon="fa fa-fw fa-edit" value="#{labels.menu_cliente_produto_cadastro}"
+									url="/pages/cliente/produto/cadastro.jsf" rendered="#{sec:isAllowed('/pages/cliente/produto/cadastro.jsf', '')}" />
+								<p:menuitem id="menu_cliente_produto_estoque" icon="fa fa-fw fa-truck" value="#{labels.menu_cliente_produto_estoque}"
+									url="/pages/cliente/produto/estoque.jsf" rendered="#{sec:isAllowed('/pages/cliente/produto/estoque.jsf', '')}" />
+							</p:submenu>
 						</p:submenu>
 					</pp:menu>
 				</div>

@@ -16,13 +16,14 @@
 		<!-- Administracao -->
 		<intercept-url pattern="/pages/administracao/acesso/perfil.jsf" access="hasAnyRole('ROLE_ADM_ACESSO_PERFIL')" />
 		<intercept-url pattern="/pages/administracao/acesso/usuario.jsf" access="hasAnyRole('ROLE_ADM_ACESSO_USUARIO')" />
+		<intercept-url pattern="/pages/administracao/acesso/usuario.jsf" access="hasAnyRole('ROLE_ADM_PRODUTO_TAMANHO')" />
 
 		<!-- Cliente -->
 		<intercept-url pattern="/pages/cliente/cadastro.jsf" access="hasAnyRole('ROLE_CLI_CADASTRO')" />
-		
-		<!-- Produto -->
-		<intercept-url pattern="/pages/produto/cadastro.jsf" access="hasAnyRole('ROLE_PRO_CADASTRO')" />
-		<intercept-url pattern="/pages/produto/cor.jsf" access="hasAnyRole('ROLE_PRO_COR')" />
+		<intercept-url pattern="/pages/cliente/produto/categoria.jsf" access="hasAnyRole('ROLE_CLI_PRODUTO_CATEGORIA')" />
+		<intercept-url pattern="/pages/cliente/produto/setor.jsf" access="hasAnyRole('ROLE_CLI_PRODUTO_SETOR')" />
+		<intercept-url pattern="/pages/cliente/produto/cadastro.jsf" access="hasAnyRole('ROLE_CLI_PRODUTO_CADASTRO')" />
+		<intercept-url pattern="/pages/cliente/produto/estoque.jsf" access="hasAnyRole('ROLE_CLI_PRODUTO_ESTOQUE')" />
 
 		<!-- Misc -->
 		<intercept-url pattern="/pages/publico/**" access="permitAll" />
