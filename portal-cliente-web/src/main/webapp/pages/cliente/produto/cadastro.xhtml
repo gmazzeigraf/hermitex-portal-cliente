@@ -187,39 +187,43 @@
 						</p:panelGrid>
 					</div>
 
-					<div class="card card-w-title">
-						<h1>Imagens</h1>
+					<c:if test="#{produtoController.editing}">
+						<div class="card card-w-title">
+							<h1>Imagens</h1>
 
-						<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank">
-							<p:fileUpload fileUploadListener="#{produtoController.uploadImagem}" mode="advanced" dragDropSupport="false" sizeLimit="200000"
-								cancelLabel="Cancelar" label="Adicionar" invalidSizeMessage="O tamanho do máximo da imagem é de 200 Kb" update="editForm:dtbImagens"
-								auto="true" allowTypes="/(\.|\/)(jpg)$/" invalidFileMessage="A imagem deve ser JPG" accept="application/jpg" />
-						</p:panelGrid>
+							<p:panelGrid columns="1" id="imagensGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
+								<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank">
+									<p:fileUpload fileUploadListener="#{produtoController.uploadImagem}" mode="advanced" dragDropSupport="false" sizeLimit="200000"
+										cancelLabel="Cancelar" label="Adicionar" invalidSizeMessage="O tamanho do máximo da imagem é de 200 Kb" update="editForm:imagensGrid"
+										auto="true" allowTypes="/(\.|\/)(jpg)$/" invalidFileMessage="A imagem deve ser JPG" accept="application/jpg" />
+								</p:panelGrid>
 
-						<p:spacer styleClass="display-desktop" />
+								<p:spacer styleClass="display-desktop" />
 
-						<p:dataTable id="dtbImagens" var="imagem" value="#{produtoController.imagens}" paginator="true" emptyMessage="Nenhuma imagem encontrada"
-							rowIndexVar="index" reflow="true" filterEvent="enter">
-							<p:column style="text-align: center;" headerText="Imagem">
-								<h:outputText value="#{imagem.name}" />
-							</p:column>
-							<p:column style="width:70px; text-align: center;" headerText="Download">
-								<p:commandButton icon="fa fa-fw fa-download" title="Download" process="@this" ajax="false" immediate="true"
-									onclick="liberaRefresh(); PrimeFaces.monitorDownload(showStatus, hideStatus)">
-									<f:param name="index" value="#{index}" />
-									<p:fileDownload value="#{produtoController.imagem}" />
-								</p:commandButton>
-							</p:column>
+								<p:dataTable id="dtbImagens" var="imagem" value="#{produtoController.imagens}" paginator="true" emptyMessage="Nenhuma imagem encontrada"
+									rowIndexVar="index" reflow="true" filterEvent="enter">
+									<p:column style="text-align: center;" headerText="Imagem">
+										<h:outputText value="#{imagem.name}" />
+									</p:column>
+									<p:column style="width:70px; text-align: center;" headerText="Download">
+										<p:commandButton icon="fa fa-fw fa-download" title="Download" process="@this" ajax="false" immediate="true"
+											onclick="liberaRefresh(); PrimeFaces.monitorDownload(showStatus, hideStatus)">
+											<f:param name="index" value="#{index}" />
+											<p:fileDownload value="#{produtoController.imagem}" />
+										</p:commandButton>
+									</p:column>
 
-							<p:column style="width:70px; text-align: center;" headerText="Excluir">
-								<p:commandButton icon="fa fa-fw fa-trash" title="Excluir" process="@this" actionListener="#{produtoController.excluiImagem}"
-									update="editForm:dtbImagens">
-									<p:confirm header="Confirmação" message="Confirmar exclusão?" icon="ui-icon-alert" />
-									<f:param name="index" value="#{index}" />
-								</p:commandButton>
-							</p:column>
-						</p:dataTable>
-					</div>
+									<p:column style="width:70px; text-align: center;" headerText="Excluir">
+										<p:commandButton icon="fa fa-fw fa-trash" title="Excluir" process="@this" actionListener="#{produtoController.excluiImagem}"
+											update="editForm:imagensGrid">
+											<p:confirm header="Confirmação" message="Confirmar exclusão?" icon="ui-icon-alert" />
+											<f:param name="index" value="#{index}" />
+										</p:commandButton>
+									</p:column>
+								</p:dataTable>
+							</p:panelGrid>
+						</div>
+					</c:if>
 
 					<p:messages />
 
