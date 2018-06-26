@@ -286,7 +286,7 @@ public class ClienteController extends CrudBaseController<Cliente, Cliente> impl
 		}
 	}
 
-	// Getters And Setters
+	// Getters e Setters
 	public int getIndexRelacionado() {
 		return indexRelacionado;
 	}

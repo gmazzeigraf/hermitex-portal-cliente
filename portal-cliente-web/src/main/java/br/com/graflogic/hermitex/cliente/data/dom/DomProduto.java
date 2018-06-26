@@ -22,12 +22,12 @@ public class DomProduto {
 	public static DomStatusTamanho domStatusTamanho = new DomStatusTamanho();
 
 	public static class DomStatusCategoria extends DomBase {
-		public static final String ATIVO = "A";
-		public static final String INATIVO = "I";
+		public static final String ATIVA = "A";
+		public static final String INATIVA = "I";
 
 		DomStatusCategoria() {
-			mapa.put(ATIVO, "Ativo");
-			mapa.put(INATIVO, "Inativo");
+			mapa.put(ATIVA, "Ativa");
+			mapa.put(INATIVA, "Inativa");
 		}
 	}
 

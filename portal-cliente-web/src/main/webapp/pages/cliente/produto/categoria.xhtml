@@ -2,10 +2,10 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/pages/templates/crud_template.xhtml"
 	xmlns:fn="http://java.sun.com/jsp/jstl/functions" xmlns:c="http://java.sun.com/jsp/jstl/core">
 
-	<ui:define name="viewname">#{labels.menu_administracao} / #{labels.menu_administracao_produto} / #{labels.menu_administracao_produto_tamanho} </ui:define>
+	<ui:define name="viewname">#{labels.menu_cliente} / #{labels.menu_cliente_produto} / #{labels.menu_cliente_produto_categoria} </ui:define>
 
 	<ui:define name="search">
-		<c:if test="#{null == tamanhoProdutoController.entity}">
+		<c:if test="#{null == categoriaProdutoController.entity}">
 			<div class="ui-g">
 				<div class="ui-g-12">
 					<div class="card card-w-title">
@@ -13,15 +13,24 @@
 						<p:panelGrid columns="1" id="filterGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
 							<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="clienteFilter" value="Cliente *" styleClass="label" />
+									<p:selectOneMenu id="clienteFilter" value="#{categoriaProdutoController.filterEntity.idCliente}" styleClass="ui-grid-col-12">
+										<f:selectItem itemLabel="" itemValue="" />
+										<f:selectItems value="#{categoriaProdutoController.clientes}" var="item" itemLabel="#{item.razaoSocial}" itemValue="#{item.id}" />
+										<p:ajax process="@this" update=":searchForm" listener="#{categoriaProdutoController.changeCliente}" />
+									</p:selectOneMenu>
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 									<p:outputLabel for="nomeFilter" value="Nome" styleClass="label" />
-									<p:inputText id="nomeFilter" value="#{tamanhoProdutoController.filterEntity.nome}" maxlength="20" styleClass="ui-grid-col-12" />
+									<p:inputText id="nomeFilter" value="#{categoriaProdutoController.filterEntity.nome}" maxlength="20" styleClass="ui-grid-col-12" />
 								</p:panelGrid>
 
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 									<p:outputLabel for="statusFilter" value="Status" styleClass="label" />
-									<p:selectOneMenu id="statusFilter" value="#{tamanhoProdutoController.filterEntity.status}" styleClass="ui-grid-col-12">
+									<p:selectOneMenu id="statusFilter" value="#{categoriaProdutoController.filterEntity.status}" styleClass="ui-grid-col-12">
 										<f:selectItem itemLabel="" itemValue="" />
-										<f:selectItems value="#{domProdutoController.statusTamanhoMap}" />
+										<f:selectItems value="#{domProdutoController.statusCategoriaMap}" />
 									</p:selectOneMenu>
 								</p:panelGrid>
 							</p:panelGrid>
@@ -29,8 +38,8 @@
 							<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank">
 								<p:spacer styleClass="display-desktop" />
 								<p:commandButton value="#{labels.botao_pesquisar}" id="searchButton" icon="fa fa-fw fa-search" update="dtbEntities searchMessages"
-									actionListener="#{tamanhoProdutoController.search}" process="@this, filterGrid" oncomplete="PF('dtb').getPaginator().setPage(0);"
-									styleClass="ui-grid-col-4 botao-pesquisar" />
+									actionListener="#{categoriaProdutoController.search}" process="@this, filterGrid" oncomplete="PF('dtb').getPaginator().setPage(0);"
+									styleClass="ui-grid-col-4 botao-pesquisar" disabled="#{!categoriaProdutoController.clienteSelecionado}" />
 							</p:panelGrid>
 
 							<p:messages id="searchMessages" />
@@ -39,17 +48,18 @@
 
 							<p:defaultCommand target="searchButton" scope="filterGrid" />
 
-							<p:commandButton value="#{labels.botao_adicionar}" icon="fa fa-fw fa-plus" actionListener="#{tamanhoProdutoController.add}"
-								update=":searchForm :editForm" process="@this" resetValues="true" styleClass="ui-grid-col-12 botao-adicionar" />
+							<p:commandButton value="#{labels.botao_adicionar}" icon="fa fa-fw fa-plus" actionListener="#{categoriaProdutoController.add}"
+								update=":searchForm :editForm" process="@this" resetValues="true" styleClass="ui-grid-col-12 botao-adicionar"
+								disabled="#{!categoriaProdutoController.clienteSelecionado}" />
 						</p:panelGrid>
 
 						<p:spacer styleClass="display-desktop" />
 
-						<p:dataTable id="dtbEntities" widgetVar="dtb" var="entity" value="#{tamanhoProdutoController.entities}" rowKey="#{entity.id}" paginator="true"
-							reflow="true" rows="10" emptyMessage="#{null != tamanhoProdutoController.entities ? messages.nenhum_resultado_encontrado : ''}">
+						<p:dataTable id="dtbEntities" widgetVar="dtb" var="entity" value="#{categoriaProdutoController.entities}" rowKey="#{entity.id}" paginator="true"
+							reflow="true" rows="10" emptyMessage="#{null != categoriaProdutoController.entities ? messages.nenhum_resultado_encontrado : ''}">
 
-							<p:column headerText="Código" sortBy="#{entity.codigo}" styleClass="id-column">
-								<h:outputText value="#{entity.codigo}" />
+							<p:column headerText="#" sortBy="#{entity.id}" styleClass="id-column">
+								<h:outputText value="#{entity.id}" />
 							</p:column>
 
 							<p:column headerText="Nome" sortBy="#{entity.nome}">
@@ -63,12 +73,12 @@
 							<p:column styleClass="coluna-edicao">
 								<p:commandButton icon="fa fa-fw fa-pencil" title="#{labels.botao_editar}" update=":searchForm :editForm" process="@this" resetValues="true"
 									styleClass="ui-grid-col-12">
-									<f:setPropertyActionListener value="#{entity}" target="#{tamanhoProdutoController.selectedEntity}" />
+									<f:setPropertyActionListener value="#{entity}" target="#{categoriaProdutoController.selectedEntity}" />
 								</p:commandButton>
 							</p:column>
 
 							<f:facet name="footer">
-								<h:outputText value="#{fn:length(tamanhoProdutoController.entities)} registro(s) encontrado(s)" />
+								<h:outputText value="#{fn:length(categoriaProdutoController.entities)} registro(s) encontrado(s)" />
 							</f:facet>
 						</p:dataTable>
 					</div>
@@ -78,21 +88,15 @@
 	</ui:define>
 
 	<ui:define name="edit">
-		<c:if test="#{null != tamanhoProdutoController.entity}">
+		<c:if test="#{null != categoriaProdutoController.entity}">
 			<div class="ui-g">
 				<div class="ui-g-12">
 					<div class="card card-w-title">
 						<h1>#{labels.informacoes}</h1>
 						<p:panelGrid columns="2" id="informacoesGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<p:outputLabel for="codigo" value="Código" styleClass="label" />
-								<p:inputText id="codigo" value="#{tamanhoProdutoController.entity.codigo}" maxlength="2" styleClass="ui-grid-col-12" required="true"
-									requiredMessage="Favor informar o código" disabled="#{tamanhoProdutoController.editing}" />
-							</p:panelGrid>
-
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 								<p:outputLabel for="nome" value="Nome" styleClass="label" />
-								<p:inputText id="nome" value="#{tamanhoProdutoController.entity.nome}" maxlength="20" styleClass="ui-grid-col-12" required="true"
+								<p:inputText id="nome" value="#{categoriaProdutoController.entity.nome}" maxlength="20" styleClass="ui-grid-col-12" required="true"
 									requiredMessage="Favor informar o nome" />
 							</p:panelGrid>
 						</p:panelGrid>
@@ -101,22 +105,22 @@
 					<p:messages />
 
 					<p:panelGrid columns="6" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
-						<p:commandButton id="submitButton" icon="fa fa-fw fa-save" value="#{labels.botao_gravar}" actionListener="#{tamanhoProdutoController.save}"
+						<p:commandButton id="submitButton" icon="fa fa-fw fa-save" value="#{labels.botao_gravar}" actionListener="#{categoriaProdutoController.save}"
 							process=":editForm:informacoesGrid" update=":editForm :searchForm" styleClass="ui-grid-col-12" />
 
 						<p:commandButton id="inativacaoButton" icon="fa fa-fw fa-ban" value="#{labels.botao_inativar}"
-							actionListener="#{tamanhoProdutoController.inativa}" process="@this" update=":searchForm :editForm" styleClass="ui-grid-col-12 botao-vermelho"
-							rendered="#{tamanhoProdutoController.editing and tamanhoProdutoController.entity.ativo}">
+							actionListener="#{categoriaProdutoController.inativa}" process="@this" update=":searchForm :editForm"
+							styleClass="ui-grid-col-12 botao-vermelho" rendered="#{categoriaProdutoController.editing and categoriaProdutoController.entity.ativa}">
 							<p:confirm header="Confirmação" message="Confirmar inativação?" icon="ui-icon-alert" />
 						</p:commandButton>
 
 						<p:commandButton id="ativacaoButton" icon="fa fa-fw fa-check-circle" value="#{labels.botao_ativar}"
-							actionListener="#{tamanhoProdutoController.ativa}" process="@this" update=":searchForm :editForm" styleClass="ui-grid-col-12"
-							rendered="#{tamanhoProdutoController.editing and tamanhoProdutoController.entity.inativo}">
+							actionListener="#{categoriaProdutoController.ativa}" process="@this" update=":searchForm :editForm" styleClass="ui-grid-col-12"
+							rendered="#{categoriaProdutoController.editing and categoriaProdutoController.entity.inativa}">
 							<p:confirm header="Confirmação" message="Confirmar ativação?" icon="ui-icon-alert" />
 						</p:commandButton>
 
-						<p:commandButton icon="fa fa-fw fa-close" value="#{labels.botao_fechar}" actionListener="#{tamanhoProdutoController.close}" process="@this"
+						<p:commandButton icon="fa fa-fw fa-close" value="#{labels.botao_fechar}" actionListener="#{categoriaProdutoController.close}" process="@this"
 							update=":searchForm :editForm" styleClass="ui-grid-col-12 botao-turquesa" />
 					</p:panelGrid>
 				</div>
