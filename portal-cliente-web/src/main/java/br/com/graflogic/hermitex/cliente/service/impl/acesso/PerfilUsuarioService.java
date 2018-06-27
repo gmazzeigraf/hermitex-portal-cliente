@@ -12,8 +12,12 @@ import org.springframework.stereotype.Service;
 import br.com.graflogic.base.service.gson.GsonUtil;
 import br.com.graflogic.base.service.util.CacheUtil;
 import br.com.graflogic.hermitex.cliente.data.dom.DomAcesso.DomStatusPerfilUsuario;
+import br.com.graflogic.hermitex.cliente.data.dom.DomAcesso.DomTipoUsuario;
 import br.com.graflogic.hermitex.cliente.data.dom.DomAuditoria.DomEventoAuditoriaPerfilUsuario;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuario;
+import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuarioAdministrador;
+import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuarioCliente;
+import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuarioFilial;
 import br.com.graflogic.hermitex.cliente.data.entity.aud.PerfilUsuarioAuditoria;
 import br.com.graflogic.hermitex.cliente.data.impl.acesso.PerfilUsuarioRepository;
 import br.com.graflogic.hermitex.cliente.data.impl.aud.PerfilUsuarioAuditoriaRepository;
@@ -87,17 +91,36 @@ public class PerfilUsuarioService {
 
 	// Consulta
 	@SuppressWarnings("unchecked")
-	public List<PerfilUsuario> consulta(String tipoUsuario) {
-		Object cacheObj = cacheUtil.findOnCache(CACHE_NAME, tipoUsuario);
+	public List<PerfilUsuario> consulta(String tipoUsuario, Integer idEntidade) {
+		String chave = tipoUsuario;
+
+		if (null != idEntidade) {
+			chave += idEntidade;
+		}
+
+		Object cacheObj = cacheUtil.findOnCache(CACHE_NAME, chave);
 
 		if (null == cacheObj) {
-			PerfilUsuario filter = new PerfilUsuario();
+			PerfilUsuario filter = null;
+			if (DomTipoUsuario.ADMINISTRADOR.equals(tipoUsuario)) {
+				filter = new PerfilUsuarioAdministrador();
+
+			} else if (DomTipoUsuario.CLIENTE.equals(tipoUsuario)) {
+				filter = new PerfilUsuarioCliente();
+				((PerfilUsuarioCliente) filter).setIdCliente(idEntidade);
+
+			} else if (DomTipoUsuario.FILIAL.equals(tipoUsuario)) {
+				filter = new PerfilUsuarioFilial();
+				((PerfilUsuarioFilial) filter).setIdFilial(idEntidade);
+
+			}
+
 			filter.setTipoUsuario(tipoUsuario);
 
 			List<PerfilUsuario> objetos = repository.consulta(filter);
-			cacheUtil.putOnCache(CACHE_NAME, tipoUsuario, ObjectCopier.copy(objetos));
+			cacheUtil.putOnCache(CACHE_NAME, chave, ObjectCopier.copy(objetos));
 
-			cacheObj = cacheUtil.findOnCache(CACHE_NAME, tipoUsuario);
+			cacheObj = cacheUtil.findOnCache(CACHE_NAME, chave);
 		}
 
 		return (List<PerfilUsuario>) ObjectCopier.copy(cacheObj);

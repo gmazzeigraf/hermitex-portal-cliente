@@ -48,6 +48,18 @@
 									url="/pages/cliente/acesso/usuario.jsf" rendered="#{sec:isAllowed('/pages/cliente/acesso/usuario.jsf', '')}" />
 							</p:submenu>
 						</p:submenu>
+
+						<p:submenu id="menu_filial" icon="fa fa-fw fa-briefcase" label="#{labels.menu_filial}">
+							<p:menuitem id="menu_filial_cadastro" icon="fa fa-fw fa-edit" value="#{labels.menu_filial_cadastro}" url="/pages/filial/cadastro.jsf"
+								rendered="#{sec:isAllowed('/pages/filial/cadastro.jsf', '')}" />
+
+							<p:submenu id="menu_filial_acesso" icon="fa fa-fw fa-unlock" label="#{labels.menu_filial_acesso}">
+								<p:menuitem id="menu_filial_acesso_perfil" icon="fa fa-fw fa-magic" value="#{labels.menu_filial_acesso_perfil}"
+									url="/pages/filial/acesso/perfil.jsf" rendered="#{sec:isAllowed('/pages/filial/acesso/perfil.jsf', '')}" />
+								<p:menuitem id="menu_filial_acesso_usuario" icon="fa fa-fw fa-user" value="#{labels.menu_filial_acesso_usuario}"
+									url="/pages/filial/acesso/usuario.jsf" rendered="#{sec:isAllowed('/pages/filial/acesso/usuario.jsf', '')}" />
+							</p:submenu>
+						</p:submenu>
 					</pp:menu>
 				</div>
 			</div>

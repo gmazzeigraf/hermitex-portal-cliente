@@ -16,6 +16,7 @@
 		<!-- Administracao -->
 		<intercept-url pattern="/pages/administracao/acesso/perfil.jsf" access="hasAnyRole('ROLE_ADM_ACESSO_PERFIL')" />
 		<intercept-url pattern="/pages/administracao/acesso/usuario.jsf" access="hasAnyRole('ROLE_ADM_ACESSO_USUARIO')" />
+
 		<intercept-url pattern="/pages/administracao/produto/tamanho.jsf" access="hasAnyRole('ROLE_ADM_PRODUTO_TAMANHO')" />
 
 		<!-- Cliente -->
@@ -26,6 +27,11 @@
 		<intercept-url pattern="/pages/cliente/produto/estoque.jsf" access="hasAnyRole('ROLE_CLI_PRODUTO_ESTOQUE')" />
 		<intercept-url pattern="/pages/cliente/acesso/perfil.jsf" access="hasAnyRole('ROLE_CLI_ACESSO_PERFIL')" />
 		<intercept-url pattern="/pages/cliente/acesso/usuario.jsf" access="hasAnyRole('ROLE_CLI_ACESSO_USUARIO')" />
+
+		<!-- Filial -->
+		<intercept-url pattern="/pages/filial/cadastro.jsf" access="hasAnyRole('ROLE_FIL_CADASTRO')" />
+		<intercept-url pattern="/pages/filial/acesso/perfil.jsf" access="hasAnyRole('ROLE_FIL_ACESSO_PERFIL')" />
+		<intercept-url pattern="/pages/filial/acesso/usuario.jsf" access="hasAnyRole('ROLE_FIL_ACESSO_USUARIO')" />
 
 		<!-- Misc -->
 		<intercept-url pattern="/pages/publico/**" access="permitAll" />

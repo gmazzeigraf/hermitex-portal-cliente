@@ -53,39 +53,47 @@ public class ClienteService {
 	public void cadastra(Cliente entity) {
 		entity.setStatus(DomStatusCliente.ATIVO);
 
-		try {
-			consultaPorCnpj(entity.getCnpj());
-
-			throw new DadosInvalidosException("CNPJ já cadastrado");
-
-		} catch (ResultadoNaoEncontradoException e) {
-		}
-
 		List<ClienteContato> contatos = entity.getContatos();
 		entity.setContatos(null);
 
 		List<ClienteEndereco> enderecos = entity.getEnderecos();
 		entity.setEnderecos(null);
 
-		repository.store(entity);
+		try {
+			try {
+				repository.consultaPorCnpj(entity.getCnpj());
 
-		for (ClienteEndereco endereco : enderecos) {
-			endereco.setCliente(entity);
-		}
+				throw new DadosInvalidosException("CNPJ já cadastrado");
 
-		entity.setEnderecos(enderecos);
-
-		if (null != contatos && !contatos.isEmpty()) {
-			for (ClienteContato contato : contatos) {
-				contato.setIdCliente(entity.getId());
+			} catch (NoResultException e) {
 			}
 
+			repository.store(entity);
+
+			for (ClienteEndereco endereco : enderecos) {
+				endereco.setCliente(entity);
+			}
+
+			entity.setEnderecos(enderecos);
+
+			if (null != contatos && !contatos.isEmpty()) {
+				for (ClienteContato contato : contatos) {
+					contato.setIdCliente(entity.getId());
+				}
+
+				entity.setContatos(contatos);
+			}
+
+			repository.update(entity);
+
+			registraAuditoria(entity.getId(), entity, DomEventoAuditoriaCliente.CADASTRO, null);
+
+		} catch (Throwable t) {
+			entity.setEnderecos(enderecos);
 			entity.setContatos(contatos);
+
+			throw t;
 		}
-
-		repository.update(entity);
-
-		registraAuditoria(entity.getId(), entity, DomEventoAuditoriaCliente.CADASTRO, null);
 	}
 
 	public void atualiza(Cliente entity) {
@@ -122,19 +130,6 @@ public class ClienteService {
 	// Consulta
 	public List<Cliente> consulta(Cliente entity) {
 		return repository.consulta(entity);
-	}
-
-	public Cliente consultaPorCnpj(String cnpj) {
-		try {
-			Cliente entity = repository.consultaPorCnpj(cnpj);
-
-			preencheRelacionados(entity);
-
-			return entity;
-
-		} catch (NoResultException e) {
-			throw new ResultadoNaoEncontradoException();
-		}
 	}
 
 	public Cliente consultaPorId(Integer id) {

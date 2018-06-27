@@ -13,13 +13,19 @@ import br.com.graflogic.base.service.util.I18NUtil;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuario;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuarioAdministrador;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuarioCliente;
+import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuarioFilial;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.PermissaoAcesso;
+import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioCliente;
+import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioFilial;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
+import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Filial;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
 import br.com.graflogic.hermitex.cliente.service.impl.acesso.PerfilUsuarioService;
 import br.com.graflogic.hermitex.cliente.service.impl.acesso.PermissaoAcessoService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
+import br.com.graflogic.hermitex.cliente.service.impl.cadastro.FilialService;
+import br.com.graflogic.hermitex.cliente.web.util.SessionUtil;
 import br.com.graflogic.utilities.presentationutil.controller.CrudBaseController;
 
 /**
@@ -35,6 +41,7 @@ public class PerfilUsuarioController extends CrudBaseController<PerfilUsuario, P
 
 	private static final String VIEW_ADMINISTRADOR = "administracao/acesso/perfil.xhtml";
 	private static final String VIEW_CLIENTE = "cliente/acesso/perfil.xhtml";
+	private static final String VIEW_FILIAL = "filial/acesso/perfil.xhtml";
 
 	@Autowired
 	private PerfilUsuarioService service;
@@ -44,6 +51,9 @@ public class PerfilUsuarioController extends CrudBaseController<PerfilUsuario, P
 
 	@Autowired
 	private ClienteService clienteService;
+
+	@Autowired
+	private FilialService filialService;
 
 	private DualListModel<PermissaoAcesso> permissoes;
 
@@ -64,7 +74,27 @@ public class PerfilUsuarioController extends CrudBaseController<PerfilUsuario, P
 			} else if (isViewCliente()) {
 				setFilterEntity(new PerfilUsuarioCliente());
 
-				entidades.addAll(clienteService.consulta(new Cliente()));
+				if (SessionUtil.isUsuarioAdministrador()) {
+					entidades.addAll(clienteService.consulta(new Cliente()));
+
+				} else if (SessionUtil.isUsuarioCliente()) {
+					idEntidade = ((UsuarioCliente) SessionUtil.getAuthenticatedUsuario()).getIdCliente();
+				}
+
+			} else if (isViewFilial()) {
+				setFilterEntity(new PerfilUsuarioFilial());
+
+				if (SessionUtil.isUsuarioAdministrador()) {
+					entidades.addAll(filialService.consulta(new Filial()));
+
+				} else if (SessionUtil.isUsuarioCliente()) {
+					entidades
+							.addAll(filialService.consultaPorCliente(((UsuarioCliente) SessionUtil.getAuthenticatedUsuario()).getIdCliente(), false));
+
+				} else if (SessionUtil.isUsuarioFilial()) {
+					idEntidade = ((UsuarioFilial) SessionUtil.getAuthenticatedUsuario()).getIdFilial();
+
+				}
 			}
 
 			permissoesDisponiveis = permissaoService.consulta(getFilterEntity().getTipoUsuario());
@@ -118,6 +148,11 @@ public class PerfilUsuarioController extends CrudBaseController<PerfilUsuario, P
 		} else if (isViewCliente()) {
 			setEntity(new PerfilUsuarioCliente());
 			((PerfilUsuarioCliente) getEntity()).setIdCliente(idEntidade);
+
+		} else if (isViewFilial()) {
+			setEntity(new PerfilUsuarioFilial());
+			((PerfilUsuarioFilial) getEntity()).setIdFilial(idEntidade);
+
 		}
 
 		carregaPermissoes();
@@ -142,6 +177,10 @@ public class PerfilUsuarioController extends CrudBaseController<PerfilUsuario, P
 	protected void executeSearch() {
 		if (isViewCliente()) {
 			((PerfilUsuarioCliente) getFilterEntity()).setIdCliente(idEntidade);
+
+		} else if (isViewFilial()) {
+			((PerfilUsuarioFilial) getFilterEntity()).setIdFilial(idEntidade);
+
 		}
 
 		setEntities(service.consulta(getFilterEntity()));
@@ -214,6 +253,10 @@ public class PerfilUsuarioController extends CrudBaseController<PerfilUsuario, P
 
 	public boolean isViewCliente() {
 		return isView(VIEW_CLIENTE);
+	}
+
+	public boolean isViewFilial() {
+		return isView(VIEW_FILIAL);
 	}
 
 	// Getters e Setters

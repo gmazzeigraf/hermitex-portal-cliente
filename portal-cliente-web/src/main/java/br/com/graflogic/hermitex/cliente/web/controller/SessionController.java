@@ -63,12 +63,16 @@ public class SessionController extends BaseController implements InitializingBea
 		return DomStatusSenhaUsuario.DEFINITIVA.equals(SessionUtil.getAuthenticatedUsuario().getStatusSenha());
 	}
 
-	public static boolean possuiPermissao(String permissao) {
-		return SessionUtil.possuiPermissao(permissao);
+	public boolean isUsuarioAdministrador() {
+		return SessionUtil.isUsuarioAdministrador();
 	}
 
-	public static boolean isTipo(String tipo) {
-		return SessionUtil.isTipo(tipo);
+	public boolean isUsuarioCliente() {
+		return SessionUtil.isUsuarioCliente();
+	}
+
+	public boolean isUsuarioFilial() {
+		return SessionUtil.isUsuarioFilial();
 	}
 
 	// Getters e Setters

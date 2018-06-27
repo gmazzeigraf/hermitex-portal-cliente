@@ -16,8 +16,12 @@ INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_CL
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_CLI_PRODUTO_SETOR', 'Cliente / Produto / Setor', 'A');
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_CLI_PRODUTO_CADASTRO', 'Cliente / Produto / Cadastro', 'A');
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_CLI_PRODUTO_ESTOQUE', 'Cliente / Produto / Estoque', 'A');
-INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_CLI_ACESSO_PERFIL', 'Cliente / Acesso / Perfil', 'A');
-INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_CLI_ACESSO_USUARIO', 'Cliente / Acesso / Usuário', 'A');
+INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_CLI_ACESSO_PERFIL', 'Cliente / Acesso / Perfil', 'AC');
+INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_CLI_ACESSO_USUARIO', 'Cliente / Acesso / Usuário', 'AC');
+
+INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_FIL_CADASTRO', 'Filial / Cadastro', 'AC');
+INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_FIL_ACESSO_PERFIL', 'Filial / Acesso / Perfil', 'ACF');
+INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_FIL_ACESSO_USUARIO', 'Filial / Acesso / Usuário', 'ACF');
 
 -- Cria  FK
 ALTER TABLE tb_perfil_usuario_permissao_acesso ADD CONSTRAINT fk_perfil_usuario_permissao_acesso_permissao
@@ -27,7 +31,7 @@ ALTER TABLE tb_perfil_usuario_permissao_acesso ADD CONSTRAINT fk_perfil_usuario_
 
 -- Carga
 INSERT INTO tb_perfil_usuario (id, nome, descricao, tp_usuario, status, versao) VALUES (NEXTVAL('sq_perfil_usuario'), 'Administrador', '', 'A', 'A', 0);
-INSERT INTO tb_perfil_usuario_administrador (id) VALUES ((SELECT MAX(id) FROM tb_perfil_usuario));
+INSERT INTO tb_perfil_usuario_administrador (id) VALUES ((SELECT MIN(id) FROM tb_perfil_usuario));
 INSERT INTO tb_perfil_usuario_permissao_acesso (id_perfil, cd_permissao) SELECT (SELECT MIN(id) FROM tb_perfil_usuario), codigo FROM tb_permissao_acesso;
 
 INSERT INTO tb_usuario (id, email, nome, telefone, senha, id_perfil, tipo, status, status_senha, versao) VALUES 

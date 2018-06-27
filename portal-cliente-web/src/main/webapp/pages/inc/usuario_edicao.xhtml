@@ -11,7 +11,8 @@
 						<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 							<p:outputLabel for="email" value="E-mail" styleClass="label" />
 							<p:inputText id="email" styleClass="ui-grid-col-12" required="true" requiredMessage="Favor informar o e-mail"
-								value="#{usuarioController.entity.email}" maxlength="50" validator="checkvalidemail" validatorMessage="E-mail inválido" />
+								value="#{usuarioController.entity.email}" maxlength="50" validator="checkvalidemail" validatorMessage="E-mail inválido"
+								disabled="#{usuarioController.editing}" />
 						</p:panelGrid>
 
 						<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
@@ -41,8 +42,7 @@
 
 				<p:panelGrid columns="6" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
 					<p:commandButton id="submitButton" icon="fa fa-fw fa-save" value="#{labels.botao_gravar}" actionListener="#{usuarioController.save}"
-						process=":editForm" update=":editForm :searchForm" styleClass="ui-grid-col-12"
-						 />
+						process=":editForm" update=":editForm :searchForm" styleClass="ui-grid-col-12" />
 
 					<p:commandButton icon="fa fa-fw fa-key" value="#{labels.botao_gera_nova_senha}" actionListener="#{usuarioController.geraNovaSenha}"
 						process="@this" update=":editForm" rendered="#{usuarioController.editing}" styleClass="ui-grid-col-12"

@@ -12,10 +12,12 @@ public class DomAcesso {
 	public static class DomTipoUsuario extends DomBase {
 		public static final String ADMINISTRADOR = "A";
 		public static final String CLIENTE = "C";
+		public static final String FILIAL = "F";
 
 		DomTipoUsuario() {
 			mapa.put(ADMINISTRADOR, "Administrador");
 			mapa.put(CLIENTE, "Cliente");
+			mapa.put(FILIAL, "Filial");
 		}
 	}
 

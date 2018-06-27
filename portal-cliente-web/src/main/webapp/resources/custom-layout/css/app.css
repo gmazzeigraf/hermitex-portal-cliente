@@ -20,8 +20,8 @@
 	.id-column {
 		width: 100px !important; text-align: center !important;
 	}
-	.min-column {
-		width: 30px !important; text-align: center !important;
+	.status-column {
+		width: 150px !important; text-align: center !important;
 	}
 	.resp-calendar input.hasDatepicker {
 		width: 83%;

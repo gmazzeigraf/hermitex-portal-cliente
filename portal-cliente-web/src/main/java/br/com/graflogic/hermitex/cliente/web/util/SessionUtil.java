@@ -62,4 +62,12 @@ public class SessionUtil {
 	public static boolean isUsuarioAdministrador() {
 		return isTipo(DomTipoUsuario.ADMINISTRADOR);
 	}
+
+	public static boolean isUsuarioCliente() {
+		return isTipo(DomTipoUsuario.CLIENTE);
+	}
+
+	public static boolean isUsuarioFilial() {
+		return isTipo(DomTipoUsuario.FILIAL);
+	}
 }

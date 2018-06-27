@@ -2,7 +2,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/pages/templates/crud_template.xhtml"
 	xmlns:fn="http://java.sun.com/jsp/jstl/functions" xmlns:c="http://java.sun.com/jsp/jstl/core">
 
-	<ui:define name="viewname">#{labels.menu_administracao} / #{labels.menu_administracao_acesso} / #{labels.menu_administracao_acesso_usuario} 
+	<ui:define name="viewname">#{labels.menu_cliente} / #{labels.menu_cliente_acesso} / #{labels.menu_cliente_acesso_usuario} 
 			</ui:define>
 
 	<ui:define name="search">
@@ -12,7 +12,17 @@
 					<div class="card card-w-title">
 						<h1>#{labels.consulta}</h1>
 						<p:panelGrid columns="1" id="filterGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
-							<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
+							<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{!sessionController.usuarioCliente}">
+									<p:outputLabel for="entidadeFilter" value="Cliente *" styleClass="label" />
+									<p:selectOneMenu id="entidadeFilter" value="#{usuarioController.idEntidade}" styleClass="ui-grid-col-12" filter="true"
+										filterMatchMode="contains">
+										<f:selectItem itemLabel="Selecione" itemValue="" />
+										<f:selectItems value="#{usuarioController.entidades}" var="item" itemLabel="#{item.razaoSocial}" itemValue="#{item.id}" />
+										<p:ajax process="@this" update="searchForm" listener="#{usuarioController.changeEntidade}" />
+									</p:selectOneMenu>
+								</p:panelGrid>
+
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 									<p:outputLabel for="nomeFilter" value="Nome" styleClass="label" />
 									<p:inputText id="nomeFilter" value="#{usuarioController.filterEntity.nome}" maxlength="50" styleClass="ui-grid-col-12" />

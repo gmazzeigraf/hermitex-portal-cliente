@@ -19,13 +19,17 @@ import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuario;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.PermissaoAcesso;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.Usuario;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioAdministrador;
+import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioCliente;
+import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioFilial;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
+import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Filial;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
 import br.com.graflogic.hermitex.cliente.service.impl.acesso.PerfilUsuarioService;
 import br.com.graflogic.hermitex.cliente.service.impl.acesso.PermissaoAcessoService;
 import br.com.graflogic.hermitex.cliente.service.impl.acesso.UsuarioService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
+import br.com.graflogic.hermitex.cliente.service.impl.cadastro.FilialService;
 import br.com.graflogic.hermitex.cliente.web.util.SessionUtil;
 import br.com.graflogic.utilities.presentationutil.controller.CrudBaseController;
 
@@ -41,10 +45,9 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 	private static final long serialVersionUID = -66975495239952137L;
 
 	private static final String VIEW_ALTERACAO_SENHA = "usuario/acesso/alteracao_senha.xhtml";
-
 	private static final String VIEW_ADMINISTRADOR = "administracao/acesso/usuario.xhtml";
-
 	private static final String VIEW_CLIENTE = "cliente/acesso/usuario.xhtml";
+	private static final String VIEW_FILIAL = "filial/acesso/usuario.xhtml";
 
 	@Autowired
 	private UsuarioService service;
@@ -57,6 +60,9 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 
 	@Autowired
 	private ClienteService clienteService;
+
+	@Autowired
+	private FilialService filialService;
 
 	private List<PerfilUsuario> perfis;
 
@@ -83,11 +89,32 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 			} else if (isViewAdministrador()) {
 				setFilterEntity(new UsuarioAdministrador());
 
-				perfis = perfilService.consulta(DomTipoUsuario.ADMINISTRADOR);
+				perfis = perfilService.consulta(DomTipoUsuario.ADMINISTRADOR, null);
 
 			} else if (isViewCliente()) {
+				setFilterEntity(new UsuarioCliente());
 
-				entidades.addAll(clienteService.consulta(new Cliente()));
+				if (SessionUtil.isUsuarioAdministrador()) {
+					entidades.addAll(clienteService.consulta(new Cliente()));
+
+				} else if (SessionUtil.isUsuarioCliente()) {
+					idEntidade = ((UsuarioCliente) SessionUtil.getAuthenticatedUsuario()).getIdCliente();
+				}
+
+			} else if (isViewFilial()) {
+				setFilterEntity(new UsuarioFilial());
+
+				if (SessionUtil.isUsuarioAdministrador()) {
+					entidades.addAll(filialService.consulta(new Filial()));
+
+				} else if (SessionUtil.isUsuarioCliente()) {
+					entidades
+							.addAll(filialService.consultaPorCliente(((UsuarioCliente) SessionUtil.getAuthenticatedUsuario()).getIdCliente(), false));
+
+				} else if (SessionUtil.isUsuarioFilial()) {
+					idEntidade = ((UsuarioFilial) SessionUtil.getAuthenticatedUsuario()).getIdFilial();
+
+				}
 			}
 
 		} catch (Throwable t) {
@@ -133,6 +160,14 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 		if (isViewAdministrador()) {
 			setEntity(new UsuarioAdministrador());
 
+		} else if (isViewCliente()) {
+			setEntity(new UsuarioCliente());
+			((UsuarioCliente) getEntity()).setIdCliente(idEntidade);
+
+		} else if (isViewFilial()) {
+			setEntity(new UsuarioFilial());
+			((UsuarioFilial) getEntity()).setIdFilial(idEntidade);
+
 		}
 	}
 
@@ -143,10 +178,34 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 
 	@Override
 	protected void executeSearch() {
+		if (isViewCliente()) {
+			((UsuarioCliente) getFilterEntity()).setIdCliente(idEntidade);
+
+		} else if (isViewFilial()) {
+			((UsuarioFilial) getFilterEntity()).setIdFilial(idEntidade);
+
+		}
+
 		setEntities(service.consulta(getFilterEntity()));
 	}
 
 	// Util
+	public void changeEntidade() {
+		try {
+			setEntities(null);
+			getFilterEntity().setIdPerfil(null);
+
+			perfis = null;
+
+			if (null != idEntidade && 0 != idEntidade) {
+				perfis = perfilService.consulta(getFilterEntity().getTipo(), idEntidade);
+			}
+
+		} catch (Throwable t) {
+			returnFatalDialogMessage("Erro", "Erro ao alterar valor, contate o administrador", t);
+		}
+	}
+
 	public void inativa() {
 		try {
 			service.inativa(getEntity());
@@ -262,6 +321,10 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 
 	public boolean isViewCliente() {
 		return isView(VIEW_CLIENTE);
+	}
+
+	public boolean isViewFilial() {
+		return isView(VIEW_FILIAL);
 	}
 
 	// Getters e Setters

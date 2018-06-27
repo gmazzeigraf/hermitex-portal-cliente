@@ -20,6 +20,18 @@ public class DomCadastro {
 	}
 
 	public static DomStatusCliente domStatusCliente = new DomStatusCliente();
+	
+	public static class DomStatusFilial extends DomBase {
+		public static final String ATIVO = "A";
+		public static final String INATIVO = "I";
+
+		DomStatusFilial() {
+			mapa.put(ATIVO, "Ativo");
+			mapa.put(INATIVO, "Inativo");
+		}
+	}
+
+	public static DomStatusFilial domStatusFilial = new DomStatusFilial();
 
 	public static class DomTipoEndereco extends DomBase {
 		public static final String FATURAMENTO = "F";
