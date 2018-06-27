@@ -96,7 +96,12 @@
 }
 
 .botao-adicionar {
+	/* 	background-color: #00ACAC !important; */
 	
+}
+
+.botao-fechar {
+	background-color: #00ACAC !important;
 }
 
 .resp-dialog {
@@ -183,20 +188,26 @@ body.exception-body .exception-bottom .exception-wrapper .logo-icon {
 	width: 100px; display: block; margin: 0 auto 5px auto;
 }
 
-.layout-wrapper .topbar .logo {
-	background-size: 120px 75px !important;
-}
-
-.layout-wrapper .topbar .topbar-left {
-	padding-top: 5px !important;
-}
-
 .route-bar {
 	font-weight: 700 !important;
 }
 
-.faq .ui-accordion-header {
-	background-color: #f0f3f5 !important; color: #000 !important; font-weight: 700 !important;
+/* Logotipo logado */
+.layout-wrapper.menu-layout-static .topbar .topbar-left .logo {
+	/* 	background-image: url("#{resource['poseidon-layout:images/logo-colored.png']}") !important; */
+	
+}
+
+/* Cor do fundo */
+body.main-body {
+	/* 	background-color: #fff; */
+	
+}
+
+/* Cor do cabecalho */
+.topbar, .topbar-left {
+	/* 	background-color: #fff; */
+	
 }
 
 /* Fullscren */

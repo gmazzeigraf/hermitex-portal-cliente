@@ -295,7 +295,7 @@
 						</p:commandButton>
 
 						<p:commandButton icon="fa fa-fw fa-close" value="#{labels.botao_fechar}" actionListener="#{clienteController.close}" process="@this"
-							update=":searchForm :editForm" styleClass="ui-grid-col-12 botao-turquesa" />
+							update=":searchForm :editForm" styleClass="ui-grid-col-12 botao-fechar" />
 					</p:panelGrid>
 				</div>
 			</div>
@@ -350,7 +350,7 @@
 						</p:commandButton>
 
 						<p:commandButton icon="fa fa-fw fa-close" value="#{labels.botao_fechar}" oncomplete="PF('contatoDialog').hide();" process="@none" global="false"
-							styleClass="ui-grid-col-12 botao-turquesa" />
+							styleClass="ui-grid-col-12 botao-fechar" />
 					</p:panelGrid>
 
 					<p:spacer styleClass="display-desktop" />

@@ -20,8 +20,7 @@
 
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 									<p:outputLabel for="perfilFilter" value="Perfil" styleClass="label" />
-									<p:selectOneMenu id="perfilFilter" value="#{usuarioController.filterEntity.idPerfil}" styleClass="ui-grid-col-12"
-										disabled="#{!usuarioController.entidadeSelecionada}">
+									<p:selectOneMenu id="perfilFilter" value="#{usuarioController.filterEntity.idPerfil}" styleClass="ui-grid-col-12">
 										<f:selectItem itemLabel="" itemValue="" />
 										<f:selectItems value="#{usuarioController.perfis}" var="item" itemLabel="#{item.nome}" itemValue="#{item.id}" />
 									</p:selectOneMenu>
@@ -40,7 +39,7 @@
 								<p:spacer styleClass="display-desktop" />
 								<p:commandButton value="#{labels.botao_pesquisar}" id="searchButton" icon="fa fa-fw fa-search" update="dtbEntities searchMessages"
 									actionListener="#{usuarioController.search}" process="@this, filterGrid" oncomplete="PF('dtb').getPaginator().setPage(0);"
-									styleClass="ui-grid-col-4 botao-pesquisar" disabled="#{!usuarioController.entidadeSelecionada}" />
+									styleClass="ui-grid-col-4 botao-pesquisar" />
 							</p:panelGrid>
 
 							<p:messages id="searchMessages" />
@@ -50,8 +49,7 @@
 							<p:defaultCommand target="searchButton" scope="filterGrid" />
 
 							<p:commandButton value="#{labels.botao_adicionar}" icon="fa fa-fw fa-plus" actionListener="#{usuarioController.add}"
-								update=":searchForm :editForm" process="@this" resetValues="true" styleClass="ui-grid-col-12 botao-adicionar"
-								disabled="#{!usuarioController.entidadeSelecionada}" />
+								update=":searchForm :editForm" process="@this" resetValues="true" styleClass="ui-grid-col-12 botao-adicionar" />
 						</p:panelGrid>
 
 						<p:spacer styleClass="display-desktop" />

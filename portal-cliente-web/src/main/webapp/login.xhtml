@@ -16,7 +16,7 @@
 				<p:focus />
 
 				<div class="ui-g-12 logo-container">
-					<p:graphicImage name="images/logo-colored.png" library="poseidon-layout" />
+					<p:graphicImage name="images/logo-colored.png" library="poseidon-layout" styleClass="ui-g-12" />
 				</div>
 
 				<div class="ui-g-12">
@@ -35,7 +35,7 @@
 				</div>
 
 				<div style="width: 100%; text-align: center;">
-					<h:outputText value="#{sessionScope['SPRING_SECURITY_LAST_EXCEPTION'].message}" />
+					<h:outputText value="#{sessionScope['SPRING_SECURITY_LAST_EXCEPTION'].message}" styleClass="label" style="color: red;" />
 				</div>
 
 				<input type="password" style="display: none;" autocomplete="off" />
