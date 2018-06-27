@@ -13,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Repository;
 
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuario;
+import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuarioCliente;
 import br.com.graflogic.utilities.datautil.repository.BaseRepository;
 
 /**
@@ -41,6 +42,14 @@ public class PerfilUsuarioRepository extends BaseRepository<PerfilUsuario> {
 
 		if (StringUtils.isNotEmpty(entity.getTipoUsuario())) {
 			predicateList.add(builder.and(builder.equal(table.get("tipoUsuario"), entity.getTipoUsuario())));
+		}
+
+		if (entity instanceof PerfilUsuarioCliente) {
+			Integer idCliente = ((PerfilUsuarioCliente) entity).getIdCliente();
+
+			if (null != idCliente && 0 != idCliente) {
+				predicateList.add(builder.and(builder.equal(table.get("idCliente"), idCliente)));
+			}
 		}
 
 		query.orderBy(builder.asc(table.get("nome")));

@@ -11,11 +11,13 @@ import org.springframework.stereotype.Controller;
 
 import br.com.graflogic.base.service.util.I18NUtil;
 import br.com.graflogic.commonutil.util.StringUtil;
+import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomTipoEndereco;
 import br.com.graflogic.hermitex.cliente.data.entity.auxiliar.Estado;
 import br.com.graflogic.hermitex.cliente.data.entity.auxiliar.Municipio;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.ClienteContato;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.ClienteEndereco;
+import br.com.graflogic.hermitex.cliente.data.entity.cadastro.ClienteEnderecoPK;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
 import br.com.graflogic.hermitex.cliente.service.exception.ResultadoNaoEncontradoException;
@@ -54,11 +56,15 @@ public class ClienteController extends CrudBaseController<Cliente, Cliente> impl
 
 	private List<Estado> estados;
 
-	private List<Municipio> municipios;
+	private List<Municipio> municipiosFaturamento;
 
-	private String siglaEstado;
+	private List<Municipio> municipiosEntrega;
 
 	private ClienteContato contato;
+
+	private ClienteEndereco enderecoFaturamento;
+
+	private ClienteEndereco enderecoEntrega;
 
 	private int indexRelacionado;
 
@@ -68,7 +74,8 @@ public class ClienteController extends CrudBaseController<Cliente, Cliente> impl
 			setFilterEntity(new Cliente());
 
 			estados = estadoService.consulta();
-			municipios = new ArrayList<Municipio>();
+			municipiosFaturamento = new ArrayList<Municipio>();
+			municipiosEntrega = new ArrayList<>();
 
 		} catch (Throwable t) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao inicializar tela, contate o administrador", t);
@@ -79,6 +86,9 @@ public class ClienteController extends CrudBaseController<Cliente, Cliente> impl
 	protected boolean executeSave() {
 		try {
 			// TODO Enviar logotipo
+			getEntity().getEnderecos().clear();
+			getEntity().getEnderecos().add(enderecoFaturamento);
+			getEntity().getEnderecos().add(enderecoEntrega);
 
 			if (isEditing()) {
 				try {
@@ -113,21 +123,28 @@ public class ClienteController extends CrudBaseController<Cliente, Cliente> impl
 	@Override
 	protected void beforeAdd() {
 		setEntity(new Cliente());
-		getEntity().setEndereco(new ClienteEndereco());
 		getEntity().setContatos(new ArrayList<ClienteContato>());
+		getEntity().setEnderecos(new ArrayList<ClienteEndereco>());
 
 		contato = new ClienteContato();
 
-		siglaEstado = "";
+		enderecoFaturamento = new ClienteEndereco(new ClienteEnderecoPK(null, DomTipoEndereco.FATURAMENTO));
+		enderecoEntrega = new ClienteEndereco(new ClienteEnderecoPK(null, DomTipoEndereco.ENTREGA));
 	}
 
 	@Override
 	protected void executeEdit(Cliente entity) {
 		setEntity(service.consultaPorId(entity.getId()));
 
-		siglaEstado = municipioService.consultaPorId(getEntity().getEndereco().getIdMunicipio()).getSiglaEstado();
+		for (ClienteEndereco endereco : getEntity().getEnderecos()) {
+			endereco.setSiglaEstado(municipioService.consultaPorId(endereco.getIdMunicipio()).getSiglaEstado());
+		}
 
-		changeEstado();
+		enderecoFaturamento = getEntity().getEnderecoFaturamento();
+		enderecoEntrega = getEntity().getEnderecoEntrega();
+
+		changeEstadoFaturamento();
+		changeEstadoEntrega();
 	}
 
 	@Override
@@ -143,34 +160,40 @@ public class ClienteController extends CrudBaseController<Cliente, Cliente> impl
 		}
 	}
 
-	// Endereco
-	public void changeCep() {
+	// Enderecos
+	// Faturamento
+	public void changeCepFaturamento() {
 		try {
-			Endereco endereco = cepClient.consulta(getEntity().getEndereco().getCep());
+			Endereco endereco = cepClient.consulta(enderecoFaturamento.getCep());
 
 			try {
 				Municipio municipio = municipioService.consultaPorNomeEstado(StringUtil.removerAcentos(endereco.getCidade()).toUpperCase(),
 						endereco.getUf().toUpperCase());
 
-				siglaEstado = municipio.getSiglaEstado();
-				changeEstado();
+				enderecoFaturamento.setSiglaEstado(municipio.getSiglaEstado());
 
-				getEntity().getEndereco().setIdMunicipio(municipio.getId());
+				changeEstadoFaturamento();
+
+				enderecoFaturamento.setIdMunicipio(municipio.getId());
 
 			} catch (ResultadoNaoEncontradoException e) {
-				limpaEndereco();
-				siglaEstado = estadoService.consultaPorSigla(endereco.getUf().toUpperCase()).getSigla();
-				changeEstado();
+				limpaEnderecoFaturamento();
+
+				enderecoFaturamento.setSiglaEstado(estadoService.consultaPorSigla(endereco.getUf().toUpperCase()).getSigla());
+
+				changeEstadoFaturamento();
 			}
 
-			getEntity().getEndereco()
+			enderecoFaturamento
 					.setLogradouro(endereco.getLogradouro().length() > 100 ? endereco.getLogradouro().substring(0, 100) : endereco.getLogradouro());
-			getEntity().getEndereco().setBairro(endereco.getBairro().length() > 100 ? endereco.getBairro().substring(0, 100) : endereco.getBairro());
+			enderecoFaturamento.setBairro(endereco.getBairro().length() > 100 ? endereco.getBairro().substring(0, 100) : endereco.getBairro());
 
 		} catch (InvalidCEPException e) {
 			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "CEP inválido", null);
-			limpaEndereco();
-			getEntity().getEndereco().setCep(null);
+
+			limpaEnderecoFaturamento();
+
+			enderecoFaturamento.setCep(null);
 
 		} catch (CEPNotFoundException e) {
 			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "CEP não encontrado", null);
@@ -180,21 +203,94 @@ public class ClienteController extends CrudBaseController<Cliente, Cliente> impl
 		}
 	}
 
-	private void limpaEndereco() {
-		siglaEstado = null;
-		getEntity().getEndereco().setIdMunicipio(null);
-		getEntity().getEndereco().setBairro(null);
-		getEntity().getEndereco().setLogradouro(null);
-		getEntity().getEndereco().setNumero(null);
-		getEntity().getEndereco().setComplemento(null);
+	private void limpaEnderecoFaturamento() {
+		enderecoFaturamento.setIdMunicipio(null);
+		enderecoFaturamento.setBairro(null);
+		enderecoFaturamento.setLogradouro(null);
+		enderecoFaturamento.setNumero(null);
+		enderecoFaturamento.setComplemento(null);
 	}
 
-	public void changeEstado() {
+	public void changeEstadoFaturamento() {
 		try {
-			municipios.clear();
+			municipiosFaturamento.clear();
 
-			if (StringUtils.isNotEmpty(siglaEstado)) {
-				municipios.addAll(municipioService.consulta(siglaEstado));
+			if (StringUtils.isNotEmpty(enderecoFaturamento.getSiglaEstado())) {
+				municipiosFaturamento.addAll(municipioService.consulta(enderecoFaturamento.getSiglaEstado()));
+			}
+		} catch (Throwable t) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao consultar dados do estado, contate o administrador", t);
+		}
+	}
+
+	public void copiaEnderecoFaturamento() {
+		try {
+			enderecoEntrega = (ClienteEndereco) ObjectCopier.copy(enderecoFaturamento);
+			enderecoEntrega.getId().setTipo(DomTipoEndereco.ENTREGA);
+
+			changeEstadoEntrega();
+
+		} catch (Throwable t) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao copiar endereço, contate o administrador", t);
+		}
+	}
+
+	// Entrega
+	public void changeCepEntrega() {
+		try {
+			Endereco endereco = cepClient.consulta(enderecoEntrega.getCep());
+
+			try {
+				Municipio municipio = municipioService.consultaPorNomeEstado(StringUtil.removerAcentos(endereco.getCidade()).toUpperCase(),
+						endereco.getUf().toUpperCase());
+
+				enderecoEntrega.setSiglaEstado(municipio.getSiglaEstado());
+
+				changeEstadoEntrega();
+
+				enderecoEntrega.setIdMunicipio(municipio.getId());
+
+			} catch (ResultadoNaoEncontradoException e) {
+				limpaEnderecoEntrega();
+
+				enderecoEntrega.setSiglaEstado(estadoService.consultaPorSigla(endereco.getUf().toUpperCase()).getSigla());
+
+				changeEstadoEntrega();
+			}
+
+			enderecoEntrega
+					.setLogradouro(endereco.getLogradouro().length() > 100 ? endereco.getLogradouro().substring(0, 100) : endereco.getLogradouro());
+			enderecoEntrega.setBairro(endereco.getBairro().length() > 100 ? endereco.getBairro().substring(0, 100) : endereco.getBairro());
+
+		} catch (InvalidCEPException e) {
+			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "CEP inválido", null);
+
+			limpaEnderecoEntrega();
+
+			enderecoEntrega.setCep(null);
+
+		} catch (CEPNotFoundException e) {
+			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "CEP não encontrado", null);
+
+		} catch (Throwable t) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao consultar CEP, contate o administrador", t);
+		}
+	}
+
+	private void limpaEnderecoEntrega() {
+		enderecoEntrega.setIdMunicipio(null);
+		enderecoEntrega.setBairro(null);
+		enderecoEntrega.setLogradouro(null);
+		enderecoEntrega.setNumero(null);
+		enderecoEntrega.setComplemento(null);
+	}
+
+	public void changeEstadoEntrega() {
+		try {
+			municipiosEntrega.clear();
+
+			if (StringUtils.isNotEmpty(enderecoEntrega.getSiglaEstado())) {
+				municipiosEntrega.addAll(municipioService.consulta(enderecoEntrega.getSiglaEstado()));
 			}
 		} catch (Throwable t) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao consultar dados do estado, contate o administrador", t);
@@ -295,23 +391,27 @@ public class ClienteController extends CrudBaseController<Cliente, Cliente> impl
 		this.indexRelacionado = indexRelacionado;
 	}
 
-	public String getSiglaEstado() {
-		return siglaEstado;
+	public List<Estado> getEstados() {
+		return estados;
 	}
 
-	public void setSiglaEstado(String siglaEstado) {
-		this.siglaEstado = siglaEstado;
+	public List<Municipio> getMunicipiosFaturamento() {
+		return municipiosFaturamento;
+	}
+
+	public List<Municipio> getMunicipiosEntrega() {
+		return municipiosEntrega;
 	}
 
 	public ClienteContato getContato() {
 		return contato;
 	}
 
-	public List<Estado> getEstados() {
-		return estados;
+	public ClienteEndereco getEnderecoFaturamento() {
+		return enderecoFaturamento;
 	}
 
-	public List<Municipio> getMunicipios() {
-		return municipios;
+	public ClienteEndereco getEnderecoEntrega() {
+		return enderecoEntrega;
 	}
 }

@@ -17,6 +17,7 @@ import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomStatusCliente;
 import br.com.graflogic.hermitex.cliente.data.entity.aud.ClienteAuditoria;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.ClienteContato;
+import br.com.graflogic.hermitex.cliente.data.entity.cadastro.ClienteEndereco;
 import br.com.graflogic.hermitex.cliente.data.impl.aud.ClienteAuditoriaRepository;
 import br.com.graflogic.hermitex.cliente.data.impl.cadastro.ClienteContatoRepository;
 import br.com.graflogic.hermitex.cliente.data.impl.cadastro.ClienteEnderecoRepository;
@@ -63,9 +64,16 @@ public class ClienteService {
 		List<ClienteContato> contatos = entity.getContatos();
 		entity.setContatos(null);
 
-		entity.getEndereco().setCliente(entity);
+		List<ClienteEndereco> enderecos = entity.getEnderecos();
+		entity.setEnderecos(null);
 
 		repository.store(entity);
+
+		for (ClienteEndereco endereco : enderecos) {
+			endereco.setCliente(entity);
+		}
+
+		entity.setEnderecos(enderecos);
 
 		if (null != contatos && !contatos.isEmpty()) {
 			for (ClienteContato contato : contatos) {
@@ -73,8 +81,9 @@ public class ClienteService {
 			}
 
 			entity.setContatos(contatos);
-			repository.update(entity);
 		}
+
+		repository.update(entity);
 
 		registraAuditoria(entity.getId(), entity, DomEventoAuditoriaCliente.CADASTRO, null);
 	}
@@ -152,7 +161,9 @@ public class ClienteService {
 		if (null != objeto) {
 			objeto = (Cliente) ObjectCopier.copy(objeto);
 			// Remove as referencias recursivas
-			objeto.getEndereco().setCliente(null);
+			for (ClienteEndereco endereco : objeto.getEnderecos()) {
+				endereco.setCliente(null);
+			}
 			if (null != objeto.getContatos()) {
 				for (ClienteContato contato : objeto.getContatos()) {
 					contato.setCliente(null);
@@ -168,7 +179,7 @@ public class ClienteService {
 	}
 
 	private void preencheRelacionados(Cliente entity) {
-		entity.setContatos(contatoRepository.consultaContatos(entity.getId()));
-		entity.setEndereco(enderecoRepository.findById(entity.getId()));
+		entity.setContatos(contatoRepository.consultaPorCliente(entity.getId()));
+		entity.setEnderecos(enderecoRepository.consultaPorCliente(entity.getId()));
 	}
 }

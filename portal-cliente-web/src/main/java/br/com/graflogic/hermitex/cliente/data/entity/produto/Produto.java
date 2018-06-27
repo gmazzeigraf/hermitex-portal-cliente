@@ -1,6 +1,7 @@
 package br.com.graflogic.hermitex.cliente.data.entity.produto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -54,6 +55,9 @@ public class Produto implements Serializable {
 
 	@Column(name = "genero", nullable = false)
 	private String genero;
+
+	@Column(name = "valor", nullable = false)
+	private BigDecimal valor;
 
 	@Column(name = "link_youtube", nullable = false)
 	private String linkYoutube;
@@ -135,6 +139,14 @@ public class Produto implements Serializable {
 
 	public void setGenero(String genero) {
 		this.genero = genero;
+	}
+
+	public BigDecimal getValor() {
+		return valor;
+	}
+
+	public void setValor(BigDecimal valor) {
+		this.valor = valor;
 	}
 
 	public String getLinkYoutube() {

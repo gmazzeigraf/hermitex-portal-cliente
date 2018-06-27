@@ -176,9 +176,15 @@
 							</p:panelGrid>
 
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel for="valor" value="Valor" styleClass="label" />
+								<p:inputNumber id="valor" value="#{produtoController.entity.valor}" styleClass="input-number-resp" decimalSeparator="," thousandSeparator="."
+									maxValue="9999.99" required="true" requiredMessage="Favor informar o valor">
+								</p:inputNumber>
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 								<p:outputLabel for="linkYoutube" value="Link Youtube" styleClass="label" />
-								<p:inputText id="linkYoutube" value="#{produtoController.entity.linkYoutube}" maxlength="100" styleClass="ui-grid-col-12" required="true"
-									requiredMessage="Favor informar o link do Youtube" />
+								<p:inputText id="linkYoutube" value="#{produtoController.entity.linkYoutube}" maxlength="100" styleClass="ui-grid-col-12" />
 							</p:panelGrid>
 
 							<c:if test="#{fn:length(produtoController.entity.linkYoutube) > 0}">

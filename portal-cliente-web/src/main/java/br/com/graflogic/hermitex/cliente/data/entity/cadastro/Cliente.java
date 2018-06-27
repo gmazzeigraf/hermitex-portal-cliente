@@ -6,15 +6,12 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.LazyCollection;
@@ -22,6 +19,7 @@ import org.hibernate.annotations.LazyCollectionOption;
 
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro;
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomStatusCliente;
+import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomTipoEndereco;
 import br.com.graflogic.utilities.datautil.util.FormatUtil;
 
 /**
@@ -66,8 +64,9 @@ public class Cliente implements Serializable {
 	@Column(name = "versao", nullable = false)
 	private Long versao;
 
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "cliente")
-	private ClienteEndereco endereco;
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "cliente", orphanRemoval = true)
+	@LazyCollection(LazyCollectionOption.TRUE)
+	private List<ClienteEndereco> enderecos;
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "cliente", orphanRemoval = true)
 	@LazyCollection(LazyCollectionOption.TRUE)
@@ -145,12 +144,12 @@ public class Cliente implements Serializable {
 		this.versao = versao;
 	}
 
-	public ClienteEndereco getEndereco() {
-		return endereco;
+	public List<ClienteEndereco> getEnderecos() {
+		return enderecos;
 	}
 
-	public void setEndereco(ClienteEndereco endereco) {
-		this.endereco = endereco;
+	public void setEnderecos(List<ClienteEndereco> enderecos) {
+		this.enderecos = enderecos;
 	}
 
 	public List<ClienteContato> getContatos() {
@@ -176,8 +175,15 @@ public class Cliente implements Serializable {
 		return DomCadastro.domStatusCliente.getDeValor(status);
 	}
 
-	@Transient
 	public String getFormattedCnpj() {
 		return FormatUtil.formatCNPJ(cnpj);
+	}
+
+	public ClienteEndereco getEnderecoFaturamento() {
+		return enderecos.get(enderecos.indexOf(new ClienteEndereco(new ClienteEnderecoPK(id, DomTipoEndereco.FATURAMENTO))));
+	}
+
+	public ClienteEndereco getEnderecoEntrega() {
+		return enderecos.get(enderecos.indexOf(new ClienteEndereco(new ClienteEnderecoPK(id, DomTipoEndereco.ENTREGA))));
 	}
 }

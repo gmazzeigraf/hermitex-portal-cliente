@@ -3,13 +3,14 @@ package br.com.graflogic.hermitex.cliente.data.entity.cadastro;
 import java.io.Serializable;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * 
@@ -22,9 +23,17 @@ public class ClienteEndereco implements Serializable {
 
 	private static final long serialVersionUID = 2177232708572173228L;
 
-	@Id
-	@Column(name = "id_cliente", nullable = false)
-	private Integer idCliente;
+	public ClienteEndereco() {
+
+	}
+
+	public ClienteEndereco(ClienteEnderecoPK id) {
+		super();
+		this.id = id;
+	}
+
+	@EmbeddedId
+	private ClienteEnderecoPK id;
 
 	@Column(name = "id_municipio", nullable = false)
 	private Integer idMunicipio;
@@ -44,17 +53,20 @@ public class ClienteEndereco implements Serializable {
 	@Column(name = "complemento")
 	private String complemento;
 
-	@MapsId
+	@MapsId("idCliente")
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_cliente", referencedColumnName = "id", insertable = false, updatable = false)
 	private Cliente cliente;
 
-	public Integer getIdCliente() {
-		return idCliente;
+	@Transient
+	private String siglaEstado;
+
+	public ClienteEnderecoPK getId() {
+		return id;
 	}
 
-	public void setIdCliente(Integer idCliente) {
-		this.idCliente = idCliente;
+	public void setId(ClienteEnderecoPK id) {
+		this.id = id;
 	}
 
 	public Integer getIdMunicipio() {
@@ -111,5 +123,38 @@ public class ClienteEndereco implements Serializable {
 
 	public void setCliente(Cliente cliente) {
 		this.cliente = cliente;
+	}
+
+	public String getSiglaEstado() {
+		return siglaEstado;
+	}
+
+	public void setSiglaEstado(String siglaEstado) {
+		this.siglaEstado = siglaEstado;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ClienteEndereco other = (ClienteEndereco) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
 	}
 }

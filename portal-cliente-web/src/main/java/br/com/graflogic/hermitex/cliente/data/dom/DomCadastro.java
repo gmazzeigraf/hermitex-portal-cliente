@@ -20,4 +20,16 @@ public class DomCadastro {
 	}
 
 	public static DomStatusCliente domStatusCliente = new DomStatusCliente();
+
+	public static class DomTipoEndereco extends DomBase {
+		public static final String FATURAMENTO = "F";
+		public static final String ENTREGA = "T";
+
+		DomTipoEndereco() {
+			mapa.put(FATURAMENTO, "Faturamento");
+			mapa.put(ENTREGA, "Entrega");
+		}
+	}
+
+	public static DomTipoEndereco domTipoEndereco = new DomTipoEndereco();
 }

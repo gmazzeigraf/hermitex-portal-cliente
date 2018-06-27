@@ -16,6 +16,8 @@ INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_CL
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_CLI_PRODUTO_SETOR', 'Cliente / Produto / Setor', 'A');
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_CLI_PRODUTO_CADASTRO', 'Cliente / Produto / Cadastro', 'A');
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_CLI_PRODUTO_ESTOQUE', 'Cliente / Produto / Estoque', 'A');
+INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_CLI_ACESSO_PERFIL', 'Cliente / Acesso / Perfil', 'A');
+INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_CLI_ACESSO_USUARIO', 'Cliente / Acesso / Usuário', 'A');
 
 -- Cria  FK
 ALTER TABLE tb_perfil_usuario_permissao_acesso ADD CONSTRAINT fk_perfil_usuario_permissao_acesso_permissao

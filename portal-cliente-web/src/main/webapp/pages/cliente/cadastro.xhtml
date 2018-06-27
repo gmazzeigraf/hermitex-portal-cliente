@@ -127,99 +127,160 @@
 					</div>
 
 					<div class="card card-w-title">
-						<h1>Endereço</h1>
-						<p:panelGrid columns="1" id="enderecoGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
+						<h1>Endereço Faturamento</h1>
+						<p:panelGrid columns="1" id="enderecoFaturamentoGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
+
 							<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12, ui-grid-col-12, ui-grid-col-12" layout="grid">
-									<p:outputLabel for="cep" value="CEP" styleClass="label" />
-									<p:inputMask id="cep" styleClass="ui-grid-col-12" mask="99.999-999" value="#{clienteController.entity.endereco.cep}"
+									<p:outputLabel for="cepFaturamento" value="CEP" styleClass="label" />
+									<p:inputMask id="cepFaturamento" styleClass="ui-grid-col-12" mask="99.999-999" value="#{clienteController.enderecoFaturamento.cep}"
 										converter="maskConverter" validatorMessage="CEP inválido" required="true" requiredMessage="Favor informar o CEP">
-										<p:ajax process="@this" update="enderecoGrid" listener="#{clienteController.changeCep}" />
+										<p:ajax process="@this" update="enderecoFaturamentoGrid" listener="#{clienteController.changeCepFaturamento}" resetValues="true" />
 									</p:inputMask>
 								</p:panelGrid>
 
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-									<p:outputLabel for="logradouro" value="Logradouro" styleClass="label" />
-									<p:inputText id="logradouro" value="#{clienteController.entity.endereco.logradouro}" maxlength="100" styleClass="ui-grid-col-12"
-										required="true" requiredMessage="Favor informar o logradouro" />
+									<p:outputLabel for="logradouroFaturamento" value="Logradouro" styleClass="label" />
+									<p:inputText id="logradouroFaturamento" value="#{clienteController.enderecoFaturamento.logradouro}" maxlength="100"
+										styleClass="ui-grid-col-12" required="true" requiredMessage="Favor informar o logradouro" />
 								</p:panelGrid>
 
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-									<p:outputLabel for="numero" value="Número" styleClass="label" />
-									<p:inputText id="numero" value="#{clienteController.entity.endereco.numero}" maxlength="10" styleClass="ui-grid-col-12" required="true"
-										requiredMessage="Favor informar o número" />
+									<p:outputLabel for="numeroFaturamento" value="Número" styleClass="label" />
+									<p:inputText id="numeroFaturamento" value="#{clienteController.enderecoFaturamento.numero}" maxlength="10" styleClass="ui-grid-col-12"
+										required="true" requiredMessage="Favor informar o número" />
 								</p:panelGrid>
 
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-									<p:outputLabel for="bairro" value="Bairro" styleClass="label" />
-									<p:inputText id="bairro" value="#{clienteController.entity.endereco.bairro}" maxlength="100" styleClass="ui-grid-col-12" required="true"
-										requiredMessage="Favor informar o bairro" />
+									<p:outputLabel for="bairroFaturamento" value="Bairro" styleClass="label" />
+									<p:inputText id="bairroFaturamento" value="#{clienteController.enderecoFaturamento.bairro}" maxlength="100" styleClass="ui-grid-col-12"
+										required="true" requiredMessage="Favor informar o bairro" />
 								</p:panelGrid>
 
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-									<p:outputLabel for="estado" value="Estado" styleClass="label" />
-									<p:selectOneMenu id="estado" value="#{clienteController.siglaEstado}" styleClass="ui-grid-col-12" required="true"
-										requiredMessage="Favor informar o estado" filter="true" filterMatchMode="startsWith">
+									<p:outputLabel for="estadoFaturamento" value="Estado" styleClass="label" />
+									<p:selectOneMenu id="estadoFaturamento" value="#{clienteController.enderecoFaturamento.siglaEstado}" styleClass="ui-grid-col-12"
+										required="true" requiredMessage="Favor informar o estado" filter="true" filterMatchMode="startsWith">
 										<f:selectItem itemLabel="" itemValue="" />
 										<f:selectItems value="#{clienteController.estados}" var="item" itemLabel="#{item.nome}" itemValue="#{item.sigla}" />
-										<p:ajax process="@this" update="editForm:municipio" listener="#{clienteController.changeEstado}" />
+										<p:ajax process="@this" update="editForm:municipioFaturamento" listener="#{clienteController.changeEstadoFaturamento}" />
 									</p:selectOneMenu>
 								</p:panelGrid>
 
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-									<p:outputLabel for="municipio" value="Município" styleClass="label" />
-									<p:selectOneMenu id="municipio" value="#{clienteController.entity.endereco.idMunicipio}" styleClass="ui-grid-col-12" required="true"
-										requiredMessage="Favor informar o município" filter="true" filterMatchMode="startsWith">
+									<p:outputLabel for="municipioFaturamento" value="Município" styleClass="label" />
+									<p:selectOneMenu id="municipioFaturamento" value="#{clienteController.enderecoFaturamento.idMunicipio}" styleClass="ui-grid-col-12"
+										required="true" requiredMessage="Favor informar o município" filter="true" filterMatchMode="startsWith">
 										<f:selectItem itemLabel="" itemValue="" />
-										<f:selectItems value="#{clienteController.municipios}" var="item" itemLabel="#{item.nome}" itemValue="#{item.id}" />
+										<f:selectItems value="#{clienteController.municipiosFaturamento}" var="item" itemLabel="#{item.nome}" itemValue="#{item.id}" />
 									</p:selectOneMenu>
 								</p:panelGrid>
 							</p:panelGrid>
 							<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
-								<p:outputLabel for="complemento" value="Complemento" styleClass="label" />
-								<p:inputText id="complemento" value="#{clienteController.entity.endereco.complemento}" maxlength="100" styleClass="ui-grid-col-12" />
+								<p:outputLabel for="complementoFaturamento" value="Complemento" styleClass="label" />
+								<p:inputText id="complementoFaturamento" value="#{clienteController.enderecoFaturamento.complemento}" maxlength="100"
+									styleClass="ui-grid-col-12" />
 							</p:panelGrid>
 						</p:panelGrid>
 					</div>
 
-					<c:if test="#{clienteController.editing}">
-						<div class="card card-w-title">
-							<h1>Contatos</h1>
+					<div class="card card-w-title">
+						<h1>Endereço Entrega</h1>
+						<p:panelGrid columns="1" id="enderecoEntregaGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
 
-							<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank">
-								<p:commandButton value="#{labels.botao_adicionar}" icon="fa fa-fw fa-plus" actionListener="#{clienteController.prepareAddContato}"
-									process="@this" resetValues="true" styleClass="ui-grid-col-12 botao-adicionar" update="editForm:idContatoDialog" />
+							<p:commandLink value="Copiar do endereço de faturamento" process="@this enderecoFaturamentoGrid"
+								actionListener="#{clienteController.copiaEnderecoFaturamento}" update="enderecoEntregaGrid" />
+
+							<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12, ui-grid-col-12, ui-grid-col-12" layout="grid">
+									<p:outputLabel for="cepEntrega" value="CEP" styleClass="label" />
+									<p:inputMask id="cepEntrega" styleClass="ui-grid-col-12" mask="99.999-999" value="#{clienteController.enderecoEntrega.cep}"
+										converter="maskConverter" validatorMessage="CEP inválido" required="true" requiredMessage="Favor informar o CEP">
+										<p:ajax process="@this" update="enderecoEntregaGrid" listener="#{clienteController.changeCepEntrega}" resetValues="true" />
+									</p:inputMask>
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="logradouroEntrega" value="Logradouro" styleClass="label" />
+									<p:inputText id="logradouroEntrega" value="#{clienteController.enderecoEntrega.logradouro}" maxlength="100" styleClass="ui-grid-col-12"
+										required="true" requiredMessage="Favor informar o logradouro" />
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="numeroEntrega" value="Número" styleClass="label" />
+									<p:inputText id="numeroEntrega" value="#{clienteController.enderecoEntrega.numero}" maxlength="10" styleClass="ui-grid-col-12"
+										required="true" requiredMessage="Favor informar o número" />
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="bairroEntrega" value="Bairro" styleClass="label" />
+									<p:inputText id="bairroEntrega" value="#{clienteController.enderecoEntrega.bairro}" maxlength="100" styleClass="ui-grid-col-12"
+										required="true" requiredMessage="Favor informar o bairro" />
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="estadoEntrega" value="Estado" styleClass="label" />
+									<p:selectOneMenu id="estadoEntrega" value="#{clienteController.enderecoEntrega.siglaEstado}" styleClass="ui-grid-col-12" required="true"
+										requiredMessage="Favor informar o estado" filter="true" filterMatchMode="startsWith">
+										<f:selectItem itemLabel="" itemValue="" />
+										<f:selectItems value="#{clienteController.estados}" var="item" itemLabel="#{item.nome}" itemValue="#{item.sigla}" />
+										<p:ajax process="@this" update="editForm:municipioEntrega" listener="#{clienteController.changeEstadoEntrega}" />
+									</p:selectOneMenu>
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="municipioEntrega" value="Município" styleClass="label" />
+									<p:selectOneMenu id="municipioEntrega" value="#{clienteController.enderecoEntrega.idMunicipio}" styleClass="ui-grid-col-12" required="true"
+										requiredMessage="Favor informar o município" filter="true" filterMatchMode="startsWith">
+										<f:selectItem itemLabel="" itemValue="" />
+										<f:selectItems value="#{clienteController.municipiosEntrega}" var="item" itemLabel="#{item.nome}" itemValue="#{item.id}" />
+									</p:selectOneMenu>
+								</p:panelGrid>
 							</p:panelGrid>
+							<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
+								<p:outputLabel for="complementoEntrega" value="Complemento" styleClass="label" />
+								<p:inputText id="complementoEntrega" value="#{clienteController.enderecoEntrega.complemento}" maxlength="100" styleClass="ui-grid-col-12" />
+							</p:panelGrid>
+						</p:panelGrid>
+					</div>
 
-							<p:spacer styleClass="display-desktop" />
+					<div class="card card-w-title">
+						<h1>Contatos</h1>
 
-							<p:dataTable id="dtbContatos" widgetVar="dtbContato" var="entity" value="#{clienteController.entity.contatos}" rowKey="#{entity.id}"
-								reflow="true" emptyMessage="Nenhum contato encontrado" rowIndexVar="index">
+						<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank">
+							<p:commandButton value="#{labels.botao_adicionar}" icon="fa fa-fw fa-plus" actionListener="#{clienteController.prepareAddContato}"
+								process="@this" resetValues="true" styleClass="ui-grid-col-12 botao-adicionar" update="editForm:idContatoDialog" />
+						</p:panelGrid>
 
-								<p:column headerText="Nome">
-									<h:outputText value="#{entity.nome}" />
-								</p:column>
+						<p:spacer styleClass="display-desktop" />
 
-								<p:column headerText="Descrição" styleClass="display-desktop">
-									<h:outputText value="#{entity.descricao}" />
-								</p:column>
+						<p:dataTable id="dtbContatos" widgetVar="dtbContato" var="entity" value="#{clienteController.entity.contatos}" rowKey="#{entity.id}"
+							reflow="true" emptyMessage="Nenhum contato encontrado" rowIndexVar="index">
 
-								<p:column styleClass="coluna-edicao">
-									<p:commandButton icon="fa fa-fw fa-pencil" title="#{labels.botao_editar}" update="editForm:idContatoDialog" process="@this"
-										resetValues="true" styleClass="ui-grid-col-12" oncomplete="PF('contatoDialog').show();">
-										<f:setPropertyActionListener value="#{index}" target="#{clienteController.indexRelacionado}" />
-										<f:setPropertyActionListener value="#{entity}" target="#{clienteController.selectedRelatedEntity}" />
-									</p:commandButton>
-								</p:column>
-							</p:dataTable>
-						</div>
-					</c:if>
+							<p:column headerText="Nome">
+								<h:outputText value="#{entity.nome}" />
+							</p:column>
+
+							<p:column headerText="Descrição" styleClass="display-desktop">
+								<h:outputText value="#{entity.descricao}" />
+							</p:column>
+
+							<p:column styleClass="coluna-edicao">
+								<p:commandButton icon="fa fa-fw fa-pencil" title="#{labels.botao_editar}" update="editForm:idContatoDialog" process="@this" resetValues="true"
+									styleClass="ui-grid-col-12" oncomplete="PF('contatoDialog').show();">
+									<f:setPropertyActionListener value="#{index}" target="#{clienteController.indexRelacionado}" />
+									<f:setPropertyActionListener value="#{entity}" target="#{clienteController.selectedRelatedEntity}" />
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+					</div>
 
 					<p:messages />
 
 					<p:panelGrid columns="6" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
 						<p:commandButton id="submitButton" icon="fa fa-fw fa-save" value="#{labels.botao_gravar}" actionListener="#{clienteController.save}"
-							process=":editForm:informacoesGrid :editForm:enderecoGrid" update=":editForm :searchForm" styleClass="ui-grid-col-12" />
+							process=":editForm:informacoesGrid :editForm:enderecoFaturamentoGrid :editForm:enderecoEntregaGrid" update=":editForm :searchForm"
+							styleClass="ui-grid-col-12" />
 
 						<p:commandButton id="inativacaoButton" icon="fa fa-fw fa-ban" value="#{labels.botao_inativar}" actionListener="#{clienteController.inativa}"
 							process="@this" update=":searchForm :editForm" styleClass="ui-grid-col-12 botao-vermelho"

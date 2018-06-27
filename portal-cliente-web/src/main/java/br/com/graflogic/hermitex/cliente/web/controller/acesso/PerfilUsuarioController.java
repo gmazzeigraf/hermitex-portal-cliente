@@ -12,11 +12,14 @@ import org.springframework.stereotype.Controller;
 import br.com.graflogic.base.service.util.I18NUtil;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuario;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuarioAdministrador;
+import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuarioCliente;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.PermissaoAcesso;
+import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
 import br.com.graflogic.hermitex.cliente.service.impl.acesso.PerfilUsuarioService;
 import br.com.graflogic.hermitex.cliente.service.impl.acesso.PermissaoAcessoService;
+import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
 import br.com.graflogic.utilities.presentationutil.controller.CrudBaseController;
 
 /**
@@ -31,6 +34,7 @@ public class PerfilUsuarioController extends CrudBaseController<PerfilUsuario, P
 	private static final long serialVersionUID = 1082162763639413315L;
 
 	private static final String VIEW_ADMINISTRADOR = "administracao/acesso/perfil.xhtml";
+	private static final String VIEW_CLIENTE = "cliente/acesso/perfil.xhtml";
 
 	@Autowired
 	private PerfilUsuarioService service;
@@ -38,16 +42,29 @@ public class PerfilUsuarioController extends CrudBaseController<PerfilUsuario, P
 	@Autowired
 	private PermissaoAcessoService permissaoService;
 
+	@Autowired
+	private ClienteService clienteService;
+
 	private DualListModel<PermissaoAcesso> permissoes;
 
 	private List<PermissaoAcesso> permissoesDisponiveis;
 
+	private List<Object> entidades;
+
+	private Integer idEntidade;
+
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		try {
-			if (isView(VIEW_ADMINISTRADOR)) {
+			entidades = new ArrayList<>();
+
+			if (isViewAdministrador()) {
 				setFilterEntity(new PerfilUsuarioAdministrador());
 
+			} else if (isViewCliente()) {
+				setFilterEntity(new PerfilUsuarioCliente());
+
+				entidades.addAll(clienteService.consulta(new Cliente()));
 			}
 
 			permissoesDisponiveis = permissaoService.consulta(getFilterEntity().getTipoUsuario());
@@ -95,9 +112,12 @@ public class PerfilUsuarioController extends CrudBaseController<PerfilUsuario, P
 
 	@Override
 	protected void beforeAdd() {
-		if (isView(VIEW_ADMINISTRADOR)) {
+		if (isViewAdministrador()) {
 			setEntity(new PerfilUsuarioAdministrador());
 
+		} else if (isViewCliente()) {
+			setEntity(new PerfilUsuarioCliente());
+			((PerfilUsuarioCliente) getEntity()).setIdCliente(idEntidade);
 		}
 
 		carregaPermissoes();
@@ -120,17 +140,29 @@ public class PerfilUsuarioController extends CrudBaseController<PerfilUsuario, P
 
 	@Override
 	protected void executeSearch() {
+		if (isViewCliente()) {
+			((PerfilUsuarioCliente) getFilterEntity()).setIdCliente(idEntidade);
+		}
+
 		setEntities(service.consulta(getFilterEntity()));
 	}
 
-	// Utilities
+	// Util
 	private void carregaPermissoes() {
 		permissoes.getSource().clear();
 		permissoes.getSource().addAll(permissoesDisponiveis);
 		permissoes.getTarget().clear();
 	}
 
-	// Util
+	public void changeEntidade() {
+		try {
+			setEntities(null);
+
+		} catch (Throwable t) {
+			returnFatalDialogMessage("Erro", "Erro ao alterar valor, contate o administrador", t);
+		}
+	}
+
 	public void inativa() {
 		try {
 			service.inativa(getEntity());
@@ -171,12 +203,37 @@ public class PerfilUsuarioController extends CrudBaseController<PerfilUsuario, P
 		}
 	}
 
+	// Condicoes
+	public boolean isEntidadeSelecionada() {
+		return (null != idEntidade && idEntidade > 0);
+	}
+
+	public boolean isViewAdministrador() {
+		return isView(VIEW_ADMINISTRADOR);
+	}
+
+	public boolean isViewCliente() {
+		return isView(VIEW_CLIENTE);
+	}
+
 	// Getters e Setters
+	public DualListModel<PermissaoAcesso> getPermissoes() {
+		return permissoes;
+	}
+
 	public void setPermissoes(DualListModel<PermissaoAcesso> permissoes) {
 		this.permissoes = permissoes;
 	}
 
-	public DualListModel<PermissaoAcesso> getPermissoes() {
-		return permissoes;
+	public Integer getIdEntidade() {
+		return idEntidade;
+	}
+
+	public void setIdEntidade(Integer idEntidade) {
+		this.idEntidade = idEntidade;
+	}
+
+	public List<Object> getEntidades() {
+		return entidades;
 	}
 }

@@ -19,11 +19,13 @@ import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuario;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.PermissaoAcesso;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.Usuario;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioAdministrador;
+import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
 import br.com.graflogic.hermitex.cliente.service.impl.acesso.PerfilUsuarioService;
 import br.com.graflogic.hermitex.cliente.service.impl.acesso.PermissaoAcessoService;
 import br.com.graflogic.hermitex.cliente.service.impl.acesso.UsuarioService;
+import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
 import br.com.graflogic.hermitex.cliente.web.util.SessionUtil;
 import br.com.graflogic.utilities.presentationutil.controller.CrudBaseController;
 
@@ -42,6 +44,8 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 
 	private static final String VIEW_ADMINISTRADOR = "administracao/acesso/usuario.xhtml";
 
+	private static final String VIEW_CLIENTE = "cliente/acesso/usuario.xhtml";
+
 	@Autowired
 	private UsuarioService service;
 
@@ -51,13 +55,18 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 	@Autowired
 	private PermissaoAcessoService permissaoAcessoService;
 
-	private List<PerfilUsuario> perfis;
+	@Autowired
+	private ClienteService clienteService;
 
-	private List<Object> entidades;
+	private List<PerfilUsuario> perfis;
 
 	private String senhaAtual;
 
 	private String novaSenha;
+
+	private List<Object> entidades;
+
+	private Integer idEntidade;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -71,10 +80,14 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 					returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Favor alterar a senha temporária para acesso completo ao sistema", null);
 				}
 
-			} else if (isView(VIEW_ADMINISTRADOR)) {
+			} else if (isViewAdministrador()) {
 				setFilterEntity(new UsuarioAdministrador());
 
 				perfis = perfilService.consulta(DomTipoUsuario.ADMINISTRADOR);
+
+			} else if (isViewCliente()) {
+
+				entidades.addAll(clienteService.consulta(new Cliente()));
 			}
 
 		} catch (Throwable t) {
@@ -117,7 +130,7 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 
 	@Override
 	protected void beforeAdd() {
-		if (isView(VIEW_ADMINISTRADOR)) {
+		if (isViewAdministrador()) {
 			setEntity(new UsuarioAdministrador());
 
 		}
@@ -238,6 +251,19 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 		}
 	}
 
+	// Condicoes
+	public boolean isEntidadeSelecionada() {
+		return (null != idEntidade && idEntidade > 0);
+	}
+
+	public boolean isViewAdministrador() {
+		return isView(VIEW_ADMINISTRADOR);
+	}
+
+	public boolean isViewCliente() {
+		return isView(VIEW_CLIENTE);
+	}
+
 	// Getters e Setters
 	public String getSenhaAtual() {
 		return senhaAtual;
@@ -257,6 +283,14 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 
 	public void setNovaSenha(String novaSenha) {
 		this.novaSenha = novaSenha;
+	}
+
+	public Integer getIdEntidade() {
+		return idEntidade;
+	}
+
+	public void setIdEntidade(Integer idEntidade) {
+		this.idEntidade = idEntidade;
 	}
 
 	public List<Object> getEntidades() {

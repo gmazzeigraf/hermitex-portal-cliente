@@ -26,7 +26,7 @@ public class ClienteContatoRepository extends BaseRepository<ClienteContato> {
 		super(ClienteContato.class);
 	}
 
-	public List<ClienteContato> consultaContatos(Integer id) {
+	public List<ClienteContato> consultaPorCliente(Integer id) {
 		CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
 		CriteriaQuery<ClienteContato> query = builder.createQuery(ClienteContato.class);
 		List<Predicate> predicateList = new ArrayList<Predicate>();
