@@ -51,13 +51,12 @@ public class ClienteService {
 	// Fluxo
 	@Transactional(rollbackFor = Throwable.class)
 	public void cadastra(Cliente entity) {
+		validaDados(entity);
+
 		entity.setStatus(DomStatusCliente.ATIVO);
 
 		List<ClienteContato> contatos = entity.getContatos();
 		entity.setContatos(null);
-
-		List<ClienteEndereco> enderecos = entity.getEnderecos();
-		entity.setEnderecos(null);
 
 		try {
 			try {
@@ -70,26 +69,17 @@ public class ClienteService {
 
 			repository.store(entity);
 
-			for (ClienteEndereco endereco : enderecos) {
-				endereco.setCliente(entity);
+			for (ClienteContato contato : contatos) {
+				contato.setIdCliente(entity.getId());
 			}
 
-			entity.setEnderecos(enderecos);
-
-			if (null != contatos && !contatos.isEmpty()) {
-				for (ClienteContato contato : contatos) {
-					contato.setIdCliente(entity.getId());
-				}
-
-				entity.setContatos(contatos);
-			}
+			entity.setContatos(contatos);
 
 			repository.update(entity);
 
 			registraAuditoria(entity.getId(), entity, DomEventoAuditoriaCliente.CADASTRO, null);
 
 		} catch (Throwable t) {
-			entity.setEnderecos(enderecos);
 			entity.setContatos(contatos);
 
 			throw t;
@@ -97,6 +87,8 @@ public class ClienteService {
 	}
 
 	public void atualiza(Cliente entity) {
+		validaDados(entity);
+
 		executaAtualiza(entity);
 
 		registraAuditoria(entity.getId(), entity, DomEventoAuditoriaCliente.ATUALIZACAO, null);
@@ -139,12 +131,28 @@ public class ClienteService {
 			throw new ResultadoNaoEncontradoException();
 		}
 
+		return entity;
+	}
+
+	public Cliente consultaCompletoPorId(Integer id) {
+		Cliente entity = repository.findById(id);
+
+		if (null == entity) {
+			throw new ResultadoNaoEncontradoException();
+		}
+
 		preencheRelacionados(entity);
 
 		return entity;
 	}
 
 	// Util
+	private void validaDados(Cliente entity) {
+		if (entity.getDiaInicioCompras() >= entity.getDiaFimCompras()) {
+			throw new DadosInvalidosException("O dia de início das compras deve ser menor que o dia de fim");
+		}
+	}
+
 	private String registraAuditoria(Integer id, Cliente objeto, String codigoEvento, String observacao) {
 		ClienteAuditoria evento = new ClienteAuditoria();
 		evento.setId(UUID.randomUUID().toString());

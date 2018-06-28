@@ -56,9 +56,6 @@ public class FilialService {
 		List<FilialContato> contatos = entity.getContatos();
 		entity.setContatos(null);
 
-		List<FilialEndereco> enderecos = entity.getEnderecos();
-		entity.setEnderecos(null);
-
 		try {
 			try {
 				repository.consultaPorCnpj(entity.getCnpj());
@@ -70,26 +67,17 @@ public class FilialService {
 
 			repository.store(entity);
 
-			for (FilialEndereco endereco : enderecos) {
-				endereco.setFilial(entity);
+			for (FilialContato contato : contatos) {
+				contato.setIdFilial(entity.getId());
 			}
 
-			entity.setEnderecos(enderecos);
-
-			if (null != contatos && !contatos.isEmpty()) {
-				for (FilialContato contato : contatos) {
-					contato.setIdFilial(entity.getId());
-				}
-
-				entity.setContatos(contatos);
-			}
+			entity.setContatos(contatos);
 
 			repository.update(entity);
 
 			registraAuditoria(entity.getId(), entity, DomEventoAuditoriaFilial.CADASTRO, null);
 
 		} catch (Throwable t) {
-			entity.setEnderecos(enderecos);
 			entity.setContatos(contatos);
 
 			throw t;

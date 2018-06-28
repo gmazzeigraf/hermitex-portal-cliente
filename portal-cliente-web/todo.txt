@@ -1,0 +1,5 @@
+OK - Colocar tamanho, setor e categoria em cache
+OK - Cadastro de tamanhos do produto
+OK - Gravar imagens em banco
+- Enviar logo do cliente
+- Apresentar logo por cliente

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.graflogic.base.service.gson.GsonUtil;
+import br.com.graflogic.base.service.util.CacheUtil;
 import br.com.graflogic.hermitex.cliente.data.dom.DomAuditoria.DomEventoAuditoriaCategoriaProduto;
 import br.com.graflogic.hermitex.cliente.data.dom.DomProduto.DomStatusCategoria;
 import br.com.graflogic.hermitex.cliente.data.entity.aud.CategoriaProdutoAuditoria;
@@ -30,11 +31,16 @@ import br.com.graflogic.utilities.datautil.copy.ObjectCopier;
 @Service
 public class CategoriaProdutoService {
 
+	private static final String CACHE_NAME = "categoriasProduto";
+
 	@Autowired
 	private CategoriaProdutoRepository repository;
 
 	@Autowired
 	private CategoriaProdutoAuditoriaRepository auditoriaRepository;
+
+	@Autowired
+	private CacheUtil cacheUtil;
 
 	// Fluxo
 	@Transactional(rollbackFor = Throwable.class)
@@ -82,14 +88,33 @@ public class CategoriaProdutoService {
 		return repository.consulta(entity);
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<CategoriaProduto> consultaPorCliente(Integer idCliente, boolean somenteAtivas) {
-		CategoriaProduto filter = new CategoriaProduto();
-		filter.setIdCliente(idCliente);
+		String key = idCliente.toString();
+
 		if (somenteAtivas) {
-			filter.setStatus(DomStatusCategoria.ATIVA);
+			key += "ativas";
 		}
 
-		return consulta(filter);
+		Object cacheObj = cacheUtil.findOnCache(CACHE_NAME, key);
+
+		if (null == cacheObj) {
+			// Consulta
+			CategoriaProduto filter = new CategoriaProduto();
+			filter.setIdCliente(idCliente);
+			if (somenteAtivas) {
+				filter.setStatus(DomStatusCategoria.ATIVA);
+			}
+
+			List<CategoriaProduto> objetos = consulta(filter);
+
+			// Atualiza o cache
+			cacheUtil.putOnCache(CACHE_NAME, key, ObjectCopier.copy(objetos));
+
+			cacheObj = cacheUtil.findOnCache(CACHE_NAME, key);
+		}
+
+		return (List<CategoriaProduto>) ObjectCopier.copy(cacheObj);
 	}
 
 	public CategoriaProduto consultaPorId(Integer id) {

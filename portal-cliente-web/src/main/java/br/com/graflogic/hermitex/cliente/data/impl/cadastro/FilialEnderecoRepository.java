@@ -26,14 +26,14 @@ public class FilialEnderecoRepository extends BaseRepository<FilialEndereco> {
 		super(FilialEndereco.class);
 	}
 
-	public List<FilialEndereco> consultaPorFilial(Integer id) {
+	public List<FilialEndereco> consultaPorFilial(Integer idFilial) {
 		CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
 		CriteriaQuery<FilialEndereco> query = builder.createQuery(FilialEndereco.class);
 		List<Predicate> predicateList = new ArrayList<Predicate>();
 
 		Root<FilialEndereco> table = query.from(FilialEndereco.class);
 
-		predicateList.add(builder.and(builder.equal(table.get("id").get("idFilial"), id)));
+		predicateList.add(builder.and(builder.equal(table.get("id").get("idFilial"), idFilial)));
 
 		query.orderBy(builder.asc(table.get("id").get("tipo")));
 		query.where(predicateList.toArray(new Predicate[predicateList.size()]));

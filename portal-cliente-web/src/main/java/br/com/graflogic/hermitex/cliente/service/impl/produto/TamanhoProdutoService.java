@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.graflogic.base.service.gson.GsonUtil;
+import br.com.graflogic.base.service.util.CacheUtil;
 import br.com.graflogic.hermitex.cliente.data.dom.DomAuditoria.DomEventoAuditoriaTamanhoProduto;
 import br.com.graflogic.hermitex.cliente.data.dom.DomProduto.DomStatusTamanho;
 import br.com.graflogic.hermitex.cliente.data.entity.aud.TamanhoProdutoAuditoria;
@@ -31,11 +32,16 @@ import br.com.graflogic.utilities.datautil.copy.ObjectCopier;
 @Service
 public class TamanhoProdutoService {
 
+	private static final String CACHE_NAME = "tamanhosProduto";
+
 	@Autowired
 	private TamanhoProdutoRepository repository;
 
 	@Autowired
 	private TamanhoProdutoAuditoriaRepository auditoriaRepository;
+
+	@Autowired
+	private CacheUtil cacheUtil;
 
 	// Fluxo
 	@Transactional(rollbackFor = Throwable.class)
@@ -89,6 +95,36 @@ public class TamanhoProdutoService {
 	// Consulta
 	public List<TamanhoProduto> consulta(TamanhoProduto entity) {
 		return repository.consulta(entity);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<TamanhoProduto> consulta(boolean somenteAtivos) {
+		String key = null;
+
+		if (somenteAtivos) {
+			key = "ativos";
+		} else {
+			key = "all";
+		}
+
+		Object cacheObj = cacheUtil.findOnCache(CACHE_NAME, key);
+
+		if (null == cacheObj) {
+			// Consulta
+			TamanhoProduto filter = new TamanhoProduto();
+			if (somenteAtivos) {
+				filter.setStatus(DomStatusTamanho.ATIVO);
+			}
+
+			List<TamanhoProduto> objetos = consulta(filter);
+
+			// Atualiza o cache
+			cacheUtil.putOnCache(CACHE_NAME, key, ObjectCopier.copy(objetos));
+
+			cacheObj = cacheUtil.findOnCache(CACHE_NAME, key);
+		}
+
+		return (List<TamanhoProduto>) ObjectCopier.copy(cacheObj);
 	}
 
 	public TamanhoProduto consultaPorCodigo(String codigo) {

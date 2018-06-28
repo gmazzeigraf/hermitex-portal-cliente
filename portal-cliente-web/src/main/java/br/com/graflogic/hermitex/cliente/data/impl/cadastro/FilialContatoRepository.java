@@ -26,14 +26,14 @@ public class FilialContatoRepository extends BaseRepository<FilialContato> {
 		super(FilialContato.class);
 	}
 
-	public List<FilialContato> consultaPorFilial(Integer id) {
+	public List<FilialContato> consultaPorFilial(Integer idFilial) {
 		CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
 		CriteriaQuery<FilialContato> query = builder.createQuery(FilialContato.class);
 		List<Predicate> predicateList = new ArrayList<Predicate>();
 
 		Root<FilialContato> table = query.from(FilialContato.class);
 
-		predicateList.add(builder.and(builder.equal(table.get("idFilial"), id)));
+		predicateList.add(builder.and(builder.equal(table.get("idFilial"), idFilial)));
 
 		query.orderBy(builder.asc(table.get("nome")));
 		query.where(predicateList.toArray(new Predicate[predicateList.size()]));

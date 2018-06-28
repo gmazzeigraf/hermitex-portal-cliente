@@ -1,19 +1,13 @@
 package br.com.graflogic.hermitex.cliente.service.impl.produto;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 import javax.persistence.OptimisticLockException;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,12 +17,14 @@ import br.com.graflogic.hermitex.cliente.data.dom.DomAuditoria.DomEventoAuditori
 import br.com.graflogic.hermitex.cliente.data.dom.DomProduto.DomStatus;
 import br.com.graflogic.hermitex.cliente.data.entity.aud.ProdutoAuditoria;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.Produto;
+import br.com.graflogic.hermitex.cliente.data.entity.produto.ProdutoImagem;
+import br.com.graflogic.hermitex.cliente.data.entity.produto.ProdutoTamanho;
 import br.com.graflogic.hermitex.cliente.data.impl.aud.ProdutoAuditoriaRepository;
+import br.com.graflogic.hermitex.cliente.data.impl.produto.ProdutoImagemRepository;
 import br.com.graflogic.hermitex.cliente.data.impl.produto.ProdutoRepository;
-import br.com.graflogic.hermitex.cliente.data.util.ConfiguracaoEnum;
+import br.com.graflogic.hermitex.cliente.data.impl.produto.ProdutoTamanhoRepository;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
 import br.com.graflogic.hermitex.cliente.service.exception.ResultadoNaoEncontradoException;
-import br.com.graflogic.hermitex.cliente.service.impl.auxiliar.ConfiguracaoService;
 import br.com.graflogic.hermitex.cliente.web.util.SessionUtil;
 import br.com.graflogic.utilities.datautil.copy.ObjectCopier;
 
@@ -44,19 +40,42 @@ public class ProdutoService {
 	private ProdutoRepository repository;
 
 	@Autowired
-	private ProdutoAuditoriaRepository auditoriaRepository;
+	private ProdutoTamanhoRepository tamanhoRepository;
 
 	@Autowired
-	private ConfiguracaoService configuracaoService;
+	private ProdutoImagemRepository imagemRepository;
+
+	@Autowired
+	private ProdutoAuditoriaRepository auditoriaRepository;
 
 	// Fluxo
 	@Transactional(rollbackFor = Throwable.class)
 	public void cadastra(Produto entity) {
+		// TODO Validar codigo unico
+
 		entity.setStatus(DomStatus.ATIVO);
 
-		repository.store(entity);
+		List<ProdutoImagem> imagens = entity.getImagens();
+		entity.setImagens(null);
 
-		registraAuditoria(entity.getId(), entity, DomEventoAuditoriaProduto.CADASTRO, null);
+		try {
+			repository.store(entity);
+
+			for (ProdutoImagem imagem : imagens) {
+				imagem.setProduto(entity);
+			}
+
+			entity.setImagens(imagens);
+
+			repository.update(entity);
+
+			registraAuditoria(entity.getId(), entity, DomEventoAuditoriaProduto.CADASTRO, null);
+
+		} catch (Throwable t) {
+			entity.setImagens(imagens);
+
+			throw t;
+		}
 	}
 
 	public void atualiza(Produto entity) {
@@ -91,52 +110,39 @@ public class ProdutoService {
 	}
 
 	// Imagem
-	public List<File> getImagens(Integer idProduto) {
-		File diretorio = new File(getCaminhoDiretorioImagens(idProduto));
+	public ProdutoImagem consultaImagem(String id) {
+		ProdutoImagem imagem = imagemRepository.findById(id);
 
-		if (null == diretorio || !diretorio.exists()) {
-			return new ArrayList<>();
+		if (null == imagem) {
+			throw new ResultadoNaoEncontradoException();
 		}
 
-		return Arrays.asList(diretorio.listFiles());
+		return imagem;
 	}
 
-	public void uploadImagem(Integer idProduto, String nomeArquivo, byte[] conteudoArquivo) throws FileNotFoundException, IOException {
-		File diretorio = new File(getCaminhoDiretorioImagens(idProduto));
+	public ProdutoImagem geraImagem(byte[] conteudo) {
+		ProdutoImagem imagem = new ProdutoImagem();
+		imagem.setId(UUID.randomUUID().toString());
+		imagem.setConteudo(Base64.encodeBase64String(conteudo));
+		imagem.setCapa(false);
+		imagem.setTemporaria(true);
 
-		if (!diretorio.exists()) {
-			diretorio.mkdirs();
+		return imagem;
+	}
+
+	public byte[] downloadImagem(String idImagem) throws IOException {
+		try {
+			ProdutoImagem imagem = consultaImagem(idImagem);
+
+			return downloadImagem(imagem);
+
+		} catch (ResultadoNaoEncontradoException e) {
+			return null;
 		}
-
-		File imagem = new File(getCaminhoImagem(idProduto, nomeArquivo));
-
-		IOUtils.write(conteudoArquivo, new FileOutputStream(imagem));
-
-		registraAuditoria(idProduto, null, DomEventoAuditoriaProduto.UPLOAD_IMAGEM, nomeArquivo);
 	}
 
-	public void excluiImagem(Integer idProduto, String nomeArquivo) throws IOException {
-		File imagem = new File(getCaminhoImagem(idProduto, nomeArquivo));
-
-		FileUtils.forceDelete(imagem);
-
-		registraAuditoria(idProduto, null, DomEventoAuditoriaProduto.EXCLUSAO_IMAGEM, nomeArquivo);
-	}
-
-	private String getCaminhoImagem(Integer idProduto, String nomeArquivo) {
-		String caminhoImagem = getCaminhoDiretorioImagens(idProduto);
-
-		caminhoImagem += File.separator + nomeArquivo;
-
-		return caminhoImagem;
-	}
-
-	private String getCaminhoDiretorioImagens(Integer idProduto) {
-		String caminhoDiretorio = configuracaoService.consulta(ConfiguracaoEnum.PRODUTO_DIRETORIO_IMAGENS);
-
-		caminhoDiretorio += File.separator + idProduto;
-
-		return caminhoDiretorio;
+	public byte[] downloadImagem(ProdutoImagem imagem) {
+		return Base64.decodeBase64(imagem.getConteudo());
 	}
 
 	// Consulta
@@ -154,6 +160,18 @@ public class ProdutoService {
 		return entity;
 	}
 
+	public Produto consultaCompletoPorId(Integer id) {
+		Produto entity = repository.findById(id);
+
+		if (null == entity) {
+			throw new ResultadoNaoEncontradoException();
+		}
+
+		preencheRelacionados(entity);
+
+		return entity;
+	}
+
 	// Util
 	private String registraAuditoria(Integer id, Produto objeto, String codigoEvento, String observacao) {
 		ProdutoAuditoria evento = new ProdutoAuditoria();
@@ -165,6 +183,11 @@ public class ProdutoService {
 		evento.setObservacao(observacao);
 		if (null != objeto) {
 			objeto = (Produto) ObjectCopier.copy(objeto);
+			// Remove as referencias recursivas
+			for (ProdutoTamanho tamanho : objeto.getTamanhos()) {
+				tamanho.setProduto(null);
+			}
+			objeto.setImagens(null);
 
 			evento.setObjeto(GsonUtil.gson.toJson(objeto));
 		}
@@ -172,5 +195,10 @@ public class ProdutoService {
 		auditoriaRepository.store(evento);
 
 		return evento.getId();
+	}
+
+	private void preencheRelacionados(Produto entity) {
+		entity.setTamanhos(tamanhoRepository.consultaPorProduto(entity.getId()));
+		entity.setImagens(imagemRepository.consultaPorProduto(entity.getId()));
 	}
 }

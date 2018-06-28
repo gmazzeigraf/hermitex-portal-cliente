@@ -102,6 +102,9 @@ public class ClienteController extends CrudBaseController<Cliente, Cliente> impl
 				}
 
 			} else {
+				enderecoFaturamento.setCliente(getEntity());
+				enderecoEntrega.setCliente(getEntity());
+
 				service.cadastra(getEntity());
 
 				returnInfoMessage("Cliente cadastrado com sucesso", null);
@@ -134,7 +137,7 @@ public class ClienteController extends CrudBaseController<Cliente, Cliente> impl
 
 	@Override
 	protected void executeEdit(Cliente entity) {
-		setEntity(service.consultaPorId(entity.getId()));
+		setEntity(service.consultaCompletoPorId(entity.getId()));
 
 		for (ClienteEndereco endereco : getEntity().getEnderecos()) {
 			endereco.setSiglaEstado(municipioService.consultaPorId(endereco.getIdMunicipio()).getSiglaEstado());
@@ -316,6 +319,7 @@ public class ClienteController extends CrudBaseController<Cliente, Cliente> impl
 		try {
 			if (isEditingRelated()) {
 				getEntity().getContatos().set(indexRelacionado, contato);
+
 			} else {
 				getEntity().getContatos().add(contato);
 				setEditingRelated(true);

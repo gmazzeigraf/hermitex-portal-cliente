@@ -12,4 +12,14 @@
 	<cache name="perfisUsuario" eternal="false" maxElementsInMemory="10" timeToLiveSeconds="1200" overflowToDisk="false" memoryStoreEvictionPolicy="LFU" />
 
 	<cache name="permissoesAcesso" eternal="true" maxElementsInMemory="10" overflowToDisk="false" memoryStoreEvictionPolicy="LFU" />
+
+	<!-- Produto -->
+	<cache name="setoresProduto" eternal="false" maxElementsInMemory="0" timeToLiveSeconds="3600" overflowToDisk="false"
+		memoryStoreEvictionPolicy="LFU" />
+
+	<cache name="categoriasProduto" eternal="false" maxElementsInMemory="0" timeToLiveSeconds="3600" overflowToDisk="false"
+		memoryStoreEvictionPolicy="LFU" />
+
+	<cache name="tamanhosProduto" eternal="false" maxElementsInMemory="0" timeToLiveSeconds="3600" overflowToDisk="false"
+		memoryStoreEvictionPolicy="LFU" />
 </ehcache>

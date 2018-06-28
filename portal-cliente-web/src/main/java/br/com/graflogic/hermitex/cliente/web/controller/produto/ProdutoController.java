@@ -1,19 +1,15 @@
 package br.com.graflogic.hermitex.cliente.web.controller.produto;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
-import org.primefaces.model.UploadedFile;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -23,13 +19,19 @@ import br.com.graflogic.base.service.util.I18NUtil;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.CategoriaProduto;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.Produto;
+import br.com.graflogic.hermitex.cliente.data.entity.produto.ProdutoImagem;
+import br.com.graflogic.hermitex.cliente.data.entity.produto.ProdutoTamanho;
+import br.com.graflogic.hermitex.cliente.data.entity.produto.ProdutoTamanhoPK;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.SetorProduto;
+import br.com.graflogic.hermitex.cliente.data.entity.produto.TamanhoProduto;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
 import br.com.graflogic.hermitex.cliente.service.impl.produto.CategoriaProdutoService;
 import br.com.graflogic.hermitex.cliente.service.impl.produto.ProdutoService;
 import br.com.graflogic.hermitex.cliente.service.impl.produto.SetorProdutoService;
+import br.com.graflogic.hermitex.cliente.service.impl.produto.TamanhoProdutoService;
+import br.com.graflogic.utilities.datautil.copy.ObjectCopier;
 import br.com.graflogic.utilities.presentationutil.controller.CrudBaseController;
 
 /**
@@ -55,13 +57,20 @@ public class ProdutoController extends CrudBaseController<Produto, Produto> impl
 	@Autowired
 	private SetorProdutoService setorService;
 
+	@Autowired
+	private TamanhoProdutoService tamanhoService;
+
 	private List<Cliente> clientes;
 
 	private List<CategoriaProduto> categorias;
 
 	private List<SetorProduto> setores;
 
-	private List<File> imagens;
+	private List<TamanhoProduto> tamanhos;
+
+	private ProdutoTamanho tamanho;
+
+	private int indexRelacionado;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -71,6 +80,8 @@ public class ProdutoController extends CrudBaseController<Produto, Produto> impl
 			clientes = clienteService.consulta(new Cliente());
 			categorias = new ArrayList<>();
 			setores = new ArrayList<>();
+
+			tamanhos = tamanhoService.consulta(true);
 
 		} catch (Throwable t) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao inicializar tela, contate o administrador", t);
@@ -116,17 +127,15 @@ public class ProdutoController extends CrudBaseController<Produto, Produto> impl
 			return;
 		}
 
-		imagens = null;
-
 		setEntity(new Produto());
+		getEntity().setTamanhos(new ArrayList<>());
+		getEntity().setImagens(new ArrayList<>());
 		getEntity().setIdCliente(getFilterEntity().getIdCliente());
 	}
 
 	@Override
 	protected void executeEdit(Produto entity) {
-		setEntity(service.consultaPorId(entity.getId()));
-
-		consultaImagens();
+		setEntity(service.consultaCompletoPorId(entity.getId()));
 	}
 
 	@Override
@@ -137,6 +146,67 @@ public class ProdutoController extends CrudBaseController<Produto, Produto> impl
 		}
 
 		setEntities(service.consulta(getFilterEntity()));
+	}
+
+	@Override
+	protected void executeEditRelated(Object relatedEntity) throws Exception {
+		if (relatedEntity instanceof ProdutoTamanho) {
+			tamanho = (ProdutoTamanho) ObjectCopier.copy(relatedEntity);
+
+		}
+	}
+
+	// Tamanho
+	public void prepareAddTamanho() {
+		try {
+			setEditingRelated(false);
+
+			tamanho = new ProdutoTamanho();
+			tamanho.setId(new ProdutoTamanhoPK());
+			tamanho.setProduto(getEntity());
+
+			showDialog("tamanhoDialog");
+
+		} catch (Throwable t) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao adicionar tamanho, contate o administrador", t);
+		}
+	}
+
+	public void saveTamanho() {
+		try {
+			if (isEditingRelated()) {
+				getEntity().getTamanhos().set(indexRelacionado, tamanho);
+
+			} else {
+				for (ProdutoTamanho produtoTamanho : getEntity().getTamanhos()) {
+					if (produtoTamanho.getId().getCodigoTamanho().equals(tamanho.getId().getCodigoTamanho())) {
+						returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Tamanho já cadastrado", null);
+						return;
+					}
+				}
+
+				getEntity().getTamanhos().add(tamanho);
+				setEditingRelated(true);
+			}
+
+			updateComponent("editForm:dtbTamanhos");
+			hideDialog("tamanhoDialog");
+
+		} catch (Throwable t) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao salvar tamanho, contate o administrador", t);
+		}
+	}
+
+	public void excluiTamanho() {
+		try {
+			getEntity().getTamanhos().remove(indexRelacionado);
+
+			updateComponent("editForm:dtbTamanhos");
+			hideDialog("tamanhoDialog");
+
+		} catch (Throwable t) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao excluir tamanho, contate o administrador", t);
+		}
 	}
 
 	// Util
@@ -197,33 +267,19 @@ public class ProdutoController extends CrudBaseController<Produto, Produto> impl
 	}
 
 	// Imagem
-	private void consultaImagens() {
-		try {
-			imagens = service.getImagens(getEntity().getId());
-
-		} catch (Throwable t) {
-			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao consultar imagens, contate o administrador", t);
-		}
-	}
-
 	public void uploadImagem(FileUploadEvent event) {
 		try {
-			if (imagens.size() >= 4) {
+			if (getEntity().getImagens().size() >= 4) {
 				returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Apenas 4 imagens podem ser enviadas por produto", null);
 				return;
 			}
 
-			UploadedFile imagem = event.getFile();
+			byte[] conteudoImagem = IOUtils.toByteArray(event.getFile().getInputstream());
 
-			byte[] conteudoArquivo = IOUtils.toByteArray(imagem.getInputstream());
+			ProdutoImagem imagem = service.geraImagem(conteudoImagem);
+			imagem.setIdProduto(getEntity().getId());
 
-			String nomeArquivo = FilenameUtils.getName(imagem.getFileName());
-
-			service.uploadImagem(getEntity().getId(), nomeArquivo, conteudoArquivo);
-
-			consultaImagens();
-
-			returnInfoDialogMessage(I18NUtil.getLabel("sucesso"), "Imagem enviada com sucesso");
+			getEntity().getImagens().add(imagem);
 
 		} catch (Throwable t) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao realizar upload da imagem, contate o administrador", t);
@@ -232,11 +288,13 @@ public class ProdutoController extends CrudBaseController<Produto, Produto> impl
 
 	public StreamedContent getImagem() {
 		try {
-			File imagem = imagens.get(Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("index")));
+			int index = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("index"));
 
-			byte[] conteudoArquivo = IOUtils.toByteArray(new FileInputStream(imagem));
+			ProdutoImagem imagem = getEntity().getImagens().get(index);
 
-			return new DefaultStreamedContent(new ByteArrayInputStream(conteudoArquivo), "", imagem.getName());
+			byte[] conteudoArquivo = service.downloadImagem(imagem);
+
+			return new DefaultStreamedContent(new ByteArrayInputStream(conteudoArquivo), "", imagem.getId() + ".jpg");
 
 		} catch (Throwable t) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao realizar download da imagem, contate o administrador", t);
@@ -246,16 +304,25 @@ public class ProdutoController extends CrudBaseController<Produto, Produto> impl
 
 	public void excluiImagem() {
 		try {
-			File imagem = imagens.get(Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("index")));
+			int index = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("index"));
 
-			service.excluiImagem(getEntity().getId(), imagem.getName());
-
-			consultaImagens();
-
-			returnInfoDialogMessage(I18NUtil.getLabel("sucesso"), "Imagem excluída com sucesso");
+			getEntity().getImagens().remove(index);
 
 		} catch (Throwable t) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao realizar exclusão da imagem, contate o administrador", t);
+		}
+	}
+
+	public void selecionaImagemCapa(Integer index) {
+		try {
+			for (int i = 0; i < getEntity().getImagens().size(); i++) {
+				if (i != index) {
+					getEntity().getImagens().get(i).setCapa(false);
+				}
+			}
+
+		} catch (Throwable t) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao selecionar a imagem de capa, contate o administrador", t);
 		}
 	}
 
@@ -277,7 +344,19 @@ public class ProdutoController extends CrudBaseController<Produto, Produto> impl
 		return setores;
 	}
 
-	public List<File> getImagens() {
-		return imagens;
+	public List<TamanhoProduto> getTamanhos() {
+		return tamanhos;
+	}
+
+	public ProdutoTamanho getTamanho() {
+		return tamanho;
+	}
+
+	public int getIndexRelacionado() {
+		return indexRelacionado;
+	}
+
+	public void setIndexRelacionado(int indexRelacionado) {
+		this.indexRelacionado = indexRelacionado;
 	}
 }

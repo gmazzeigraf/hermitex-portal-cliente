@@ -127,9 +127,31 @@
 					</div>
 
 					<div class="card card-w-title">
-						<h1>Endereço Faturamento</h1>
-						<p:panelGrid columns="1" id="enderecoFaturamentoGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
+						<h1>Compras</h1>
 
+						<h:outputText value="Utilize início 1 e fim 31 para não limitar os dias." styleClass="label" />
+
+						<p:panelGrid columns="2" id="comprasGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel for="diaInicioCompras" value="Dia Início" styleClass="label" />
+								<p:inputNumber id="diaInicioCompras" styleClass="input-number-resp" value="#{clienteController.entity.diaInicioCompras}" required="true"
+									requiredMessage="Favor informar o dia de início de compras" minValue="1" maxValue="27" />
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel for="diaFimCompras" value="Dia Fim" styleClass="label" />
+								<p:inputNumber id="diaFimCompras" styleClass="input-number-resp" value="#{clienteController.entity.diaFimCompras}" required="true"
+									requiredMessage="Favor informar o dia de fim de compras" minValue="1" maxValue="31" />
+							</p:panelGrid>
+						</p:panelGrid>
+					</div>
+
+					<div class="card card-w-title">
+						<h1>Endereço Faturamento</h1>
+
+						<h:outputText value="Utilize os mesmos dados contidos na Receita." styleClass="label" />
+
+						<p:panelGrid columns="1" id="enderecoFaturamentoGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
 							<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12, ui-grid-col-12, ui-grid-col-12" layout="grid">
 									<p:outputLabel for="cepFaturamento" value="CEP" styleClass="label" />
@@ -186,8 +208,8 @@
 
 					<div class="card card-w-title">
 						<h1>Endereço Entrega</h1>
-						<p:panelGrid columns="1" id="enderecoEntregaGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
 
+						<p:panelGrid columns="1" id="enderecoEntregaGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
 							<p:commandLink value="Copiar do endereço de faturamento" process="@this enderecoFaturamentoGrid"
 								actionListener="#{clienteController.copiaEnderecoFaturamento}" update="enderecoEntregaGrid" resetValues="true" />
 
@@ -261,7 +283,7 @@
 								<h:outputText value="#{entity.nome}" />
 							</p:column>
 
-							<p:column headerText="Descrição" styleClass="display-desktop">
+							<p:column headerText="Descrição">
 								<h:outputText value="#{entity.descricao}" />
 							</p:column>
 
@@ -279,8 +301,8 @@
 
 					<p:panelGrid columns="6" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
 						<p:commandButton id="submitButton" icon="fa fa-fw fa-save" value="#{labels.botao_gravar}" actionListener="#{clienteController.save}"
-							process=":editForm:informacoesGrid :editForm:enderecoFaturamentoGrid :editForm:enderecoEntregaGrid" update=":editForm :searchForm"
-							styleClass="ui-grid-col-12" />
+							process=":editForm:informacoesGrid :editForm:comprasGrid :editForm:enderecoFaturamentoGrid :editForm:enderecoEntregaGrid"
+							update=":editForm :searchForm" styleClass="ui-grid-col-12" />
 
 						<p:commandButton id="inativacaoButton" icon="fa fa-fw fa-ban" value="#{labels.botao_inativar}" actionListener="#{clienteController.inativa}"
 							process="@this" update=":searchForm :editForm" styleClass="ui-grid-col-12 botao-vermelho"

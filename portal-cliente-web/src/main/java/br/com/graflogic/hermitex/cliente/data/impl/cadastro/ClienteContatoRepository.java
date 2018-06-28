@@ -26,14 +26,14 @@ public class ClienteContatoRepository extends BaseRepository<ClienteContato> {
 		super(ClienteContato.class);
 	}
 
-	public List<ClienteContato> consultaPorCliente(Integer id) {
+	public List<ClienteContato> consultaPorCliente(Integer idCliente) {
 		CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
 		CriteriaQuery<ClienteContato> query = builder.createQuery(ClienteContato.class);
 		List<Predicate> predicateList = new ArrayList<Predicate>();
 
 		Root<ClienteContato> table = query.from(ClienteContato.class);
 
-		predicateList.add(builder.and(builder.equal(table.get("idCliente"), id)));
+		predicateList.add(builder.and(builder.equal(table.get("idCliente"), idCliente)));
 
 		query.orderBy(builder.asc(table.get("nome")));
 		query.where(predicateList.toArray(new Predicate[predicateList.size()]));

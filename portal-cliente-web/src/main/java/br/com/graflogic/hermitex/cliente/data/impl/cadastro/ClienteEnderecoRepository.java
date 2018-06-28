@@ -26,14 +26,14 @@ public class ClienteEnderecoRepository extends BaseRepository<ClienteEndereco> {
 		super(ClienteEndereco.class);
 	}
 
-	public List<ClienteEndereco> consultaPorCliente(Integer id) {
+	public List<ClienteEndereco> consultaPorCliente(Integer idCliente) {
 		CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
 		CriteriaQuery<ClienteEndereco> query = builder.createQuery(ClienteEndereco.class);
 		List<Predicate> predicateList = new ArrayList<Predicate>();
 
 		Root<ClienteEndereco> table = query.from(ClienteEndereco.class);
 
-		predicateList.add(builder.and(builder.equal(table.get("id").get("idCliente"), id)));
+		predicateList.add(builder.and(builder.equal(table.get("id").get("idCliente"), idCliente)));
 
 		query.orderBy(builder.asc(table.get("id").get("tipo")));
 		query.where(predicateList.toArray(new Predicate[predicateList.size()]));

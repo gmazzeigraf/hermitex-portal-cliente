@@ -57,6 +57,12 @@ public class Cliente implements Serializable {
 	@Column(name = "telefone", nullable = false)
 	private String telefone;
 
+	@Column(name = "dia_inicio_compras", nullable = false)
+	private Integer diaInicioCompras;
+
+	@Column(name = "dia_fim_compras", nullable = false)
+	private Integer diaFimCompras;
+
 	@Column(name = "status", nullable = false)
 	private String status;
 
@@ -126,6 +132,22 @@ public class Cliente implements Serializable {
 
 	public void setTelefone(String telefone) {
 		this.telefone = telefone;
+	}
+
+	public Integer getDiaInicioCompras() {
+		return diaInicioCompras;
+	}
+
+	public void setDiaInicioCompras(Integer diaInicioCompras) {
+		this.diaInicioCompras = diaInicioCompras;
+	}
+
+	public Integer getDiaFimCompras() {
+		return diaFimCompras;
+	}
+
+	public void setDiaFimCompras(Integer diaFimCompras) {
+		this.diaFimCompras = diaFimCompras;
 	}
 
 	public String getStatus() {

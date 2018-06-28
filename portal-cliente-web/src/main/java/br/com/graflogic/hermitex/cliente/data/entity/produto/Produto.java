@@ -2,15 +2,21 @@ package br.com.graflogic.hermitex.cliente.data.entity.produto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
+
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import br.com.graflogic.hermitex.cliente.data.dom.DomProduto;
 import br.com.graflogic.hermitex.cliente.data.dom.DomProduto.DomStatus;
@@ -68,6 +74,14 @@ public class Produto implements Serializable {
 	@Version
 	@Column(name = "versao", nullable = false)
 	private Long versao;
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "produto", orphanRemoval = true)
+	@LazyCollection(LazyCollectionOption.TRUE)
+	private List<ProdutoTamanho> tamanhos;
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "produto", orphanRemoval = true)
+	@LazyCollection(LazyCollectionOption.TRUE)
+	private List<ProdutoImagem> imagens;
 
 	public Integer getId() {
 		return id;
@@ -171,6 +185,22 @@ public class Produto implements Serializable {
 
 	public void setVersao(Long versao) {
 		this.versao = versao;
+	}
+
+	public List<ProdutoTamanho> getTamanhos() {
+		return tamanhos;
+	}
+
+	public void setTamanhos(List<ProdutoTamanho> tamanhos) {
+		this.tamanhos = tamanhos;
+	}
+
+	public List<ProdutoImagem> getImagens() {
+		return imagens;
+	}
+
+	public void setImagens(List<ProdutoImagem> imagens) {
+		this.imagens = imagens;
 	}
 
 	public boolean isAtivo() {

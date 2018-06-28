@@ -56,7 +56,7 @@ public class DomAuditoria {
 			mapa.put(ATIVACAO, "Ativação");
 		}
 	}
-	
+
 	public static class DomEventoAuditoriaFilial extends DomBase {
 		public static final String CADASTRO = "C";
 		public static final String ATUALIZACAO = "A";
@@ -76,16 +76,12 @@ public class DomAuditoria {
 		public static final String ATUALIZACAO = "A";
 		public static final String INATIVACAO = "I";
 		public static final String ATIVACAO = "T";
-		public static final String UPLOAD_IMAGEM = "U";
-		public static final String EXCLUSAO_IMAGEM = "X";
 
 		DomEventoAuditoriaProduto() {
 			mapa.put(CADASTRO, "Cadastro");
 			mapa.put(ATUALIZACAO, "Atualização");
 			mapa.put(INATIVACAO, "Inativação");
 			mapa.put(ATIVACAO, "Ativação");
-			mapa.put(UPLOAD_IMAGEM, "Upload Imagem");
-			mapa.put(EXCLUSAO_IMAGEM, "Exclusão Imagem");
 		}
 	}
 

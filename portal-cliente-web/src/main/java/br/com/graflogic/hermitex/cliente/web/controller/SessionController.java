@@ -75,6 +75,13 @@ public class SessionController extends BaseController implements InitializingBea
 		return SessionUtil.isUsuarioFilial();
 	}
 
+	// Produto
+	public String getUrlImagem(String idImagem, boolean miniatura) {
+		String url = "/imagens?idImagem=" + idImagem + "&miniatura=" + miniatura;
+
+		return url;
+	}
+
 	// Getters e Setters
 	public String getVersaoSistema() {
 		return versaoSistema;

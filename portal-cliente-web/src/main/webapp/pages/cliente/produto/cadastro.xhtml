@@ -193,43 +193,86 @@
 						</p:panelGrid>
 					</div>
 
-					<c:if test="#{produtoController.editing}">
-						<div class="card card-w-title">
-							<h1>Imagens</h1>
+					<div class="card card-w-title">
+						<h1>Tamanhos</h1>
 
-							<p:panelGrid columns="1" id="imagensGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
-								<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank">
+						<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank">
+							<p:commandButton value="#{labels.botao_adicionar}" icon="fa fa-fw fa-plus" actionListener="#{produtoController.prepareAddTamanho}"
+								process="@this" resetValues="true" styleClass="ui-grid-col-12 botao-adicionar" update="editForm:idTamanhoDialog" />
+						</p:panelGrid>
+
+						<p:spacer styleClass="display-desktop" />
+
+						<p:dataTable id="dtbTamanhos" widgetVar="dtbTamanho" var="entity" value="#{produtoController.entity.tamanhos}" rowKey="#{entity.id}"
+							reflow="true" emptyMessage="Nenhum tamanho encontrado" rowIndexVar="index">
+
+							<p:column headerText="Código">
+								<h:outputText value="#{entity.id.codigoTamanho}" />
+							</p:column>
+
+							<p:column headerText="Fator">
+								<h:outputText value="#{entity.fator}">
+									<f:convertNumber pattern="#,##0.00" />
+								</h:outputText>
+							</p:column>
+
+							<p:column styleClass="coluna-edicao">
+								<p:commandButton icon="fa fa-fw fa-pencil" title="#{labels.botao_editar}" update="editForm:idTamanhoDialog" process="@this" resetValues="true"
+									styleClass="ui-grid-col-12" oncomplete="PF('tamanhoDialog').show();">
+									<f:setPropertyActionListener value="#{index}" target="#{produtoController.indexRelacionado}" />
+									<f:setPropertyActionListener value="#{entity}" target="#{produtoController.selectedRelatedEntity}" />
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+					</div>
+
+					<div class="card card-w-title">
+						<h1>Imagens</h1>
+
+						<p:panelGrid columns="1" id="imagensGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
+							<h:outputText value="Até 4 imagens podem ser enviadas." styleClass="label" />
+
+							<p:dataTable id="dtbImagens" var="imagem" value="#{produtoController.entity.imagens}" paginator="false"
+								emptyMessage="Nenhuma imagem encontrada" rowIndexVar="index" reflow="true">
+								<f:facet name="header">
 									<p:fileUpload fileUploadListener="#{produtoController.uploadImagem}" mode="advanced" dragDropSupport="false" sizeLimit="200000"
 										cancelLabel="Cancelar" label="Adicionar" invalidSizeMessage="O tamanho do máximo da imagem é de 200 Kb" update="editForm:imagensGrid"
-										auto="true" allowTypes="/(\.|\/)(jpg)$/" invalidFileMessage="A imagem deve ser JPG" accept="application/jpg" />
-								</p:panelGrid>
+										auto="true" allowTypes="/(\.|\/)(jpg)$/" invalidFileMessage="A imagem deve ser JPG" accept="image/jpeg" />
+								</f:facet>
 
-								<p:spacer styleClass="display-desktop" />
+								<p:column style="text-align: center;" headerText="#">
+									<h:outputText value="#{imagem.id}" />
+								</p:column>
 
-								<p:dataTable id="dtbImagens" var="imagem" value="#{produtoController.imagens}" paginator="true" emptyMessage="Nenhuma imagem encontrada"
-									rowIndexVar="index" reflow="true" filterEvent="enter">
-									<p:column style="text-align: center;" headerText="Imagem">
-										<h:outputText value="#{imagem.name}" />
-									</p:column>
-									<p:column style="width:70px; text-align: center;" headerText="Download">
-										<p:commandButton icon="fa fa-fw fa-download" title="Download" process="@this" ajax="false" immediate="true"
-											onclick="liberaRefresh(); PrimeFaces.monitorDownload(showStatus, hideStatus)">
-											<f:param name="index" value="#{index}" />
-											<p:fileDownload value="#{produtoController.imagem}" />
-										</p:commandButton>
-									</p:column>
+								<p:column headerText="Imagem" style="text-align: center;">
+									<h:outputText value="Pendente de gravação" rendered="#{imagem.temporaria}" />
+									<p:graphicImage cache="true" value="#{sessionController.getUrlImagem(imagem.id, true)}" title="" rendered="#{!imagem.temporaria}" />
+								</p:column>
 
-									<p:column style="width:70px; text-align: center;" headerText="Excluir">
-										<p:commandButton icon="fa fa-fw fa-trash" title="Excluir" process="@this" actionListener="#{produtoController.excluiImagem}"
-											update="editForm:imagensGrid">
-											<p:confirm header="Confirmação" message="Confirmar exclusão?" icon="ui-icon-alert" />
-											<f:param name="index" value="#{index}" />
-										</p:commandButton>
-									</p:column>
-								</p:dataTable>
-							</p:panelGrid>
-						</div>
-					</c:if>
+								<p:column headerText="Capa" style="text-align: center;">
+									<p:selectBooleanCheckbox value="#{imagem.capa}">
+										<p:ajax process="@this" update="dtbImagens" listener="#{produtoController.selecionaImagemCapa(index)}" />
+									</p:selectBooleanCheckbox>
+								</p:column>
+
+								<p:column style="width:70px; text-align: center;" headerText="Download">
+									<p:commandButton icon="fa fa-fw fa-download" title="Download" process="@this" ajax="false" immediate="true"
+										onclick="liberaRefresh(); PrimeFaces.monitorDownload(showStatus, hideStatus)">
+										<f:param name="index" value="#{index}" />
+										<p:fileDownload value="#{produtoController.imagem}" />
+									</p:commandButton>
+								</p:column>
+
+								<p:column style="width:70px; text-align: center;" headerText="Excluir">
+									<p:commandButton icon="fa fa-fw fa-trash" title="Excluir" process="@this" actionListener="#{produtoController.excluiImagem}"
+										update="editForm:imagensGrid">
+										<p:confirm header="Confirmação" message="Confirmar exclusão?" icon="ui-icon-alert" />
+										<f:param name="index" value="#{index}" />
+									</p:commandButton>
+								</p:column>
+							</p:dataTable>
+						</p:panelGrid>
+					</div>
 
 					<p:messages />
 
@@ -258,5 +301,54 @@
 	</ui:define>
 
 	<ui:define name="complement">
+		<p:dialog header="Tamanho" id="idTamanhoDialog" widgetVar="tamanhoDialog" width="90%" height="90%" modal="true" draggable="false" resizable="false"
+			responsive="true" position="top">
+			<div class="ui-g">
+				<div class="ui-g-12">
+					<div class="card card-w-title">
+						<h1>#{labels.informacoes}</h1>
+						<p:scrollPanel styleClass="resp-dialog">
+							<p:panelGrid columns="1" layout="grid" id="tamanhoGrid" styleClass="ui-panelgrid-blank form-group">
+								<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group">
+									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+										<p:outputLabel for="tamanho" value="Tamanho" styleClass="label" />
+										<p:selectOneMenu id="tamanho" value="#{produtoController.tamanho.id.codigoTamanho}" styleClass="ui-grid-col-12" required="true"
+											requiredMessage="Favor selecionar o tamanho">
+											<f:selectItem itemLabel="Selecione" itemValue="" />
+											<f:selectItems value="#{produtoController.tamanhos}" var="item" itemLabel="#{item.nome}" itemValue="#{item.codigo}" />
+										</p:selectOneMenu>
+									</p:panelGrid>
+
+									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+										<p:outputLabel for="fator" value="Fator" styleClass="label" />
+										<p:inputNumber id="fator" value="#{produtoController.tamanho.fator}" styleClass="input-number-resp" decimalSeparator=","
+											thousandSeparator="." maxValue="9.99" required="true" requiredMessage="Favor informar o fator">
+										</p:inputNumber>
+									</p:panelGrid>
+								</p:panelGrid>
+							</p:panelGrid>
+						</p:scrollPanel>
+					</div>
+
+					<p:panelGrid columns="6" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
+						<p:commandButton id="submitTamanhoButton" icon="fa fa-fw fa-save" value="#{labels.botao_gravar}"
+							actionListener="#{produtoController.saveTamanho}" process="editForm:tamanhoGrid" update="messagesTamanho :editForm:tamanhoGrid"
+							styleClass="ui-grid-col-12" />
+
+						<p:commandButton id="exclusaoButton" icon="fa fa-fw fa-ban" value="#{labels.botao_excluir}" actionListener="#{produtoController.excluiTamanho}"
+							process="editForm:tamanhoGrid" styleClass="ui-grid-col-12 botao-vermelho" rendered="#{produtoController.editingRelated}">
+							<p:confirm header="Confirmação" message="Confirmar excluão do tamanho?" icon="ui-icon-alert" />
+						</p:commandButton>
+
+						<p:commandButton icon="fa fa-fw fa-close" value="#{labels.botao_fechar}" oncomplete="PF('tamanhoDialog').hide();" process="@none" global="false"
+							styleClass="ui-grid-col-12 botao-fechar" />
+					</p:panelGrid>
+
+					<p:spacer styleClass="display-desktop" />
+
+					<p:messages id="messagesTamanho" />
+				</div>
+			</div>
+		</p:dialog>
 	</ui:define>
 </ui:composition>

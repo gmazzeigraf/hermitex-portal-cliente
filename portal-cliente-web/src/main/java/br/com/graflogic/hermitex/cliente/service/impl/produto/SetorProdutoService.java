@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.graflogic.base.service.gson.GsonUtil;
+import br.com.graflogic.base.service.util.CacheUtil;
 import br.com.graflogic.hermitex.cliente.data.dom.DomAuditoria.DomEventoAuditoriaSetorProduto;
 import br.com.graflogic.hermitex.cliente.data.dom.DomProduto.DomStatusSetor;
 import br.com.graflogic.hermitex.cliente.data.entity.aud.SetorProdutoAuditoria;
@@ -30,11 +31,16 @@ import br.com.graflogic.utilities.datautil.copy.ObjectCopier;
 @Service
 public class SetorProdutoService {
 
+	private static final String CACHE_NAME = "setoresProduto";
+
 	@Autowired
 	private SetorProdutoRepository repository;
 
 	@Autowired
 	private SetorProdutoAuditoriaRepository auditoriaRepository;
+
+	@Autowired
+	private CacheUtil cacheUtil;
 
 	// Fluxo
 	@Transactional(rollbackFor = Throwable.class)
@@ -82,14 +88,33 @@ public class SetorProdutoService {
 		return repository.consulta(entity);
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<SetorProduto> consultaPorCliente(Integer idCliente, boolean somenteAtivos) {
-		SetorProduto filter = new SetorProduto();
-		filter.setIdCliente(idCliente);
+		String key = idCliente.toString();
+
 		if (somenteAtivos) {
-			filter.setStatus(DomStatusSetor.ATIVO);
+			key += "ativos";
 		}
 
-		return consulta(filter);
+		Object cacheObj = cacheUtil.findOnCache(CACHE_NAME, key);
+
+		if (null == cacheObj) {
+			// Consulta
+			SetorProduto filter = new SetorProduto();
+			filter.setIdCliente(idCliente);
+			if (somenteAtivos) {
+				filter.setStatus(DomStatusSetor.ATIVO);
+			}
+
+			List<SetorProduto> objetos = consulta(filter);
+
+			// Atualiza o cache
+			cacheUtil.putOnCache(CACHE_NAME, key, ObjectCopier.copy(objetos));
+
+			cacheObj = cacheUtil.findOnCache(CACHE_NAME, key);
+		}
+
+		return (List<SetorProduto>) ObjectCopier.copy(cacheObj);
 	}
 
 	public SetorProduto consultaPorId(Integer id) {

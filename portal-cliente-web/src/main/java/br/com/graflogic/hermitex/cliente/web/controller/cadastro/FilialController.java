@@ -118,6 +118,9 @@ public class FilialController extends CrudBaseController<Filial, Filial> impleme
 				}
 
 			} else {
+				enderecoFaturamento.setFilial(getEntity());
+				enderecoEntrega.setFilial(getEntity());
+
 				service.cadastra(getEntity());
 
 				returnInfoMessage("Filial cadastrada com sucesso", null);
@@ -333,6 +336,7 @@ public class FilialController extends CrudBaseController<Filial, Filial> impleme
 		try {
 			if (isEditingRelated()) {
 				getEntity().getContatos().set(indexRelacionado, contato);
+
 			} else {
 				getEntity().getContatos().add(contato);
 				setEditingRelated(true);
