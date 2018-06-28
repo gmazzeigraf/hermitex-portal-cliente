@@ -3,5 +3,5 @@ OK - Cadastro de tamanhos do produto
 OK - Gravar imagens em banco
 - Enviar logo do cliente
 - Apresentar logo por cliente
-- Validar codigo do produto unico para o cliente
+OK - Validar codigo do produto unico para o cliente
 - Inclusao de ordem para tamanho
