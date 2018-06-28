@@ -64,4 +64,21 @@ public class ProdutoRepository extends BaseRepository<Produto> {
 
 		return (List<Produto>) typedQuery.getResultList();
 	}
+
+	public Produto consultaPorClienteCodigo(Integer idCliente, String codigo) {
+		CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+		CriteriaQuery<Produto> query = builder.createQuery(Produto.class);
+		List<Predicate> predicateList = new ArrayList<Predicate>();
+
+		Root<Produto> table = query.from(Produto.class);
+
+		predicateList.add(builder.and(builder.equal(table.get("idCliente"), idCliente)));
+		predicateList.add(builder.and(builder.equal(table.get("codigo"), codigo)));
+
+		query.where(predicateList.toArray(new Predicate[predicateList.size()]));
+
+		TypedQuery<Produto> typedQuery = getEntityManager().createQuery(query);
+
+		return typedQuery.getSingleResult();
+	}
 }

@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import javax.persistence.NoResultException;
 import javax.persistence.OptimisticLockException;
 
 import org.apache.commons.codec.binary.Base64;
@@ -24,6 +25,7 @@ import br.com.graflogic.hermitex.cliente.data.impl.produto.ProdutoImagemReposito
 import br.com.graflogic.hermitex.cliente.data.impl.produto.ProdutoRepository;
 import br.com.graflogic.hermitex.cliente.data.impl.produto.ProdutoTamanhoRepository;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
+import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
 import br.com.graflogic.hermitex.cliente.service.exception.ResultadoNaoEncontradoException;
 import br.com.graflogic.hermitex.cliente.web.util.SessionUtil;
 import br.com.graflogic.utilities.datautil.copy.ObjectCopier;
@@ -51,18 +53,24 @@ public class ProdutoService {
 	// Fluxo
 	@Transactional(rollbackFor = Throwable.class)
 	public void cadastra(Produto entity) {
-		// TODO Validar codigo unico
-
 		entity.setStatus(DomStatus.ATIVO);
 
 		List<ProdutoImagem> imagens = entity.getImagens();
 		entity.setImagens(null);
 
 		try {
+			try {
+				repository.consultaPorClienteCodigo(entity.getIdCliente(), entity.getCodigo());
+
+				throw new DadosInvalidosException("Código já cadastrado");
+
+			} catch (NoResultException e) {
+			}
+
 			repository.store(entity);
 
 			for (ProdutoImagem imagem : imagens) {
-				imagem.setProduto(entity);
+				imagem.setIdProduto(entity.getId());
 			}
 
 			entity.setImagens(imagens);
