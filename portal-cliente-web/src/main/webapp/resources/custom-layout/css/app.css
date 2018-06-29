@@ -41,6 +41,23 @@
 	.layout-main-content {
 		padding-top: 0px !important;
 	}
+	.coluna-imagem-capa {
+		text-align: center; width: 200px;
+	}
+	.coluna-valor {
+		text-align: center; width: 200px;
+	}
+
+	/* 	Correcao da altura da imagem da galleria */
+	.ui-galleria, .ui-galleria-panel-wrapper, .ui-galleria-panel {
+		min-height: 600px;
+	}
+	.ui-galleria-panel img {
+		height: 100% !important;
+	}
+	.coluna-center {
+		text-align: center;
+	}
 }
 
 @media ( max-width : 1024px) {
@@ -190,6 +207,20 @@ body.exception-body .exception-bottom .exception-wrapper .logo-icon {
 
 .route-bar {
 	font-weight: 700 !important;
+}
+
+/* 	Separacao dos botoes de tamanhos */
+.ui-selectonebutton {
+	background: #fff !important;
+}
+
+.ui-selectonebutton .ui-button {
+	margin-right: 1em !important; width: 5em !important;
+}
+
+/* Galleria nao ultrapassar a largura maxima */
+.ui-galleria, .ui-galleria-panel-wrapper, .ui-galleria-panel, .ui-galleria-panel img {
+	max-width: 100% !important; text-align: center;
 }
 
 /* Logotipo logado */

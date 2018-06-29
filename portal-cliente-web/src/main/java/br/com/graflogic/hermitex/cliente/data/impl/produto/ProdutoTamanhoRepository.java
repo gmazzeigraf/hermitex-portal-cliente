@@ -35,7 +35,7 @@ public class ProdutoTamanhoRepository extends BaseRepository<ProdutoTamanho> {
 
 		predicateList.add(builder.and(builder.equal(table.get("id").get("idProduto"), idProduto)));
 
-		query.orderBy(builder.asc(table.get("id").get("codigoTamanho")));
+		query.orderBy(builder.asc(table.get("tamanho").get("ordem")));
 		query.where(predicateList.toArray(new Predicate[predicateList.size()]));
 		TypedQuery<ProdutoTamanho> typedQuery = getEntityManager().createQuery(query);
 

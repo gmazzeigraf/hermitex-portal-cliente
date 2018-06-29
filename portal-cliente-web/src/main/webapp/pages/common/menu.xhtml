@@ -30,7 +30,7 @@
 							<p:menuitem id="menu_cliente_cadastro" icon="fa fa-fw fa-edit" value="#{labels.menu_cliente_cadastro}" url="/pages/cliente/cadastro.jsf"
 								rendered="#{sec:isAllowed('/pages/cliente/cadastro.jsf', '')}" />
 
-							<p:submenu id="menu_cliente_produto" icon="fa fa-fw fa-tags" label="#{labels.menu_cliente_produto}">
+							<p:submenu id="menu_cliente_produto" icon="fa fa-fw fa-barcode" label="#{labels.menu_cliente_produto}">
 								<p:menuitem id="menu_cliente_produto_categoria" icon="fa fa-fw fa-bookmark" value="#{labels.menu_cliente_produto_categoria}"
 									url="/pages/cliente/produto/categoria.jsf" rendered="#{sec:isAllowed('/pages/cliente/produto/categoria.jsf', '')}" />
 								<p:menuitem id="menu_cliente_produto_setor" icon="fa fa-fw fa-suitcase" value="#{labels.menu_cliente_produto_setor}"
@@ -60,6 +60,9 @@
 									url="/pages/filial/acesso/usuario.jsf" rendered="#{sec:isAllowed('/pages/filial/acesso/usuario.jsf', '')}" />
 							</p:submenu>
 						</p:submenu>
+						
+						<p:menuitem id="menu_produtos" icon="fa fa-fw fa-barcode" value="#{labels.menu_produtos}" url="/pages/produtos.jsf"
+								rendered="#{sec:isAllowed('/pages/produtos.jsf', '')}" />
 					</pp:menu>
 				</div>
 			</div>

@@ -120,6 +120,13 @@ public class ClienteService {
 	}
 
 	// Consulta
+	public List<Cliente> consultaAtivos() {
+		Cliente filter = new Cliente();
+		filter.setStatus(DomStatusCliente.ATIVO);
+
+		return consulta(filter);
+	}
+
 	public List<Cliente> consulta(Cliente entity) {
 		return repository.consulta(entity);
 	}

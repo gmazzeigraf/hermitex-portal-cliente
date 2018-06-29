@@ -91,6 +91,26 @@ public class ProdutoController extends CrudBaseController<Produto, Produto> impl
 	@Override
 	protected boolean executeSave() {
 		try {
+			if (getEntity().getImagens().isEmpty()) {
+				throw new DadosInvalidosException("Ao menos uma imagem devem ser enviada");
+			}
+
+			if (getEntity().getTamanhos().isEmpty()) {
+				throw new DadosInvalidosException("Ao menos um tamanho deve ser cadastrado");
+			}
+
+			boolean possuiCapa = false;
+			for (ProdutoImagem imagem : getEntity().getImagens()) {
+				if (imagem.isCapa()) {
+					possuiCapa = true;
+					break;
+				}
+			}
+
+			if (!possuiCapa) {
+				throw new DadosInvalidosException("Ao menos uma imagem deve ser capa");
+			}
+
 			if (isEditing()) {
 				try {
 					service.atualiza(getEntity());

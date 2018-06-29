@@ -23,6 +23,8 @@ INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_FI
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_FIL_ACESSO_PERFIL', 'Filial / Acesso / Perfil', 'ACF');
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_FIL_ACESSO_USUARIO', 'Filial / Acesso / Usuário', 'ACF');
 
+INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_PRODUTOS', 'Produtos', 'ACF');
+
 -- Cria  FK
 ALTER TABLE tb_perfil_usuario_permissao_acesso ADD CONSTRAINT fk_perfil_usuario_permissao_acesso_permissao
 	FOREIGN KEY (cd_permissao) REFERENCES tb_permissao_acesso (codigo)

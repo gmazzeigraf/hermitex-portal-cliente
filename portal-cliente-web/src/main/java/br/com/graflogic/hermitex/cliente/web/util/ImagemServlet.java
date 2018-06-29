@@ -52,18 +52,24 @@ public class ImagemServlet extends HttpServlet {
 		if (miniatura) {
 			BufferedImage original = ImageIO.read(new ByteArrayInputStream(imagemArray));
 
+			// Calcula as proporcoes
 			Double width = (double) original.getWidth();
 			Double height = (double) original.getHeight();
 
-			Double divisor = width / 260;
+			Double divisor = width / 150;
 			width = width / divisor;
 			height = height / divisor;
 
+			// Redimensiona a imagem
 			BufferedImage alterada = new BufferedImage(width.intValue(), height.intValue(), BufferedImage.TYPE_INT_RGB);
 			Graphics2D g = alterada.createGraphics();
 			g.drawImage(original, 0, 0, width.intValue(), height.intValue(), null);
 			g.dispose();
 
+			// Corta a imagem
+			//			alterada = original.getSubimage(0, 0, 150, 200);
+
+			// Grava a imagem alterada
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
 			ImageIO.write(alterada, "jpg", stream);
 			stream.flush();

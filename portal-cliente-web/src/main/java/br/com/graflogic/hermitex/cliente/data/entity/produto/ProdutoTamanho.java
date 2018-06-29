@@ -34,6 +34,10 @@ public class ProdutoTamanho implements Serializable {
 	@JoinColumn(name = "id_produto", referencedColumnName = "id", insertable = false, updatable = false)
 	private Produto produto;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "cd_tamanho", referencedColumnName = "codigo", insertable = false, updatable = false)
+	private TamanhoProduto tamanho;
+
 	public ProdutoTamanhoPK getId() {
 		return id;
 	}
@@ -56,5 +60,13 @@ public class ProdutoTamanho implements Serializable {
 
 	public void setProduto(Produto produto) {
 		this.produto = produto;
+	}
+
+	public TamanhoProduto getTamanho() {
+		return tamanho;
+	}
+
+	public void setTamanho(TamanhoProduto tamanho) {
+		this.tamanho = tamanho;
 	}
 }

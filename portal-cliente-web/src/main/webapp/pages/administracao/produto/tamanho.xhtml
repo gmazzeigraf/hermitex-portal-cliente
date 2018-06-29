@@ -56,6 +56,10 @@
 								<h:outputText value="#{entity.nome}" />
 							</p:column>
 
+							<p:column headerText="Ordem" sortBy="#{entity.ordem}">
+								<h:outputText value="#{entity.ordem}" />
+							</p:column>
+
 							<p:column headerText="Status" sortBy="#{entity.deStatus}" styleClass="status-column">
 								<h:outputText value="#{entity.deStatus}" />
 							</p:column>
@@ -94,6 +98,12 @@
 								<p:outputLabel for="nome" value="Nome" styleClass="label" />
 								<p:inputText id="nome" value="#{tamanhoProdutoController.entity.nome}" maxlength="20" styleClass="ui-grid-col-12" required="true"
 									requiredMessage="Favor informar o nome" />
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel for="ordem" value="Ordem" styleClass="label" />
+								<p:inputNumber id="ordem" value="#{tamanhoProdutoController.entity.ordem}" minValue="1" maxValue="99" styleClass="input-number-resp"
+									required="true" requiredMessage="Favor informar a ordem" />
 							</p:panelGrid>
 						</p:panelGrid>
 					</div>

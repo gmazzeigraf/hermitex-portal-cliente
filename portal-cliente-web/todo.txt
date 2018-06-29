@@ -4,4 +4,4 @@ OK - Gravar imagens em banco
 - Enviar logo do cliente
 - Apresentar logo por cliente
 OK - Validar codigo do produto unico para o cliente
-- Inclusao de ordem para tamanho
+OK - Inclusao de ordem para tamanho

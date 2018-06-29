@@ -33,6 +33,9 @@
 		<intercept-url pattern="/pages/filial/acesso/perfil.jsf" access="hasAnyRole('ROLE_FIL_ACESSO_PERFIL')" />
 		<intercept-url pattern="/pages/filial/acesso/usuario.jsf" access="hasAnyRole('ROLE_FIL_ACESSO_USUARIO')" />
 
+		<!-- Produtos -->
+		<intercept-url pattern="/pages/produtos.jsf" access="hasAnyRole('ROLE_PRODUTOS')" />
+
 		<!-- Misc -->
 		<intercept-url pattern="/pages/publico/**" access="permitAll" />
 		<intercept-url pattern="/pages/exception/**" access="permitAll" />

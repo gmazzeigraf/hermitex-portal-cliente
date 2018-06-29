@@ -1,0 +1,166 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/pages/templates/crud_template.xhtml"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+	<ui:define name="viewname">#{labels.menu_produtos}</ui:define>
+
+	<ui:define name="search">
+		<c:if test="#{null == produtoApresentacaoController.entity}">
+			<div class="ui-g">
+				<div class="ui-g-12">
+					<div class="card card-w-title">
+						<p:panelGrid columns="1" id="filterGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
+							<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{sessionController.usuarioAdministrador}">
+									<p:outputLabel for="clienteFilter" value="Cliente *" styleClass="label" />
+									<p:selectOneMenu id="clienteFilter" value="#{produtoApresentacaoController.filterEntity.idCliente}" styleClass="ui-grid-col-12">
+										<f:selectItem itemLabel="" itemValue="" />
+										<f:selectItems value="#{produtoApresentacaoController.clientes}" var="item" itemLabel="#{item.razaoSocial}" itemValue="#{item.id}" />
+										<p:ajax process="@this" update=":searchForm" listener="#{produtoApresentacaoController.changeCliente}" />
+									</p:selectOneMenu>
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="categoriaFilter" value="Categoria" styleClass="label" />
+									<p:selectOneMenu id="categoriaFilter" value="#{produtoApresentacaoController.filterEntity.idCategoria}" styleClass="ui-grid-col-12"
+										disabled="#{!produtoApresentacaoController.clienteSelecionado}">
+										<f:selectItem itemLabel="" itemValue="" />
+										<f:selectItems value="#{produtoApresentacaoController.categorias}" var="item" itemLabel="#{item.nome}" itemValue="#{item.id}" />
+										<p:ajax process="@this" update=":searchForm" listener="#{produtoApresentacaoController.search}" />
+									</p:selectOneMenu>
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="setorFilter" value="Setor" styleClass="label" />
+									<p:selectOneMenu id="setorFilter" value="#{produtoApresentacaoController.filterEntity.idSetor}" styleClass="ui-grid-col-12"
+										disabled="#{!produtoApresentacaoController.clienteSelecionado}">
+										<f:selectItem itemLabel="" itemValue="" />
+										<f:selectItems value="#{produtoApresentacaoController.setores}" var="item" itemLabel="#{item.nome}" itemValue="#{item.id}" />
+										<p:ajax process="@this" update=":searchForm" listener="#{produtoApresentacaoController.search}" />
+									</p:selectOneMenu>
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="tituloFilter" value="Título" styleClass="label" />
+									<p:inputText id="tituloFilter" value="#{produtoApresentacaoController.filterEntity.titulo}" maxlength="20" styleClass="ui-grid-col-12">
+										<p:ajax process="@this" update=":searchForm" listener="#{produtoApresentacaoController.search}" />
+									</p:inputText>
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="generoFilter" value="Gênero" styleClass="label" />
+									<p:selectOneMenu id="generoFilter" value="#{produtoApresentacaoController.filterEntity.genero}" styleClass="ui-grid-col-12">
+										<f:selectItem itemLabel="" itemValue="" />
+										<f:selectItems value="#{domProdutoController.generoMap}" />
+										<p:ajax process="@this" update=":searchForm" listener="#{produtoApresentacaoController.search}" />
+									</p:selectOneMenu>
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="tamanhoFilter" value="Tamanho" styleClass="label" />
+									<p:selectOneMenu id="tamanhoFilter" value="#{produtoApresentacaoController.filterEntity.codigoTamanho}" styleClass="ui-grid-col-12">
+										<f:selectItem itemLabel="" itemValue="" />
+										<f:selectItems value="#{produtoApresentacaoController.tamanhos}" var="item" itemLabel="#{item.codigo}" itemValue="#{item.codigo}" />
+										<p:ajax process="@this" update=":searchForm" listener="#{produtoApresentacaoController.search}" />
+									</p:selectOneMenu>
+								</p:panelGrid>
+							</p:panelGrid>
+						</p:panelGrid>
+
+						<p:spacer styleClass="display-desktop" />
+
+						<p:dataTable id="dtbEntities" widgetVar="dtb" var="entity" value="#{produtoApresentacaoController.entities}" rowKey="#{entity.id}"
+							paginator="true" reflow="true" rows="10" paginatorPosition="bottom"
+							emptyMessage="#{null != produtoApresentacaoController.entities ? messages.nenhum_resultado_encontrado : ''}">
+
+							<p:column headerText="" styleClass="coluna-imagem-capa">
+								<p:graphicImage cache="true" value="#{sessionController.getUrlImagem(entity.idImagemCapa, true)}" title="" />
+							</p:column>
+
+							<p:column headerText="Código" sortBy="#{entity.codigo}" styleClass="id-column">
+								<h:outputText value="#{entity.codigo}" />
+							</p:column>
+
+							<p:column headerText="Título" sortBy="#{entity.titulo}" styleClass="coluna-center">
+								<h:outputText value="#{entity.titulo}" />
+							</p:column>
+
+							<p:column headerText="Valor" sortBy="#{entity.valor}" styleClass="coluna-valor">
+								<h:outputText value="#{entity.valor}">
+									<f:convertNumber pattern="R$ #,##0.00" />
+								</h:outputText>
+							</p:column>
+
+							<p:column styleClass="coluna-edicao">
+								<p:commandButton icon="fa fa-fw fa-folder-open" title="#{labels.botao_editar}" update=":searchForm :editForm" process="@this"
+									resetValues="true" styleClass="ui-grid-col-12">
+									<f:setPropertyActionListener value="#{entity}" target="#{produtoApresentacaoController.selectedEntity}" />
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+					</div>
+				</div>
+			</div>
+		</c:if>
+	</ui:define>
+
+	<ui:define name="edit">
+		<c:if test="#{null != produtoApresentacaoController.entity}">
+			<div class="ui-g">
+				<div class="ui-g-12">
+					<div class="card card-w-title">
+						<h1>#{produtoApresentacaoController.entity.titulo}</h1>
+
+						<p:panelGrid columns="1" id="produtoGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
+							<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group" columnClasses="ui-grid-col-4, ui-grid-col-8">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" style="text-align: center;">
+									<p:galleria value="#{produtoApresentacaoController.entity.imagens}" var="imagem" showCaption="false" autoPlay="false"
+										style="width: 100%;">
+										<p:graphicImage cache="true" value="#{sessionController.getUrlImagem(imagem.id, false)}" title="" />
+									</p:galleria>
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" style="font-size: 16px !important;">
+									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+										<h1>Descrição</h1>
+										<h:outputText value="#{produtoApresentacaoController.entity.descricao}" escape="false" />
+									</p:panelGrid>
+
+									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid"
+										rendered="#{fn:length(produtoApresentacaoController.entity.garantia) > 0}">
+										<h1>Garantia</h1>
+										<h:outputText value="#{produtoApresentacaoController.entity.garantia}" />
+									</p:panelGrid>
+
+									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+										<h1>Tamanhos</h1>
+										<p:selectOneButton value="#{produtoApresentacaoController.itemPedido.codigoTamanho}">
+											<f:selectItems value="#{produtoApresentacaoController.entity.tamanhos}" var="item" itemLabel="#{item.id.codigoTamanho}"
+												itemValue="#{item.id.codigoTamanho}" />
+											<p:ajax process="@this" global="false" update=":editForm:precoGrid" listener="#{produtoApresentacaoController.changeTamanho}" />
+										</p:selectOneButton>
+									</p:panelGrid>
+
+									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" id="precoGrid">
+										<h1>Preço</h1>
+										<h:outputText value="#{produtoApresentacaoController.itemPedido.valorCorrigidoTamanho}">
+											<f:convertNumber pattern="R$ #,##0.00" />
+										</h:outputText>
+									</p:panelGrid>
+								</p:panelGrid>
+							</p:panelGrid>
+
+							<p:panelGrid columns="6" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
+								<p:commandButton icon="fa fa-fw fa-close" value="#{labels.botao_fechar}" actionListener="#{produtoApresentacaoController.close}"
+									process="@this" update=":searchForm :editForm" styleClass="ui-grid-col-12 botao-fechar" />
+							</p:panelGrid>
+						</p:panelGrid>
+					</div>
+				</div>
+			</div>
+		</c:if>
+	</ui:define>
+
+	<ui:define name="complement">
+	</ui:define>
+</ui:composition>

@@ -137,6 +137,16 @@ public class FilialService {
 			throw new ResultadoNaoEncontradoException();
 		}
 
+		return entity;
+	}
+
+	public Filial consultaCompletoPorId(Integer id) {
+		Filial entity = repository.findById(id);
+
+		if (null == entity) {
+			throw new ResultadoNaoEncontradoException();
+		}
+
 		preencheRelacionados(entity);
 
 		return entity;

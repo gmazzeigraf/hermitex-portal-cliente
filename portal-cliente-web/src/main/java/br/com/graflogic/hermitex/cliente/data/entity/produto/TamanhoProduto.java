@@ -29,6 +29,9 @@ public class TamanhoProduto implements Serializable {
 	@Column(name = "nome", nullable = false)
 	private String nome;
 
+	@Column(name = "ordem", nullable = false)
+	private Integer ordem;
+
 	@Column(name = "status", nullable = false)
 	private String status;
 
@@ -50,6 +53,14 @@ public class TamanhoProduto implements Serializable {
 
 	public void setNome(String nome) {
 		this.nome = nome;
+	}
+
+	public Integer getOrdem() {
+		return ordem;
+	}
+
+	public void setOrdem(Integer ordem) {
+		this.ordem = ordem;
 	}
 
 	public String getStatus() {

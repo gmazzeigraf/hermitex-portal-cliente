@@ -14,10 +14,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.graflogic.base.service.gson.GsonUtil;
+import br.com.graflogic.base.service.util.CacheUtil;
 import br.com.graflogic.hermitex.cliente.data.dom.DomAuditoria.DomEventoAuditoriaProduto;
 import br.com.graflogic.hermitex.cliente.data.dom.DomProduto.DomStatus;
 import br.com.graflogic.hermitex.cliente.data.entity.aud.ProdutoAuditoria;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.Produto;
+import br.com.graflogic.hermitex.cliente.data.entity.produto.ProdutoApresentacaoLista;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.ProdutoImagem;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.ProdutoTamanho;
 import br.com.graflogic.hermitex.cliente.data.impl.aud.ProdutoAuditoriaRepository;
@@ -38,6 +40,8 @@ import br.com.graflogic.utilities.datautil.copy.ObjectCopier;
 @Service
 public class ProdutoService {
 
+	private static final String IMAGENS_CACHE_NAME = "imagensProduto";
+
 	@Autowired
 	private ProdutoRepository repository;
 
@@ -49,6 +53,9 @@ public class ProdutoService {
 
 	@Autowired
 	private ProdutoAuditoriaRepository auditoriaRepository;
+
+	@Autowired
+	private CacheUtil cacheUtil;
 
 	// Fluxo
 	@Transactional(rollbackFor = Throwable.class)
@@ -118,14 +125,24 @@ public class ProdutoService {
 	}
 
 	// Imagem
-	public ProdutoImagem consultaImagem(String id) {
-		ProdutoImagem imagem = imagemRepository.findById(id);
+	public ProdutoImagem consultaImagem(String idImagem) {
+		Object cacheObj = cacheUtil.findOnCache(IMAGENS_CACHE_NAME, idImagem);
 
-		if (null == imagem) {
-			throw new ResultadoNaoEncontradoException();
+		if (null == cacheObj) {
+			// Consulta
+			ProdutoImagem imagem = imagemRepository.findById(idImagem);
+
+			if (null == imagem) {
+				throw new ResultadoNaoEncontradoException();
+			}
+
+			// Atualiza o cache
+			cacheUtil.putOnCache(IMAGENS_CACHE_NAME, idImagem, ObjectCopier.copy(imagem));
+
+			cacheObj = cacheUtil.findOnCache(IMAGENS_CACHE_NAME, idImagem);
 		}
 
-		return imagem;
+		return (ProdutoImagem) ObjectCopier.copy(cacheObj);
 	}
 
 	public ProdutoImagem geraImagem(byte[] conteudo) {
@@ -156,6 +173,10 @@ public class ProdutoService {
 	// Consulta
 	public List<Produto> consulta(Produto entity) {
 		return repository.consulta(entity);
+	}
+
+	public List<ProdutoApresentacaoLista> consultaApresentacaoLista(ProdutoApresentacaoLista filter) {
+		return repository.consultaApresentacaoLista(filter);
 	}
 
 	public Produto consultaPorId(Integer id) {
@@ -194,6 +215,7 @@ public class ProdutoService {
 			// Remove as referencias recursivas
 			for (ProdutoTamanho tamanho : objeto.getTamanhos()) {
 				tamanho.setProduto(null);
+				tamanho.setTamanho(null);
 			}
 			objeto.setImagens(null);
 
