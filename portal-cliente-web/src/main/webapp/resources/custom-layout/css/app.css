@@ -58,6 +58,13 @@
 	.coluna-center {
 		text-align: center;
 	}
+	/* 	Botoes quantidade item */
+	.botao-aumenta-quantidade-item {
+		margin-left: 5px !important;
+	}
+	.botao-diminui-quantidade-item {
+		margin-right: 5px !important;
+	}
 }
 
 @media ( max-width : 1024px) {
@@ -75,6 +82,9 @@
 	}
 	.layout-main {
 		min-height: 83% !important; box-sizing: border-box !important;
+	}
+	.coluna-imagem-capa {
+		text-align: center;
 	}
 }
 
@@ -207,6 +217,11 @@ body.exception-body .exception-bottom .exception-wrapper .logo-icon {
 
 .route-bar {
 	font-weight: 700 !important;
+}
+
+/* Cabecalho das tabelas */
+.ui-datatable thead th {
+	border-color: #2d353c !important; background-color: #2d353c !important; color: #fff !important;
 }
 
 /* 	Separacao dos botoes de tamanhos */

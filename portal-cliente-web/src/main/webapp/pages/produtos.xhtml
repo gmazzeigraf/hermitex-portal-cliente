@@ -1,6 +1,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/pages/templates/crud_template.xhtml"
-	xmlns:fn="http://java.sun.com/jsp/jstl/functions" xmlns:c="http://java.sun.com/jsp/jstl/core">
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions" xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:sec="http://www.springframework.org/security/tags">
 
 	<ui:define name="viewname">#{labels.menu_produtos}</ui:define>
 
@@ -70,11 +71,11 @@
 						<p:spacer styleClass="display-desktop" />
 
 						<p:dataTable id="dtbEntities" widgetVar="dtb" var="entity" value="#{produtoApresentacaoController.entities}" rowKey="#{entity.id}"
-							paginator="true" reflow="true" rows="10" paginatorPosition="bottom"
-							emptyMessage="#{null != produtoApresentacaoController.entities ? messages.nenhum_resultado_encontrado : ''}">
+							paginator="true" paginatorPosition="bottom" reflow="true" rows="10"
+							emptyMessage="#{null != produtoApresentacaoController.entities ? messages.nenhum_resultado_encontrado : messages.realize_pesquisa}">
 
 							<p:column headerText="" styleClass="coluna-imagem-capa">
-								<p:graphicImage cache="true" value="#{sessionController.getUrlImagem(entity.idImagemCapa, true)}" title="" />
+								<p:graphicImage cache="true" value="#{sessionController.getUrlImagem(entity.idImagemCapa, true)}" title="" styleClass="imagem-capa" />
 							</p:column>
 
 							<p:column headerText="Código" sortBy="#{entity.codigo}" styleClass="id-column">
@@ -93,7 +94,7 @@
 
 							<p:column styleClass="coluna-edicao">
 								<p:commandButton icon="fa fa-fw fa-folder-open" title="#{labels.botao_editar}" update=":searchForm :editForm" process="@this"
-									resetValues="true" styleClass="ui-grid-col-12">
+									resetValues="true" styleClass="ui-grid-col-12" oncomplete="scrollPageTop();">
 									<f:setPropertyActionListener value="#{entity}" target="#{produtoApresentacaoController.selectedEntity}" />
 								</p:commandButton>
 							</p:column>
@@ -114,48 +115,87 @@
 						<p:panelGrid columns="1" id="produtoGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
 							<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group" columnClasses="ui-grid-col-4, ui-grid-col-8">
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" style="text-align: center;">
-									<p:galleria value="#{produtoApresentacaoController.entity.imagens}" var="imagem" showCaption="false" autoPlay="false"
-										style="width: 100%;">
+									<p:galleria value="#{produtoApresentacaoController.entity.imagens}" var="imagem" showCaption="false" autoPlay="false" style="width: 100%;">
 										<p:graphicImage cache="true" value="#{sessionController.getUrlImagem(imagem.id, false)}" title="" />
 									</p:galleria>
 								</p:panelGrid>
 
-								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" style="font-size: 16px !important;">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" style="font-size: 16px !important;" id="dadosProdutoGrid">
 									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-										<h1>Descrição</h1>
+										<h:outputText value="Descrição" styleClass="label" />
 										<h:outputText value="#{produtoApresentacaoController.entity.descricao}" escape="false" />
 									</p:panelGrid>
 
 									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid"
 										rendered="#{fn:length(produtoApresentacaoController.entity.garantia) > 0}">
-										<h1>Garantia</h1>
+										<h:outputText value="Garantia" styleClass="label" />
 										<h:outputText value="#{produtoApresentacaoController.entity.garantia}" />
 									</p:panelGrid>
 
-									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-										<h1>Tamanhos</h1>
-										<p:selectOneButton value="#{produtoApresentacaoController.itemPedido.codigoTamanho}">
+									<p:panelGrid columns="1" columnClasses="ui-grid-col-6" layout="grid">
+										<h:outputText value="Tamanho" styleClass="label" />
+										<p:selectOneButton id="tamanho" value="#{produtoApresentacaoController.itemPedido.codigoTamanho}" required="true"
+											requiredMessage="Favor selecionar o tamanho">
 											<f:selectItems value="#{produtoApresentacaoController.entity.tamanhos}" var="item" itemLabel="#{item.id.codigoTamanho}"
 												itemValue="#{item.id.codigoTamanho}" />
-											<p:ajax process="@this" global="false" update=":editForm:precoGrid" listener="#{produtoApresentacaoController.changeTamanho}" />
+											<p:ajax process="@this" global="false" update=":editForm:precoGrid :editForm:valorTotalGrid"
+												listener="#{produtoApresentacaoController.changeTamanho}" />
 										</p:selectOneButton>
+										<p:message for="tamanho" />
 									</p:panelGrid>
 
 									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" id="precoGrid">
-										<h1>Preço</h1>
+										<h:outputText value="Preço" styleClass="label" />
 										<h:outputText value="#{produtoApresentacaoController.itemPedido.valorCorrigidoTamanho}">
 											<f:convertNumber pattern="R$ #,##0.00" />
 										</h:outputText>
 									</p:panelGrid>
+
+									<p:panelGrid columns="1" columnClasses="ui-grid-col-4" layout="grid" rendered="#{sec:areAnyGranted('ROLE_PEDIDO')}">
+										<h:outputText value="Quantidade" styleClass="label" />
+										<p:panelGrid columns="3" columnClasses="ui-grid-col-2, ui-grid-col-8, ui-grid-col-2" layout="grid">
+											<p:commandButton icon="fa fa-fw fa-minus" actionListener="#{produtoApresentacaoController.diminuiQuantidade}" process="@this"
+												global="false" update="quantidade valorTotalGrid" styleClass="ui-grid-col-12 botao-diminui-quantidade-item" />
+											<p:inputNumber id="quantidade" styleClass="input-number-resp" minValue="1" maxValue="999"
+												value="#{produtoApresentacaoController.itemPedido.quantidade}" required="true" requiredMessage="Favor informar a quantidade">
+												<p:ajax process="@this" update="valorTotalGrid" listener="#{produtoApresentacaoController.calculaTotalItem}" />
+											</p:inputNumber>
+											<p:commandButton icon="fa fa-fw fa-plus" actionListener="#{produtoApresentacaoController.aumentaQuantidade}" process="@this" global="false"
+												update="quantidade valorTotalGrid" styleClass="ui-grid-col-12 botao-aumenta-quantidade-item" />
+										</p:panelGrid>
+										<p:message for="quantidade" />
+									</p:panelGrid>
+
+									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" id="valorTotalGrid" rendered="#{sec:areAnyGranted('ROLE_PEDIDO')}">
+										<h:outputText value="Total" styleClass="label" />
+										<h:outputText value="#{produtoApresentacaoController.itemPedido.valorTotal}">
+											<f:convertNumber pattern="R$ #,##0.00" />
+										</h:outputText>
+									</p:panelGrid>
+
+
+									<p:panelGrid columns="1" columnClasses="ui-grid-col-4" layout="grid" rendered="#{sec:areAnyGranted('ROLE_PEDIDO')}">
+										<p:commandButton icon="fa fa-fw fa-shopping-cart" value="#{labels.botao_adicionar_carrinho}"
+											actionListener="#{produtoApresentacaoController.adicionaItem}" process=":editForm:dadosProdutoGrid" update=":editForm :formMenu"
+											oncomplete="carregaClose();" styleClass="ui-grid-col-12" />
+									</p:panelGrid>
 								</p:panelGrid>
+							</p:panelGrid>
+
+							<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group">
+								<c:if test="#{fn:length(produtoApresentacaoController.entity.linkYoutube) > 0}">
+									<iframe width="420" height="315" src="#{produtoApresentacaoController.entity.linkYoutube}"> </iframe>
+								</c:if>
 							</p:panelGrid>
 
 							<p:panelGrid columns="6" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
 								<p:commandButton icon="fa fa-fw fa-close" value="#{labels.botao_fechar}" actionListener="#{produtoApresentacaoController.close}"
-									process="@this" update=":searchForm :editForm" styleClass="ui-grid-col-12 botao-fechar" />
+									process="@this" update=":searchForm :editForm" styleClass="ui-grid-col-12 botao-fechar" oncomplete="scrollPageTop();" />
 							</p:panelGrid>
 						</p:panelGrid>
 					</div>
+
+					<p:growl id="messagesGrowl" />
 				</div>
 			</div>
 		</c:if>

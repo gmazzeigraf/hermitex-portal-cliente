@@ -60,9 +60,11 @@
 									url="/pages/filial/acesso/usuario.jsf" rendered="#{sec:isAllowed('/pages/filial/acesso/usuario.jsf', '')}" />
 							</p:submenu>
 						</p:submenu>
-						
+
 						<p:menuitem id="menu_produtos" icon="fa fa-fw fa-barcode" value="#{labels.menu_produtos}" url="/pages/produtos.jsf"
-								rendered="#{sec:isAllowed('/pages/produtos.jsf', '')}" />
+							rendered="#{sec:isAllowed('/pages/produtos.jsf', '')}" />
+						<p:menuitem id="menu_carrinho" icon="fa fa-fw fa-shopping-cart" value="#{fn:length(carrinhoController.pedido.itens)}" url="/pages/carrinho.jsf"
+							rendered="#{sec:areAnyGranted('ROLE_PEDIDO')}" />
 					</pp:menu>
 				</div>
 			</div>

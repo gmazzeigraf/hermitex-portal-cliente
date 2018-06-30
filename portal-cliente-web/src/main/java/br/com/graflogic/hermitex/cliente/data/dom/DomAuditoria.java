@@ -127,6 +127,16 @@ public class DomAuditoria {
 		}
 	}
 
+	public static class DomEventoAuditoriaPedido extends DomBase {
+		public static final String CADASTRO = "C";
+		public static final String ATUALIZACAO = "A";
+
+		DomEventoAuditoriaPedido() {
+			mapa.put(CADASTRO, "Cadastro");
+			mapa.put(ATUALIZACAO, "Atualização");
+		}
+	}
+
 	//	Processamento
 	public static class DomStatusProcessamento extends DomBase {
 		public static final String ERRO = "E";

@@ -16,18 +16,21 @@ import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioCliente;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioFilial;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Filial;
+import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoItem;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.CategoriaProduto;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.Produto;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.ProdutoApresentacaoLista;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.ProdutoTamanho;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.SetorProduto;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.TamanhoProduto;
+import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.FilialService;
 import br.com.graflogic.hermitex.cliente.service.impl.produto.CategoriaProdutoService;
 import br.com.graflogic.hermitex.cliente.service.impl.produto.ProdutoService;
 import br.com.graflogic.hermitex.cliente.service.impl.produto.SetorProdutoService;
 import br.com.graflogic.hermitex.cliente.service.impl.produto.TamanhoProdutoService;
+import br.com.graflogic.hermitex.cliente.web.controller.pedido.CarrinhoController;
 import br.com.graflogic.hermitex.cliente.web.util.SessionUtil;
 import br.com.graflogic.utilities.presentationutil.controller.SearchBaseController;
 
@@ -60,6 +63,9 @@ public class ProdutoApresentacaoController extends SearchBaseController<ProdutoA
 	@Autowired
 	private SetorProdutoService setorService;
 
+	@Autowired
+	private CarrinhoController carrinhoController;
+
 	private List<Cliente> clientes;
 
 	private List<TamanhoProduto> tamanhos;
@@ -68,7 +74,9 @@ public class ProdutoApresentacaoController extends SearchBaseController<ProdutoA
 
 	private List<SetorProduto> setores;
 
-	private ProdutoPedido itemPedido;
+	private PedidoItem itemPedido;
+
+	private ProdutoApresentacaoLista produtoApresentacao;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -111,12 +119,28 @@ public class ProdutoApresentacaoController extends SearchBaseController<ProdutoA
 	protected void select(ProdutoApresentacaoLista entity) {
 		setEntity(service.consultaCompletoPorId(entity.getId()));
 
-		itemPedido = new ProdutoPedido();
-		itemPedido.setId(getEntity().getId());
-		itemPedido.setValorUnitario(getEntity().getValor());
-		itemPedido.setCodigoTamanho(getEntity().getTamanhos().get(0).getId().getCodigoTamanho());
+		this.produtoApresentacao = entity;
 
-		changeTamanho();
+		preparaItem();
+	}
+
+	public void adicionaItem() {
+		try {
+			// Adiciona o item no carrinho
+			carrinhoController.adicionaItem(itemPedido);
+
+			preparaItem();
+
+			returnInfoMessage("Item adicionado com sucesso", null);
+
+			updateComponent("editForm:messagesGrowl");
+
+		} catch (DadosInvalidosException e) {
+			returnWarnMessage(e.getMessage(), null, null);
+
+		} catch (Throwable t) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao adicionar item, contate o administrador", t);
+		}
 	}
 
 	// Util
@@ -141,6 +165,7 @@ public class ProdutoApresentacaoController extends SearchBaseController<ProdutoA
 		try {
 			itemPedido.setValorCorrigidoTamanho(itemPedido.getValorUnitario());
 
+			// Caso o tamanho esteja selecionado calcula o valor pelo fato
 			if (StringUtils.isNotEmpty(itemPedido.getCodigoTamanho())) {
 				BigDecimal fator = null;
 
@@ -154,8 +179,63 @@ public class ProdutoApresentacaoController extends SearchBaseController<ProdutoA
 				itemPedido.setValorCorrigidoTamanho(itemPedido.getValorCorrigidoTamanho().multiply(fator).setScale(2, RoundingMode.HALF_EVEN));
 			}
 
+			calculaTotalItem();
+
 		} catch (Throwable t) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao alterar tamanho do produto, contate o administrador", t);
+		}
+	}
+
+	private void preparaItem() {
+		itemPedido = new PedidoItem();
+		itemPedido.setIdProduto(getEntity().getId());
+		itemPedido.setValorUnitario(getEntity().getValor());
+		itemPedido.setCodigoTamanho(getEntity().getTamanhos().get(0).getId().getCodigoTamanho());
+		itemPedido.setQuantidade(1);
+		itemPedido.setCodigoProduto(getEntity().getCodigo());
+		itemPedido.setTituloProduto(getEntity().getTitulo());
+		itemPedido.setIdImagemCapaProduto(produtoApresentacao.getIdImagemCapa());
+
+		changeTamanho();
+
+		calculaTotalItem();
+	}
+
+	public void aumentaQuantidade() {
+		try {
+			if (itemPedido.getQuantidade() >= 999) {
+				return;
+			}
+
+			itemPedido.setQuantidade(itemPedido.getQuantidade() + 1);
+
+			calculaTotalItem();
+
+		} catch (Throwable t) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao aumentar quantidade, contate o administrador", t);
+		}
+	}
+
+	public void diminuiQuantidade() {
+		try {
+			if (itemPedido.getQuantidade() <= 1) {
+				return;
+			}
+
+			itemPedido.setQuantidade(itemPedido.getQuantidade() - 1);
+
+			calculaTotalItem();
+
+		} catch (Throwable t) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao diminuir quantidade, contate o administrador", t);
+		}
+	}
+
+	public void calculaTotalItem() {
+		itemPedido.setValorTotal(BigDecimal.ZERO);
+
+		if (itemPedido.getQuantidade() > 0) {
+			itemPedido.setValorTotal(itemPedido.getValorCorrigidoTamanho().multiply(new BigDecimal(itemPedido.getQuantidade())));
 		}
 	}
 
@@ -181,7 +261,7 @@ public class ProdutoApresentacaoController extends SearchBaseController<ProdutoA
 		return tamanhos;
 	}
 
-	public ProdutoPedido getItemPedido() {
+	public PedidoItem getItemPedido() {
 		return itemPedido;
 	}
 }

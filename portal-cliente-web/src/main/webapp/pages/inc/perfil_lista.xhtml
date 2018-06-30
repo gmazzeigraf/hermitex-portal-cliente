@@ -3,7 +3,8 @@
 	xmlns:c="http://java.sun.com/jsp/jstl/core">
 
 	<p:dataTable id="dtbEntities" widgetVar="dtb" var="entity" value="#{perfilUsuarioController.entities}" rowKey="#{entity.id}" paginator="true"
-		reflow="true" rows="10" emptyMessage="#{null != perfilUsuarioController.entities ? messages.nenhum_resultado_encontrado : ''}">
+		paginatorPosition="bottom" reflow="true" rows="10"
+		emptyMessage="#{null != perfilUsuarioController.entities ? messages.nenhum_resultado_encontrado : messages.realize_pesquisa}">
 
 		<p:column headerText="#" sortBy="#{entity.id}" styleClass="id-column">
 			<h:outputText value="#{entity.id}" />

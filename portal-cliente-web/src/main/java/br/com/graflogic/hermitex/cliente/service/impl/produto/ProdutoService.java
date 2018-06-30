@@ -60,6 +60,8 @@ public class ProdutoService {
 	// Fluxo
 	@Transactional(rollbackFor = Throwable.class)
 	public void cadastra(Produto entity) {
+		validaDados(entity);
+
 		entity.setStatus(DomStatus.ATIVO);
 
 		List<ProdutoImagem> imagens = entity.getImagens();
@@ -94,6 +96,8 @@ public class ProdutoService {
 	}
 
 	public void atualiza(Produto entity) {
+		validaDados(entity);
+
 		executaAtualiza(entity);
 
 		registraAuditoria(entity.getId(), entity, DomEventoAuditoriaProduto.ATUALIZACAO, null);
@@ -202,6 +206,28 @@ public class ProdutoService {
 	}
 
 	// Util
+	private void validaDados(Produto entity) {
+		if (entity.getImagens().isEmpty()) {
+			throw new DadosInvalidosException("Ao menos uma imagem devem ser enviada");
+		}
+
+		if (entity.getTamanhos().isEmpty()) {
+			throw new DadosInvalidosException("Ao menos um tamanho deve ser cadastrado");
+		}
+
+		boolean possuiCapa = false;
+		for (ProdutoImagem imagem : entity.getImagens()) {
+			if (imagem.isCapa()) {
+				possuiCapa = true;
+				break;
+			}
+		}
+
+		if (!possuiCapa) {
+			throw new DadosInvalidosException("Ao menos uma imagem deve ser capa");
+		}
+	}
+
 	private String registraAuditoria(Integer id, Produto objeto, String codigoEvento, String observacao) {
 		ProdutoAuditoria evento = new ProdutoAuditoria();
 		evento.setId(UUID.randomUUID().toString());

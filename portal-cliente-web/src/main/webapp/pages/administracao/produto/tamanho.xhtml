@@ -46,7 +46,8 @@
 						<p:spacer styleClass="display-desktop" />
 
 						<p:dataTable id="dtbEntities" widgetVar="dtb" var="entity" value="#{tamanhoProdutoController.entities}" rowKey="#{entity.id}" paginator="true"
-							reflow="true" rows="10" emptyMessage="#{null != tamanhoProdutoController.entities ? messages.nenhum_resultado_encontrado : ''}">
+							paginatorPosition="bottom" reflow="true" rows="10"
+							emptyMessage="#{null != tamanhoProdutoController.entities ? messages.nenhum_resultado_encontrado : messages.realize_pesquisa}">
 
 							<p:column headerText="Código" sortBy="#{entity.codigo}" styleClass="id-column">
 								<h:outputText value="#{entity.codigo}" />

@@ -56,7 +56,8 @@
 						<p:spacer styleClass="display-desktop" />
 
 						<p:dataTable id="dtbEntities" widgetVar="dtb" var="entity" value="#{filialController.entities}" rowKey="#{entity.id}" paginator="true"
-							reflow="true" rows="10" emptyMessage="#{null != filialController.entities ? messages.nenhum_resultado_encontrado : ''}">
+							paginatorPosition="bottom" reflow="true" rows="10"
+							emptyMessage="#{null != filialController.entities ? messages.nenhum_resultado_encontrado : messages.realize_pesquisa}">
 
 							<p:column headerText="#" sortBy="#{entity.id}" styleClass="id-column">
 								<h:outputText value="#{entity.id}" />
@@ -356,9 +357,9 @@
 							actionListener="#{filialController.saveContato}" process="editForm:contatoGrid" update="messagesContato :editForm:contatoGrid"
 							styleClass="ui-grid-col-12" />
 
-						<p:commandButton id="exclusaoButton" icon="fa fa-fw fa-ban" value="#{labels.botao_excluir}" actionListener="#{filialController.excluiContato}"
+						<p:commandButton id="exclusaoButton" icon="fa fa-fw fa-trash" value="#{labels.botao_excluir}" actionListener="#{filialController.excluiContato}"
 							process="editForm:contatoGrid" styleClass="ui-grid-col-12 botao-vermelho" rendered="#{filialController.editingRelated}">
-							<p:confirm header="Confirmação" message="Confirmar excluão de contato?" icon="ui-icon-alert" />
+							<p:confirm header="Confirmação" message="Confirmar exclusão de contato?" icon="ui-icon-alert" />
 						</p:commandButton>
 
 						<p:commandButton icon="fa fa-fw fa-close" value="#{labels.botao_fechar}" oncomplete="PF('contatoDialog').hide();" process="@none" global="false"

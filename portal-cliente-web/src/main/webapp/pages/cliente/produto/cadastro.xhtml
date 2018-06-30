@@ -82,7 +82,8 @@
 						<p:spacer styleClass="display-desktop" />
 
 						<p:dataTable id="dtbEntities" widgetVar="dtb" var="entity" value="#{produtoController.entities}" rowKey="#{entity.id}" paginator="true"
-							reflow="true" rows="10" emptyMessage="#{null != produtoController.entities ? messages.nenhum_resultado_encontrado : ''}">
+							paginatorPosition="bottom" reflow="true" rows="10"
+							emptyMessage="#{null != produtoController.entities ? messages.nenhum_resultado_encontrado : messages.realize_pesquisa}">
 
 							<p:column headerText="#" sortBy="#{entity.id}" styleClass="id-column">
 								<h:outputText value="#{entity.id}" />
@@ -335,9 +336,10 @@
 							actionListener="#{produtoController.saveTamanho}" process="editForm:tamanhoGrid" update="messagesTamanho :editForm:tamanhoGrid"
 							styleClass="ui-grid-col-12" />
 
-						<p:commandButton id="exclusaoButton" icon="fa fa-fw fa-ban" value="#{labels.botao_excluir}" actionListener="#{produtoController.excluiTamanho}"
-							process="editForm:tamanhoGrid" styleClass="ui-grid-col-12 botao-vermelho" rendered="#{produtoController.editingRelated}">
-							<p:confirm header="Confirmação" message="Confirmar excluão do tamanho?" icon="ui-icon-alert" />
+						<p:commandButton id="exclusaoButton" icon="fa fa-fw fa-trash" value="#{labels.botao_excluir}"
+							actionListener="#{produtoController.excluiTamanho}" process="editForm:tamanhoGrid" styleClass="ui-grid-col-12 botao-vermelho"
+							rendered="#{produtoController.editingRelated}">
+							<p:confirm header="Confirmação" message="Confirmar exclusão do tamanho?" icon="ui-icon-alert" />
 						</p:commandButton>
 
 						<p:commandButton icon="fa fa-fw fa-close" value="#{labels.botao_fechar}" oncomplete="PF('tamanhoDialog').hide();" process="@none" global="false"
