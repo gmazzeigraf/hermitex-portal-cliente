@@ -33,8 +33,13 @@
 		<intercept-url pattern="/pages/filial/acesso/perfil.jsf" access="hasAnyRole('ROLE_FIL_ACESSO_PERFIL')" />
 		<intercept-url pattern="/pages/filial/acesso/usuario.jsf" access="hasAnyRole('ROLE_FIL_ACESSO_USUARIO')" />
 
-		<!-- Produtos -->
-		<intercept-url pattern="/pages/produtos.jsf" access="hasAnyRole('ROLE_PRODUTOS')" />
+		<!-- Compra -->
+		<intercept-url pattern="/pages/compra/produtos.jsf" access="hasAnyRole('ROLE_PRODUTOS')" />
+		<intercept-url pattern="/pages/compra/carrinho.jsf" access="hasAnyRole('ROLE_COMPRA')" />
+		<intercept-url pattern="/pages/compra/pagamento.jsf" access="hasAnyRole('ROLE_COMPRA')" />
+
+		<!-- Pedido -->
+		<intercept-url pattern="/pages/pedido/consulta.jsf" access="hasAnyRole('ROLE_PEDIDO_CONSULTA')" />
 
 		<!-- Misc -->
 		<intercept-url pattern="/pages/publico/**" access="permitAll" />

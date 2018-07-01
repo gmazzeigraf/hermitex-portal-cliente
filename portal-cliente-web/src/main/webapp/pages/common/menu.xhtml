@@ -26,7 +26,7 @@
 							</p:submenu>
 						</p:submenu>
 
-						<p:submenu id="menu_cliente" icon="fa fa-fw fa-truck" label="#{labels.menu_cliente}">
+						<p:submenu id="menu_cliente" icon="fa fa-fw fa-star" label="#{labels.menu_cliente}">
 							<p:menuitem id="menu_cliente_cadastro" icon="fa fa-fw fa-edit" value="#{labels.menu_cliente_cadastro}" url="/pages/cliente/cadastro.jsf"
 								rendered="#{sec:isAllowed('/pages/cliente/cadastro.jsf', '')}" />
 
@@ -37,7 +37,7 @@
 									url="/pages/cliente/produto/setor.jsf" rendered="#{sec:isAllowed('/pages/cliente/produto/setor.jsf', '')}" />
 								<p:menuitem id="menu_cliente_produto_cadastro" icon="fa fa-fw fa-edit" value="#{labels.menu_cliente_produto_cadastro}"
 									url="/pages/cliente/produto/cadastro.jsf" rendered="#{sec:isAllowed('/pages/cliente/produto/cadastro.jsf', '')}" />
-								<p:menuitem id="menu_cliente_produto_estoque" icon="fa fa-fw fa-truck" value="#{labels.menu_cliente_produto_estoque}"
+								<p:menuitem id="menu_cliente_produto_estoque" icon="fa fa-fw fa-cubes" value="#{labels.menu_cliente_produto_estoque}"
 									url="/pages/cliente/produto/estoque.jsf" rendered="#{sec:isAllowed('/pages/cliente/produto/estoque.jsf', '')}" />
 							</p:submenu>
 
@@ -61,10 +61,15 @@
 							</p:submenu>
 						</p:submenu>
 
-						<p:menuitem id="menu_produtos" icon="fa fa-fw fa-barcode" value="#{labels.menu_produtos}" url="/pages/produtos.jsf"
-							rendered="#{sec:isAllowed('/pages/produtos.jsf', '')}" />
-						<p:menuitem id="menu_carrinho" icon="fa fa-fw fa-shopping-cart" value="#{fn:length(carrinhoController.pedido.itens)}" url="/pages/carrinho.jsf"
-							rendered="#{sec:areAnyGranted('ROLE_PEDIDO')}" />
+						<p:submenu id="menu_pedido" icon="fa fa-fw fa-truck" label="#{labels.menu_pedido}">
+							<p:menuitem id="menu_pedido_consulta" icon="fa fa-fw fa-search" value="#{labels.menu_pedido_consulta}" url="/pages/pedido/consulta.jsf"
+								rendered="#{sec:isAllowed('/pages/pedido/consulta.jsf', '')}" />
+						</p:submenu>
+
+						<p:menuitem id="menu_produtos" icon="fa fa-fw fa-barcode" value="#{labels.menu_produtos}" url="/pages/compra/produtos.jsf"
+							rendered="#{sec:isAllowed('/pages/compra/produtos.jsf', '')}" />
+						<p:menuitem id="menu_carrinho" icon="fa fa-fw fa-shopping-cart" value="#{fn:length(carrinhoController.pedido.itens)}"
+							url="/pages/compra/carrinho.jsf" rendered="#{sec:isAllowed('/pages/compra/carrinho.jsf', '')}" />
 					</pp:menu>
 				</div>
 			</div>

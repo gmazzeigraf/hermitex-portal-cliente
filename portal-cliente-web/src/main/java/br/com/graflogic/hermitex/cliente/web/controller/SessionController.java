@@ -76,8 +76,8 @@ public class SessionController extends BaseController implements InitializingBea
 	}
 
 	// Produto
-	public String getUrlImagem(String idImagem, boolean miniatura) {
-		String url = "/imagens?idImagem=" + idImagem + "&miniatura=" + miniatura;
+	public String getUrlImagem(String idImagem, Integer miniatura) {
+		String url = "/imagens?idImagem=" + idImagem + "&miniatura=" + (null != miniatura ? miniatura : "");
 
 		return url;
 	}

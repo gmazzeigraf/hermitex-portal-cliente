@@ -22,11 +22,13 @@
 
 		<div class="layout-main">
 			<div class="route-bar">
-				<i class="fa fa-home"></i> <span>/ </span>
-				<ui:insert name="viewname" />
-
+				<h:form id="routeBarForm">
+					<i class="fa fa-home"></i>
+					<span>/ </span>
+					<ui:insert name="viewname" />
+				</h:form>
 			</div>
-			
+
 			<div class="layout-main-content">
 				<h:form id="searchForm">
 					<ui:insert name="search" />

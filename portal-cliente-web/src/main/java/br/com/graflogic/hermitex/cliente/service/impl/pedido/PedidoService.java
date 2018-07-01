@@ -49,9 +49,27 @@ public class PedidoService {
 
 		entity.setStatus(DomStatus.PAGAMENTO_PENDENTE);
 
-		repository.store(entity);
+		List<PedidoItem> itens = entity.getItens();
+		entity.setItens(null);
 
-		registraAuditoria(entity.getId(), entity, DomEventoAuditoriaPedido.CADASTRO, null);
+		try {
+			repository.store(entity);
+
+			for (PedidoItem item : itens) {
+				item.setIdPedido(entity.getId());
+			}
+
+			entity.setItens(itens);
+
+			repository.update(entity);
+
+			registraAuditoria(entity.getId(), entity, DomEventoAuditoriaPedido.CADASTRO, null);
+
+		} catch (Throwable t) {
+			entity.setItens(itens);
+
+			throw t;
+		}
 	}
 
 	public void atualiza(Pedido entity) {
@@ -76,7 +94,7 @@ public class PedidoService {
 		return repository.consulta(entity);
 	}
 
-	public Pedido consultaPorId(Integer id) {
+	public Pedido consultaPorId(Long id) {
 		Pedido entity = repository.findById(id);
 
 		if (null == entity) {
@@ -86,7 +104,7 @@ public class PedidoService {
 		return entity;
 	}
 
-	public Pedido consultaCompletoPorId(Integer id) {
+	public Pedido consultaCompletoPorId(Long id) {
 		Pedido entity = repository.findById(id);
 
 		if (null == entity) {

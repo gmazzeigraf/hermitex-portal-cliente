@@ -26,8 +26,12 @@ import org.springframework.security.web.util.TextEscapeUtils;
 import br.com.graflogic.hermitex.cliente.data.dom.DomAcesso.DomStatusSenhaUsuario;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.Usuario;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioAdministrador;
+import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioCliente;
+import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioFilial;
+import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Filial;
 import br.com.graflogic.hermitex.cliente.service.impl.acesso.UsuarioService;
 import br.com.graflogic.hermitex.cliente.service.impl.aud.AuditoriaService;
+import br.com.graflogic.hermitex.cliente.service.impl.cadastro.FilialService;
 
 /**
  * 
@@ -50,6 +54,9 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
 
 	@Autowired
 	private AuditoriaService auditoriaService;
+
+	@Autowired
+	private FilialService filialService;
 
 	public AuthenticationFilter() {
 		super("/j_spring_security_check");
@@ -100,6 +107,12 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
 			// Consulta o usuario	
 			Usuario usuario = usuarioService.consultaPorEmail(email);
 
+			if (usuario instanceof UsuarioFilial) {
+				Filial filial = filialService.consultaPorId(((UsuarioFilial) usuario).getIdFilial());
+
+				((UsuarioFilial) usuario).setIdCliente(filial.getIdCliente());
+			}
+
 			// Prepara o objeto autenticado
 			UserInfo principal = new UserInfo(email, "", autenticacao.getAuthorities(), usuario);
 
@@ -112,6 +125,12 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
 
 			if (usuario instanceof UsuarioAdministrador) {
 				authorities.add(new SimpleGrantedAuthority(UsuarioAdministrador.PERMISSAO));
+
+			} else if (usuario instanceof UsuarioCliente) {
+				authorities.add(new SimpleGrantedAuthority(UsuarioCliente.PERMISSAO));
+
+			} else if (usuario instanceof UsuarioFilial) {
+				authorities.add(new SimpleGrantedAuthority(UsuarioFilial.PERMISSAO));
 
 			}
 

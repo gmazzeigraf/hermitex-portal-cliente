@@ -60,10 +60,10 @@ public class DomAcesso {
 	public static DomStatusPerfilUsuario domStatusPerfilUsuario = new DomStatusPerfilUsuario();
 
 	public static class DomPermissaoAcesso extends DomBase {
-		public static final String ROLE_PEDIDO = "ROLE_PEDIDO";
+		public static final String ROLE_COMPRA = "ROLE_COMPRA";
 
 		DomPermissaoAcesso() {
-			mapa.put(ROLE_PEDIDO, "Pedido");
+			mapa.put(ROLE_COMPRA, "Compra");
 		}
 	}
 }

@@ -35,7 +35,7 @@ public class PedidoItemRepository extends BaseRepository<PedidoItem> {
 
 		predicateList.add(builder.and(builder.equal(table.get("idPedido"), idPedido)));
 
-		query.orderBy(builder.asc(table.get("desc")));
+		query.orderBy(builder.asc(table.get("id")));
 		query.where(predicateList.toArray(new Predicate[predicateList.size()]));
 		TypedQuery<PedidoItem> typedQuery = getEntityManager().createQuery(query);
 

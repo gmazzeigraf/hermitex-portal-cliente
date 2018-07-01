@@ -1,0 +1,37 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/pages/templates/template.xhtml"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+	<ui:define name="viewname">#{labels.menu_carrinho}</ui:define>
+
+	<ui:define name="content">
+		<h:form id="mainForm">
+			<div class="ui-g">
+				<div class="ui-g-12">
+					<div class="card card-w-title">
+						<h1>Pagamento</h1>
+						<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel for="tipoPagamento" value="Tipo Pagamento" styleClass="label" />
+								<p:selectOneMenu id="tipoPagamento" value="#{carrinhoController.pedido.tipoPagamento}" styleClass="ui-grid-col-12" required="true"
+									requiredMessage="Favor selecionar o tipo de pagamento">
+									<f:selectItem itemLabel="Selecione" itemValue="" />
+									<f:selectItems value="#{domPedidoController.tipoPagamentoMap}" />
+								</p:selectOneMenu>
+							</p:panelGrid>
+
+							<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group" rendered="#{fn:length(carrinhoController.pedido.itens) > 0}">
+								<p:spacer styleClass="display-desktop" />
+								<p:commandButton icon="fa fa-fw fa-check" value="#{labels.botao_finalizar_pedido}" update="mainForm" process="mainForm"
+									styleClass="ui-grid-col-12" actionListener="#{carrinhoController.finalizaPedido}" onsuccess="liberaRefresh();" />
+							</p:panelGrid>
+						</p:panelGrid>
+					</div>
+
+					<p:growl id="messagesGrowl" />
+				</div>
+			</div>
+		</h:form>
+	</ui:define>
+
+</ui:composition>

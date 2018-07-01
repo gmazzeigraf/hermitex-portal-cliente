@@ -46,10 +46,6 @@ public class PedidoRepository extends BaseRepository<Pedido> {
 			predicateList.add(builder.and(builder.equal(table.get("status"), entity.getStatus())));
 		}
 
-		if (StringUtils.isNotEmpty(entity.getStatusPagamento())) {
-			predicateList.add(builder.and(builder.equal(table.get("pagamento"), entity.getStatusPagamento())));
-		}
-
 		query.orderBy(builder.desc(table.get("id")));
 		query.where(predicateList.toArray(new Predicate[predicateList.size()]));
 		TypedQuery<Pedido> typedQuery = getEntityManager().createQuery(query);

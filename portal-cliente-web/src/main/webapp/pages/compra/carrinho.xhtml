@@ -9,13 +9,14 @@
 			<div class="ui-g">
 				<div class="ui-g-12">
 					<div class="card card-w-title">
+						<h1>Produtos</h1>
 						<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
 							<p:dataTable id="dtbEntities" widgetVar="dtb" var="entity" value="#{carrinhoController.pedido.itens}" reflow="true"
 								emptyMessage="#{null != carrinhoController.pedido.itens ? 'Nenhum item adicionado no carrinho' : ''}" rowIndexVar="index"
 								styleClass="carrinho-table">
 
 								<p:column headerText="" styleClass="id-column">
-									<p:graphicImage cache="true" value="#{sessionController.getUrlImagem(entity.idImagemCapaProduto, true)}" title="" style="height: 50px;" />
+									<p:graphicImage cache="true" value="#{sessionController.getUrlImagem(entity.idImagemCapaProduto, 2)}" title="" />
 								</p:column>
 
 								<p:column headerText="Código" styleClass="id-column">
@@ -62,10 +63,10 @@
 								</f:facet>
 							</p:dataTable>
 
-							<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
+							<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group" rendered="#{fn:length(carrinhoController.pedido.itens) > 0}">
 								<p:spacer styleClass="display-desktop" />
-								<p:commandButton icon="fa fa-fw fa-check" value="#{labels.botao_fechar_pedido}" update="mainForm" process="@this" resetValues="true"
-									styleClass="ui-grid-col-12" />
+								<p:commandButton icon="fa fa-fw fa-check" value="#{labels.botao_prosseguir_pagamento}" update="mainForm" process="@this" resetValues="true"
+									styleClass="ui-grid-col-12" actionListener="#{carrinhoController.prosseguePagamento}" />
 							</p:panelGrid>
 						</p:panelGrid>
 					</div>

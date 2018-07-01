@@ -15,7 +15,6 @@ import br.com.graflogic.base.service.util.I18NUtil;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioCliente;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioFilial;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
-import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Filial;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoItem;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.CategoriaProduto;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.Produto;
@@ -25,7 +24,6 @@ import br.com.graflogic.hermitex.cliente.data.entity.produto.SetorProduto;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.TamanhoProduto;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
-import br.com.graflogic.hermitex.cliente.service.impl.cadastro.FilialService;
 import br.com.graflogic.hermitex.cliente.service.impl.produto.CategoriaProdutoService;
 import br.com.graflogic.hermitex.cliente.service.impl.produto.ProdutoService;
 import br.com.graflogic.hermitex.cliente.service.impl.produto.SetorProdutoService;
@@ -50,9 +48,6 @@ public class ProdutoApresentacaoController extends SearchBaseController<ProdutoA
 
 	@Autowired
 	private ClienteService clienteService;
-
-	@Autowired
-	private FilialService filialService;
 
 	@Autowired
 	private TamanhoProdutoService tamanhoService;
@@ -94,9 +89,8 @@ public class ProdutoApresentacaoController extends SearchBaseController<ProdutoA
 				getFilterEntity().setIdCliente(((UsuarioCliente) SessionUtil.getAuthenticatedUsuario()).getIdCliente());
 
 			} else if (SessionUtil.isUsuarioFilial()) {
-				Filial filial = filialService.consultaPorId(((UsuarioFilial) SessionUtil.getAuthenticatedUsuario()).getIdFilial());
+				getFilterEntity().setIdCliente(((UsuarioFilial) SessionUtil.getAuthenticatedUsuario()).getIdCliente());
 
-				getFilterEntity().setIdCliente(filial.getIdCliente());
 			}
 
 			if (null != getFilterEntity().getIdCliente()) {
@@ -121,7 +115,7 @@ public class ProdutoApresentacaoController extends SearchBaseController<ProdutoA
 
 		this.produtoApresentacao = entity;
 
-		preparaItem();
+		preparaNovoItem();
 	}
 
 	public void adicionaItem() {
@@ -129,7 +123,7 @@ public class ProdutoApresentacaoController extends SearchBaseController<ProdutoA
 			// Adiciona o item no carrinho
 			carrinhoController.adicionaItem(itemPedido);
 
-			preparaItem();
+			preparaNovoItem();
 
 			returnInfoMessage("Item adicionado com sucesso", null);
 
@@ -186,7 +180,7 @@ public class ProdutoApresentacaoController extends SearchBaseController<ProdutoA
 		}
 	}
 
-	private void preparaItem() {
+	private void preparaNovoItem() {
 		itemPedido = new PedidoItem();
 		itemPedido.setIdProduto(getEntity().getId());
 		itemPedido.setValorUnitario(getEntity().getValor());

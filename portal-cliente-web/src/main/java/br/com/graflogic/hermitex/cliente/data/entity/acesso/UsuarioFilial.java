@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import br.com.graflogic.hermitex.cliente.data.dom.DomAcesso.DomTipoUsuario;
 
@@ -28,11 +29,22 @@ public class UsuarioFilial extends Usuario {
 	@Column(name = "id_filial", nullable = false)
 	private Integer idFilial;
 
+	@Transient
+	private Integer idCliente;
+
 	public Integer getIdFilial() {
 		return idFilial;
 	}
 
 	public void setIdFilial(Integer idFilial) {
 		this.idFilial = idFilial;
+	}
+
+	public Integer getIdCliente() {
+		return idCliente;
+	}
+
+	public void setIdCliente(Integer idCliente) {
+		this.idCliente = idCliente;
 	}
 }

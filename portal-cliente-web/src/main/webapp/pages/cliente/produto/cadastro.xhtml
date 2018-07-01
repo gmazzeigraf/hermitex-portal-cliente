@@ -14,8 +14,9 @@
 							<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 									<p:outputLabel for="clienteFilter" value="Cliente *" styleClass="label" />
-									<p:selectOneMenu id="clienteFilter" value="#{produtoController.filterEntity.idCliente}" styleClass="ui-grid-col-12">
-										<f:selectItem itemLabel="" itemValue="" />
+									<p:selectOneMenu id="clienteFilter" value="#{produtoController.filterEntity.idCliente}" styleClass="ui-grid-col-12" filter="true"
+										filterMatchMode="contains">
+										<f:selectItem itemLabel="Selecione" itemValue="" />
 										<f:selectItems value="#{produtoController.clientes}" var="item" itemLabel="#{item.razaoSocial}" itemValue="#{item.id}" />
 										<p:ajax process="@this" update=":searchForm" listener="#{produtoController.changeCliente}" />
 									</p:selectOneMenu>
@@ -189,7 +190,7 @@
 							</p:panelGrid>
 
 							<c:if test="#{fn:length(produtoController.entity.linkYoutube) > 0}">
-								<iframe width="420" height="315" src="#{produtoController.entity.linkYoutube}"> </iframe>
+								<iframe width="420" height="315" src="#{produtoController.entity.linkYoutube}" />
 							</c:if>
 						</p:panelGrid>
 					</div>
@@ -247,7 +248,7 @@
 
 								<p:column headerText="Imagem" style="text-align: center;">
 									<h:outputText value="Pendente de gravação" rendered="#{imagem.temporaria}" />
-									<p:graphicImage cache="true" value="#{sessionController.getUrlImagem(imagem.id, true)}" title="" rendered="#{!imagem.temporaria}" />
+									<p:graphicImage cache="true" value="#{sessionController.getUrlImagem(imagem.id, 3)}" title="" rendered="#{!imagem.temporaria}" />
 								</p:column>
 
 								<p:column headerText="Capa" style="text-align: center;">

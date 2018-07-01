@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
@@ -40,7 +41,7 @@ public class ImagemServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String idImagem = request.getParameter("idImagem");
 
-		boolean miniatura = new Boolean(request.getParameter("miniatura"));
+		String miniaturaStr = request.getParameter("miniatura");
 
 		byte[] imagemArray = produtoService.downloadImagem(idImagem);
 
@@ -49,14 +50,14 @@ public class ImagemServlet extends HttpServlet {
 			return;
 		}
 
-		if (miniatura) {
+		if (StringUtils.isNotEmpty(miniaturaStr) && StringUtils.isNumeric(miniaturaStr)) {
 			BufferedImage original = ImageIO.read(new ByteArrayInputStream(imagemArray));
 
 			// Calcula as proporcoes
 			Double width = (double) original.getWidth();
 			Double height = (double) original.getHeight();
 
-			Double divisor = width / 150;
+			Double divisor = width / (50 * Integer.parseInt(miniaturaStr));
 			width = width / divisor;
 			height = height / divisor;
 

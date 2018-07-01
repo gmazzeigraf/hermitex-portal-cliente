@@ -47,14 +47,11 @@ public class Pedido implements Serializable {
 	@Column(name = "tp_pagamento", nullable = false)
 	private String tipoPagamento;
 
-	@Column(name = "id_pagamento", nullable = false)
+	@Column(name = "id_pagamento")
 	private String idPagamento;
 
 	@Column(name = "status", nullable = false)
 	private String status;
-
-	@Column(name = "status_pagamento", nullable = false)
-	private String statusPagamento;
 
 	@Version
 	@Column(name = "versao", nullable = false)
@@ -118,14 +115,6 @@ public class Pedido implements Serializable {
 
 	public void setStatus(String status) {
 		this.status = status;
-	}
-
-	public String getStatusPagamento() {
-		return statusPagamento;
-	}
-
-	public void setStatusPagamento(String statusPagamento) {
-		this.statusPagamento = statusPagamento;
 	}
 
 	public Long getVersao() {

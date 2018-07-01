@@ -4,13 +4,18 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 import br.com.graflogic.base.service.util.I18NUtil;
+import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioCliente;
+import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioFilial;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.Pedido;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoItem;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
+import br.com.graflogic.hermitex.cliente.service.impl.pedido.PedidoService;
+import br.com.graflogic.hermitex.cliente.web.util.SessionUtil;
 import br.com.graflogic.utilities.presentationutil.controller.BaseController;
 
 /**
@@ -24,13 +29,15 @@ public class CarrinhoController extends BaseController implements InitializingBe
 
 	private static final long serialVersionUID = 1141659331755233586L;
 
+	@Autowired
+	private PedidoService pedidoService;
+
 	private Pedido pedido;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		try {
-			pedido = new Pedido();
-			pedido.setItens(new ArrayList<>());
+			preparaNovoPedido();
 
 		} catch (Throwable t) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao iniciar a sessão, contate o administrador", t);
@@ -66,6 +73,42 @@ public class CarrinhoController extends BaseController implements InitializingBe
 
 		for (PedidoItem item : pedido.getItens()) {
 			pedido.setValorTotal(pedido.getValorTotal().add(item.getValorTotal()));
+		}
+	}
+
+	private void preparaNovoPedido() {
+		pedido = new Pedido();
+		pedido.setItens(new ArrayList<>());
+
+		if (SessionUtil.isUsuarioCliente()) {
+			pedido.setIdCliente(((UsuarioCliente) SessionUtil.getAuthenticatedUsuario()).getIdCliente());
+
+		} else if (SessionUtil.isUsuarioFilial()) {
+			pedido.setIdCliente(((UsuarioFilial) SessionUtil.getAuthenticatedUsuario()).getIdCliente());
+			pedido.setIdFilial(((UsuarioFilial) SessionUtil.getAuthenticatedUsuario()).getIdFilial());
+
+		}
+	}
+
+	public void prosseguePagamento() {
+		try {
+			redirectView(getApplicationUrl() + "/pages/compra/pagamento.jsf");
+
+		} catch (Throwable t) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao finalizar pedido, contate o administrador", t);
+		}
+	}
+
+	public void finalizaPedido() {
+		try {
+			pedidoService.cadastra(pedido);
+
+			returnInfoMessage("Pedido " + pedido.getId() + " cadastrado com sucesso", getApplicationUrl() + "/pages/compra/produtos.jsf");
+
+			preparaNovoPedido();
+
+		} catch (Throwable t) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao cadastrar pedido, contate o administrador", t);
 		}
 	}
 

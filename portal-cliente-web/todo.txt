@@ -2,5 +2,7 @@
 - Apresentar logo por cliente
 - Download fita métrica
 - Tabela medidas
-OK - Atualizacao do menu do carrinho
-OK - Video youtube
+- Pagamento do pedido
+- Calculo de frete?
+- Incluir id do objeto no route ao editar
+- Incluir mais informacoes na consulta de peddo
