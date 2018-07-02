@@ -16,6 +16,7 @@ import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomStatus;
 import br.com.graflogic.hermitex.cliente.data.entity.aud.PedidoAuditoria;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.Pedido;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoItem;
+import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoSimple;
 import br.com.graflogic.hermitex.cliente.data.impl.aud.PedidoAuditoriaRepository;
 import br.com.graflogic.hermitex.cliente.data.impl.pedido.PedidoItemRepository;
 import br.com.graflogic.hermitex.cliente.data.impl.pedido.PedidoRepository;
@@ -90,7 +91,7 @@ public class PedidoService {
 	}
 
 	// Consulta
-	public List<Pedido> consulta(Pedido entity) {
+	public List<PedidoSimple> consulta(PedidoSimple entity) {
 		return repository.consulta(entity);
 	}
 

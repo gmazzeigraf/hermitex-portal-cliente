@@ -1,18 +1,18 @@
 package br.com.graflogic.hermitex.cliente.data.impl.pedido;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.Query;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Repository;
 
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.Pedido;
+import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoSimple;
 import br.com.graflogic.utilities.datautil.repository.BaseRepository;
 
 /**
@@ -27,29 +27,65 @@ public class PedidoRepository extends BaseRepository<Pedido> {
 		super(Pedido.class);
 	}
 
-	public List<Pedido> consulta(Pedido entity) {
-		CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
-		CriteriaQuery<Pedido> query = builder.createQuery(Pedido.class);
-		List<Predicate> predicateList = new ArrayList<Predicate>();
+	@SuppressWarnings("unchecked")
+	public List<PedidoSimple> consulta(PedidoSimple filter) {
+		String queryStr = "SELECT ped.id, ped.vl_total, ped.tp_pagamento, ped.status,"
+				+ " (SELECT COUNT(id) FROM tb_pedido_item WHERE id_pedido = ped.id) AS quantidade_itens, aud.data"
+				+ " FROM tb_pedido ped INNER JOIN tb_pedido_aud aud ON ped.id = aud.id_relacionado";
+		String where = "";
+		List<Object> params = new ArrayList<>();
 
-		Root<Pedido> table = query.from(Pedido.class);
-
-		if (null != entity.getIdCliente() && 0 != entity.getIdCliente()) {
-			predicateList.add(builder.and(builder.equal(table.get("idCliente"), entity.getIdCliente())));
+		if (null != filter.getIdCliente() && 0 != filter.getIdCliente()) {
+			where = generateWhere(where, "ped.id_cliente = ?");
+			params.add(filter.getIdCliente());
 		}
 
-		if (null != entity.getIdFilial() && 0 != entity.getIdFilial()) {
-			predicateList.add(builder.and(builder.equal(table.get("idFilial"), entity.getIdFilial())));
+		if (null != filter.getIdFilial() && 0 != filter.getIdFilial()) {
+			where = generateWhere(where, "ped.id_filial = ?");
+			params.add(filter.getIdFilial());
 		}
 
-		if (StringUtils.isNotEmpty(entity.getStatus())) {
-			predicateList.add(builder.and(builder.equal(table.get("status"), entity.getStatus())));
+		if (StringUtils.isNotEmpty(filter.getStatus())) {
+			where = generateWhere(where, "ped.status = ?");
+			params.add(filter.getStatus());
 		}
 
-		query.orderBy(builder.desc(table.get("id")));
-		query.where(predicateList.toArray(new Predicate[predicateList.size()]));
-		TypedQuery<Pedido> typedQuery = getEntityManager().createQuery(query);
+		if (null != filter.getDataCadastroDe()) {
+			where = generateWhere(where, "aud.data >= ?");
+			params.add(filter.getDataCadastroDe());
+		}
 
-		return (List<Pedido>) typedQuery.getResultList();
+		if (null != filter.getDataCadastroAte()) {
+			where = generateWhere(where, "aud.data <= ?");
+			params.add(filter.getDataCadastroAte());
+		}
+
+		queryStr += where;
+
+		queryStr += " ORDER BY ped.id DESC";
+
+		Query query = getEntityManager().createNativeQuery(queryStr);
+
+		for (int i = 0; i < params.size(); i++) {
+			query.setParameter((i + 1), params.get(i));
+		}
+
+		List<Object[]> rows = query.getResultList();
+
+		List<PedidoSimple> entities = new ArrayList<>();
+
+		for (Object[] row : rows) {
+			PedidoSimple entity = new PedidoSimple();
+			entity.setId(((BigInteger) row[0]).longValue());
+			entity.setValorTotal((BigDecimal) row[1]);
+			entity.setTipoPagamento(((Character) row[2]).toString());
+			entity.setStatus(((Character) row[3]).toString());
+			entity.setQuantidadeItens(((BigInteger) row[4]).intValue());
+			entity.setDataCadastro((Date) row[5]);
+
+			entities.add(entity);
+		}
+
+		return entities;
 	}
 }

@@ -39,6 +39,20 @@
 										<f:selectItems value="#{domPedidoController.statusMap}" />
 									</p:selectOneMenu>
 								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="dataCadastroDeFilter" value="Data - De" styleClass="label" />
+									<p:calendar id="dataCadastroDeFilter" value="#{pedidoController.filterEntity.dataCadastroDe}" pattern="dd/MM/yyyy HH:mm:ss" locale="br"
+										readonlyInput="false" navigator="true" showOn="button" styleClass="resp-calendar" mask="99/99/9999 99:99:99"
+										converterMessage="Data de inválida" />
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="dataCadastroAteFilter" value="Data - Até" styleClass="label" />
+									<p:calendar id="dataCadastroAteFilter" value="#{pedidoController.filterEntity.dataCadastroAte}" pattern="dd/MM/yyyy HH:mm:ss" locale="br"
+										readonlyInput="false" navigator="true" showOn="button" styleClass="resp-calendar" mask="99/99/9999 99:99:99"
+										converterMessage="Data até inválida" />
+								</p:panelGrid>
 							</p:panelGrid>
 
 							<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank">
@@ -65,10 +79,24 @@
 								<h:outputText value="#{entity.id}" />
 							</p:column>
 
-							<p:column headerText="Total" sortBy="#{entity.valorTotal}" styleClass="coluna-valor">
+							<p:column headerText="Data" sortBy="#{entity.dataCadastro}">
+								<h:outputText value="#{entity.dataCadastro}">
+									<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" timeZone="America/Sao_Paulo" />
+								</h:outputText>
+							</p:column>
+
+							<p:column headerText="Total" sortBy="#{entity.valorTotal}">
 								<h:outputText value="#{entity.valorTotal}">
 									<f:convertNumber pattern="R$ #,##0.00" />
 								</h:outputText>
+							</p:column>
+
+							<p:column headerText="Itens" sortBy="#{entity.quantidadeItens}">
+								<h:outputText value="#{entity.quantidadeItens}" />
+							</p:column>
+
+							<p:column headerText="Status" sortBy="#{entity.deStatus}">
+								<h:outputText value="#{entity.deStatus}" />
 							</p:column>
 
 							<p:column styleClass="coluna-edicao">
@@ -93,6 +121,53 @@
 
 						<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
 
+						</p:panelGrid>
+
+						<h1>Produtos</h1>
+						<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
+							<p:dataTable id="dtbEntities" widgetVar="dtb" var="entity" value="#{pedidoController.entity.itens}" reflow="true"
+								emptyMessage="#{null != pedidoController.entity.itens ? 'Nenhum item cadastrado' : ''}" rowIndexVar="index">
+
+								<p:column headerText="" styleClass="id-column">
+									<p:graphicImage cache="true" value="#{sessionController.getUrlImagem(entity.idImagemCapaProduto, 2)}" title="" />
+								</p:column>
+
+								<p:column headerText="Código" styleClass="id-column">
+									<h:outputText value="#{entity.codigoProduto}" />
+								</p:column>
+
+								<p:column headerText="Título" styleClass="coluna-center">
+									<h:outputText value="#{entity.tituloProduto}" />
+								</p:column>
+
+								<p:column headerText="Tamanho" styleClass="id-column">
+									<h:outputText value="#{entity.codigoTamanho}" />
+								</p:column>
+
+								<p:column headerText="Total" styleClass="coluna-valor">
+									<h:outputText value="#{entity.valorCorrigidoTamanho}">
+										<f:convertNumber pattern="R$ #,##0.00" />
+									</h:outputText>
+								</p:column>
+
+								<p:column headerText="Quantidade" styleClass="id-column">
+									<h:outputText value="#{entity.quantidade}" />
+								</p:column>
+
+								<p:column headerText="Total" styleClass="coluna-valor">
+									<h:outputText value="#{entity.valorTotal}">
+										<f:convertNumber pattern="R$ #,##0.00" />
+									</h:outputText>
+								</p:column>
+
+								<f:facet name="footer">
+									<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
+										<h:outputText value="#{pedidoController.entity.valorTotal}">
+											<f:convertNumber pattern="Total do pedido: R$ #,##0.00" />
+										</h:outputText>
+									</p:panelGrid>
+								</f:facet>
+							</p:dataTable>
 						</p:panelGrid>
 					</div>
 

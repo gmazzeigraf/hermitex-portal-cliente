@@ -13,6 +13,7 @@ import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioFilial;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Filial;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.Pedido;
+import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoSimple;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.FilialService;
 import br.com.graflogic.hermitex.cliente.service.impl.pedido.PedidoService;
@@ -26,7 +27,7 @@ import br.com.graflogic.utilities.presentationutil.controller.SearchBaseControll
  */
 @Controller
 @Scope("view")
-public class PedidoController extends SearchBaseController<Pedido, Pedido> implements InitializingBean {
+public class PedidoController extends SearchBaseController<PedidoSimple, Pedido> implements InitializingBean {
 
 	private static final long serialVersionUID = 3702814175660127874L;
 
@@ -46,7 +47,7 @@ public class PedidoController extends SearchBaseController<Pedido, Pedido> imple
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		try {
-			setFilterEntity(new Pedido());
+			setFilterEntity(new PedidoSimple());
 
 			if (SessionUtil.isUsuarioAdministrador()) {
 				clientes = clienteService.consulta(new Cliente());
@@ -80,7 +81,7 @@ public class PedidoController extends SearchBaseController<Pedido, Pedido> imple
 	}
 
 	@Override
-	protected void select(Pedido entity) {
+	protected void select(PedidoSimple entity) {
 		setEntity(service.consultaCompletoPorId(entity.getId()));
 	}
 

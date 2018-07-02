@@ -12,8 +12,7 @@
 						<h1>Produtos</h1>
 						<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
 							<p:dataTable id="dtbEntities" widgetVar="dtb" var="entity" value="#{carrinhoController.pedido.itens}" reflow="true"
-								emptyMessage="#{null != carrinhoController.pedido.itens ? 'Nenhum item adicionado no carrinho' : ''}" rowIndexVar="index"
-								styleClass="carrinho-table">
+								emptyMessage="#{null != carrinhoController.pedido.itens ? 'Nenhum item adicionado no carrinho' : ''}" rowIndexVar="index">
 
 								<p:column headerText="" styleClass="id-column">
 									<p:graphicImage cache="true" value="#{sessionController.getUrlImagem(entity.idImagemCapaProduto, 2)}" title="" />
