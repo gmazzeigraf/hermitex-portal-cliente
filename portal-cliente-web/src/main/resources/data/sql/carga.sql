@@ -18,5 +18,3 @@ INSERT INTO tb_configuracao VALUES ('email.senha', 'n127415');
 INSERT INTO tb_configuracao VALUES ('email.ssl', 'true');
 
 INSERT INTO tb_configuracao VALUES ('web.url', 'http://localhost:8080/web');
-
-INSERT INTO tb_configuracao VALUES ('produto.diretorio_imagens', '/opt/hermitex/produto');
