@@ -18,6 +18,8 @@ import javax.persistence.Version;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
+import br.com.graflogic.hermitex.cliente.data.dom.DomPedido;
+
 /**
  * 
  * @author gmazz
@@ -131,5 +133,13 @@ public class Pedido implements Serializable {
 
 	public void setItens(List<PedidoItem> itens) {
 		this.itens = itens;
+	}
+
+	public String getDeTipoPagamento() {
+		return DomPedido.domTipoPagamento.getDeValor(tipoPagamento);
+	}
+
+	public String getDeStatus() {
+		return DomPedido.domStatus.getDeValor(status);
 	}
 }

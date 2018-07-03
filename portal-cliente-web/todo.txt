@@ -5,4 +5,4 @@
 - Pagamento do pedido
 - Calculo de frete?
 - Incluir id do objeto no route ao editar
-- Incluir mais informacoes na consulta de peddo
+- Incluir mais informacoes na consulta de pedido

@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -230,6 +232,17 @@ public class ProdutoApresentacaoController extends SearchBaseController<ProdutoA
 
 		if (itemPedido.getQuantidade() > 0) {
 			itemPedido.setValorTotal(itemPedido.getValorCorrigidoTamanho().multiply(new BigDecimal(itemPedido.getQuantidade())));
+		}
+	}
+
+	public StreamedContent getFitaMetrica() {
+		try {
+			return new DefaultStreamedContent(this.getClass().getClassLoader().getResourceAsStream("web/arquivos/fitametrica.pdf"), "",
+					"fitametrica.pdf");
+
+		} catch (Throwable t) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao realizar download da fita métrica, contate o administrador", t);
+			return null;
 		}
 	}
 
