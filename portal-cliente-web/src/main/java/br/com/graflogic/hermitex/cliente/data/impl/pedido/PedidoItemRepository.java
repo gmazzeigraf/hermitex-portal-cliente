@@ -1,16 +1,15 @@
 package br.com.graflogic.hermitex.cliente.data.impl.pedido;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.Query;
 
 import org.springframework.stereotype.Repository;
 
+import br.com.graflogic.hermitex.cliente.data.dom.DomGeral.DomBoolean;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoItem;
 import br.com.graflogic.utilities.datautil.repository.BaseRepository;
 
@@ -26,19 +25,51 @@ public class PedidoItemRepository extends BaseRepository<PedidoItem> {
 		super(PedidoItem.class);
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<PedidoItem> consultaPorPedido(Long idPedido) {
-		CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
-		CriteriaQuery<PedidoItem> query = builder.createQuery(PedidoItem.class);
-		List<Predicate> predicateList = new ArrayList<Predicate>();
+		String queryStr = "SELECT ite.id, ite.id_pedido, ite.id_produto, ite.cd_tamanho, ite.quantidade, ite.vl_unitario, ite.vl_corrigido_tamanho, ite.vl_total,"
+				+ " pro.codigo, pro.titulo, img.id AS id_imagem"
+				+ " FROM tb_pedido_item ite INNER JOIN tb_produto pro ON ite.id_produto = pro.id INNER JOIN tb_produto_imagem img ON pro.id = img.id_produto";
 
-		Root<PedidoItem> table = query.from(PedidoItem.class);
+		String where = "";
 
-		predicateList.add(builder.and(builder.equal(table.get("idPedido"), idPedido)));
+		List<Object> params = new ArrayList<>();
 
-		query.orderBy(builder.asc(table.get("id")));
-		query.where(predicateList.toArray(new Predicate[predicateList.size()]));
-		TypedQuery<PedidoItem> typedQuery = getEntityManager().createQuery(query);
+		where = generateWhere(where, "img.in_capa = ?");
+		params.add(DomBoolean.SIM);
 
-		return (List<PedidoItem>) typedQuery.getResultList();
+		where = generateWhere(where, "ite.id_pedido = ?");
+		params.add(idPedido);
+
+		queryStr += where;
+
+		Query query = getEntityManager().createNativeQuery(queryStr);
+
+		for (int i = 0; i < params.size(); i++) {
+			query.setParameter((i + 1), params.get(i));
+		}
+
+		List<Object[]> rows = query.getResultList();
+
+		List<PedidoItem> entities = new ArrayList<>();
+
+		for (Object[] row : rows) {
+			PedidoItem entity = new PedidoItem();
+			entity.setId(((BigInteger) row[0]).longValue());
+			entity.setIdPedido(((BigInteger) row[1]).longValue());
+			entity.setIdProduto((Integer) row[2]);
+			entity.setCodigoTamanho((String) row[3]);
+			entity.setQuantidade(((Short) row[4]).intValue());
+			entity.setValorUnitario((BigDecimal) row[5]);
+			entity.setValorCorrigidoTamanho((BigDecimal) row[6]);
+			entity.setValorTotal((BigDecimal) row[7]);
+			entity.setCodigoProduto((String) row[8]);
+			entity.setTituloProduto((String) row[9]);
+			entity.setIdImagemCapaProduto((String) row[10]);
+
+			entities.add(entity);
+		}
+
+		return entities;
 	}
 }

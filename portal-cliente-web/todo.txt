@@ -1,7 +1,5 @@
 - Enviar logo do cliente
 - Apresentar logo por cliente
-- Download fita métrica
-- Tabela medidas
 - Pagamento do pedido
 - Calculo de frete?
 - Incluir id do objeto no route ao editar

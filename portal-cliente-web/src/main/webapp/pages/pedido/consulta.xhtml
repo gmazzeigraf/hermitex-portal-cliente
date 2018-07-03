@@ -120,7 +120,19 @@
 						<h1>#{labels.informacoes}</h1>
 
 						<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
+							<h:outputText value="#" styleClass="label" />
+							<h:outputText value="#{pedidoController.entity.id}" />
 
+							<h:outputText value="Total" styleClass="label" />
+							<h:outputText value="#{pedidoController.entity.valorTotal}">
+								<f:convertNumber pattern="R$ #,##0.00" />
+							</h:outputText>
+							
+							<h:outputText value="Tipo Pagamento" styleClass="label" />
+							<h:outputText value="#{pedidoController.entity.deTipoPagamento}" />
+							
+							<h:outputText value="Status" styleClass="label" />
+							<h:outputText value="#{pedidoController.entity.deStatus}" />
 						</p:panelGrid>
 
 						<h1>Produtos</h1>
@@ -129,7 +141,7 @@
 								emptyMessage="#{null != pedidoController.entity.itens ? 'Nenhum item cadastrado' : ''}" rowIndexVar="index">
 
 								<p:column headerText="" styleClass="id-column">
-									<p:graphicImage cache="true" value="#{sessionController.getUrlImagem(entity.idImagemCapaProduto, 2)}" title="" />
+									<p:graphicImage cache="true" value="#{sessionController.getUrlImagem(entity.idImagemCapaProduto, 1)}" title="" />
 								</p:column>
 
 								<p:column headerText="Código" styleClass="id-column">
