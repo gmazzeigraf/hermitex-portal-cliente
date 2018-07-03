@@ -1,6 +1,3 @@
 - Enviar logo do cliente
 - Apresentar logo por cliente
-- Pagamento do pedido
 - Calculo de frete?
-- Incluir id do objeto no route ao editar
-- Incluir mais informacoes na consulta de pedido
