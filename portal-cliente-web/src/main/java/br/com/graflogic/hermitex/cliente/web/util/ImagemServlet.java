@@ -17,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
+import br.com.graflogic.base.service.util.CacheUtil;
 import br.com.graflogic.hermitex.cliente.service.impl.produto.ProdutoService;
 
 /**
@@ -26,10 +27,15 @@ import br.com.graflogic.hermitex.cliente.service.impl.produto.ProdutoService;
  */
 public class ImagemServlet extends HttpServlet {
 
+	private static final String CACHE_NAME = "imagensApresentacao";
+
 	private static final long serialVersionUID = -8994235178100494201L;
 
 	@Autowired
 	private ProdutoService produtoService;
+
+	@Autowired
+	private CacheUtil cacheUtil;
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
@@ -51,33 +57,44 @@ public class ImagemServlet extends HttpServlet {
 		}
 
 		if (StringUtils.isNotEmpty(miniaturaStr) && StringUtils.isNumeric(miniaturaStr)) {
-			BufferedImage original = ImageIO.read(new ByteArrayInputStream(imagemArray));
+			String chaveCache = idImagem + "_" + miniaturaStr;
 
-			// Calcula as proporcoes
-			Double width = (double) original.getWidth();
-			Double height = (double) original.getHeight();
+			byte[] imagemCacheArray = (byte[]) cacheUtil.findOnCache(CACHE_NAME, chaveCache);
 
-			Double divisor = width / (50 * Integer.parseInt(miniaturaStr));
-			width = width / divisor;
-			height = height / divisor;
+			if (null == imagemCacheArray) {
+				BufferedImage original = ImageIO.read(new ByteArrayInputStream(imagemArray));
 
-			// Redimensiona a imagem
-			BufferedImage alterada = new BufferedImage(width.intValue(), height.intValue(), BufferedImage.TYPE_INT_RGB);
-			Graphics2D g = alterada.createGraphics();
-			g.drawImage(original, 0, 0, width.intValue(), height.intValue(), null);
-			g.dispose();
+				// Calcula as proporcoes
+				Double width = (double) original.getWidth();
+				Double height = (double) original.getHeight();
 
-			// Corta a imagem
-			//			alterada = original.getSubimage(0, 0, 150, 200);
+				Double divisor = width / (50 * Integer.parseInt(miniaturaStr));
+				width = width / divisor;
+				height = height / divisor;
 
-			// Grava a imagem alterada
-			ByteArrayOutputStream stream = new ByteArrayOutputStream();
-			ImageIO.write(alterada, "jpg", stream);
-			stream.flush();
+				// Redimensiona a imagem
+				BufferedImage alterada = new BufferedImage(width.intValue(), height.intValue(), BufferedImage.TYPE_INT_RGB);
+				Graphics2D g = alterada.createGraphics();
+				g.drawImage(original, 0, 0, width.intValue(), height.intValue(), null);
+				g.dispose();
 
-			imagemArray = stream.toByteArray();
+				// Corta a imagem
+				//			alterada = original.getSubimage(0, 0, 150, 200);
 
-			stream.close();
+				// Grava a imagem alterada
+				ByteArrayOutputStream stream = new ByteArrayOutputStream();
+				ImageIO.write(alterada, "jpg", stream);
+				stream.flush();
+
+				imagemArray = stream.toByteArray();
+
+				stream.close();
+
+				cacheUtil.putOnCache(CACHE_NAME, chaveCache, imagemArray);
+
+			} else {
+				imagemArray = imagemCacheArray;
+			}
 		}
 
 		response.reset();

@@ -2,3 +2,4 @@
 - Apresentar logo por cliente
 - Validar dias de compras cliente
 - Calcular frete
+- Faturamento para cliente

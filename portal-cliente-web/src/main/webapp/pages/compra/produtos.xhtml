@@ -121,7 +121,7 @@
 							<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group" columnClasses="ui-grid-col-4, ui-grid-col-8">
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" style="text-align: center;">
 									<p:galleria value="#{produtoApresentacaoController.entity.imagens}" var="imagem" showCaption="false" autoPlay="false" style="width: 100%;">
-										<p:graphicImage cache="true" value="#{sessionController.getUrlImagem(imagem.id, null)}" title="" />
+										<p:graphicImage cache="true" value="#{sessionController.getUrlImagem(imagem.id, 20)}" title="" />
 									</p:galleria>
 
 									<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
