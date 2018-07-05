@@ -133,15 +133,14 @@ public class ClienteController extends CrudBaseController<Cliente, Cliente> impl
 
 		enderecoFaturamento = new ClienteEndereco(new ClienteEnderecoPK(null, DomTipoEndereco.FATURAMENTO));
 		enderecoEntrega = new ClienteEndereco(new ClienteEnderecoPK(null, DomTipoEndereco.ENTREGA));
+
+		changeEstadoFaturamento();
+		changeEstadoEntrega();
 	}
 
 	@Override
 	protected void executeEdit(Cliente entity) {
 		setEntity(service.consultaCompletoPorId(entity.getId()));
-
-		for (ClienteEndereco endereco : getEntity().getEnderecos()) {
-			endereco.setSiglaEstado(municipioService.consultaPorId(endereco.getIdMunicipio()).getSiglaEstado());
-		}
 
 		enderecoFaturamento = getEntity().getEnderecoFaturamento();
 		enderecoEntrega = getEntity().getEnderecoEntrega();

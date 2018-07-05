@@ -1,4 +1,4 @@
-package br.com.graflogic.hermitex.cliente.data.entity.cadastro;
+package br.com.graflogic.hermitex.cliente.data.entity.pedido;
 
 import java.io.Serializable;
 
@@ -17,22 +17,22 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name = "tb_cliente_endereco")
-public class ClienteEndereco implements Serializable {
+@Table(name = "tb_pedido_endereco")
+public class PedidoEndereco implements Serializable {
 
-	private static final long serialVersionUID = 2177232708572173228L;
+	private static final long serialVersionUID = 3919177901438077639L;
 
-	public ClienteEndereco() {
+	public PedidoEndereco() {
 
 	}
 
-	public ClienteEndereco(ClienteEnderecoPK id) {
+	public PedidoEndereco(PedidoEnderecoPK id) {
 		super();
 		this.id = id;
 	}
 
 	@EmbeddedId
-	private ClienteEnderecoPK id;
+	private PedidoEnderecoPK id;
 
 	@Column(name = "sg_estado", nullable = false)
 	private String siglaEstado;
@@ -55,16 +55,16 @@ public class ClienteEndereco implements Serializable {
 	@Column(name = "complemento")
 	private String complemento;
 
-	@MapsId("idCliente")
+	@MapsId("idPedido")
 	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_cliente", referencedColumnName = "id", insertable = false, updatable = false)
-	private Cliente cliente;
+	@JoinColumn(name = "id_pedido", referencedColumnName = "id", insertable = false, updatable = false)
+	private Pedido pedido;
 
-	public ClienteEnderecoPK getId() {
+	public PedidoEnderecoPK getId() {
 		return id;
 	}
 
-	public void setId(ClienteEnderecoPK id) {
+	public void setId(PedidoEnderecoPK id) {
 		this.id = id;
 	}
 
@@ -124,12 +124,12 @@ public class ClienteEndereco implements Serializable {
 		this.complemento = complemento;
 	}
 
-	public Cliente getCliente() {
-		return cliente;
+	public Pedido getPedido() {
+		return pedido;
 	}
 
-	public void setCliente(Cliente cliente) {
-		this.cliente = cliente;
+	public void setPedido(Pedido pedido) {
+		this.pedido = pedido;
 	}
 
 	@Override
@@ -148,7 +148,7 @@ public class ClienteEndereco implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ClienteEndereco other = (ClienteEndereco) obj;
+		PedidoEndereco other = (PedidoEndereco) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;

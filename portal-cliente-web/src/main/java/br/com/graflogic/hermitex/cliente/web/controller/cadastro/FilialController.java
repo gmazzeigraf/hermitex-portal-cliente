@@ -150,15 +150,14 @@ public class FilialController extends CrudBaseController<Filial, Filial> impleme
 
 		enderecoFaturamento = new FilialEndereco(new FilialEnderecoPK(null, DomTipoEndereco.FATURAMENTO));
 		enderecoEntrega = new FilialEndereco(new FilialEnderecoPK(null, DomTipoEndereco.ENTREGA));
+
+		changeEstadoFaturamento();
+		changeEstadoEntrega();
 	}
 
 	@Override
 	protected void executeEdit(Filial entity) {
-		setEntity(service.consultaPorId(entity.getId()));
-
-		for (FilialEndereco endereco : getEntity().getEnderecos()) {
-			endereco.setSiglaEstado(municipioService.consultaPorId(endereco.getIdMunicipio()).getSiglaEstado());
-		}
+		setEntity(service.consultaCompletoPorId(entity.getId()));
 
 		enderecoFaturamento = getEntity().getEnderecoFaturamento();
 		enderecoEntrega = getEntity().getEnderecoEntrega();

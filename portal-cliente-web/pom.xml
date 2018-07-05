@@ -79,7 +79,7 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
-			<version>4.2.21.Final</version>
+			<version>5.2.12.Final</version>
 		</dependency>
 
 		<!-- SERVICE -->

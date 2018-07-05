@@ -1,5 +1,6 @@
 package br.com.graflogic.hermitex.cliente.web.controller.produto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.InitializingBean;
@@ -10,10 +11,15 @@ import org.springframework.stereotype.Controller;
 import br.com.graflogic.base.service.util.I18NUtil;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioCliente;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioFilial;
+import br.com.graflogic.hermitex.cliente.data.entity.auxiliar.Estado;
+import br.com.graflogic.hermitex.cliente.data.entity.auxiliar.Municipio;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Filial;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.Pedido;
+import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoEndereco;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoSimple;
+import br.com.graflogic.hermitex.cliente.service.impl.auxiliar.EstadoService;
+import br.com.graflogic.hermitex.cliente.service.impl.auxiliar.MunicipioService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.FilialService;
 import br.com.graflogic.hermitex.cliente.service.impl.pedido.PedidoService;
@@ -40,9 +46,25 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 	@Autowired
 	private FilialService filialService;
 
+	@Autowired
+	private EstadoService estadoService;
+
+	@Autowired
+	private MunicipioService municipioService;
+
 	private List<Cliente> clientes;
 
 	private List<Filial> filiais;
+
+	private List<Estado> estados;
+
+	private List<Municipio> municipiosFaturamento;
+
+	private List<Municipio> municipiosEntrega;
+
+	private PedidoEndereco enderecoFaturamento;
+
+	private PedidoEndereco enderecoEntrega;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -65,6 +87,10 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 
 			}
 
+			estados = estadoService.consulta();
+			municipiosFaturamento = new ArrayList<Municipio>();
+			municipiosEntrega = new ArrayList<>();
+
 		} catch (Throwable t) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao inicializar tela, contate o administrador", t);
 		}
@@ -83,6 +109,15 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 	@Override
 	protected void select(PedidoSimple entity) {
 		setEntity(service.consultaCompletoPorId(entity.getId()));
+
+		municipiosFaturamento.clear();
+		municipiosEntrega.clear();
+
+		enderecoFaturamento = getEntity().getEnderecoFaturamento();
+		enderecoEntrega = getEntity().getEnderecoEntrega();
+
+		municipiosFaturamento.addAll(municipioService.consulta(enderecoFaturamento.getSiglaEstado()));
+		municipiosEntrega.addAll(municipioService.consulta(enderecoEntrega.getSiglaEstado()));
 	}
 
 	// Util
@@ -111,5 +146,25 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 
 	public List<Filial> getFiliais() {
 		return filiais;
+	}
+
+	public List<Estado> getEstados() {
+		return estados;
+	}
+
+	public List<Municipio> getMunicipiosFaturamento() {
+		return municipiosFaturamento;
+	}
+
+	public List<Municipio> getMunicipiosEntrega() {
+		return municipiosEntrega;
+	}
+
+	public PedidoEndereco getEnderecoFaturamento() {
+		return enderecoFaturamento;
+	}
+
+	public PedidoEndereco getEnderecoEntrega() {
+		return enderecoEntrega;
 	}
 }

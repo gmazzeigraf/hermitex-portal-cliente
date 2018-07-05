@@ -18,6 +18,7 @@ import javax.persistence.Version;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
+import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomTipoEndereco;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido;
 
 /**
@@ -43,6 +44,12 @@ public class Pedido implements Serializable {
 	@Column(name = "id_filial")
 	private Integer idFilial;
 
+	@Column(name = "vl_produtos", nullable = false)
+	private BigDecimal valorProdutos;
+
+	@Column(name = "vl_frete", nullable = false)
+	private BigDecimal valorFrete;
+
 	@Column(name = "vl_total", nullable = false)
 	private BigDecimal valorTotal;
 
@@ -62,6 +69,10 @@ public class Pedido implements Serializable {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "pedido", orphanRemoval = true)
 	@LazyCollection(LazyCollectionOption.TRUE)
 	private List<PedidoItem> itens;
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "pedido", orphanRemoval = true)
+	@LazyCollection(LazyCollectionOption.TRUE)
+	private List<PedidoEndereco> enderecos;
 
 	public Long getId() {
 		return id;
@@ -85,6 +96,22 @@ public class Pedido implements Serializable {
 
 	public void setIdFilial(Integer idFilial) {
 		this.idFilial = idFilial;
+	}
+
+	public BigDecimal getValorProdutos() {
+		return valorProdutos;
+	}
+
+	public void setValorProdutos(BigDecimal valorProdutos) {
+		this.valorProdutos = valorProdutos;
+	}
+
+	public BigDecimal getValorFrete() {
+		return valorFrete;
+	}
+
+	public void setValorFrete(BigDecimal valorFrete) {
+		this.valorFrete = valorFrete;
 	}
 
 	public BigDecimal getValorTotal() {
@@ -135,11 +162,27 @@ public class Pedido implements Serializable {
 		this.itens = itens;
 	}
 
+	public List<PedidoEndereco> getEnderecos() {
+		return enderecos;
+	}
+
+	public void setEnderecos(List<PedidoEndereco> enderecos) {
+		this.enderecos = enderecos;
+	}
+
 	public String getDeTipoPagamento() {
 		return DomPedido.domTipoPagamento.getDeValor(tipoPagamento);
 	}
 
 	public String getDeStatus() {
 		return DomPedido.domStatus.getDeValor(status);
+	}
+
+	public PedidoEndereco getEnderecoFaturamento() {
+		return enderecos.get(enderecos.indexOf(new PedidoEndereco(new PedidoEnderecoPK(id, DomTipoEndereco.FATURAMENTO))));
+	}
+
+	public PedidoEndereco getEnderecoEntrega() {
+		return enderecos.get(enderecos.indexOf(new PedidoEndereco(new PedidoEnderecoPK(id, DomTipoEndereco.ENTREGA))));
 	}
 }

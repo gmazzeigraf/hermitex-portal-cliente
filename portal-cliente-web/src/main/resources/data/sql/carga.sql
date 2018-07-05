@@ -3,13 +3,13 @@ INSERT INTO tb_configuracao VALUES ('usuario.email_senha.titulo', 'Hermitex Web 
 INSERT INTO tb_configuracao VALUES ('usuario.email_senha.conteudo', '<meta charset="UTF-8"><p>Ol&aacute; #NOME#,</p>
 <p>Seu usu&aacute;rio foi cadastrado em nosso sistema e o acesso dever&aacute; ser feito atrav&eacute;s do seu e-mail e a senha <span style="color: #ff0000;"><strong>#SENHA#</strong></span>.</p>
 <p>Troque sua senha no primeiro acesso.</p>
-<p>Obrigado,</p><p>Acesse&nbsp;<a href="http://hermitex.com.br">http://hermitex.com.br</a>.</p>');
+<p>Obrigado,</p><p>Acesse&nbsp;<a href="http://localhost:8080/web">http://localhost:8080/web</a>.</p>');
 
 INSERT INTO tb_configuracao VALUES ('usuario.email_nova_senha.titulo', 'Hermitex Web - Nova senha de acesso');
 INSERT INTO tb_configuracao VALUES ('usuario.email_nova_senha.conteudo', '<meta charset="UTF-8"><p>Ol&aacute; #NOME#,</p>
 <p>A sua nova senha para acesso ao sistema &eacute; <span style="color: #ff0000;"><strong>#SENHA#</strong></span>.</p>
 <p>Troque sua senha no primeiro acesso.</p>
-<p>Obrigado,</p><p>Acesse&nbsp;<a href="http://hermitex.com.br">http://hermitex.com.br</a>.</p>');
+<p>Obrigado,</p><p>Acesse&nbsp;<a href="http://localhost:8080/web">http://localhost:8080/web</a>.</p>');
 
 INSERT INTO tb_configuracao VALUES ('email.servidor', 'br432.hostgator.com.br');
 INSERT INTO tb_configuracao VALUES ('email.porta', '465');

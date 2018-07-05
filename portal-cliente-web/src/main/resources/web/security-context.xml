@@ -44,6 +44,7 @@
 		<!-- Misc -->
 		<intercept-url pattern="/pages/publico/**" access="permitAll" />
 		<intercept-url pattern="/pages/exception/**" access="permitAll" />
+		<intercept-url pattern="/pages/javax.faces.resource**" access="permitAll" />
 		<intercept-url pattern="/pages/**" access="isFullyAuthenticated()" />
 
 		<logout invalidate-session="true" logout-success-url="/login.jsf" delete-cookies="JSESSIONID" logout-url="/j_spring_security_logout" />

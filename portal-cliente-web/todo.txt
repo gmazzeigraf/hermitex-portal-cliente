@@ -1,3 +1,4 @@
 - Enviar logo do cliente
 - Apresentar logo por cliente
-- Calculo de frete?
+- Validar dias de compras cliente
+- Calcular frete

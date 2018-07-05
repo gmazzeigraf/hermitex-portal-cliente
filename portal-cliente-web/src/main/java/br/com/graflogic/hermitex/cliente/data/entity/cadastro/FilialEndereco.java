@@ -10,7 +10,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 /**
  * 
@@ -35,6 +34,9 @@ public class FilialEndereco implements Serializable {
 	@EmbeddedId
 	private FilialEnderecoPK id;
 
+	@Column(name = "sg_estado", nullable = false)
+	private String siglaEstado;
+
 	@Column(name = "id_municipio", nullable = false)
 	private Integer idMunicipio;
 
@@ -58,15 +60,20 @@ public class FilialEndereco implements Serializable {
 	@JoinColumn(name = "id_filial", referencedColumnName = "id", insertable = false, updatable = false)
 	private Filial filial;
 
-	@Transient
-	private String siglaEstado;
-
 	public FilialEnderecoPK getId() {
 		return id;
 	}
 
 	public void setId(FilialEnderecoPK id) {
 		this.id = id;
+	}
+
+	public String getSiglaEstado() {
+		return siglaEstado;
+	}
+
+	public void setSiglaEstado(String siglaEstado) {
+		this.siglaEstado = siglaEstado;
 	}
 
 	public Integer getIdMunicipio() {
@@ -123,14 +130,6 @@ public class FilialEndereco implements Serializable {
 
 	public void setFilial(Filial filial) {
 		this.filial = filial;
-	}
-
-	public String getSiglaEstado() {
-		return siglaEstado;
-	}
-
-	public void setSiglaEstado(String siglaEstado) {
-		this.siglaEstado = siglaEstado;
 	}
 
 	@Override

@@ -31,11 +31,38 @@ public class DomPedido {
 		public static final String CARTAO_CREDITO_2 = "2";
 
 		DomTipoPagamento() {
-			mapa.put(BOLETO, "Boleto");
+			mapa.put(BOLETO, "Boleto 1x");
 			mapa.put(CARTAO_CREDITO_1, "Cartão de Crédito 1x");
 			mapa.put(CARTAO_CREDITO_2, "Cartão de Crédito 2x");
 		}
 	}
 
 	public static DomTipoPagamento domTipoPagamento = new DomTipoPagamento();
+
+	public static class DomBandeiraCartaoCredito extends DomBase {
+		public static final String ELO = "Elo";
+		public static final String MASTERCARD = "Mastercard";
+		public static final String VISA = "Visa";
+		public static final String AMEX = "Amex";
+		public static final String JCB = "JCB";
+		public static final String AURA = "Aura";
+		public static final String HIPERCARD = "Hipercard";
+		public static final String DINERS = "Diners";
+		public static final String DISCOVER = "Discover";
+
+		DomBandeiraCartaoCredito() {
+			mapa.put(ELO, "Elo");
+			mapa.put(MASTERCARD, "Mastercard");
+			mapa.put(VISA, "Visa");
+			mapa.put(AMEX, "Amex");
+			mapa.put(JCB, "JCB");
+			mapa.put(AURA, "Aura");
+			mapa.put(HIPERCARD, "Hipercard");
+			mapa.put(DINERS, "Diners");
+			mapa.put(DISCOVER, "Discover");
+		}
+	}
+
+	public static DomBandeiraCartaoCredito domBandeiraCartaoCredito = new DomBandeiraCartaoCredito();
+
 }

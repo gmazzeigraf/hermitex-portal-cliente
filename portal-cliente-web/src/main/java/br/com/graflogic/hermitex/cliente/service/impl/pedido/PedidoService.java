@@ -15,9 +15,11 @@ import br.com.graflogic.hermitex.cliente.data.dom.DomAuditoria.DomEventoAuditori
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomStatus;
 import br.com.graflogic.hermitex.cliente.data.entity.aud.PedidoAuditoria;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.Pedido;
+import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoEndereco;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoItem;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoSimple;
 import br.com.graflogic.hermitex.cliente.data.impl.aud.PedidoAuditoriaRepository;
+import br.com.graflogic.hermitex.cliente.data.impl.cadastro.PedidoEnderecoRepository;
 import br.com.graflogic.hermitex.cliente.data.impl.pedido.PedidoItemRepository;
 import br.com.graflogic.hermitex.cliente.data.impl.pedido.PedidoRepository;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
@@ -42,6 +44,9 @@ public class PedidoService {
 
 	@Autowired
 	private PedidoItemRepository itemRepository;
+
+	@Autowired
+	private PedidoEnderecoRepository enderecoRepository;
 
 	// Fluxo
 	@Transactional(rollbackFor = Throwable.class)
@@ -135,7 +140,10 @@ public class PedidoService {
 		if (null != objeto) {
 			objeto = (Pedido) ObjectCopier.copy(objeto);
 			// Remove as referencias recursivas
-			for (PedidoItem endereco : objeto.getItens()) {
+			for (PedidoItem item : objeto.getItens()) {
+				item.setPedido(null);
+			}
+			for (PedidoEndereco endereco : objeto.getEnderecos()) {
 				endereco.setPedido(null);
 			}
 
@@ -149,5 +157,6 @@ public class PedidoService {
 
 	private void preencheRelacionados(Pedido entity) {
 		entity.setItens(itemRepository.consultaPorPedido(entity.getId()));
+		entity.setEnderecos(enderecoRepository.consultaPorPedido(entity.getId()));
 	}
 }
