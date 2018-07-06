@@ -11,8 +11,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 import br.com.graflogic.base.service.util.I18NUtil;
-import br.com.graflogic.commonutil.util.PessoaFisicaValidator;
-import br.com.graflogic.commonutil.util.PessoaJuridicaValidator;
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomTipoEndereco;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomTipoPagamento;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioCliente;
@@ -223,36 +221,20 @@ public class CarrinhoController extends BaseController implements InitializingBe
 
 	public void finalizaPedido() {
 		try {
-			String documentoPortador = dadosPagamentoCartaoCredito.getDocumentoPortador();
-
-			if (11 == documentoPortador.length()) {
-				if (!PessoaFisicaValidator.validateCPF(documentoPortador)) {
-					returnWarnDialogMessage(I18NUtil.getMessage("aviso"), "CPF do portador inválido", null);
-					return;
-				}
-			} else if (14 == documentoPortador.length()) {
-				if (!PessoaJuridicaValidator.validateCNPJ(documentoPortador)) {
-					returnWarnDialogMessage(I18NUtil.getMessage("aviso"), "CNPJ do portador inválido", null);
-					return;
-				}
-			} else {
-				returnWarnDialogMessage(I18NUtil.getMessage("aviso"), "Documento do portador inválido", null);
-				return;
-			}
-
-			// TODO Envia pagamento
-
 			enderecoFaturamento.setPedido(pedido);
 			enderecoEntrega.setPedido(pedido);
 
 			pedido.getEnderecos().add(enderecoFaturamento);
 			pedido.getEnderecos().add(enderecoEntrega);
 
-			pedidoService.cadastra(pedido);
+			pedidoService.cadastra(pedido, dadosPagamentoCartaoCredito);
 
 			returnInfoMessage("Pedido " + pedido.getId() + " cadastrado com sucesso", getApplicationUrl() + "/pages/compra/produtos.jsf");
 
 			preparaNovoPedido();
+
+		} catch (DadosInvalidosException e) {
+			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), e.getMessage(), null);
 
 		} catch (Throwable t) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao cadastrar pedido, contate o administrador", t);

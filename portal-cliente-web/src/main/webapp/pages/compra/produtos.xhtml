@@ -5,7 +5,7 @@
 
 	<ui:define name="viewname">
 		<p:commandLink value="#{labels.menu_produtos}" actionListener="#{produtoApresentacaoController.close}" update=":searchForm :editForm :routeBarForm"
-			process="@this" />
+			process="@this" styleClass="route-produtos" />
 		<c:if test="#{null != produtoApresentacaoController.entity}"> / #{produtoApresentacaoController.entity.codigo}</c:if>
 	</ui:define>
 
@@ -30,7 +30,7 @@
 									<p:outputLabel for="categoriaFilter" value="Categoria" styleClass="label" />
 									<p:selectOneMenu id="categoriaFilter" value="#{produtoApresentacaoController.filterEntity.idCategoria}" styleClass="ui-grid-col-12"
 										disabled="#{!produtoApresentacaoController.clienteSelecionado}">
-										<f:selectItem itemLabel="" itemValue="" />
+										<f:selectItem itemLabel="Todas" itemValue="" />
 										<f:selectItems value="#{produtoApresentacaoController.categorias}" var="item" itemLabel="#{item.nome}" itemValue="#{item.id}" />
 										<p:ajax process="@this" update=":searchForm" listener="#{produtoApresentacaoController.search}" />
 									</p:selectOneMenu>
@@ -40,7 +40,7 @@
 									<p:outputLabel for="setorFilter" value="Setor" styleClass="label" />
 									<p:selectOneMenu id="setorFilter" value="#{produtoApresentacaoController.filterEntity.idSetor}" styleClass="ui-grid-col-12"
 										disabled="#{!produtoApresentacaoController.clienteSelecionado}">
-										<f:selectItem itemLabel="" itemValue="" />
+										<f:selectItem itemLabel="Todos" itemValue="" />
 										<f:selectItems value="#{produtoApresentacaoController.setores}" var="item" itemLabel="#{item.nome}" itemValue="#{item.id}" />
 										<p:ajax process="@this" update=":searchForm" listener="#{produtoApresentacaoController.search}" />
 									</p:selectOneMenu>
@@ -56,7 +56,7 @@
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 									<p:outputLabel for="generoFilter" value="Gênero" styleClass="label" />
 									<p:selectOneMenu id="generoFilter" value="#{produtoApresentacaoController.filterEntity.genero}" styleClass="ui-grid-col-12">
-										<f:selectItem itemLabel="" itemValue="" />
+										<f:selectItem itemLabel="Todos" itemValue="" />
 										<f:selectItems value="#{domProdutoController.generoMap}" />
 										<p:ajax process="@this" update=":searchForm" listener="#{produtoApresentacaoController.search}" />
 									</p:selectOneMenu>
@@ -65,7 +65,7 @@
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 									<p:outputLabel for="tamanhoFilter" value="Tamanho" styleClass="label" />
 									<p:selectOneMenu id="tamanhoFilter" value="#{produtoApresentacaoController.filterEntity.codigoTamanho}" styleClass="ui-grid-col-12">
-										<f:selectItem itemLabel="" itemValue="" />
+										<f:selectItem itemLabel="Todos" itemValue="" />
 										<f:selectItems value="#{produtoApresentacaoController.tamanhos}" var="item" itemLabel="#{item.codigo}" itemValue="#{item.codigo}" />
 										<p:ajax process="@this" update=":searchForm" listener="#{produtoApresentacaoController.search}" />
 									</p:selectOneMenu>
@@ -75,35 +75,25 @@
 
 						<p:spacer styleClass="display-desktop" />
 
-						<p:dataTable id="dtbEntities" widgetVar="dtb" var="entity" value="#{produtoApresentacaoController.entities}" rowKey="#{entity.id}"
-							paginator="true" paginatorPosition="bottom" reflow="true" rows="10"
-							emptyMessage="#{null != produtoApresentacaoController.entities ? messages.nenhum_resultado_encontrado : messages.realize_pesquisa}">
+						<p:dataGrid var="entity" value="#{produtoApresentacaoController.entities}" layout="grid" columns="4"
+							rendered="#{fn:length(produtoApresentacaoController.entities) > 0}" styleClass="produtos">
+							<p:panel header="#{entity.codigo}" style="text-align:center" styleClass="produtos">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" styleClass="ui-panelgrid-blank form-group">
+									<p:graphicImage cache="true" value="#{sessionController.getUrlImagem(entity.idImagemCapa, 10)}" title="" styleClass="imagem-capa" />
 
-							<p:column headerText="" styleClass="coluna-imagem-capa">
-								<p:graphicImage cache="true" value="#{sessionController.getUrlImagem(entity.idImagemCapa, 2)}" title="" styleClass="imagem-capa" />
-							</p:column>
+									<h:outputText value="#{entity.titulo}" />
 
-							<p:column headerText="Código" sortBy="#{entity.codigo}" styleClass="id-column">
-								<h:outputText value="#{entity.codigo}" />
-							</p:column>
+									<h:outputText value="#{entity.valor}">
+										<f:convertNumber pattern="R$ #,##0.00" />
+									</h:outputText>
 
-							<p:column headerText="Título" sortBy="#{entity.titulo}" styleClass="coluna-center">
-								<h:outputText value="#{entity.titulo}" />
-							</p:column>
-
-							<p:column headerText="Valor" sortBy="#{entity.valor}" styleClass="coluna-valor">
-								<h:outputText value="#{entity.valor}">
-									<f:convertNumber pattern="R$ #,##0.00" />
-								</h:outputText>
-							</p:column>
-
-							<p:column styleClass="coluna-edicao">
-								<p:commandButton icon="fa fa-fw fa-folder-open" title="#{labels.botao_editar}" update=":searchForm :editForm :routeBarForm" process="@this"
-									resetValues="true" styleClass="ui-grid-col-12" oncomplete="scrollPageTop();">
-									<f:setPropertyActionListener value="#{entity}" target="#{produtoApresentacaoController.selectedEntity}" />
-								</p:commandButton>
-							</p:column>
-						</p:dataTable>
+									<p:commandButton icon="fa fa-fw fa-folder-open" title="#{labels.botao_editar}" update=":searchForm :editForm :routeBarForm" process="@this"
+										resetValues="true" styleClass="ui-grid-col-12 botao-produtos" oncomplete="scrollPageTop();">
+										<f:setPropertyActionListener value="#{entity}" target="#{produtoApresentacaoController.selectedEntity}" />
+									</p:commandButton>
+								</p:panelGrid>
+							</p:panel>
+						</p:dataGrid>
 					</div>
 				</div>
 			</div>
@@ -115,23 +105,23 @@
 			<div class="ui-g">
 				<div class="ui-g-12">
 					<div class="card card-w-title">
-						<h1>#{produtoApresentacaoController.entity.titulo}</h1>
+						<p:panelGrid columns="3" id="produtoGrid" layout="grid" styleClass="ui-panelgrid-blank form-group"
+							columnClasses="ui-grid-col-2, ui-grid-col-8, ui-grid-col-2">
 
-						<p:panelGrid columns="1" id="produtoGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
-							<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group" columnClasses="ui-grid-col-4, ui-grid-col-8">
+							<p:spacer styleClass="display-desktop" />
+
+							<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group" columnClasses="ui-grid-col-6, ui-grid-col-6">
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" style="text-align: center;">
-									<p:galleria value="#{produtoApresentacaoController.entity.imagens}" var="imagem" showCaption="false" autoPlay="false" style="width: 100%;">
+									<p:galleria value="#{produtoApresentacaoController.entity.imagens}" var="imagem" showCaption="false" autoPlay="false" style="width: 100%;"
+										styleClass="galleria-produtos">
 										<p:graphicImage cache="true" value="#{sessionController.getUrlImagem(imagem.id, 20)}" title="" />
 									</p:galleria>
-
-									<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
-										<c:if test="#{fn:length(produtoApresentacaoController.entity.linkYoutube) > 0}">
-											<iframe width="420" height="315" src="#{produtoApresentacaoController.entity.linkYoutube}" />
-										</c:if>
-									</p:panelGrid>
 								</p:panelGrid>
 
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" style="font-size: 16px !important;" id="dadosProdutoGrid">
+
+									<h1>#{produtoApresentacaoController.entity.titulo}</h1>
+
 									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 										<h:outputText value="Descrição" styleClass="label" />
 										<h:outputText value="#{produtoApresentacaoController.entity.descricao}" escape="false" />
@@ -143,10 +133,10 @@
 										<h:outputText value="#{produtoApresentacaoController.entity.garantia}" />
 									</p:panelGrid>
 
-									<p:panelGrid columns="1" columnClasses="ui-grid-col-6" layout="grid">
+									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 										<h:outputText value="Tamanho" styleClass="label" />
 										<p:selectOneButton id="tamanho" value="#{produtoApresentacaoController.itemPedido.codigoTamanho}" required="true"
-											requiredMessage="Favor selecionar o tamanho">
+											requiredMessage="Favor selecionar o tamanho" styleClass="botao-produtos">
 											<f:selectItems value="#{produtoApresentacaoController.entity.tamanhos}" var="item" itemLabel="#{item.id.codigoTamanho}"
 												itemValue="#{item.id.codigoTamanho}" />
 											<p:ajax process="@this" global="false" update=":editForm:precoGrid :editForm:valorTotalGrid"
@@ -155,14 +145,6 @@
 										<p:message for="tamanho" />
 									</p:panelGrid>
 
-									<p:commandLink value="Faça o download de nossa fita métrica" onclick="liberaRefresh(); PrimeFaces.monitorDownload(showStatus, hideStatus)"
-										process="@this" ajax="false" immediate="true" styleClass="link-fita-metrica">
-										<p:fileDownload value="#{produtoApresentacaoController.fitaMetrica}" />
-									</p:commandLink>
-
-									<p:commandLink value="Veja a tabela de medidas completa" onclick="liberaRefresh(); PF('medidasDialog').show();" process="@this"
-										styleClass="link-fita-metrica" />
-
 									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" id="precoGrid">
 										<h:outputText value="Preço" styleClass="label" />
 										<h:outputText value="#{produtoApresentacaoController.itemPedido.valorCorrigidoTamanho}">
@@ -170,17 +152,17 @@
 										</h:outputText>
 									</p:panelGrid>
 
-									<p:panelGrid columns="1" columnClasses="ui-grid-col-4" layout="grid" rendered="#{sec:areAnyGranted('ROLE_COMPRA')}">
+									<p:panelGrid columns="1" columnClasses="ui-grid-col-6" layout="grid" rendered="#{sec:areAnyGranted('ROLE_COMPRA')}">
 										<h:outputText value="Quantidade" styleClass="label" />
 										<p:panelGrid columns="3" columnClasses="ui-grid-col-2, ui-grid-col-8, ui-grid-col-2" layout="grid">
 											<p:commandButton icon="fa fa-fw fa-minus" actionListener="#{produtoApresentacaoController.diminuiQuantidade}" process="@this"
-												global="false" update="quantidade valorTotalGrid" styleClass="ui-grid-col-12 botao-diminui-quantidade-item" />
+												global="false" update="quantidade valorTotalGrid" styleClass="ui-grid-col-12 botao-diminui-quantidade-item botao-produtos" />
 											<p:inputNumber id="quantidade" styleClass="input-number-resp" minValue="1" maxValue="999"
 												value="#{produtoApresentacaoController.itemPedido.quantidade}" required="true" requiredMessage="Favor informar a quantidade">
 												<p:ajax process="@this" update="valorTotalGrid" listener="#{produtoApresentacaoController.calculaTotalItem}" />
 											</p:inputNumber>
 											<p:commandButton icon="fa fa-fw fa-plus" actionListener="#{produtoApresentacaoController.aumentaQuantidade}" process="@this" global="false"
-												update="quantidade valorTotalGrid" styleClass="ui-grid-col-12 botao-aumenta-quantidade-item" />
+												update="quantidade valorTotalGrid" styleClass="ui-grid-col-12 botao-aumenta-quantidade-item botao-produtos" />
 										</p:panelGrid>
 										<p:message for="quantidade" />
 									</p:panelGrid>
@@ -192,16 +174,39 @@
 										</h:outputText>
 									</p:panelGrid>
 
-									<p:panelGrid columns="1" columnClasses="ui-grid-col-4" layout="grid" rendered="#{sec:areAnyGranted('ROLE_COMPRA')}">
+									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{sec:areAnyGranted('ROLE_COMPRA')}">
 										<p:commandButton icon="fa fa-fw fa-shopping-cart" value="#{labels.botao_adicionar_carrinho}"
 											actionListener="#{produtoApresentacaoController.adicionaItem}" process=":editForm:dadosProdutoGrid"
-											update=":editForm:dadosProdutoGrid :formMenu" oncomplete="carregaClose();" styleClass="ui-grid-col-12" />
+											update=":editForm:dadosProdutoGrid :formMenu" oncomplete="carregaClose();" styleClass="ui-grid-col-12 botao-produtos" />
 									</p:panelGrid>
 								</p:panelGrid>
+
+								<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
+									<p:commandLink value="Faça o download de nossa fita métrica" onclick="liberaRefresh(); PrimeFaces.monitorDownload(showStatus, hideStatus)"
+										process="@this" ajax="false" immediate="true" styleClass="link-fita-metrica">
+										<p:fileDownload value="#{produtoApresentacaoController.fitaMetrica}" />
+									</p:commandLink>
+
+									<p:commandLink value="Veja a tabela de medidas completa" onclick="liberaRefresh(); PF('medidasDialog').show();" process="@this"
+										styleClass="link-fita-metrica" rendered="false" />
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
+									<c:if test="#{fn:length(produtoApresentacaoController.entity.linkYoutube) > 0}">
+										<iframe src="#{produtoApresentacaoController.entity.linkYoutube}" class="video-youtube" />
+									</c:if>
+								</p:panelGrid>
+							</p:panelGrid>
+
+							<p:spacer styleClass="display-desktop" />
+							<p:spacer styleClass="display-desktop" />
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:commandButton icon="fa fa-fw fa-arrow-left" value="#{labels.botao_voltar}" actionListener="#{produtoApresentacaoController.close}"
+									process="@this" update=":searchForm :editForm :routeBarForm" styleClass="ui-grid-col-12 botao-produtos" oncomplete="scrollPageTop();" />
 							</p:panelGrid>
 						</p:panelGrid>
 					</div>
-
 				</div>
 			</div>
 		</c:if>

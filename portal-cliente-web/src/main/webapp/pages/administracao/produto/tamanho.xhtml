@@ -11,13 +11,8 @@
 					<div class="card card-w-title">
 						<h1>#{labels.consulta}</h1>
 						<p:panelGrid columns="1" id="filterGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
-							<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group">
-								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-									<p:outputLabel for="nomeFilter" value="Nome" styleClass="label" />
-									<p:inputText id="nomeFilter" value="#{tamanhoProdutoController.filterEntity.nome}" maxlength="20" styleClass="ui-grid-col-12" />
-								</p:panelGrid>
-
-								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+							<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-6" layout="grid">
 									<p:outputLabel for="statusFilter" value="Status" styleClass="label" />
 									<p:selectOneMenu id="statusFilter" value="#{tamanhoProdutoController.filterEntity.status}" styleClass="ui-grid-col-12">
 										<f:selectItem itemLabel="" itemValue="" />
@@ -51,10 +46,6 @@
 
 							<p:column headerText="Código" sortBy="#{entity.codigo}" styleClass="id-column">
 								<h:outputText value="#{entity.codigo}" />
-							</p:column>
-
-							<p:column headerText="Nome" sortBy="#{entity.nome}">
-								<h:outputText value="#{entity.nome}" />
 							</p:column>
 
 							<p:column headerText="Ordem" sortBy="#{entity.ordem}">
@@ -93,12 +84,6 @@
 								<p:outputLabel for="codigo" value="Código" styleClass="label" />
 								<p:inputText id="codigo" value="#{tamanhoProdutoController.entity.codigo}" maxlength="2" styleClass="ui-grid-col-12" required="true"
 									requiredMessage="Favor informar o código" disabled="#{tamanhoProdutoController.editing}" />
-							</p:panelGrid>
-
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<p:outputLabel for="nome" value="Nome" styleClass="label" />
-								<p:inputText id="nome" value="#{tamanhoProdutoController.entity.nome}" maxlength="20" styleClass="ui-grid-col-12" required="true"
-									requiredMessage="Favor informar o nome" />
 							</p:panelGrid>
 
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">

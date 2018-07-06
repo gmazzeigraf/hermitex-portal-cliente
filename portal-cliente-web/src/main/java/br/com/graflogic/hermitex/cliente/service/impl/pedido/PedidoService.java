@@ -11,8 +11,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.graflogic.base.service.gson.GsonUtil;
+import br.com.graflogic.commonutil.util.PessoaFisicaValidator;
+import br.com.graflogic.commonutil.util.PessoaJuridicaValidator;
 import br.com.graflogic.hermitex.cliente.data.dom.DomAuditoria.DomEventoAuditoriaPedido;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomStatus;
+import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomTipoPagamento;
 import br.com.graflogic.hermitex.cliente.data.entity.aud.PedidoAuditoria;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.Pedido;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoEndereco;
@@ -25,6 +28,7 @@ import br.com.graflogic.hermitex.cliente.data.impl.pedido.PedidoRepository;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
 import br.com.graflogic.hermitex.cliente.service.exception.ResultadoNaoEncontradoException;
+import br.com.graflogic.hermitex.cliente.service.model.DadosPagamentoCartaoCredito;
 import br.com.graflogic.hermitex.cliente.web.util.SessionUtil;
 import br.com.graflogic.utilities.datautil.copy.ObjectCopier;
 
@@ -50,7 +54,26 @@ public class PedidoService {
 
 	// Fluxo
 	@Transactional(rollbackFor = Throwable.class)
-	public void cadastra(Pedido entity) {
+	public void cadastra(Pedido entity, DadosPagamentoCartaoCredito dadosPagamentoCartaoCredito) {
+		if (DomTipoPagamento.CARTAO_CREDITO_1.equals(entity.getTipoPagamento())
+				|| DomTipoPagamento.CARTAO_CREDITO_2.equals(entity.getTipoPagamento())) {
+			String documentoPortador = dadosPagamentoCartaoCredito.getDocumentoPortador();
+
+			if (11 == documentoPortador.length()) {
+				if (!PessoaFisicaValidator.validateCPF(documentoPortador)) {
+					throw new DadosInvalidosException("CPF do portador inválido");
+				}
+			} else if (14 == documentoPortador.length()) {
+				if (!PessoaJuridicaValidator.validateCNPJ(documentoPortador)) {
+					throw new DadosInvalidosException("CNPJ do portador inválido");
+				}
+			} else {
+				throw new DadosInvalidosException("Documento do portador inválido");
+			}
+		}
+
+		// TODO Envia pagamento
+
 		validaDados(entity);
 
 		entity.setStatus(DomStatus.PAGAMENTO_PENDENTE);

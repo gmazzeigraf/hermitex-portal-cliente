@@ -9,7 +9,7 @@
 		margin-top: 10px !important; line-height: 40px !important;
 	}
 	.layout-menu-container {
-		border-top: 2px solid;
+		border-top: none !important;
 	}
 	.lista-pick .ui-picklist-list {
 		height: 650px !important;
@@ -41,8 +41,8 @@
 	.layout-main-content {
 		padding-top: 0px !important;
 	}
-	.coluna-imagem-capa {
-		text-align: center; width: 200px;
+	.imagem-capa {
+		text-align: center;
 	}
 	.coluna-valor {
 		text-align: center; width: 200px;
@@ -65,6 +65,15 @@
 	.botao-diminui-quantidade-item {
 		margin-right: 5px !important;
 	}
+	.produtos .ui-panel-content {
+		min-height: 300px !important;
+	}
+	.produtos img {
+		height: 180px !important;
+	}
+	.video-youtube {
+		width: 350px !important; height: 262px;
+	}
 }
 
 @media ( max-width : 1024px) {
@@ -83,8 +92,11 @@
 	.layout-main {
 		min-height: 83% !important; box-sizing: border-box !important;
 	}
-	.coluna-imagem-capa {
-		text-align: center;
+	.imagem-capa {
+		text-align: center; width: 100% !important;
+	}
+	.video-youtube {
+		width: 100%;
 	}
 }
 
@@ -129,6 +141,18 @@
 
 .botao-fechar {
 	background-color: #00ACAC !important;
+}
+
+.botao-produtos, .botao-produtos .ui-button.ui-state-active {
+	background-color: #2D353C !important;
+}
+
+.botao-produtos .ui-button {
+	margin-bottom: 10px;
+}
+
+.route-produtos {
+	color: #2D353C !important;
 }
 
 .resp-dialog {
@@ -240,6 +264,18 @@ body.exception-body .exception-bottom .exception-wrapper .logo-icon {
 	font-weight: 700 !important; font-size: 16px;
 }
 
+.produtos .ui-panel-titlebar {
+	background-color: #2d353c !important; color: #fff !important; font-weight: 700;
+}
+
+.produtos .ui-datagrid-content {
+	border: none !important;
+}
+
+.galleria-produtos img:hover {
+	transform: scale(1.5); /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
+}
+
 /* Cabecalho das tabelas */
 .ui-datatable thead th {
 	border-color: #2d353c !important; background-color: #2d353c !important; color: #fff !important;
@@ -261,8 +297,7 @@ body.exception-body .exception-bottom .exception-wrapper .logo-icon {
 
 /* Logotipo logado */
 .layout-wrapper.menu-layout-static .topbar .topbar-left .logo {
-	/* 	background-image: url("#{resource['poseidon-layout:images/logo-colored.png']}") !important; */
-	
+	background-image: url("#{resource['poseidon-layout:images/logo-white.png']}") !important;
 }
 
 /* Cor do fundo */
@@ -273,8 +308,17 @@ body.main-body {
 
 /* Cor do cabecalho */
 .topbar, .topbar-left {
-	/* 	background-color: #fff; */
-	
+	background-color: #2d353c !important; color: #fff !important;
+}
+
+/* Rodape */
+.footer {
+	padding-bottom: 12px !important;
+}
+
+/* Cor do rodape */
+.footer, .footer .card, .footer-text-right {
+	background-color: #2d353c; color: #fff !important;
 }
 
 /* Fullscren */

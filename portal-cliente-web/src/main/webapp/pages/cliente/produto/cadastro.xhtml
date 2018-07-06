@@ -152,7 +152,7 @@
 
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 								<p:outputLabel for="titulo" value="Título" styleClass="label" />
-								<p:inputText id="titulo" value="#{produtoController.entity.titulo}" maxlength="100" styleClass="ui-grid-col-12" required="true"
+								<p:inputText id="titulo" value="#{produtoController.entity.titulo}" maxlength="50" styleClass="ui-grid-col-12" required="true"
 									requiredMessage="Favor informar o título" />
 							</p:panelGrid>
 
@@ -190,7 +190,7 @@
 							</p:panelGrid>
 
 							<c:if test="#{fn:length(produtoController.entity.linkYoutube) > 0}">
-								<iframe width="420" height="315" src="#{produtoController.entity.linkYoutube}" />
+								<iframe src="#{produtoController.entity.linkYoutube}" class="video-youtube" />
 							</c:if>
 						</p:panelGrid>
 					</div>
@@ -317,7 +317,7 @@
 										<p:selectOneMenu id="tamanho" value="#{produtoController.tamanho.id.codigoTamanho}" styleClass="ui-grid-col-12" required="true"
 											requiredMessage="Favor selecionar o tamanho">
 											<f:selectItem itemLabel="Selecione" itemValue="" />
-											<f:selectItems value="#{produtoController.tamanhos}" var="item" itemLabel="#{item.nome}" itemValue="#{item.codigo}" />
+											<f:selectItems value="#{produtoController.tamanhos}" var="item" itemLabel="#{item.codigo}" itemValue="#{item.codigo}" />
 										</p:selectOneMenu>
 									</p:panelGrid>
 

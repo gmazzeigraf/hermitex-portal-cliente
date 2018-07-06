@@ -34,10 +34,6 @@ public class TamanhoProdutoRepository extends BaseRepository<TamanhoProduto> {
 
 		Root<TamanhoProduto> table = query.from(TamanhoProduto.class);
 
-		if (StringUtils.isNotEmpty(entity.getNome())) {
-			predicateList.add(builder.and(builder.like(builder.upper(table.<String>get("nome")), "%" + entity.getNome().toUpperCase() + "%")));
-		}
-
 		if (StringUtils.isNotEmpty(entity.getStatus())) {
 			predicateList.add(builder.and(builder.equal(table.get("status"), entity.getStatus())));
 		}
