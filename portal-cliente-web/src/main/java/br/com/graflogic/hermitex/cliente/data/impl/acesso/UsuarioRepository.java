@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.Usuario;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioCliente;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioFilial;
+import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioRepresentante;
 import br.com.graflogic.utilities.datautil.repository.BaseRepository;
 
 /**
@@ -62,6 +63,13 @@ public class UsuarioRepository extends BaseRepository<Usuario> {
 
 			if (null != idFilial && 0 != idFilial) {
 				predicateList.add(builder.and(builder.equal(table.get("idFilial"), idFilial)));
+			}
+	
+		} else if (entity instanceof UsuarioRepresentante) {
+			Integer idRepresentante = ((UsuarioRepresentante) entity).getIdRepresentante();
+
+			if (null != idRepresentante && 0 != idRepresentante) {
+				predicateList.add(builder.and(builder.equal(table.get("idRepresentante"), idRepresentante)));
 			}
 		}
 

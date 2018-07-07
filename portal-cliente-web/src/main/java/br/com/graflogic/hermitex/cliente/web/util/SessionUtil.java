@@ -70,4 +70,8 @@ public class SessionUtil {
 	public static boolean isUsuarioFilial() {
 		return isTipo(DomTipoUsuario.FILIAL);
 	}
+
+	public static boolean isUsuarioRepresentante() {
+		return isTipo(DomTipoUsuario.REPRESENTANTE);
+	}
 }

@@ -14,17 +14,21 @@ import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuario;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuarioAdministrador;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuarioCliente;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuarioFilial;
+import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuarioRepresentante;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.PermissaoAcesso;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioCliente;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioFilial;
+import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioRepresentante;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Filial;
+import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Representante;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
 import br.com.graflogic.hermitex.cliente.service.impl.acesso.PerfilUsuarioService;
 import br.com.graflogic.hermitex.cliente.service.impl.acesso.PermissaoAcessoService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.FilialService;
+import br.com.graflogic.hermitex.cliente.service.impl.cadastro.RepresentanteService;
 import br.com.graflogic.hermitex.cliente.web.util.SessionUtil;
 import br.com.graflogic.utilities.presentationutil.controller.CrudBaseController;
 
@@ -42,6 +46,7 @@ public class PerfilUsuarioController extends CrudBaseController<PerfilUsuario, P
 	private static final String VIEW_ADMINISTRADOR = "administracao/acesso/perfil.xhtml";
 	private static final String VIEW_CLIENTE = "cliente/acesso/perfil.xhtml";
 	private static final String VIEW_FILIAL = "filial/acesso/perfil.xhtml";
+	private static final String VIEW_REPRESENTANTE = "representante/acesso/perfil.xhtml";
 
 	@Autowired
 	private PerfilUsuarioService service;
@@ -54,6 +59,9 @@ public class PerfilUsuarioController extends CrudBaseController<PerfilUsuario, P
 
 	@Autowired
 	private FilialService filialService;
+
+	@Autowired
+	private RepresentanteService representanteService;
 
 	private DualListModel<PermissaoAcesso> permissoes;
 
@@ -95,6 +103,16 @@ public class PerfilUsuarioController extends CrudBaseController<PerfilUsuario, P
 					idEntidade = ((UsuarioFilial) SessionUtil.getAuthenticatedUsuario()).getIdFilial();
 
 				}
+			} else if (isViewRepresentante()) {
+				setFilterEntity(new PerfilUsuarioRepresentante());
+
+				if (SessionUtil.isUsuarioAdministrador()) {
+					entidades.addAll(representanteService.consulta(new Representante()));
+
+				} else if (SessionUtil.isUsuarioRepresentante()) {
+					idEntidade = ((UsuarioRepresentante) SessionUtil.getAuthenticatedUsuario()).getIdRepresentante();
+				}
+
 			}
 
 			permissoesDisponiveis = permissaoService.consulta(getFilterEntity().getTipoUsuario());
@@ -153,6 +171,10 @@ public class PerfilUsuarioController extends CrudBaseController<PerfilUsuario, P
 			setEntity(new PerfilUsuarioFilial());
 			((PerfilUsuarioFilial) getEntity()).setIdFilial(idEntidade);
 
+		} else if (isViewRepresentante()) {
+			setEntity(new PerfilUsuarioRepresentante());
+			((PerfilUsuarioRepresentante) getEntity()).setIdRepresentante(idEntidade);
+
 		}
 
 		carregaPermissoes();
@@ -180,6 +202,9 @@ public class PerfilUsuarioController extends CrudBaseController<PerfilUsuario, P
 
 		} else if (isViewFilial()) {
 			((PerfilUsuarioFilial) getFilterEntity()).setIdFilial(idEntidade);
+
+		} else if (isViewRepresentante()) {
+			((PerfilUsuarioRepresentante) getFilterEntity()).setIdRepresentante(idEntidade);
 
 		}
 
@@ -257,6 +282,10 @@ public class PerfilUsuarioController extends CrudBaseController<PerfilUsuario, P
 
 	public boolean isViewFilial() {
 		return isView(VIEW_FILIAL);
+	}
+
+	public boolean isViewRepresentante() {
+		return isView(VIEW_REPRESENTANTE);
 	}
 
 	// Getters e Setters

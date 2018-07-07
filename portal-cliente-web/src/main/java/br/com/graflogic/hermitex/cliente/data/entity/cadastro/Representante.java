@@ -18,7 +18,7 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro;
-import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomStatusCliente;
+import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomStatusRepresentante;
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomTipoEndereco;
 import br.com.graflogic.utilities.datautil.util.FormatUtil;
 
@@ -28,14 +28,14 @@ import br.com.graflogic.utilities.datautil.util.FormatUtil;
  *
  */
 @Entity
-@Table(name = "tb_cliente")
-public class Cliente implements Serializable {
+@Table(name = "tb_representante")
+public class Representante implements Serializable {
 
-	private static final long serialVersionUID = 8284333242118992528L;
+	private static final long serialVersionUID = -3747790521790651488L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SQ_CLIENTE")
-	@SequenceGenerator(name = "SQ_CLIENTE", sequenceName = "SQ_CLIENTE", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SQ_REPRESENTANTE")
+	@SequenceGenerator(name = "SQ_REPRESENTANTE", sequenceName = "SQ_REPRESENTANTE", allocationSize = 1)
 	@Column(name = "id")
 	private Integer id;
 
@@ -57,12 +57,6 @@ public class Cliente implements Serializable {
 	@Column(name = "telefone", nullable = false)
 	private String telefone;
 
-	@Column(name = "id_representante")
-	private Integer idRepresentante;
-
-	@Column(name = "dias_boleto", nullable = false)
-	private Integer diasBoleto;
-
 	@Column(name = "status", nullable = false)
 	private String status;
 
@@ -70,13 +64,13 @@ public class Cliente implements Serializable {
 	@Column(name = "versao", nullable = false)
 	private Long versao;
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "cliente", orphanRemoval = true)
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "representante", orphanRemoval = true)
 	@LazyCollection(LazyCollectionOption.TRUE)
-	private List<ClienteEndereco> enderecos;
+	private List<RepresentanteEndereco> enderecos;
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "cliente", orphanRemoval = true)
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "representante", orphanRemoval = true)
 	@LazyCollection(LazyCollectionOption.TRUE)
-	private List<ClienteContato> contatos;
+	private List<RepresentanteContato> contatos;
 
 	public Integer getId() {
 		return id;
@@ -134,22 +128,6 @@ public class Cliente implements Serializable {
 		this.telefone = telefone;
 	}
 
-	public Integer getIdRepresentante() {
-		return idRepresentante;
-	}
-
-	public void setIdRepresentante(Integer idRepresentante) {
-		this.idRepresentante = idRepresentante;
-	}
-
-	public Integer getDiasBoleto() {
-		return diasBoleto;
-	}
-
-	public void setDiasBoleto(Integer diasBoleto) {
-		this.diasBoleto = diasBoleto;
-	}
-
 	public String getStatus() {
 		return status;
 	}
@@ -166,46 +144,42 @@ public class Cliente implements Serializable {
 		this.versao = versao;
 	}
 
-	public List<ClienteEndereco> getEnderecos() {
+	public List<RepresentanteEndereco> getEnderecos() {
 		return enderecos;
 	}
 
-	public void setEnderecos(List<ClienteEndereco> enderecos) {
+	public void setEnderecos(List<RepresentanteEndereco> enderecos) {
 		this.enderecos = enderecos;
 	}
 
-	public List<ClienteContato> getContatos() {
+	public List<RepresentanteContato> getContatos() {
 		return contatos;
 	}
 
-	public void setContatos(List<ClienteContato> contatos) {
+	public void setContatos(List<RepresentanteContato> contatos) {
 		this.contatos = contatos;
 	}
 
 	public boolean isAtivo() {
-		return null != status && DomStatusCliente.ATIVO.equals(status);
+		return null != status && DomStatusRepresentante.ATIVO.equals(status);
 	}
 
 	public boolean isInativo() {
-		if (DomStatusCliente.INATIVO.equals(status)) {
+		if (DomStatusRepresentante.INATIVO.equals(status)) {
 			return true;
 		}
 		return false;
 	}
 
 	public String getDeStatus() {
-		return DomCadastro.domStatusCliente.getDeValor(status);
+		return DomCadastro.domStatusRepresentante.getDeValor(status);
 	}
 
 	public String getFormattedCnpj() {
 		return FormatUtil.formatCNPJ(cnpj);
 	}
 
-	public ClienteEndereco getEnderecoFaturamento() {
-		return enderecos.get(enderecos.indexOf(new ClienteEndereco(new ClienteEnderecoPK(id, DomTipoEndereco.FATURAMENTO))));
-	}
-
-	public ClienteEndereco getEnderecoEntrega() {
-		return enderecos.get(enderecos.indexOf(new ClienteEndereco(new ClienteEnderecoPK(id, DomTipoEndereco.ENTREGA))));
+	public RepresentanteEndereco getEnderecoCadastro() {
+		return enderecos.get(enderecos.indexOf(new RepresentanteEndereco(new RepresentanteEnderecoPK(id, DomTipoEndereco.CADASTRO))));
 	}
 }

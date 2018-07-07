@@ -13,11 +13,13 @@ public class DomAcesso {
 		public static final String ADMINISTRADOR = "A";
 		public static final String CLIENTE = "C";
 		public static final String FILIAL = "F";
+		public static final String REPRESENTANTE = "R";
 
 		DomTipoUsuario() {
 			mapa.put(ADMINISTRADOR, "Administrador");
 			mapa.put(CLIENTE, "Cliente");
 			mapa.put(FILIAL, "Filial");
+			mapa.put(REPRESENTANTE, "Representante");
 		}
 	}
 

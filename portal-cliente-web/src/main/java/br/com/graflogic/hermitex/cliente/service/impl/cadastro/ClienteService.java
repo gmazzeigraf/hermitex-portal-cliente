@@ -131,6 +131,13 @@ public class ClienteService {
 		return repository.consulta(entity);
 	}
 
+	public List<Cliente> consultaPorRepresentante(Integer idRepresentante) {
+		Cliente filter = new Cliente();
+		filter.setIdRepresentante(idRepresentante);
+
+		return consulta(filter);
+	}
+
 	public Cliente consultaPorId(Integer id) {
 		Cliente entity = repository.findById(id);
 
@@ -155,8 +162,8 @@ public class ClienteService {
 
 	// Util
 	private void validaDados(Cliente entity) {
-		if (entity.getDiaInicioCompras() >= entity.getDiaFimCompras()) {
-			throw new DadosInvalidosException("O dia de início das compras deve ser menor que o dia de fim");
+		if (null != entity.getIdRepresentante() && 0 == entity.getIdRepresentante()) {
+			entity.setIdRepresentante(null);
 		}
 	}
 

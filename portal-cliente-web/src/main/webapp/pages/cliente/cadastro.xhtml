@@ -11,10 +11,19 @@
 					<div class="card card-w-title">
 						<h1>#{labels.consulta}</h1>
 						<p:panelGrid columns="1" id="filterGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
-							<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group">
+							<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 									<p:outputLabel for="razaoSocialFilter" value="Razão Social" styleClass="label" />
 									<p:inputText id="razaoSocialFilter" value="#{clienteController.filterEntity.razaoSocial}" maxlength="100" styleClass="ui-grid-col-12" />
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="representanteFilter" value="Representante" styleClass="label" />
+									<p:selectOneMenu id="representanteFilter" value="#{clienteController.filterEntity.idRepresentante}" styleClass="ui-grid-col-12" filter="true"
+										filterMatchMode="startsWith">
+										<f:selectItem itemLabel="" itemValue="" />
+										<f:selectItems value="#{clienteController.representantes}" var="item" itemLabel="#{item.razaoSocial}" itemValue="#{item.id}" />
+									</p:selectOneMenu>
 								</p:panelGrid>
 
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
@@ -124,25 +133,27 @@
 								<p:inputMask id="telefone" styleClass="ui-grid-col-12" mask="(99) 9999?9-9999" value="#{clienteController.entity.telefone}"
 									converter="maskConverter" required="true" requiredMessage="Favor informar o telefone" />
 							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel for="representante" value="Representante" styleClass="label" />
+								<p:selectOneMenu id="representante" value="#{clienteController.entity.idRepresentante}" styleClass="ui-grid-col-12" filter="true"
+									filterMatchMode="startsWith">
+									<f:selectItem itemLabel="" itemValue="" />
+									<f:selectItems value="#{clienteController.representantes}" var="item" itemLabel="#{item.razaoSocial}" itemValue="#{item.id}"
+										itemDisabled="#{item.inativo}" />
+								</p:selectOneMenu>
+							</p:panelGrid>
 						</p:panelGrid>
 					</div>
 
 					<div class="card card-w-title">
 						<h1>Compras</h1>
 
-						<h:outputText value="Utilize início 1 e fim 31 para não limitar os dias." styleClass="label" />
-
-						<p:panelGrid columns="2" id="comprasGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
+						<p:panelGrid columns="4" id="comprasGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<p:outputLabel for="diaInicioCompras" value="Dia Início" styleClass="label" />
-								<p:inputNumber id="diaInicioCompras" styleClass="input-number-resp" value="#{clienteController.entity.diaInicioCompras}" required="true"
-									requiredMessage="Favor informar o dia de início de compras" minValue="1" maxValue="27" />
-							</p:panelGrid>
-
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<p:outputLabel for="diaFimCompras" value="Dia Fim" styleClass="label" />
-								<p:inputNumber id="diaFimCompras" styleClass="input-number-resp" value="#{clienteController.entity.diaFimCompras}" required="true"
-									requiredMessage="Favor informar o dia de fim de compras" minValue="1" maxValue="31" />
+								<p:outputLabel for="diasBoleto" value="Dias Boleto" styleClass="label" />
+								<p:inputNumber id="diasBoleto" styleClass="input-number-resp" value="#{clienteController.entity.diasBoleto}" required="true"
+									requiredMessage="Favor informar os dias do boleto" minValue="1" maxValue="30" />
 							</p:panelGrid>
 						</p:panelGrid>
 					</div>
@@ -349,7 +360,7 @@
 									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 										<p:outputLabel for="emailContato" value="E-mail" styleClass="label" />
 										<p:inputText id="emailContato" styleClass="ui-grid-col-12" value="#{clienteController.contato.email}" maxlength="50"
-											validator="checkvalidemail" validatorMessage="E-mail inválido" required="true" />
+											validator="checkvalidemail" validatorMessage="E-mail inválido" />
 									</p:panelGrid>
 
 									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">

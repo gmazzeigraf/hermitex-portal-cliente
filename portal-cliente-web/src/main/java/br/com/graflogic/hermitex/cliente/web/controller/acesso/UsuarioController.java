@@ -21,8 +21,10 @@ import br.com.graflogic.hermitex.cliente.data.entity.acesso.Usuario;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioAdministrador;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioCliente;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioFilial;
+import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioRepresentante;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Filial;
+import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Representante;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
 import br.com.graflogic.hermitex.cliente.service.impl.acesso.PerfilUsuarioService;
@@ -30,6 +32,7 @@ import br.com.graflogic.hermitex.cliente.service.impl.acesso.PermissaoAcessoServ
 import br.com.graflogic.hermitex.cliente.service.impl.acesso.UsuarioService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.FilialService;
+import br.com.graflogic.hermitex.cliente.service.impl.cadastro.RepresentanteService;
 import br.com.graflogic.hermitex.cliente.web.util.SessionUtil;
 import br.com.graflogic.utilities.presentationutil.controller.CrudBaseController;
 
@@ -48,6 +51,7 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 	private static final String VIEW_ADMINISTRADOR = "administracao/acesso/usuario.xhtml";
 	private static final String VIEW_CLIENTE = "cliente/acesso/usuario.xhtml";
 	private static final String VIEW_FILIAL = "filial/acesso/usuario.xhtml";
+	private static final String VIEW_REPRESENTANTE = "representante/acesso/usuario.xhtml";
 
 	@Autowired
 	private UsuarioService service;
@@ -63,6 +67,9 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 
 	@Autowired
 	private FilialService filialService;
+
+	@Autowired
+	private RepresentanteService representanteService;
 
 	private List<PerfilUsuario> perfis;
 
@@ -114,6 +121,16 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 				} else if (SessionUtil.isUsuarioFilial()) {
 					idEntidade = ((UsuarioFilial) SessionUtil.getAuthenticatedUsuario()).getIdFilial();
 
+				}
+
+			} else if (isViewRepresentante()) {
+				setFilterEntity(new UsuarioRepresentante());
+
+				if (SessionUtil.isUsuarioAdministrador()) {
+					entidades.addAll(representanteService.consulta(new Representante()));
+
+				} else if (SessionUtil.isUsuarioRepresentante()) {
+					idEntidade = ((UsuarioRepresentante) SessionUtil.getAuthenticatedUsuario()).getIdRepresentante();
 				}
 			}
 
@@ -168,6 +185,10 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 			setEntity(new UsuarioFilial());
 			((UsuarioFilial) getEntity()).setIdFilial(idEntidade);
 
+		} else if (isViewRepresentante()) {
+			setEntity(new UsuarioRepresentante());
+			((UsuarioRepresentante) getEntity()).setIdRepresentante(idEntidade);
+
 		}
 	}
 
@@ -183,6 +204,9 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 
 		} else if (isViewFilial()) {
 			((UsuarioFilial) getFilterEntity()).setIdFilial(idEntidade);
+
+		} else if (isViewRepresentante()) {
+			((UsuarioRepresentante) getFilterEntity()).setIdRepresentante(idEntidade);
 
 		}
 
@@ -325,6 +349,10 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 
 	public boolean isViewFilial() {
 		return isView(VIEW_FILIAL);
+	}
+
+	public boolean isViewRepresentante() {
+		return isView(VIEW_REPRESENTANTE);
 	}
 
 	// Getters e Setters

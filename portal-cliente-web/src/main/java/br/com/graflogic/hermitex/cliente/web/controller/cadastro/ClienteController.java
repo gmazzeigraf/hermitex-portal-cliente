@@ -18,12 +18,14 @@ import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.ClienteContato;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.ClienteEndereco;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.ClienteEnderecoPK;
+import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Representante;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
 import br.com.graflogic.hermitex.cliente.service.exception.ResultadoNaoEncontradoException;
 import br.com.graflogic.hermitex.cliente.service.impl.auxiliar.EstadoService;
 import br.com.graflogic.hermitex.cliente.service.impl.auxiliar.MunicipioService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
+import br.com.graflogic.hermitex.cliente.service.impl.cadastro.RepresentanteService;
 import br.com.graflogic.utilities.cep.CEPClient;
 import br.com.graflogic.utilities.cep.exception.CEPNotFoundException;
 import br.com.graflogic.utilities.cep.exception.InvalidCEPException;
@@ -46,6 +48,9 @@ public class ClienteController extends CrudBaseController<Cliente, Cliente> impl
 	private ClienteService service;
 
 	@Autowired
+	private RepresentanteService representanteService;
+
+	@Autowired
 	private EstadoService estadoService;
 
 	@Autowired
@@ -53,6 +58,8 @@ public class ClienteController extends CrudBaseController<Cliente, Cliente> impl
 
 	@Autowired
 	private CEPClient cepClient;
+
+	private List<Representante> representantes;
 
 	private List<Estado> estados;
 
@@ -73,6 +80,7 @@ public class ClienteController extends CrudBaseController<Cliente, Cliente> impl
 		try {
 			setFilterEntity(new Cliente());
 
+			representantes = representanteService.consulta(new Representante());
 			estados = estadoService.consulta();
 			municipiosFaturamento = new ArrayList<Municipio>();
 			municipiosEntrega = new ArrayList<>();
@@ -392,6 +400,10 @@ public class ClienteController extends CrudBaseController<Cliente, Cliente> impl
 
 	public void setIndexRelacionado(int indexRelacionado) {
 		this.indexRelacionado = indexRelacionado;
+	}
+
+	public List<Representante> getRepresentantes() {
+		return representantes;
 	}
 
 	public List<Estado> getEstados() {

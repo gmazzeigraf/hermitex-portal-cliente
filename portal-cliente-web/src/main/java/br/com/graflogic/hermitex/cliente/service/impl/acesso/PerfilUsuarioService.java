@@ -18,6 +18,7 @@ import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuario;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuarioAdministrador;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuarioCliente;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuarioFilial;
+import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuarioRepresentante;
 import br.com.graflogic.hermitex.cliente.data.entity.aud.PerfilUsuarioAuditoria;
 import br.com.graflogic.hermitex.cliente.data.impl.acesso.PerfilUsuarioRepository;
 import br.com.graflogic.hermitex.cliente.data.impl.aud.PerfilUsuarioAuditoriaRepository;
@@ -112,6 +113,10 @@ public class PerfilUsuarioService {
 			} else if (DomTipoUsuario.FILIAL.equals(tipoUsuario)) {
 				filter = new PerfilUsuarioFilial();
 				((PerfilUsuarioFilial) filter).setIdFilial(idEntidade);
+
+			} else if (DomTipoUsuario.REPRESENTANTE.equals(tipoUsuario)) {
+				filter = new PerfilUsuarioRepresentante();
+				((PerfilUsuarioRepresentante) filter).setIdRepresentante(idEntidade);
 
 			}
 

@@ -32,6 +32,11 @@
 		<intercept-url pattern="/pages/filial/cadastro.jsf" access="hasAnyRole('ROLE_FIL_CADASTRO')" />
 		<intercept-url pattern="/pages/filial/acesso/perfil.jsf" access="hasAnyRole('ROLE_FIL_ACESSO_PERFIL')" />
 		<intercept-url pattern="/pages/filial/acesso/usuario.jsf" access="hasAnyRole('ROLE_FIL_ACESSO_USUARIO')" />
+		
+		<!-- Filial -->
+		<intercept-url pattern="/pages/representante/cadastro.jsf" access="hasAnyRole('ROLE_REP_CADASTRO')" />
+		<intercept-url pattern="/pages/representante/acesso/perfil.jsf" access="hasAnyRole('ROLE_REP_ACESSO_PERFIL')" />
+		<intercept-url pattern="/pages/representante/acesso/usuario.jsf" access="hasAnyRole('ROLE_REP_ACESSO_USUARIO')" />
 
 		<!-- Compra -->
 		<intercept-url pattern="/pages/compra/produtos.jsf" access="hasAnyRole('ROLE_PRODUTOS')" />

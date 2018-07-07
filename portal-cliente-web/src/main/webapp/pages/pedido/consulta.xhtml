@@ -13,7 +13,8 @@
 					<div class="card card-w-title">
 						<p:panelGrid columns="1" id="filterGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
 							<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group">
-								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{sessionController.usuarioAdministrador}">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid"
+									rendered="#{sessionController.usuarioAdministrador or sessionController.usuarioRepresentante}">
 									<p:outputLabel for="clienteFilter" value="Cliente *" styleClass="label" />
 									<p:selectOneMenu id="clienteFilter" value="#{pedidoController.filterEntity.idCliente}" styleClass="ui-grid-col-12" filter="true"
 										filterMatchMode="contains">

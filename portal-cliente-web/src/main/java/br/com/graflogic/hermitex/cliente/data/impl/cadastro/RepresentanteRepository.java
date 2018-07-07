@@ -12,7 +12,7 @@ import javax.persistence.criteria.Root;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Repository;
 
-import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
+import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Representante;
 import br.com.graflogic.utilities.datautil.repository.BaseRepository;
 
 /**
@@ -21,26 +21,22 @@ import br.com.graflogic.utilities.datautil.repository.BaseRepository;
  *
  */
 @Repository
-public class ClienteRepository extends BaseRepository<Cliente> {
+public class RepresentanteRepository extends BaseRepository<Representante> {
 
-	public ClienteRepository() {
-		super(Cliente.class);
+	public RepresentanteRepository() {
+		super(Representante.class);
 	}
 
-	public List<Cliente> consulta(Cliente entity) {
+	public List<Representante> consulta(Representante entity) {
 		CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
-		CriteriaQuery<Cliente> query = builder.createQuery(Cliente.class);
+		CriteriaQuery<Representante> query = builder.createQuery(Representante.class);
 		List<Predicate> predicateList = new ArrayList<Predicate>();
 
-		Root<Cliente> table = query.from(Cliente.class);
+		Root<Representante> table = query.from(Representante.class);
 
 		if (StringUtils.isNotEmpty(entity.getRazaoSocial())) {
 			predicateList.add(
 					builder.and(builder.like(builder.upper(table.<String>get("razaoSocial")), "%" + entity.getRazaoSocial().toUpperCase() + "%")));
-		}
-
-		if (null != entity.getIdRepresentante() && 0 != entity.getIdRepresentante()) {
-			predicateList.add(builder.and(builder.equal(table.get("idRepresentante"), entity.getIdRepresentante())));
 		}
 
 		if (StringUtils.isNotEmpty(entity.getStatus())) {
@@ -49,22 +45,22 @@ public class ClienteRepository extends BaseRepository<Cliente> {
 
 		query.orderBy(builder.asc(table.get("razaoSocial")));
 		query.where(predicateList.toArray(new Predicate[predicateList.size()]));
-		TypedQuery<Cliente> typedQuery = getEntityManager().createQuery(query);
+		TypedQuery<Representante> typedQuery = getEntityManager().createQuery(query);
 
-		return (List<Cliente>) typedQuery.getResultList();
+		return (List<Representante>) typedQuery.getResultList();
 	}
 
-	public Cliente consultaPorCnpj(String cnpj) {
+	public Representante consultaPorCnpj(String cnpj) {
 		CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
-		CriteriaQuery<Cliente> query = builder.createQuery(Cliente.class);
+		CriteriaQuery<Representante> query = builder.createQuery(Representante.class);
 		List<Predicate> predicateList = new ArrayList<Predicate>();
 
-		Root<Cliente> table = query.from(Cliente.class);
+		Root<Representante> table = query.from(Representante.class);
 
 		predicateList.add(builder.and(builder.equal(table.get("cnpj"), cnpj)));
 
 		query.where(predicateList.toArray(new Predicate[predicateList.size()]));
-		TypedQuery<Cliente> typedQuery = getEntityManager().createQuery(query);
+		TypedQuery<Representante> typedQuery = getEntityManager().createQuery(query);
 
 		return typedQuery.getSingleResult();
 	}
