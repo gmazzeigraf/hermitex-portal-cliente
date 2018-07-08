@@ -23,6 +23,7 @@
 		memoryStoreEvictionPolicy="LFU" />
 
 	<cache name="imagensProduto" eternal="false" maxElementsInMemory="0" timeToLiveSeconds="1800" overflowToDisk="false" memoryStoreEvictionPolicy="LFU" />
-	
-	<cache name="imagensApresentacao" eternal="false" maxElementsInMemory="0" timeToLiveSeconds="1800" overflowToDisk="false" memoryStoreEvictionPolicy="LFU" />
+
+	<cache name="imagensApresentacao" eternal="false" maxElementsInMemory="0" timeToLiveSeconds="1800" overflowToDisk="false"
+		memoryStoreEvictionPolicy="LFU" />
 </ehcache>

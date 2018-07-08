@@ -127,11 +127,11 @@
 						<h1>Pagamento</h1>
 						<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group" id="dadosPagamentoGrid">
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-4" layout="grid">
-								<p:outputLabel for="tipoPagamento" value="Forma Pagamento" styleClass="label" />
-								<p:selectOneMenu id="tipoPagamento" value="#{carrinhoController.pedido.tipoPagamento}" styleClass="ui-grid-col-12" required="true"
+								<p:outputLabel for="formaPagamento" value="Forma Pagamento" styleClass="label" />
+								<p:selectOneMenu id="formaPagamento" value="#{carrinhoController.pedido.codigoFormaPagamento}" styleClass="ui-grid-col-12" required="true"
 									requiredMessage="Favor selecionar a forma de pagamento">
 									<f:selectItem itemLabel="Selecione" itemValue="" />
-									<f:selectItems value="#{carrinhoController.formasPagamento}" var="item" itemLabel="#{item.descricao}" itemValue="#{item.tipoPagamento}" />
+									<f:selectItems value="#{carrinhoController.formasPagamento}" var="item" itemLabel="#{item.descricao}" itemValue="#{item.codigo}" />
 									<p:ajax process="@this" update="dadosPagamentoGrid" />
 								</p:selectOneMenu>
 							</p:panelGrid>

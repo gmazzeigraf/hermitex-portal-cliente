@@ -25,19 +25,19 @@ public class DomPedido {
 
 	public static DomStatus domStatus = new DomStatus();
 
-	public static class DomTipoPagamento extends DomBase {
+	public static class DomFormaPagamento extends DomBase {
 		public static final String BOLETO = "B";
 		public static final String CARTAO_CREDITO_1 = "1";
 		public static final String CARTAO_CREDITO_2 = "2";
 
-		DomTipoPagamento() {
+		DomFormaPagamento() {
 			mapa.put(BOLETO, "Boleto 1x");
 			mapa.put(CARTAO_CREDITO_1, "Cartão de Crédito 1x");
 			mapa.put(CARTAO_CREDITO_2, "Cartão de Crédito 2x");
 		}
 	}
 
-	public static DomTipoPagamento domTipoPagamento = new DomTipoPagamento();
+	public static DomFormaPagamento domFormaPagamento = new DomFormaPagamento();
 
 	public static class DomBandeiraCartaoCredito extends DomBase {
 		public static final String ELO = "Elo";
@@ -65,4 +65,15 @@ public class DomPedido {
 
 	public static DomBandeiraCartaoCredito domBandeiraCartaoCredito = new DomBandeiraCartaoCredito();
 
+	public static class DomStatusJanelaCompra extends DomBase {
+		public static final String CADASTRADA = "C";
+		public static final String FECHADA = "F";
+
+		DomStatusJanelaCompra() {
+			mapa.put(CADASTRADA, "Cadastrada");
+			mapa.put(FECHADA, "Fechada");
+		}
+	}
+
+	public static DomStatusJanelaCompra domStatusJanelaCompra = new DomStatusJanelaCompra();
 }

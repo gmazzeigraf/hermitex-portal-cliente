@@ -2,6 +2,7 @@ package br.com.graflogic.hermitex.cliente.web.controller.pedido;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,13 +13,14 @@ import org.springframework.stereotype.Controller;
 
 import br.com.graflogic.base.service.util.I18NUtil;
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomTipoEndereco;
-import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomTipoPagamento;
+import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomFormaPagamento;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioCliente;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioFilial;
 import br.com.graflogic.hermitex.cliente.data.entity.auxiliar.Estado;
 import br.com.graflogic.hermitex.cliente.data.entity.auxiliar.Municipio;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Filial;
+import br.com.graflogic.hermitex.cliente.data.entity.pedido.JanelaCompra;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.Pedido;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoEndereco;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoEnderecoPK;
@@ -28,6 +30,7 @@ import br.com.graflogic.hermitex.cliente.service.impl.auxiliar.EstadoService;
 import br.com.graflogic.hermitex.cliente.service.impl.auxiliar.MunicipioService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.FilialService;
+import br.com.graflogic.hermitex.cliente.service.impl.pedido.JanelaCompraService;
 import br.com.graflogic.hermitex.cliente.service.impl.pedido.PedidoService;
 import br.com.graflogic.hermitex.cliente.service.model.DadosPagamentoCartaoCredito;
 import br.com.graflogic.hermitex.cliente.service.model.FormaPagamento;
@@ -60,11 +63,16 @@ public class CarrinhoController extends BaseController implements InitializingBe
 	@Autowired
 	private MunicipioService municipioService;
 
+	@Autowired
+	private JanelaCompraService janelaCompraService;
+
 	private List<Estado> estados;
 
 	private List<Municipio> municipiosFaturamento;
 
 	private List<Municipio> municipiosEntrega;
+
+	private Cliente cliente;
 
 	private Pedido pedido;
 
@@ -76,6 +84,10 @@ public class CarrinhoController extends BaseController implements InitializingBe
 
 	private List<FormaPagamento> formasPagamento;
 
+	private JanelaCompra janelaCompra;
+
+	private String mensagemJanelaCompra;
+
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		try {
@@ -84,6 +96,14 @@ public class CarrinhoController extends BaseController implements InitializingBe
 			municipiosEntrega = new ArrayList<>();
 
 			formasPagamento = new ArrayList<>();
+
+			if (SessionUtil.isUsuarioCliente()) {
+				cliente = clienteService.consultaPorId(((UsuarioCliente) SessionUtil.getAuthenticatedUsuario()).getIdCliente());
+
+			} else if (SessionUtil.isUsuarioFilial()) {
+				cliente = clienteService.consultaPorId(((UsuarioFilial) SessionUtil.getAuthenticatedUsuario()).getIdCliente());
+
+			}
 
 			preparaNovoPedido();
 
@@ -130,18 +150,14 @@ public class CarrinhoController extends BaseController implements InitializingBe
 		pedido.setValorTotal(pedido.getValorTotal().add(pedido.getValorFrete()));
 		pedido.setValorTotal(pedido.getValorTotal().setScale(2, RoundingMode.HALF_EVEN));
 
-		formasPagamento.clear();
-
-		formasPagamento.add(new FormaPagamento(DomTipoPagamento.BOLETO));
-		formasPagamento.add(new FormaPagamento(DomTipoPagamento.CARTAO_CREDITO_1));
-		formasPagamento.add(new FormaPagamento(DomTipoPagamento.CARTAO_CREDITO_2));
-
-		for (FormaPagamento parcela : formasPagamento) {
-			parcela.setValor(pedido.getValorTotal().divide(new BigDecimal(parcela.getParcelas())).setScale(2, RoundingMode.HALF_EVEN));
-		}
+		formasPagamento = pedidoService.geraFormasPagamento(cliente, pedido.getValorTotal());
 	}
 
 	private void preparaNovoPedido() {
+		if (!SessionUtil.isUsuarioCliente() && !SessionUtil.isUsuarioFilial()) {
+			return;
+		}
+
 		pedido = new Pedido();
 		pedido.setItens(new ArrayList<>());
 		pedido.setEnderecos(new ArrayList<>());
@@ -208,10 +224,16 @@ public class CarrinhoController extends BaseController implements InitializingBe
 		municipiosEntrega.addAll(municipioService.consulta(enderecoEntrega.getSiglaEstado()));
 
 		// TODO Calcula frete
+		consultaJanelaCompra();
 	}
 
 	public void prosseguePagamento() {
 		try {
+			if (null == janelaCompra) {
+				returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Não existe janela de compras cadastrada", null);
+				return;
+			}
+
 			redirectView(getApplicationUrl() + "/pages/compra/pagamento.jsf");
 
 		} catch (Throwable t) {
@@ -221,11 +243,22 @@ public class CarrinhoController extends BaseController implements InitializingBe
 
 	public void finalizaPedido() {
 		try {
+			if (null == janelaCompra) {
+				returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Não existe janela de compras cadastrada", null);
+				return;
+			}
+
 			enderecoFaturamento.setPedido(pedido);
 			enderecoEntrega.setPedido(pedido);
 
 			pedido.getEnderecos().add(enderecoFaturamento);
 			pedido.getEnderecos().add(enderecoEntrega);
+
+			for (FormaPagamento forma : formasPagamento) {
+				if (pedido.getCodigoFormaPagamento().equals(forma.getCodigo())) {
+					pedido.setFormaPagamento(forma.getDescricao());
+				}
+			}
 
 			pedidoService.cadastra(pedido, dadosPagamentoCartaoCredito);
 
@@ -241,10 +274,28 @@ public class CarrinhoController extends BaseController implements InitializingBe
 		}
 	}
 
+	// Janela Compra
+	private void consultaJanelaCompra() {
+		try {
+			janelaCompra = janelaCompraService.consultaAtiva(cliente.getId());
+
+			mensagemJanelaCompra = "A janela de compras fechará no dia " + new SimpleDateFormat("dd/MM/yyyy").format(janelaCompra.getDataFechamento());
+
+		} catch (DadosInvalidosException e) {
+			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), e.getMessage(), null);
+
+			janelaCompra = null;
+			mensagemJanelaCompra = null;
+
+		} catch (Throwable t) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao consultar janela de compras, contate o administrador", t);
+		}
+	}
+
 	// Condicoes
 	public boolean isPagamentoCartaoCredito() {
-		return null != pedido.getTipoPagamento() && (DomTipoPagamento.CARTAO_CREDITO_1.equals(pedido.getTipoPagamento())
-				|| DomTipoPagamento.CARTAO_CREDITO_2.equals(pedido.getTipoPagamento()));
+		return null != pedido.getCodigoFormaPagamento() && (DomFormaPagamento.CARTAO_CREDITO_1.equals(pedido.getCodigoFormaPagamento())
+				|| DomFormaPagamento.CARTAO_CREDITO_2.equals(pedido.getCodigoFormaPagamento()));
 	}
 
 	// Getters e Setters
@@ -278,5 +329,13 @@ public class CarrinhoController extends BaseController implements InitializingBe
 
 	public List<FormaPagamento> getFormasPagamento() {
 		return formasPagamento;
+	}
+
+	public JanelaCompra getJanelaCompra() {
+		return janelaCompra;
+	}
+
+	public String getMensagemJanelaCompra() {
+		return mensagemJanelaCompra;
 	}
 }

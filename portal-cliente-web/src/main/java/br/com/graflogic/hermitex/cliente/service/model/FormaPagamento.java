@@ -2,9 +2,6 @@ package br.com.graflogic.hermitex.cliente.service.model;
 
 import java.math.BigDecimal;
 
-import br.com.graflogic.hermitex.cliente.data.dom.DomPedido;
-import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomTipoPagamento;
-
 /**
  * 
  * @author gmazz
@@ -12,32 +9,33 @@ import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomTipoPagamento;
  */
 public class FormaPagamento {
 
-	public FormaPagamento(String tipoPagamento) {
-		this.tipoPagamento = tipoPagamento;
-
-		if (DomTipoPagamento.BOLETO.equals(tipoPagamento)) {
-			setParcelas(1);
-
-		} else if (DomTipoPagamento.CARTAO_CREDITO_1.equals(tipoPagamento)) {
-			setParcelas(1);
-
-		} else if (DomTipoPagamento.CARTAO_CREDITO_2.equals(tipoPagamento)) {
-			setParcelas(2);
-		}
+	public FormaPagamento(String codigo, Integer parcelas) {
+		this.codigo = codigo;
+		this.parcelas = parcelas;
 	}
 
-	private String tipoPagamento;
+	private String codigo;
+
+	private String descricao;
 
 	private Integer parcelas;
 
 	private BigDecimal valor;
 
-	public String getTipoPagamento() {
-		return tipoPagamento;
+	public String getCodigo() {
+		return codigo;
 	}
 
-	public void setTipoPagamento(String tipoPagamento) {
-		this.tipoPagamento = tipoPagamento;
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
+
+	public String getDescricao() {
+		return descricao;
+	}
+
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
 	}
 
 	public Integer getParcelas() {
@@ -54,9 +52,5 @@ public class FormaPagamento {
 
 	public void setValor(BigDecimal valor) {
 		this.valor = valor;
-	}
-
-	public String getDescricao() {
-		return DomPedido.domTipoPagamento.getDeValor(tipoPagamento) + " R$ " + valor.toString().replace(".", ",");
 	}
 }

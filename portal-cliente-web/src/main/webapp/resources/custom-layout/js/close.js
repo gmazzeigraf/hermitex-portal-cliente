@@ -1,3 +1,8 @@
+function atualizaPagina() {
+	dataClick = new Date();
+	location.reload();
+}
+
 var dataClick = null;
 
  $(document).ready(function() {

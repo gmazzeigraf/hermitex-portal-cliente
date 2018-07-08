@@ -47,6 +47,9 @@
 								<p:menuitem id="menu_cliente_acesso_usuario" icon="fa fa-fw fa-user" value="#{labels.menu_cliente_acesso_usuario}"
 									url="/pages/cliente/acesso/usuario.jsf" rendered="#{sec:isAllowed('/pages/cliente/acesso/usuario.jsf', '')}" />
 							</p:submenu>
+							
+							<p:menuitem id="menu_cliente_janela_compra" icon="fa fa-fw fa-calendar" value="#{labels.menu_cliente_janela_compra}"
+									url="/pages/cliente/janela_compra.jsf" rendered="#{sec:isAllowed('/pages/cliente/janela_compra.jsf', '')}" />
 						</p:submenu>
 
 						<p:submenu id="menu_filial" icon="fa fa-fw fa-briefcase" label="#{labels.menu_filial}">

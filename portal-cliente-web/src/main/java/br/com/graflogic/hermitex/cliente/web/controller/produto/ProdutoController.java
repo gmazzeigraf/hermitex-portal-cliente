@@ -242,7 +242,7 @@ public class ProdutoController extends CrudBaseController<Produto, Produto> impl
 			edit(getEntity());
 
 		} catch (Throwable t) {
-			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao invativar produto, contate o administrador", t);
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao inativar produto, contate o administrador", t);
 		}
 	}
 

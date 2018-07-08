@@ -53,11 +53,17 @@ public class Pedido implements Serializable {
 	@Column(name = "vl_total", nullable = false)
 	private BigDecimal valorTotal;
 
-	@Column(name = "tp_pagamento", nullable = false)
-	private String tipoPagamento;
+	@Column(name = "cd_forma_pagamento", nullable = false)
+	private String codigoFormaPagamento;
+
+	@Column(name = "ds_forma_pagamento", nullable = false)
+	private String formaPagamento;
 
 	@Column(name = "id_pagamento")
 	private String idPagamento;
+
+	@Column(name = "id_janela_compra", nullable = false)
+	private Integer idJanelaCompra;
 
 	@Column(name = "status", nullable = false)
 	private String status;
@@ -122,12 +128,20 @@ public class Pedido implements Serializable {
 		this.valorTotal = valorTotal;
 	}
 
-	public String getTipoPagamento() {
-		return tipoPagamento;
+	public String getCodigoFormaPagamento() {
+		return codigoFormaPagamento;
 	}
 
-	public void setTipoPagamento(String tipoPagamento) {
-		this.tipoPagamento = tipoPagamento;
+	public void setCodigoFormaPagamento(String codigoFormaPagamento) {
+		this.codigoFormaPagamento = codigoFormaPagamento;
+	}
+
+	public String getFormaPagamento() {
+		return formaPagamento;
+	}
+
+	public void setFormaPagamento(String formaPagamento) {
+		this.formaPagamento = formaPagamento;
 	}
 
 	public String getIdPagamento() {
@@ -136,6 +150,14 @@ public class Pedido implements Serializable {
 
 	public void setIdPagamento(String idPagamento) {
 		this.idPagamento = idPagamento;
+	}
+
+	public Integer getIdJanelaCompra() {
+		return idJanelaCompra;
+	}
+
+	public void setIdJanelaCompra(Integer idJanelaCompra) {
+		this.idJanelaCompra = idJanelaCompra;
 	}
 
 	public String getStatus() {
@@ -168,10 +190,6 @@ public class Pedido implements Serializable {
 
 	public void setEnderecos(List<PedidoEndereco> enderecos) {
 		this.enderecos = enderecos;
-	}
-
-	public String getDeTipoPagamento() {
-		return DomPedido.domTipoPagamento.getDeValor(tipoPagamento);
 	}
 
 	public String getDeStatus() {

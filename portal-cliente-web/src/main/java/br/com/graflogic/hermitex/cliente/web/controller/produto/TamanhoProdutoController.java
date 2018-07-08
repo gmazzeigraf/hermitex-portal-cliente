@@ -100,7 +100,7 @@ public class TamanhoProdutoController extends CrudBaseController<TamanhoProduto,
 			edit(getEntity());
 
 		} catch (Throwable t) {
-			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao invativar tamanho, contate o administrador", t);
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao inativar tamanho, contate o administrador", t);
 		}
 	}
 

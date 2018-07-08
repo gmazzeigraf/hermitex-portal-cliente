@@ -14,6 +14,7 @@
 			<div class="ui-g">
 				<div class="ui-g-12">
 					<div class="card card-w-title">
+					<h:outputText value="#{carrinhoController.mensagemJanelaCompra}" styleClass="label" style="color: red;" />
 						<p:panelGrid columns="1" id="filterGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
 							<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{sessionController.usuarioAdministrador}">
@@ -152,32 +153,35 @@
 										</h:outputText>
 									</p:panelGrid>
 
-									<p:panelGrid columns="1" columnClasses="ui-grid-col-6" layout="grid" rendered="#{sec:areAnyGranted('ROLE_COMPRA')}">
-										<h:outputText value="Quantidade" styleClass="label" />
-										<p:panelGrid columns="3" columnClasses="ui-grid-col-2, ui-grid-col-8, ui-grid-col-2" layout="grid">
-											<p:commandButton icon="fa fa-fw fa-minus" actionListener="#{produtoApresentacaoController.diminuiQuantidade}" process="@this"
-												global="false" update="quantidade valorTotalGrid" styleClass="ui-grid-col-12 botao-diminui-quantidade-item botao-produtos" />
-											<p:inputNumber id="quantidade" styleClass="input-number-resp" minValue="1" maxValue="999"
-												value="#{produtoApresentacaoController.itemPedido.quantidade}" required="true" requiredMessage="Favor informar a quantidade">
-												<p:ajax process="@this" update="valorTotalGrid" listener="#{produtoApresentacaoController.calculaTotalItem}" />
-											</p:inputNumber>
-											<p:commandButton icon="fa fa-fw fa-plus" actionListener="#{produtoApresentacaoController.aumentaQuantidade}" process="@this" global="false"
-												update="quantidade valorTotalGrid" styleClass="ui-grid-col-12 botao-aumenta-quantidade-item botao-produtos" />
+									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid"
+										rendered="#{sec:areAnyGranted('ROLE_COMPRA') and null != carrinhoController.janelaCompra}">
+										<p:panelGrid columns="1" columnClasses="ui-grid-col-6" layout="grid">
+											<h:outputText value="Quantidade" styleClass="label" />
+											<p:panelGrid columns="3" columnClasses="ui-grid-col-2, ui-grid-col-8, ui-grid-col-2" layout="grid">
+												<p:commandButton icon="fa fa-fw fa-minus" actionListener="#{produtoApresentacaoController.diminuiQuantidade}" process="@this"
+													global="false" update="quantidade valorTotalGrid" styleClass="ui-grid-col-12 botao-diminui-quantidade-item botao-produtos" />
+												<p:inputNumber id="quantidade" styleClass="input-number-resp" minValue="1" maxValue="999"
+													value="#{produtoApresentacaoController.itemPedido.quantidade}" required="true" requiredMessage="Favor informar a quantidade">
+													<p:ajax process="@this" update="valorTotalGrid" listener="#{produtoApresentacaoController.calculaTotalItem}" />
+												</p:inputNumber>
+												<p:commandButton icon="fa fa-fw fa-plus" actionListener="#{produtoApresentacaoController.aumentaQuantidade}" process="@this"
+													global="false" update="quantidade valorTotalGrid" styleClass="ui-grid-col-12 botao-aumenta-quantidade-item botao-produtos" />
+											</p:panelGrid>
+											<p:message for="quantidade" />
 										</p:panelGrid>
-										<p:message for="quantidade" />
-									</p:panelGrid>
 
-									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" id="valorTotalGrid" rendered="#{sec:areAnyGranted('ROLE_COMPRA')}">
-										<h:outputText value="Total" styleClass="label" />
-										<h:outputText value="#{produtoApresentacaoController.itemPedido.valorTotal}">
-											<f:convertNumber pattern="R$ #,##0.00" />
-										</h:outputText>
-									</p:panelGrid>
+										<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" id="valorTotalGrid">
+											<h:outputText value="Total" styleClass="label" />
+											<h:outputText value="#{produtoApresentacaoController.itemPedido.valorTotal}">
+												<f:convertNumber pattern="R$ #,##0.00" />
+											</h:outputText>
+										</p:panelGrid>
 
-									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{sec:areAnyGranted('ROLE_COMPRA')}">
-										<p:commandButton icon="fa fa-fw fa-shopping-cart" value="#{labels.botao_adicionar_carrinho}"
-											actionListener="#{produtoApresentacaoController.adicionaItem}" process=":editForm:dadosProdutoGrid"
-											update=":editForm:dadosProdutoGrid :formMenu" oncomplete="carregaClose();" styleClass="ui-grid-col-12 botao-produtos" />
+										<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+											<p:commandButton icon="fa fa-fw fa-shopping-cart" value="#{labels.botao_adicionar_carrinho}"
+												actionListener="#{produtoApresentacaoController.adicionaItem}" process=":editForm:dadosProdutoGrid"
+												update=":editForm:dadosProdutoGrid :formMenu" oncomplete="carregaClose();" styleClass="ui-grid-col-12 botao-produtos" />
+										</p:panelGrid>
 									</p:panelGrid>
 								</p:panelGrid>
 

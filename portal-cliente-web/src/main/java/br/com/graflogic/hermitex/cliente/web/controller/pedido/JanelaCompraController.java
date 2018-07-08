@@ -1,4 +1,4 @@
-package br.com.graflogic.hermitex.cliente.web.controller.produto;
+package br.com.graflogic.hermitex.cliente.web.controller.pedido;
 
 import java.util.List;
 
@@ -9,11 +9,11 @@ import org.springframework.stereotype.Controller;
 
 import br.com.graflogic.base.service.util.I18NUtil;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
-import br.com.graflogic.hermitex.cliente.data.entity.produto.CategoriaProduto;
+import br.com.graflogic.hermitex.cliente.data.entity.pedido.JanelaCompra;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
-import br.com.graflogic.hermitex.cliente.service.impl.produto.CategoriaProdutoService;
+import br.com.graflogic.hermitex.cliente.service.impl.pedido.JanelaCompraService;
 import br.com.graflogic.utilities.presentationutil.controller.CrudBaseController;
 
 /**
@@ -23,12 +23,12 @@ import br.com.graflogic.utilities.presentationutil.controller.CrudBaseController
  */
 @Controller
 @Scope("view")
-public class CategoriaProdutoController extends CrudBaseController<CategoriaProduto, CategoriaProduto> implements InitializingBean {
+public class JanelaCompraController extends CrudBaseController<JanelaCompra, JanelaCompra> implements InitializingBean {
 
-	private static final long serialVersionUID = 2066072329838868350L;
+	private static final long serialVersionUID = 3702814175660127874L;
 
 	@Autowired
-	private CategoriaProdutoService service;
+	private JanelaCompraService service;
 
 	@Autowired
 	private ClienteService clienteService;
@@ -38,7 +38,7 @@ public class CategoriaProdutoController extends CrudBaseController<CategoriaProd
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		try {
-			setFilterEntity(new CategoriaProduto());
+			setFilterEntity(new JanelaCompra());
 
 			clientes = clienteService.consulta(new Cliente());
 
@@ -50,21 +50,10 @@ public class CategoriaProdutoController extends CrudBaseController<CategoriaProd
 	@Override
 	protected boolean executeSave() {
 		try {
-			if (isEditing()) {
-				try {
-					service.atualiza(getEntity());
-
-					returnInfoMessage("Categoria atualizada com sucesso", null);
-
-				} catch (DadosDesatualizadosException e) {
-					returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Registro com dados desatualizados, altere novamente", null);
-
-				}
-
-			} else {
+			if (!isEditing()) {
 				service.cadastra(getEntity());
 
-				returnInfoMessage("Categoria cadastrada com sucesso", null);
+				returnInfoMessage("Janela cadastrada com sucesso", null);
 			}
 		} catch (DadosInvalidosException e) {
 			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), e.getMessage(), null);
@@ -86,12 +75,12 @@ public class CategoriaProdutoController extends CrudBaseController<CategoriaProd
 			return;
 		}
 
-		setEntity(new CategoriaProduto());
+		setEntity(new JanelaCompra());
 		getEntity().setIdCliente(getFilterEntity().getIdCliente());
 	}
 
 	@Override
-	protected void executeEdit(CategoriaProduto entity) {
+	protected void executeEdit(JanelaCompra entity) {
 		setEntity(service.consultaPorId(entity.getId()));
 	}
 
@@ -115,15 +104,18 @@ public class CategoriaProdutoController extends CrudBaseController<CategoriaProd
 		}
 	}
 
-	public void inativa() {
+	public void fecha() {
 		try {
-			service.inativa(getEntity());
+			service.fecha(getEntity());
 
-			returnInfoMessage("Categoria inativada com sucesso", null);
+			returnInfoMessage("Janela fechada com sucesso", null);
 
 			edit(getEntity());
 
 			search();
+
+		} catch (DadosInvalidosException e) {
+			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), e.getMessage(), null);
 
 		} catch (DadosDesatualizadosException e) {
 			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Registro com dados desatualizados, altere novamente", null);
@@ -131,27 +123,7 @@ public class CategoriaProdutoController extends CrudBaseController<CategoriaProd
 			edit(getEntity());
 
 		} catch (Throwable t) {
-			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao inativar categoria, contate o administrador", t);
-		}
-	}
-
-	public void ativa() {
-		try {
-			service.ativa(getEntity());
-
-			returnInfoMessage("Categoria ativada com sucesso", null);
-
-			edit(getEntity());
-
-			search();
-
-		} catch (DadosDesatualizadosException e) {
-			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Registro com dados desatualizados, altere novamente", null);
-
-			edit(getEntity());
-
-		} catch (Throwable t) {
-			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao ativar categoria, contate o administrador", t);
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao fechar janela, contate o administrador", t);
 		}
 	}
 

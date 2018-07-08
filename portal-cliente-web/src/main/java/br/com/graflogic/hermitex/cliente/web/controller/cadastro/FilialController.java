@@ -387,7 +387,7 @@ public class FilialController extends CrudBaseController<Filial, Filial> impleme
 			edit(getEntity());
 
 		} catch (Throwable t) {
-			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao invativar filial, contate o administrador", t);
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao inativar filial, contate o administrador", t);
 		}
 	}
 

@@ -131,7 +131,7 @@ public class SetorProdutoController extends CrudBaseController<SetorProduto, Set
 			edit(getEntity());
 
 		} catch (Throwable t) {
-			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao invativar setor, contate o administrador", t);
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao inativar setor, contate o administrador", t);
 		}
 	}
 

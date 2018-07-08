@@ -274,7 +274,7 @@ public class RepresentanteController extends CrudBaseController<Representante, R
 			edit(getEntity());
 
 		} catch (Throwable t) {
-			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao invativar cliente, contate o administrador", t);
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao inativar cliente, contate o administrador", t);
 		}
 	}
 

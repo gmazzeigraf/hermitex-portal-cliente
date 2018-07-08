@@ -246,7 +246,7 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 			edit(getEntity());
 
 		} catch (Throwable t) {
-			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao invativar usuário, contate o administrador", t);
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao inativar usuário, contate o administrador", t);
 		}
 	}
 

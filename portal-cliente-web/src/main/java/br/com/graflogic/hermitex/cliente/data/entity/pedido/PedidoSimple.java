@@ -21,7 +21,7 @@ public class PedidoSimple implements Serializable {
 
 	private BigDecimal valorTotal;
 
-	private String tipoPagamento;
+	private String codigoFormaPagamento;
 
 	private String status;
 
@@ -56,12 +56,12 @@ public class PedidoSimple implements Serializable {
 		this.valorTotal = valorTotal;
 	}
 
-	public String getTipoPagamento() {
-		return tipoPagamento;
+	public String getCodigoFormaPagamento() {
+		return codigoFormaPagamento;
 	}
 
-	public void setTipoPagamento(String tipoPagamento) {
-		this.tipoPagamento = tipoPagamento;
+	public void setCodigoFormaPagamento(String codigoFormaPagamento) {
+		this.codigoFormaPagamento = codigoFormaPagamento;
 	}
 
 	public String getStatus() {
@@ -121,7 +121,7 @@ public class PedidoSimple implements Serializable {
 	}
 
 	public String getDeTipoPagamento() {
-		return DomPedido.domTipoPagamento.getDeValor(tipoPagamento);
+		return DomPedido.domFormaPagamento.getDeValor(codigoFormaPagamento);
 	}
 
 	public String getDeStatus() {

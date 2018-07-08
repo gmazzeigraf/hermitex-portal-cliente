@@ -1,0 +1,149 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/pages/templates/crud_template.xhtml"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+	<ui:define name="viewname">#{labels.menu_cliente} / #{labels.menu_cliente_produto} / #{labels.menu_cliente_janela_compra} </ui:define>
+
+	<ui:define name="search">
+		<c:if test="#{null == janelaCompraController.entity}">
+			<div class="ui-g">
+				<div class="ui-g-12">
+					<div class="card card-w-title">
+						<h1>#{labels.consulta}</h1>
+						<p:panelGrid columns="1" id="filterGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
+							<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="clienteFilter" value="Cliente *" styleClass="label" />
+									<p:selectOneMenu id="clienteFilter" value="#{janelaCompraController.filterEntity.idCliente}" styleClass="ui-grid-col-12" filter="true"
+										filterMatchMode="contains">
+										<f:selectItem itemLabel="Selecione" itemValue="" />
+										<f:selectItems value="#{janelaCompraController.clientes}" var="item" itemLabel="#{item.razaoSocial}" itemValue="#{item.id}" />
+										<p:ajax process="@this" update=":searchForm" listener="#{janelaCompraController.changeCliente}" />
+									</p:selectOneMenu>
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="statusFilter" value="Status" styleClass="label" />
+									<p:selectOneMenu id="statusFilter" value="#{janelaCompraController.filterEntity.status}" styleClass="ui-grid-col-12">
+										<f:selectItem itemLabel="" itemValue="" />
+										<f:selectItems value="#{domPedidooController.statusJanelaCompraMap}" />
+									</p:selectOneMenu>
+								</p:panelGrid>
+							</p:panelGrid>
+
+							<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank">
+								<p:spacer styleClass="display-desktop" />
+								<p:commandButton value="#{labels.botao_pesquisar}" id="searchButton" icon="fa fa-fw fa-search" update="dtbEntities searchMessages"
+									actionListener="#{janelaCompraController.search}" process="@this, filterGrid" oncomplete="PF('dtb').getPaginator().setPage(0);"
+									styleClass="ui-grid-col-4 botao-pesquisar" disabled="#{!janelaCompraController.clienteSelecionado}" />
+							</p:panelGrid>
+
+							<p:messages id="searchMessages" />
+
+							<p:separator />
+
+							<p:defaultCommand target="searchButton" scope="filterGrid" />
+
+							<p:commandButton value="#{labels.botao_adicionar}" icon="fa fa-fw fa-plus" actionListener="#{janelaCompraController.add}"
+								update=":searchForm :editForm" process="@this" resetValues="true" styleClass="ui-grid-col-12 botao-adicionar"
+								disabled="#{!janelaCompraController.clienteSelecionado}" />
+						</p:panelGrid>
+
+						<p:spacer styleClass="display-desktop" />
+
+						<p:dataTable id="dtbEntities" widgetVar="dtb" var="entity" value="#{janelaCompraController.entities}" rowKey="#{entity.id}" paginator="true"
+							paginatorPosition="bottom" reflow="true" rows="10"
+							emptyMessage="#{null != janelaCompraController.entities ? messages.nenhum_resultado_encontrado : messages.realize_pesquisa}">
+
+							<p:column headerText="#" sortBy="#{entity.id}" styleClass="id-column">
+								<h:outputText value="#{entity.id}" />
+							</p:column>
+
+							<p:column headerText="Descrição" sortBy="#{entity.descricao}">
+								<h:outputText value="#{entity.descricao}" />
+							</p:column>
+
+							<p:column headerText="Data Abertura" sortBy="#{entity.dataAbertura}">
+								<h:outputText value="#{entity.dataAbertura}">
+									<f:convertDateTime pattern="dd/MM/yyyy" timeZone="America/Sao_Paulo" />
+								</h:outputText>
+							</p:column>
+
+							<p:column headerText="Data Fechamento" sortBy="#{entity.dataFechamento}">
+								<h:outputText value="#{entity.dataFechamento}">
+									<f:convertDateTime pattern="dd/MM/yyyy" timeZone="America/Sao_Paulo" />
+								</h:outputText>
+							</p:column>
+
+							<p:column headerText="Status" sortBy="#{entity.deStatus}" styleClass="status-column">
+								<h:outputText value="#{entity.deStatus}" />
+							</p:column>
+
+							<p:column styleClass="coluna-edicao">
+								<p:commandButton icon="fa fa-fw fa-pencil" title="#{labels.botao_editar}" update=":searchForm :editForm" process="@this" resetValues="true"
+									styleClass="ui-grid-col-12">
+									<f:setPropertyActionListener value="#{entity}" target="#{janelaCompraController.selectedEntity}" />
+								</p:commandButton>
+							</p:column>
+
+							<f:facet name="footer">
+								<h:outputText value="#{fn:length(janelaCompraController.entities)} registro(s) encontrado(s)" />
+							</f:facet>
+						</p:dataTable>
+					</div>
+				</div>
+			</div>
+		</c:if>
+	</ui:define>
+
+	<ui:define name="edit">
+		<c:if test="#{null != janelaCompraController.entity}">
+			<div class="ui-g">
+				<div class="ui-g-12">
+					<div class="card card-w-title">
+						<h1>#{labels.informacoes}</h1>
+						<p:panelGrid columns="1" id="informacoesGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-6" layout="grid">
+								<p:outputLabel for="descricao" value="Descrição" styleClass="label" />
+								<p:inputText id="descricao" value="#{janelaCompraController.entity.descricao}" height="100" styleClass="ui-grid-col-12" />
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-6" layout="grid">
+								<p:outputLabel for="dataAbertura" value="Data Abertura" styleClass="label" />
+								<p:calendar id="dataAbertura" value="#{janelaCompraController.entity.dataAbertura}" pattern="dd/MM/yyyy" locale="br" readonlyInput="false"
+									navigator="true" showOn="button" styleClass="resp-calendar" mask="99/99/9999" converterMessage="Data abertura inválida" required="true"
+									requiredMessage="Favor informar a data abertura" disabled="#{janelaCompraController.editing}" />
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-6" layout="grid">
+								<p:outputLabel for="dataFechamento" value="Data Fechamento" styleClass="label" />
+								<p:calendar id="dataFechamento" value="#{janelaCompraController.entity.dataFechamento}" pattern="dd/MM/yyyy" locale="br" readonlyInput="false"
+									navigator="true" showOn="button" styleClass="resp-calendar" mask="99/99/9999" converterMessage="Data fechamento inválida" required="true"
+									requiredMessage="Favor informar a data fechamento" disabled="#{janelaCompraController.editing}" />
+							</p:panelGrid>
+						</p:panelGrid>
+					</div>
+
+					<p:messages />
+
+					<p:panelGrid columns="6" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
+						<p:commandButton id="submitButton" icon="fa fa-fw fa-save" value="#{labels.botao_gravar}" actionListener="#{janelaCompraController.save}"
+							process=":editForm:informacoesGrid" update=":editForm :searchForm" styleClass="ui-grid-col-12" />
+
+						<p:commandButton id="fechamentoButton" icon="fa fa-fw fa-close" value="#{labels.botao_fechar}" actionListener="#{janelaCompraController.fecha}"
+							process="@this" update=":searchForm :editForm" styleClass="ui-grid-col-12 botao-vermelho"
+							rendered="#{janelaCompraController.editing and janelaCompraController.entity.cadastrada}">
+							<p:confirm header="Confirmação" message="Confirmar fechamento?" icon="ui-icon-alert" />
+						</p:commandButton>
+
+						<p:commandButton icon="fa fa-fw fa-close" value="#{labels.botao_fechar}" actionListener="#{janelaCompraController.close}" process="@this"
+							update=":searchForm :editForm" styleClass="ui-grid-col-12 botao-fechar" />
+					</p:panelGrid>
+				</div>
+			</div>
+		</c:if>
+	</ui:define>
+
+	<ui:define name="complement">
+	</ui:define>
+</ui:composition>

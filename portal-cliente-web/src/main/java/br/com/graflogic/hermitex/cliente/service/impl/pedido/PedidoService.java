@@ -1,5 +1,8 @@
 package br.com.graflogic.hermitex.cliente.service.impl.pedido;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -14,9 +17,12 @@ import br.com.graflogic.base.service.gson.GsonUtil;
 import br.com.graflogic.commonutil.util.PessoaFisicaValidator;
 import br.com.graflogic.commonutil.util.PessoaJuridicaValidator;
 import br.com.graflogic.hermitex.cliente.data.dom.DomAuditoria.DomEventoAuditoriaPedido;
+import br.com.graflogic.hermitex.cliente.data.dom.DomPedido;
+import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomFormaPagamento;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomStatus;
-import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomTipoPagamento;
 import br.com.graflogic.hermitex.cliente.data.entity.aud.PedidoAuditoria;
+import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
+import br.com.graflogic.hermitex.cliente.data.entity.pedido.JanelaCompra;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.Pedido;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoEndereco;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoItem;
@@ -29,6 +35,7 @@ import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosEx
 import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
 import br.com.graflogic.hermitex.cliente.service.exception.ResultadoNaoEncontradoException;
 import br.com.graflogic.hermitex.cliente.service.model.DadosPagamentoCartaoCredito;
+import br.com.graflogic.hermitex.cliente.service.model.FormaPagamento;
 import br.com.graflogic.hermitex.cliente.web.util.SessionUtil;
 import br.com.graflogic.utilities.datautil.copy.ObjectCopier;
 
@@ -52,11 +59,15 @@ public class PedidoService {
 	@Autowired
 	private PedidoEnderecoRepository enderecoRepository;
 
+	@Autowired
+	private JanelaCompraService janelaCompraService;
+
 	// Fluxo
 	@Transactional(rollbackFor = Throwable.class)
 	public void cadastra(Pedido entity, DadosPagamentoCartaoCredito dadosPagamentoCartaoCredito) {
-		if (DomTipoPagamento.CARTAO_CREDITO_1.equals(entity.getTipoPagamento())
-				|| DomTipoPagamento.CARTAO_CREDITO_2.equals(entity.getTipoPagamento())) {
+		// Caso seja compra com carta, valida o documento do portador
+		if (DomFormaPagamento.CARTAO_CREDITO_1.equals(entity.getCodigoFormaPagamento())
+				|| DomFormaPagamento.CARTAO_CREDITO_2.equals(entity.getCodigoFormaPagamento())) {
 			String documentoPortador = dadosPagamentoCartaoCredito.getDocumentoPortador();
 
 			if (11 == documentoPortador.length()) {
@@ -71,6 +82,11 @@ public class PedidoService {
 				throw new DadosInvalidosException("Documento do portador inválido");
 			}
 		}
+
+		// Verifica se a janela de compras esta aberta
+		JanelaCompra janelaCompra = janelaCompraService.consultaAtiva(entity.getIdCliente());
+
+		entity.setIdJanelaCompra(janelaCompra.getId());
 
 		// TODO Envia pagamento
 
@@ -116,6 +132,30 @@ public class PedidoService {
 		} catch (OptimisticLockException e) {
 			throw new DadosDesatualizadosException();
 		}
+	}
+
+	public List<FormaPagamento> geraFormasPagamento(Cliente cliente, BigDecimal valorTotal) {
+		List<FormaPagamento> formasPagamento = new ArrayList<>();
+		formasPagamento.add(new FormaPagamento(DomFormaPagamento.BOLETO, 1));
+		formasPagamento.add(new FormaPagamento(DomFormaPagamento.CARTAO_CREDITO_1, 1));
+		formasPagamento.add(new FormaPagamento(DomFormaPagamento.CARTAO_CREDITO_2, 2));
+
+		for (FormaPagamento forma : formasPagamento) {
+			forma.setValor(valorTotal.divide(new BigDecimal(forma.getParcelas())).setScale(2, RoundingMode.HALF_EVEN));
+
+			String descricao = DomPedido.domFormaPagamento.getDeValor(forma.getCodigo());
+
+			if (DomFormaPagamento.BOLETO.equals(forma.getCodigo())) {
+				descricao += " " + cliente.getDiasBoleto() + " dias";
+
+			}
+
+			descricao += " R$ " + forma.getValor().toString().replace(".", ",");
+
+			forma.setDescricao(descricao);
+		}
+
+		return formasPagamento;
 	}
 
 	// Consulta

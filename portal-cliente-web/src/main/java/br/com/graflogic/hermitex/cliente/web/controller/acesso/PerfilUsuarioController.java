@@ -243,7 +243,7 @@ public class PerfilUsuarioController extends CrudBaseController<PerfilUsuario, P
 			edit(getEntity());
 
 		} catch (Throwable t) {
-			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao invativar perfil, contate o administrador", t);
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao inativar perfil, contate o administrador", t);
 		}
 	}
 
