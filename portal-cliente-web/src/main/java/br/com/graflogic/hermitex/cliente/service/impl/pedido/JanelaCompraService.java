@@ -1,5 +1,7 @@
 package br.com.graflogic.hermitex.cliente.service.impl.pedido;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -16,6 +18,8 @@ import br.com.graflogic.hermitex.cliente.data.dom.DomAuditoria.DomEventoAuditori
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomStatusJanelaCompra;
 import br.com.graflogic.hermitex.cliente.data.entity.aud.JanelaCompraAuditoria;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.JanelaCompra;
+import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoItem;
+import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoSimple;
 import br.com.graflogic.hermitex.cliente.data.impl.aud.JanelaCompraAuditoriaRepository;
 import br.com.graflogic.hermitex.cliente.data.impl.pedido.JanelaCompraRepository;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
@@ -38,6 +42,9 @@ public class JanelaCompraService {
 	@Autowired
 	private JanelaCompraAuditoriaRepository auditoriaRepository;
 
+	@Autowired
+	private PedidoService pedidoService;
+
 	// Fluxo
 	@Transactional(rollbackFor = Throwable.class)
 	public void cadastra(JanelaCompra entity) {
@@ -52,18 +59,42 @@ public class JanelaCompraService {
 		registraAuditoria(entity.getId(), entity, DomEventoAuditoriaJanelaCompra.CADASTRO, null);
 	}
 
+	@Transactional(rollbackFor = Throwable.class)
 	public void fecha(JanelaCompra entity) {
 		JanelaCompra entityAtual = consultaPorId(entity.getId());
 
-		if (!DomStatusJanelaCompra.CADASTRADA.equals(entityAtual.getStatus())) {
-			throw new DadosInvalidosException("A janela não está mais ativa e não pode ser fechada");
+		if (!DomStatusJanelaCompra.CADASTRADA.equals(entityAtual.getStatus()) && !DomStatusJanelaCompra.REABERTA.equals(entityAtual.getStatus())) {
+			throw new DadosInvalidosException("A janela não está ativa para ser fechada");
 		}
 
 		entity.setStatus(DomStatusJanelaCompra.FECHADA);
 
+		// Consulta os pedidos
+		List<PedidoSimple> pedidos = pedidoService.consultaPorJanelaCompra(entity.getId());
+
+		entity.setQuantidadePedido(pedidos.size());
+
 		executaAtualiza(entity);
 
 		registraAuditoria(entity.getId(), entity, DomEventoAuditoriaJanelaCompra.FECHAMENTO, null);
+	}
+
+	@Transactional(rollbackFor = Throwable.class)
+	public void reabre(JanelaCompra entity) {
+		JanelaCompra entityAtual = consultaPorId(entity.getId());
+
+		if (!DomStatusJanelaCompra.FECHADA.equals(entityAtual.getStatus())) {
+			throw new DadosInvalidosException("A janela não está fechada para ser reaberta");
+		}
+
+		entity.setStatus(DomStatusJanelaCompra.REABERTA);
+
+		// Reinicia os pedidos
+		entity.setQuantidadePedido(null);
+
+		executaAtualiza(entity);
+
+		registraAuditoria(entity.getId(), entity, DomEventoAuditoriaJanelaCompra.REABERTURA, null);
 	}
 
 	private void executaAtualiza(JanelaCompra entity) {
@@ -112,6 +143,25 @@ public class JanelaCompraService {
 		} catch (ResultadoNaoEncontradoException e) {
 			throw new DadosInvalidosException("Não existe janela de compras cadastrada");
 		}
+	}
+
+	// Extracao
+	public byte[] geraExtracao(JanelaCompra entity) throws IOException {
+		// Consulta os pedidos
+		List<PedidoSimple> pedidos = pedidoService.consultaPorJanelaCompra(entity.getId());
+
+		if (pedidos.isEmpty()) {
+			throw new DadosInvalidosException("Nenhum pedido encontrado para a janela de compra");
+		}
+
+		// Gera os itens
+		List<PedidoItem> itens = new ArrayList<>();
+		for (PedidoSimple pedido : pedidos) {
+			itens.addAll(pedidoService.consultaItensPorPedido(pedido.getId()));
+		}
+
+		// Gera a extracao
+		return pedidoService.geraExtracao(itens);
 	}
 
 	// Util

@@ -10,6 +10,7 @@ import javax.persistence.OptimisticLockException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.graflogic.base.service.gson.GsonUtil;
 import br.com.graflogic.hermitex.cliente.data.dom.DomAcesso.DomStatusSenhaUsuario;
@@ -79,12 +80,14 @@ public class UsuarioService {
 		registraAuditoria(entity.getId(), entity, DomEventoAuditoriaUsuario.CADASTRO, null);
 	}
 
+	@Transactional(rollbackFor = Throwable.class)
 	public void atualiza(Usuario entity) {
 		executaAtualiza(entity);
 
 		registraAuditoria(entity.getId(), entity, DomEventoAuditoriaUsuario.ATUALIZACAO, null);
 	}
 
+	@Transactional(rollbackFor = Throwable.class)
 	public void inativa(Usuario entity) {
 		entity.setStatus(DomStatusUsuario.INATIVO);
 
@@ -93,6 +96,7 @@ public class UsuarioService {
 		registraAuditoria(entity.getId(), null, DomEventoAuditoriaUsuario.INATIVACAO, null);
 	}
 	
+	@Transactional(rollbackFor = Throwable.class)
 	public void ativa(Usuario entity) {
 		entity.setStatus(DomStatusUsuario.ATIVO);
 

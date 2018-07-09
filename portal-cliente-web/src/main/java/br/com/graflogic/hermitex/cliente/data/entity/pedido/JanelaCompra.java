@@ -48,6 +48,9 @@ public class JanelaCompra implements Serializable {
 	@Column(name = "dt_fechamento", nullable = false)
 	private Date dataFechamento;
 
+	@Column(name = "qt_pedido")
+	private Integer quantidadePedido;
+
 	@Column(name = "status", nullable = false)
 	private String status;
 
@@ -95,6 +98,14 @@ public class JanelaCompra implements Serializable {
 		this.dataFechamento = dataFechamento;
 	}
 
+	public Integer getQuantidadePedido() {
+		return quantidadePedido;
+	}
+
+	public void setQuantidadePedido(Integer quantidadePedido) {
+		this.quantidadePedido = quantidadePedido;
+	}
+
 	public String getStatus() {
 		return status;
 	}
@@ -111,8 +122,12 @@ public class JanelaCompra implements Serializable {
 		this.versao = versao;
 	}
 
-	public boolean isCadastrada() {
-		return null != status && DomStatusJanelaCompra.CADASTRADA.equals(status);
+	public boolean isAtiva() {
+		return null != status && (DomStatusJanelaCompra.CADASTRADA.equals(status) || DomStatusJanelaCompra.REABERTA.equals(status));
+	}
+
+	public boolean isFechada() {
+		return null != status && DomStatusJanelaCompra.FECHADA.equals(status);
 	}
 
 	public String getDeStatus() {

@@ -84,12 +84,14 @@ public class FilialService {
 		}
 	}
 
+	@Transactional(rollbackFor = Throwable.class)
 	public void atualiza(Filial entity) {
 		executaAtualiza(entity);
 
 		registraAuditoria(entity.getId(), entity, DomEventoAuditoriaFilial.ATUALIZACAO, null);
 	}
 
+	@Transactional(rollbackFor = Throwable.class)
 	public void inativa(Filial entity) {
 		entity.setStatus(DomStatusFilial.INATIVO);
 
@@ -98,6 +100,7 @@ public class FilialService {
 		registraAuditoria(entity.getId(), null, DomEventoAuditoriaFilial.INATIVACAO, null);
 	}
 
+	@Transactional(rollbackFor = Throwable.class)
 	public void ativa(Filial entity) {
 		entity.setStatus(DomStatusFilial.ATIVO);
 

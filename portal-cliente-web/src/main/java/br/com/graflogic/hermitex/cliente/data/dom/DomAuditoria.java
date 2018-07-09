@@ -56,7 +56,7 @@ public class DomAuditoria {
 			mapa.put(ATIVACAO, "Ativação");
 		}
 	}
-	
+
 	public static class DomEventoAuditoriaRepresentante extends DomBase {
 		public static final String CADASTRO = "C";
 		public static final String ATUALIZACAO = "A";
@@ -150,14 +150,16 @@ public class DomAuditoria {
 			mapa.put(ATUALIZACAO, "Atualização");
 		}
 	}
-	
+
 	public static class DomEventoAuditoriaJanelaCompra extends DomBase {
 		public static final String CADASTRO = "C";
 		public static final String FECHAMENTO = "F";
+		public static final String REABERTURA = "R";
 
 		DomEventoAuditoriaJanelaCompra() {
 			mapa.put(CADASTRO, "Cadastro");
 			mapa.put(FECHAMENTO, "Fechamento");
+			mapa.put(REABERTURA, "Reabertura");
 		}
 	}
 

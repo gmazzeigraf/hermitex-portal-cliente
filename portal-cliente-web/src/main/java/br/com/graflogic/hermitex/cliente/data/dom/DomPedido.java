@@ -68,10 +68,12 @@ public class DomPedido {
 	public static class DomStatusJanelaCompra extends DomBase {
 		public static final String CADASTRADA = "C";
 		public static final String FECHADA = "F";
+		public static final String REABERTA = "R";
 
 		DomStatusJanelaCompra() {
 			mapa.put(CADASTRADA, "Cadastrada");
 			mapa.put(FECHADA, "Fechada");
+			mapa.put(REABERTA, "Reaberta");
 		}
 	}
 

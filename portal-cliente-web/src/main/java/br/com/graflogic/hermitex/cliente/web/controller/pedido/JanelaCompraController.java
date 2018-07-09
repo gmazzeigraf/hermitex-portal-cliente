@@ -1,7 +1,11 @@
 package br.com.graflogic.hermitex.cliente.web.controller.pedido;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.List;
 
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -124,6 +128,41 @@ public class JanelaCompraController extends CrudBaseController<JanelaCompra, Jan
 
 		} catch (Throwable t) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao fechar janela, contate o administrador", t);
+		}
+	}
+
+	public void reabre() {
+		try {
+			service.reabre(getEntity());
+
+			returnInfoMessage("Janela reaberta com sucesso", null);
+
+			edit(getEntity());
+
+			search();
+
+		} catch (DadosInvalidosException e) {
+			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), e.getMessage(), null);
+
+		} catch (DadosDesatualizadosException e) {
+			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Registro com dados desatualizados, altere novamente", null);
+
+			edit(getEntity());
+
+		} catch (Throwable t) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao reabrir janela, contate o administrador", t);
+		}
+	}
+
+	public StreamedContent getExtracaoExcel() throws IOException {
+		try {
+			byte[] extracao = service.geraExtracao(getEntity());
+
+			return new DefaultStreamedContent(new ByteArrayInputStream(extracao), "", "extracao.xlsx");
+
+		} catch (Throwable t) {
+			returnFatalDialogMessage("Erro", "Erro ao gerar a extração, contate o administrador", t);
+			return null;
 		}
 	}
 

@@ -45,6 +45,11 @@ public class PedidoRepository extends BaseRepository<Pedido> {
 			params.add(filter.getIdFilial());
 		}
 
+		if (null != filter.getIdJanelaCompra() && 0 != filter.getIdJanelaCompra()) {
+			where = generateWhere(where, "ped.id_janela_compra = ?");
+			params.add(filter.getIdJanelaCompra());
+		}
+
 		if (StringUtils.isNotEmpty(filter.getStatus())) {
 			where = generateWhere(where, "ped.status = ?");
 			params.add(filter.getStatus());

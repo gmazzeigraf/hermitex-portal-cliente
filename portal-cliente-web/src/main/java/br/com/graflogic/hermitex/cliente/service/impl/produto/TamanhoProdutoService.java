@@ -61,12 +61,14 @@ public class TamanhoProdutoService {
 		registraAuditoria(entity.getCodigo(), entity, DomEventoAuditoriaTamanhoProduto.CADASTRO, null);
 	}
 
+	@Transactional(rollbackFor = Throwable.class)
 	public void atualiza(TamanhoProduto entity) {
 		executaAtualiza(entity);
 
 		registraAuditoria(entity.getCodigo(), entity, DomEventoAuditoriaTamanhoProduto.ATUALIZACAO, null);
 	}
 
+	@Transactional(rollbackFor = Throwable.class)
 	public void inativa(TamanhoProduto entity) {
 		entity.setStatus(DomStatusTamanho.INATIVO);
 
@@ -75,6 +77,7 @@ public class TamanhoProdutoService {
 		registraAuditoria(entity.getCodigo(), null, DomEventoAuditoriaTamanhoProduto.INATIVACAO, null);
 	}
 
+	@Transactional(rollbackFor = Throwable.class)
 	public void ativa(TamanhoProduto entity) {
 		entity.setStatus(DomStatusTamanho.ATIVO);
 

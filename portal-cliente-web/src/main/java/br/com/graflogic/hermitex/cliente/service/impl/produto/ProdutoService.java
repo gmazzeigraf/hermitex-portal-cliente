@@ -95,6 +95,7 @@ public class ProdutoService {
 		}
 	}
 
+	@Transactional(rollbackFor = Throwable.class)
 	public void atualiza(Produto entity) {
 		validaDados(entity);
 
@@ -103,6 +104,7 @@ public class ProdutoService {
 		registraAuditoria(entity.getId(), entity, DomEventoAuditoriaProduto.ATUALIZACAO, null);
 	}
 
+	@Transactional(rollbackFor = Throwable.class)
 	public void inativa(Produto entity) {
 		entity.setStatus(DomStatus.INATIVO);
 
@@ -111,6 +113,7 @@ public class ProdutoService {
 		registraAuditoria(entity.getId(), null, DomEventoAuditoriaProduto.INATIVACAO, null);
 	}
 
+	@Transactional(rollbackFor = Throwable.class)
 	public void ativa(Produto entity) {
 		entity.setStatus(DomStatus.ATIVO);
 

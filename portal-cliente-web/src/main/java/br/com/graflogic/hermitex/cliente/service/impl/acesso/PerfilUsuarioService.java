@@ -8,6 +8,7 @@ import javax.persistence.OptimisticLockException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.graflogic.base.service.gson.GsonUtil;
 import br.com.graflogic.base.service.util.CacheUtil;
@@ -57,6 +58,7 @@ public class PerfilUsuarioService {
 		cacheUtil.clearCache(CACHE_NAME);
 	}
 
+	@Transactional(rollbackFor = Throwable.class)
 	public void atualiza(PerfilUsuario entity) {
 		executaAtualiza(entity);
 
@@ -65,6 +67,7 @@ public class PerfilUsuarioService {
 		cacheUtil.clearCache(CACHE_NAME);
 	}
 
+	@Transactional(rollbackFor = Throwable.class)
 	public void inativa(PerfilUsuario entity) {
 		entity.setStatus(DomStatusPerfilUsuario.INATIVO);
 
@@ -73,6 +76,7 @@ public class PerfilUsuarioService {
 		registraAuditoria(entity.getId(), null, DomEventoAuditoriaPerfilUsuario.INATIVACAO, null);
 	}
 
+	@Transactional(rollbackFor = Throwable.class)
 	public void ativa(PerfilUsuario entity) {
 		entity.setStatus(DomStatusPerfilUsuario.ATIVO);
 

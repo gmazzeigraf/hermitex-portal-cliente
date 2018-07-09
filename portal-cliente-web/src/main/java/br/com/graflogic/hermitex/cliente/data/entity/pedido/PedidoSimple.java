@@ -34,6 +34,8 @@ public class PedidoSimple implements Serializable {
 
 	private Integer idFilial;
 
+	private Integer idJanelaCompra;
+
 	@Transient
 	private Date dataCadastroDe;
 
@@ -102,6 +104,14 @@ public class PedidoSimple implements Serializable {
 
 	public void setIdFilial(Integer idFilial) {
 		this.idFilial = idFilial;
+	}
+
+	public Integer getIdJanelaCompra() {
+		return idJanelaCompra;
+	}
+
+	public void setIdJanelaCompra(Integer idJanelaCompra) {
+		this.idJanelaCompra = idJanelaCompra;
 	}
 
 	public Date getDataCadastroDe() {

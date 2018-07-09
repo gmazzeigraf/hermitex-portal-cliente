@@ -1,14 +1,25 @@
 package br.com.graflogic.hermitex.cliente.service.impl.pedido;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.persistence.OptimisticLockException;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +38,7 @@ import br.com.graflogic.hermitex.cliente.data.entity.pedido.Pedido;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoEndereco;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoItem;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoSimple;
+import br.com.graflogic.hermitex.cliente.data.entity.produto.TamanhoProduto;
 import br.com.graflogic.hermitex.cliente.data.impl.aud.PedidoAuditoriaRepository;
 import br.com.graflogic.hermitex.cliente.data.impl.cadastro.PedidoEnderecoRepository;
 import br.com.graflogic.hermitex.cliente.data.impl.pedido.PedidoItemRepository;
@@ -34,8 +46,10 @@ import br.com.graflogic.hermitex.cliente.data.impl.pedido.PedidoRepository;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
 import br.com.graflogic.hermitex.cliente.service.exception.ResultadoNaoEncontradoException;
+import br.com.graflogic.hermitex.cliente.service.impl.produto.TamanhoProdutoService;
 import br.com.graflogic.hermitex.cliente.service.model.DadosPagamentoCartaoCredito;
 import br.com.graflogic.hermitex.cliente.service.model.FormaPagamento;
+import br.com.graflogic.hermitex.cliente.service.util.ExcelUtil;
 import br.com.graflogic.hermitex.cliente.web.util.SessionUtil;
 import br.com.graflogic.utilities.datautil.copy.ObjectCopier;
 
@@ -61,6 +75,9 @@ public class PedidoService {
 
 	@Autowired
 	private JanelaCompraService janelaCompraService;
+
+	@Autowired
+	private TamanhoProdutoService tamanhoProdutoService;
 
 	// Fluxo
 	@Transactional(rollbackFor = Throwable.class)
@@ -163,6 +180,13 @@ public class PedidoService {
 		return repository.consulta(entity);
 	}
 
+	public List<PedidoSimple> consultaPorJanelaCompra(Integer idJanela) {
+		PedidoSimple filter = new PedidoSimple();
+		filter.setIdJanelaCompra(idJanela);
+
+		return consulta(filter);
+	}
+
 	public Pedido consultaPorId(Long id) {
 		Pedido entity = repository.findById(id);
 
@@ -183,6 +207,113 @@ public class PedidoService {
 		preencheRelacionados(entity);
 
 		return entity;
+	}
+
+	public List<PedidoItem> consultaItensPorPedido(Long id) {
+		return itemRepository.consultaPorPedido(id);
+	}
+
+	// Extracao
+	public byte[] geraExtracao(List<PedidoItem> itens) throws IOException {
+		// Obtem todos os produtos e tamanhos de todos os pedidos
+		HashMap<String, Map<String, Integer>> produtosMap = new HashMap<>();
+		List<String> tamanhosItens = new ArrayList<>();
+
+		for (PedidoItem item : itens) {
+			if (!produtosMap.containsKey(item.getCodigoProduto())) {
+				produtosMap.put(item.getCodigoProduto(), new HashMap<String, Integer>());
+			}
+
+			if (!tamanhosItens.contains(item.getCodigoTamanho())) {
+				tamanhosItens.add(item.getCodigoTamanho());
+			}
+		}
+
+		// Consulta os tamanhos de produto
+		List<TamanhoProduto> tamanhosProduto = tamanhoProdutoService.consulta(false);
+
+		// Adiciona os utilizados
+		List<String> tamanhosUtilizados = new ArrayList<>();
+
+		for (TamanhoProduto tamanho : tamanhosProduto) {
+			if (tamanhosItens.contains(tamanho.getCodigo())) {
+				tamanhosUtilizados.add(tamanho.getCodigo());
+			}
+		}
+
+		// Preenche as quantidades dos tamanhos e produtos
+		for (PedidoItem item : itens) {
+			Integer quantidade = item.getQuantidade();
+
+			Integer quantidadeTamanho = produtosMap.get(item.getCodigoProduto()).get(item.getCodigoTamanho());
+
+			if (null != quantidadeTamanho) {
+				quantidade += quantidadeTamanho;
+			}
+
+			produtosMap.get(item.getCodigoProduto()).put(item.getCodigoTamanho(), quantidade);
+		}
+
+		XSSFWorkbook workbook = new XSSFWorkbook();
+
+		XSSFSheet sheet = workbook.createSheet("Extração");
+
+		int cellIndex = 0;
+		int rowIndex = 0;
+
+		Row row = sheet.createRow(rowIndex++);
+
+		// Estilos
+		XSSFCellStyle headerStyle = ExcelUtil.ajustaHeaderStyle(workbook.createCellStyle());
+		XSSFCellStyle lineStyle = ExcelUtil.ajustaLineStyle(workbook.createCellStyle());
+
+		Cell cell = row.createCell(cellIndex++);
+		cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+		cell.setCellValue("Produto");
+		cell.setCellStyle(headerStyle);
+
+		for (String tamanho : tamanhosUtilizados) {
+			cell = row.createCell(cellIndex++);
+			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellValue(tamanho);
+			cell.setCellStyle(headerStyle);
+		}
+
+		Iterator<String> produtosIt = produtosMap.keySet().iterator();
+
+		while (produtosIt.hasNext()) {
+			String codigoProduto = produtosIt.next();
+
+			cellIndex = 0;
+
+			row = sheet.createRow(rowIndex++);
+
+			cell = row.createCell(cellIndex++);
+			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+			cell.setCellValue(codigoProduto);
+			cell.setCellStyle(lineStyle);
+
+			for (String tamanho : tamanhosUtilizados) {
+				Integer quantidade = produtosMap.get(codigoProduto).get(tamanho);
+
+				if (null == quantidade) {
+					quantidade = 0;
+				}
+
+				cell = row.createCell(cellIndex++);
+				cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
+				cell.setCellValue(quantidade);
+				cell.setCellStyle(lineStyle);
+			}
+		}
+
+		sheet = ExcelUtil.ajustaColumns(sheet, 0);
+
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		workbook.write(out);
+		out.flush();
+
+		return out.toByteArray();
 	}
 
 	// Util
@@ -219,7 +350,7 @@ public class PedidoService {
 	}
 
 	private void preencheRelacionados(Pedido entity) {
-		entity.setItens(itemRepository.consultaPorPedido(entity.getId()));
+		entity.setItens(consultaItensPorPedido(entity.getId()));
 		entity.setEnderecos(enderecoRepository.consultaPorPedido(entity.getId()));
 	}
 }

@@ -52,12 +52,14 @@ public class SetorProdutoService {
 		registraAuditoria(entity.getId(), entity, DomEventoAuditoriaSetorProduto.CADASTRO, null);
 	}
 
+	@Transactional(rollbackFor = Throwable.class)
 	public void atualiza(SetorProduto entity) {
 		executaAtualiza(entity);
 
 		registraAuditoria(entity.getId(), entity, DomEventoAuditoriaSetorProduto.ATUALIZACAO, null);
 	}
 
+	@Transactional(rollbackFor = Throwable.class)
 	public void inativa(SetorProduto entity) {
 		entity.setStatus(DomStatusSetor.INATIVO);
 
@@ -66,6 +68,7 @@ public class SetorProdutoService {
 		registraAuditoria(entity.getId(), null, DomEventoAuditoriaSetorProduto.INATIVACAO, null);
 	}
 
+	@Transactional(rollbackFor = Throwable.class)
 	public void ativa(SetorProduto entity) {
 		entity.setStatus(DomStatusSetor.ATIVO);
 

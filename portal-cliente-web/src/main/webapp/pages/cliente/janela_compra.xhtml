@@ -75,6 +75,10 @@
 								</h:outputText>
 							</p:column>
 
+							<p:column headerText="Pedidos" sortBy="#{entity.quantidadePedido}" styleClass="id-column">
+								<h:outputText value="#{entity.quantidadePedido}" />
+							</p:column>
+
 							<p:column headerText="Status" sortBy="#{entity.deStatus}" styleClass="status-column">
 								<h:outputText value="#{entity.deStatus}" />
 							</p:column>
@@ -105,7 +109,7 @@
 						<p:panelGrid columns="1" id="informacoesGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-6" layout="grid">
 								<p:outputLabel for="descricao" value="Descrição" styleClass="label" />
-								<p:inputText id="descricao" value="#{janelaCompraController.entity.descricao}" height="100" styleClass="ui-grid-col-12" />
+								<p:inputText id="descricao" value="#{janelaCompraController.entity.descricao}" maxlength="100" styleClass="ui-grid-col-12" />
 							</p:panelGrid>
 
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-6" layout="grid">
@@ -121,6 +125,11 @@
 									navigator="true" showOn="button" styleClass="resp-calendar" mask="99/99/9999" converterMessage="Data fechamento inválida" required="true"
 									requiredMessage="Favor informar a data fechamento" disabled="#{janelaCompraController.editing}" />
 							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-6" layout="grid">
+								<p:outputLabel for="quantidadePedido" value="Pedidos" styleClass="label" />
+								<p:inputText id="quantidadePedido" value="#{janelaCompraController.entity.quantidadePedido}" styleClass="ui-grid-col-12" disabled="true" />
+							</p:panelGrid>
 						</p:panelGrid>
 					</div>
 
@@ -128,12 +137,25 @@
 
 					<p:panelGrid columns="6" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
 						<p:commandButton id="submitButton" icon="fa fa-fw fa-save" value="#{labels.botao_gravar}" actionListener="#{janelaCompraController.save}"
-							process=":editForm:informacoesGrid" update=":editForm :searchForm" styleClass="ui-grid-col-12" />
+							process=":editForm:informacoesGrid" update=":editForm :searchForm" styleClass="ui-grid-col-12"
+							rendered="#{!janelaCompraController.editing or janelaCompraController.entity.ativa}" />
 
-						<p:commandButton id="fechamentoButton" icon="fa fa-fw fa-close" value="#{labels.botao_fechar}" actionListener="#{janelaCompraController.fecha}"
+						<p:commandButton id="fechamentoButton" icon="fa fa-fw fa-lock" value="Fechar janela" actionListener="#{janelaCompraController.fecha}"
 							process="@this" update=":searchForm :editForm" styleClass="ui-grid-col-12 botao-vermelho"
-							rendered="#{janelaCompraController.editing and janelaCompraController.entity.cadastrada}">
+							rendered="#{janelaCompraController.editing and janelaCompraController.entity.ativa}">
 							<p:confirm header="Confirmação" message="Confirmar fechamento?" icon="ui-icon-alert" />
+						</p:commandButton>
+
+						<p:commandButton id="reaberturaButton" icon="fa fa-fw fa-unlock" value="Reabrir janela" actionListener="#{janelaCompraController.reabre}"
+							process="@this" update=":searchForm :editForm" styleClass="ui-grid-col-12"
+							rendered="#{janelaCompraController.editing and janelaCompraController.entity.fechada}">
+							<p:confirm header="Confirmação" message="Confirmar reabertura?" icon="ui-icon-alert" />
+						</p:commandButton>
+
+						<p:commandButton icon="fa fas fa-file-excel-o" value="Extração" ajax="false"
+							onclick="liberaRefresh(); PrimeFaces.monitorDownload(showStatus, hideStatus);" process="@this" styleClass="ui-grid-col-12"
+							rendered="#{janelaCompraController.entity.fechada and janelaCompraController.entity.quantidadePedido > 0}">
+							<p:fileDownload value="#{janelaCompraController.extracaoExcel}" />
 						</p:commandButton>
 
 						<p:commandButton icon="fa fa-fw fa-close" value="#{labels.botao_fechar}" actionListener="#{janelaCompraController.close}" process="@this"
