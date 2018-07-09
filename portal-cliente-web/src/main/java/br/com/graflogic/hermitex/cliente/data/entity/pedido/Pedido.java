@@ -209,4 +209,8 @@ public class Pedido implements Serializable {
 		return null != codigoFormaPagamento && (DomFormaPagamento.CARTAO_CREDITO_1.equals(codigoFormaPagamento)
 				|| DomFormaPagamento.CARTAO_CREDITO_2.equals(codigoFormaPagamento));
 	}
+
+	public boolean isPagamentoBoleto() {
+		return null != codigoFormaPagamento && DomFormaPagamento.BOLETO.equals(codigoFormaPagamento);
+	}
 }

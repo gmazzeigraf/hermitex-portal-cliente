@@ -20,9 +20,21 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.mundipagg.api.MundiAPIClient;
+import com.mundipagg.api.models.CreateAddressRequest;
+import com.mundipagg.api.models.CreateCardRequest;
+import com.mundipagg.api.models.CreateCreditCardPaymentRequest;
+import com.mundipagg.api.models.CreateCustomerRequest;
+import com.mundipagg.api.models.CreateOrderItemRequest;
+import com.mundipagg.api.models.CreateOrderRequest;
+import com.mundipagg.api.models.CreatePaymentRequest;
+import com.mundipagg.api.models.GetOrderResponse;
 
 import br.com.graflogic.base.service.gson.GsonUtil;
 import br.com.graflogic.commonutil.util.PessoaFisicaValidator;
@@ -47,6 +59,7 @@ import br.com.graflogic.hermitex.cliente.data.impl.pedido.PedidoItemRepository;
 import br.com.graflogic.hermitex.cliente.data.impl.pedido.PedidoRepository;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
+import br.com.graflogic.hermitex.cliente.service.exception.PagamentoException;
 import br.com.graflogic.hermitex.cliente.service.exception.ResultadoNaoEncontradoException;
 import br.com.graflogic.hermitex.cliente.service.impl.auxiliar.MunicipioService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
@@ -66,6 +79,8 @@ import br.com.graflogic.utilities.datautil.copy.ObjectCopier;
 @Service
 public class PedidoService {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(PedidoService.class);
+
 	@Autowired
 	private PedidoRepository repository;
 
@@ -83,9 +98,6 @@ public class PedidoService {
 
 	@Autowired
 	private TamanhoProdutoService tamanhoProdutoService;
-
-	@Autowired
-	private PagamentoService pagamentoService;
 
 	@Autowired
 	private ClienteService clienteService;
@@ -141,21 +153,8 @@ public class PedidoService {
 
 			registraAuditoria(entity.getId(), entity, DomEventoAuditoriaPedido.CADASTRO, null);
 
-			if (entity.isPagamentoCartaoCredito()) {
-				// Consulta os dados necessario para pagamento
-				Cliente cliente = clienteService.consultaPorId(entity.getIdCliente());
-				Filial filial = null;
-				if (null != entity.getIdFilial()) {
-					filial = filialService.consultaPorId(entity.getIdFilial());
-				}
-
-				Municipio municipioFaturamento = municipioService.consultaPorId(entity.getEnderecoFaturamento().getIdMunicipio());
-
-				entity.getEnderecoFaturamento().setNomeMunicipio(municipioFaturamento.getNome());
-
-				// TODO Envia pagamento
-				pagamentoService.enviaPagamentoCartaoCredio(cliente, filial, entity, dadosPagamentoCartaoCredito);
-			}
+			// Envia o pagamento
+			enviaPagamento(entity, dadosPagamentoCartaoCredito);
 
 		} catch (Throwable t) {
 			entity.setItens(itens);
@@ -344,6 +343,116 @@ public class PedidoService {
 		out.flush();
 
 		return out.toByteArray();
+	}
+
+	// Pagamento
+	private void enviaPagamento(Pedido entity, DadosPagamentoCartaoCredito dadosPagamentoCartaoCredito) {
+		try {
+			if (entity.isPagamentoCartaoCredito()) {
+				// Consulta os dados necessario para pagamento
+				Cliente cliente = clienteService.consultaPorId(entity.getIdCliente());
+				Filial filial = null;
+				if (null != entity.getIdFilial()) {
+					filial = filialService.consultaPorId(entity.getIdFilial());
+				}
+
+				Municipio municipioFaturamento = municipioService.consultaPorId(entity.getEnderecoFaturamento().getIdMunicipio());
+
+				entity.getEnderecoFaturamento().setNomeMunicipio(municipioFaturamento.getNome());
+
+				enviaPagamentoCartaoCredio(cliente, filial, entity, dadosPagamentoCartaoCredito);
+
+			} else if (entity.isPagamentoBoleto()) {
+				// TODO
+
+			}
+		} catch (Throwable t) {
+			// TODO Tratar o erro corretamente
+			throw new PagamentoException(t);
+		}
+	}
+
+	private void enviaPagamentoCartaoCredio(Cliente cliente, Filial filial, Pedido entity, DadosPagamentoCartaoCredito dadosPagamentoCartaoCredito)
+			throws Throwable {
+		// Ordem
+		CreateOrderRequest orderRequest = new CreateOrderRequest();
+		orderRequest.setPayments(new ArrayList<>());
+		orderRequest.setItems(new ArrayList<>());
+		orderRequest.setCode(entity.getId().toString());
+
+		// Transacao
+		CreatePaymentRequest request = new CreatePaymentRequest();
+		request.setPaymentMethod("credit_card");
+		request.setAmount(Integer.parseInt(entity.getValorTotal().setScale(2, RoundingMode.HALF_EVEN).toString().replace(".", "")));
+		// TODO Obter configuracao
+		request.setGatewayAffiliationId("f0cd3ebd-ef95-4511-9b44-b51b9549167e");
+
+		// Pagamento
+		CreateCreditCardPaymentRequest cardPaymentRequest = new CreateCreditCardPaymentRequest();
+		cardPaymentRequest.setInstallments(dadosPagamentoCartaoCredito.getParcelas());
+		cardPaymentRequest.setStatementDescriptor("HERMITEX " + entity.getId());
+		cardPaymentRequest.setCapture(true);
+		cardPaymentRequest.setRecurrence(false);
+
+		// Cartao
+		CreateCardRequest cardRequest = new CreateCardRequest();
+		cardRequest.setNumber(dadosPagamentoCartaoCredito.getNumero());
+		cardRequest.setHolderName(dadosPagamentoCartaoCredito.getNomeImpresso());
+		cardRequest.setHolderDocument(dadosPagamentoCartaoCredito.getDocumentoPortador());
+		cardRequest.setExpMonth(Integer.parseInt(dadosPagamentoCartaoCredito.getVencimento().substring(0, 2)));
+		cardRequest.setExpYear(Integer.parseInt(dadosPagamentoCartaoCredito.getVencimento().substring(2)));
+		cardRequest.setCvv(dadosPagamentoCartaoCredito.getCodigoSeguranca());
+		cardRequest.setBrand(dadosPagamentoCartaoCredito.getBandeira());
+		cardRequest.setPrivateLabel(false);
+
+		CreateAddressRequest addressRequest = new CreateAddressRequest();
+		addressRequest.setStreet(entity.getEnderecoFaturamento().getLogradouro());
+		addressRequest.setNumber(entity.getEnderecoFaturamento().getNumero());
+		addressRequest.setZipCode(entity.getEnderecoFaturamento().getCep());
+		addressRequest.setNeighborhood(entity.getEnderecoFaturamento().getBairro());
+		addressRequest.setCity(entity.getEnderecoFaturamento().getNomeMunicipio());
+		addressRequest.setState(entity.getEnderecoFaturamento().getSiglaEstado());
+		addressRequest.setCountry("Brazil");
+		addressRequest.setComplement(entity.getEnderecoFaturamento().getComplemento());
+
+		cardRequest.setBillingAddress(addressRequest);
+
+		cardPaymentRequest.setCard(cardRequest);
+
+		request.setCreditCard(cardPaymentRequest);
+
+		// Cliente
+		CreateCustomerRequest customerRequest = new CreateCustomerRequest();
+		if (null != filial) {
+			customerRequest.setName(filial.getNomeFantasia());
+			customerRequest.setEmail(filial.getEmail());
+		} else {
+			customerRequest.setName(cliente.getNomeFantasia());
+			customerRequest.setEmail(cliente.getEmail());
+		}
+
+		request.setCustomer(customerRequest);
+
+		orderRequest.setCustomer(customerRequest);
+		orderRequest.getPayments().add(request);
+
+		// Itens
+		for (PedidoItem item : entity.getItens()) {
+			CreateOrderItemRequest itemRequest = new CreateOrderItemRequest();
+			itemRequest.setQuantity(item.getQuantidade());
+			itemRequest.setDescription(item.getTituloProduto());
+			itemRequest.setAmount(Integer.parseInt(item.getValorTotal().setScale(2, RoundingMode.HALF_EVEN).toString().replace(".", "")));
+
+			orderRequest.getItems().add(itemRequest);
+		}
+
+		LOGGER.info(GsonUtil.gson.toJson(orderRequest));
+
+		// TODO Envia pagamento
+		//		MundiAPIClient client = new MundiAPIClient();
+		//		GetOrderResponse orderResponse = client.getOrders().createOrder(orderRequest);
+		//
+		//		LOGGER.info(GsonUtil.gson.toJson(orderRequest));
 	}
 
 	// Util

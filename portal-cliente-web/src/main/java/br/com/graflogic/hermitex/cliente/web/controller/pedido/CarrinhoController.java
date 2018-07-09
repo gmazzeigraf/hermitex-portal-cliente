@@ -25,6 +25,7 @@ import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoEndereco;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoEnderecoPK;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoItem;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
+import br.com.graflogic.hermitex.cliente.service.exception.PagamentoException;
 import br.com.graflogic.hermitex.cliente.service.impl.auxiliar.EstadoService;
 import br.com.graflogic.hermitex.cliente.service.impl.auxiliar.MunicipioService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
@@ -268,6 +269,9 @@ public class CarrinhoController extends BaseController implements InitializingBe
 			returnInfoMessage("Pedido " + pedido.getId() + " cadastrado com sucesso", getApplicationUrl() + "/pages/compra/produtos.jsf");
 
 			preparaNovoPedido();
+
+		} catch (PagamentoException e) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao enviar o pagamento, contate o administrador", e);
 
 		} catch (DadosInvalidosException e) {
 			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), e.getMessage(), null);
