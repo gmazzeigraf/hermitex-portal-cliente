@@ -13,7 +13,6 @@ import org.springframework.stereotype.Controller;
 
 import br.com.graflogic.base.service.util.I18NUtil;
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomTipoEndereco;
-import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomFormaPagamento;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioCliente;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioFilial;
 import br.com.graflogic.hermitex.cliente.data.entity.auxiliar.Estado;
@@ -257,10 +256,14 @@ public class CarrinhoController extends BaseController implements InitializingBe
 			for (FormaPagamento forma : formasPagamento) {
 				if (pedido.getCodigoFormaPagamento().equals(forma.getCodigo())) {
 					pedido.setFormaPagamento(forma.getDescricao());
+
+					if (pedido.isPagamentoCartaoCredito()) {
+						dadosPagamentoCartaoCredito.setParcelas(forma.getParcelas());
+					}
 				}
 			}
 
-			pedidoService.cadastra(pedido, dadosPagamentoCartaoCredito);
+			pedidoService.cadastra(pedido, pedido.isPagamentoCartaoCredito() ? dadosPagamentoCartaoCredito : null);
 
 			returnInfoMessage("Pedido " + pedido.getId() + " cadastrado com sucesso", getApplicationUrl() + "/pages/compra/produtos.jsf");
 
@@ -279,7 +282,8 @@ public class CarrinhoController extends BaseController implements InitializingBe
 		try {
 			janelaCompra = janelaCompraService.consultaAtiva(cliente.getId());
 
-			mensagemJanelaCompra = "A janela de compras fechará no dia " + new SimpleDateFormat("dd/MM/yyyy").format(janelaCompra.getDataFechamento());
+			mensagemJanelaCompra = "A janela de compras fechará no dia "
+					+ new SimpleDateFormat("dd/MM/yyyy").format(janelaCompra.getDataFechamento());
 
 		} catch (DadosInvalidosException e) {
 			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), e.getMessage(), null);
@@ -290,12 +294,6 @@ public class CarrinhoController extends BaseController implements InitializingBe
 		} catch (Throwable t) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao consultar janela de compras, contate o administrador", t);
 		}
-	}
-
-	// Condicoes
-	public boolean isPagamentoCartaoCredito() {
-		return null != pedido.getCodigoFormaPagamento() && (DomFormaPagamento.CARTAO_CREDITO_1.equals(pedido.getCodigoFormaPagamento())
-				|| DomFormaPagamento.CARTAO_CREDITO_2.equals(pedido.getCodigoFormaPagamento()));
 	}
 
 	// Getters e Setters

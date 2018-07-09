@@ -32,7 +32,9 @@ import br.com.graflogic.hermitex.cliente.data.dom.DomPedido;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomFormaPagamento;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomStatus;
 import br.com.graflogic.hermitex.cliente.data.entity.aud.PedidoAuditoria;
+import br.com.graflogic.hermitex.cliente.data.entity.auxiliar.Municipio;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
+import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Filial;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.JanelaCompra;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.Pedido;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoEndereco;
@@ -46,6 +48,9 @@ import br.com.graflogic.hermitex.cliente.data.impl.pedido.PedidoRepository;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
 import br.com.graflogic.hermitex.cliente.service.exception.ResultadoNaoEncontradoException;
+import br.com.graflogic.hermitex.cliente.service.impl.auxiliar.MunicipioService;
+import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
+import br.com.graflogic.hermitex.cliente.service.impl.cadastro.FilialService;
 import br.com.graflogic.hermitex.cliente.service.impl.produto.TamanhoProdutoService;
 import br.com.graflogic.hermitex.cliente.service.model.DadosPagamentoCartaoCredito;
 import br.com.graflogic.hermitex.cliente.service.model.FormaPagamento;
@@ -79,12 +84,23 @@ public class PedidoService {
 	@Autowired
 	private TamanhoProdutoService tamanhoProdutoService;
 
+	@Autowired
+	private PagamentoService pagamentoService;
+
+	@Autowired
+	private ClienteService clienteService;
+
+	@Autowired
+	private FilialService filialService;
+
+	@Autowired
+	private MunicipioService municipioService;
+
 	// Fluxo
 	@Transactional(rollbackFor = Throwable.class)
 	public void cadastra(Pedido entity, DadosPagamentoCartaoCredito dadosPagamentoCartaoCredito) {
 		// Caso seja compra com carta, valida o documento do portador
-		if (DomFormaPagamento.CARTAO_CREDITO_1.equals(entity.getCodigoFormaPagamento())
-				|| DomFormaPagamento.CARTAO_CREDITO_2.equals(entity.getCodigoFormaPagamento())) {
+		if (entity.isPagamentoCartaoCredito()) {
 			String documentoPortador = dadosPagamentoCartaoCredito.getDocumentoPortador();
 
 			if (11 == documentoPortador.length()) {
@@ -105,8 +121,6 @@ public class PedidoService {
 
 		entity.setIdJanelaCompra(janelaCompra.getId());
 
-		// TODO Envia pagamento
-
 		validaDados(entity);
 
 		entity.setStatus(DomStatus.PAGAMENTO_PENDENTE);
@@ -126,6 +140,22 @@ public class PedidoService {
 			repository.update(entity);
 
 			registraAuditoria(entity.getId(), entity, DomEventoAuditoriaPedido.CADASTRO, null);
+
+			if (entity.isPagamentoCartaoCredito()) {
+				// Consulta os dados necessario para pagamento
+				Cliente cliente = clienteService.consultaPorId(entity.getIdCliente());
+				Filial filial = null;
+				if (null != entity.getIdFilial()) {
+					filial = filialService.consultaPorId(entity.getIdFilial());
+				}
+
+				Municipio municipioFaturamento = municipioService.consultaPorId(entity.getEnderecoFaturamento().getIdMunicipio());
+
+				entity.getEnderecoFaturamento().setNomeMunicipio(municipioFaturamento.getNome());
+
+				// TODO Envia pagamento
+				pagamentoService.enviaPagamentoCartaoCredio(cliente, filial, entity, dadosPagamentoCartaoCredito);
+			}
 
 		} catch (Throwable t) {
 			entity.setItens(itens);

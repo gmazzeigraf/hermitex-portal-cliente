@@ -134,7 +134,7 @@ public class JanelaCompraService {
 		try {
 			JanelaCompra entity = consultaPorClienteData(idCliente, new Date());
 
-			if (!DomStatusJanelaCompra.CADASTRADA.equals(entity.getStatus())) {
+			if (!entity.isAtiva()) {
 				throw new DadosInvalidosException("A janela de compras está fechada");
 			}
 

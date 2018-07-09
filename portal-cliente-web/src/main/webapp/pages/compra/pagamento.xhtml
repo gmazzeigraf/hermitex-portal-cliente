@@ -136,7 +136,7 @@
 								</p:selectOneMenu>
 							</p:panelGrid>
 
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{carrinhoController.pagamentoCartaoCredito}">
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{carrinhoController.pedido.pagamentoCartaoCredito}">
 								<h3>Dados do cartão</h3>
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-4" layout="grid">
 									<p:outputLabel for="bandeira" value="Bandeira" styleClass="label" />
@@ -167,7 +167,7 @@
 									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 										<p:outputLabel for="numero" value="Número" styleClass="label" />
 										<p:inputMask id="numero" value="#{carrinhoController.dadosPagamentoCartaoCredito.numero}" styleClass="ui-grid-col-12" required="true"
-											requiredMessage="Favor informar o número do cartão" mask="9999 9999 9999 9999" />
+											requiredMessage="Favor informar o número do cartão" mask="9999 9999 9999 9999" converter="maskConverter"  />
 									</p:panelGrid>
 								</p:panelGrid>
 
@@ -175,7 +175,7 @@
 									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 										<p:outputLabel for="vencimento" value="Vencimento" styleClass="label" />
 										<p:inputMask id="vencimento" value="#{carrinhoController.dadosPagamentoCartaoCredito.vencimento}" styleClass="ui-grid-col-12"
-											required="true" requiredMessage="Favor informar o vencimento do cartão" mask="99/9999" placeholder="mm/aaaa" />
+											required="true" requiredMessage="Favor informar o vencimento do cartão" mask="99/9999" placeholder="mm/aaaa" converter="maskConverter" />
 									</p:panelGrid>
 								</p:panelGrid>
 
@@ -183,7 +183,7 @@
 									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 										<p:outputLabel for="codigoSeguranca" value="Código Segurança" styleClass="label" />
 										<p:inputMask id="codigoSeguranca" value="#{carrinhoController.dadosPagamentoCartaoCredito.codigoSeguranca}" styleClass="ui-grid-col-12"
-											required="true" requiredMessage="Favor informar o vencimento do cartão" mask="999" />
+											required="true" requiredMessage="Favor informar o vencimento do cartão" mask="999" converter="maskConverter"  />
 									</p:panelGrid>
 								</p:panelGrid>
 							</p:panelGrid>

@@ -20,6 +20,7 @@ import org.hibernate.annotations.LazyCollectionOption;
 
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomTipoEndereco;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido;
+import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomFormaPagamento;
 
 /**
  * 
@@ -202,5 +203,10 @@ public class Pedido implements Serializable {
 
 	public PedidoEndereco getEnderecoEntrega() {
 		return enderecos.get(enderecos.indexOf(new PedidoEndereco(new PedidoEnderecoPK(id, DomTipoEndereco.ENTREGA))));
+	}
+
+	public boolean isPagamentoCartaoCredito() {
+		return null != codigoFormaPagamento && (DomFormaPagamento.CARTAO_CREDITO_1.equals(codigoFormaPagamento)
+				|| DomFormaPagamento.CARTAO_CREDITO_2.equals(codigoFormaPagamento));
 	}
 }

@@ -10,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * 
@@ -59,6 +60,9 @@ public class PedidoEndereco implements Serializable {
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_pedido", referencedColumnName = "id", insertable = false, updatable = false)
 	private Pedido pedido;
+
+	@Transient
+	private String nomeMunicipio;
 
 	public PedidoEnderecoPK getId() {
 		return id;
@@ -130,6 +134,14 @@ public class PedidoEndereco implements Serializable {
 
 	public void setPedido(Pedido pedido) {
 		this.pedido = pedido;
+	}
+
+	public String getNomeMunicipio() {
+		return nomeMunicipio;
+	}
+
+	public void setNomeMunicipio(String nomeMunicipio) {
+		this.nomeMunicipio = nomeMunicipio;
 	}
 
 	@Override
