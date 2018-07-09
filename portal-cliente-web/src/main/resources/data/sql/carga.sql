@@ -18,3 +18,7 @@ INSERT INTO tb_configuracao VALUES ('email.senha', 'n127415');
 INSERT INTO tb_configuracao VALUES ('email.ssl', 'true');
 
 INSERT INTO tb_configuracao VALUES ('web.url', 'http://localhost:8080/web');
+
+INSERT INTO tb_configuracao VALUES ('pagamento_boleto.codigo_banco', '033');
+INSERT INTO tb_configuracao VALUES ('pagamento_boleto.instrucao', 'Após o vencimento esse boleto será cancelado e será necessário realizar uma nova compra.');
+INSERT INTO tb_configuracao VALUES ('pagamento.key', 'f0cd3ebd-ef95-4511-9b44-b51b9549167e');

@@ -15,6 +15,9 @@ public enum ConfiguracaoEnum {
 
 	WEB_URL("web.url"),
 
+	PAGAMENTO_BOLETO_CODIGO_BANCO("pagamento_boleto.codigo_banco"), PAGAMENTO_BOLETO_INSTRUCAO(
+			"pagamento_boleto.instrucao"), PAGAMENTO_KEY("pagamento.key"),
+
 	;
 
 	private final String codigo;
