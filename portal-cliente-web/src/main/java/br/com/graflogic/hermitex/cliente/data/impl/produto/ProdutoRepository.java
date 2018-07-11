@@ -47,6 +47,10 @@ public class ProdutoRepository extends BaseRepository<Produto> {
 			predicateList.add(builder.and(builder.equal(table.get("idCliente"), entity.getIdCliente())));
 		}
 
+		if (StringUtils.isNotEmpty(entity.getTipo())) {
+			predicateList.add(builder.and(builder.equal(table.get("tipo"), entity.getTipo())));
+		}
+
 		if (null != entity.getIdCategoria() && 0 != entity.getIdCategoria()) {
 			predicateList.add(builder.and(builder.equal(table.get("idCategoria"), entity.getIdCategoria())));
 		}

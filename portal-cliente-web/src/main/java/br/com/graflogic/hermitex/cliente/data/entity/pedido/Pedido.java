@@ -21,6 +21,7 @@ import org.hibernate.annotations.LazyCollectionOption;
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomTipoEndereco;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomFormaPagamento;
+import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomStatus;
 
 /**
  * 
@@ -62,6 +63,9 @@ public class Pedido implements Serializable {
 
 	@Column(name = "id_pagamento")
 	private String idPagamento;
+
+	@Column(name = "url_boleto")
+	private String urlBoleto;
 
 	@Column(name = "id_janela_compra", nullable = false)
 	private Integer idJanelaCompra;
@@ -153,6 +157,14 @@ public class Pedido implements Serializable {
 		this.idPagamento = idPagamento;
 	}
 
+	public String getUrlBoleto() {
+		return urlBoleto;
+	}
+
+	public void setUrlBoleto(String urlBoleto) {
+		this.urlBoleto = urlBoleto;
+	}
+
 	public Integer getIdJanelaCompra() {
 		return idJanelaCompra;
 	}
@@ -212,5 +224,17 @@ public class Pedido implements Serializable {
 
 	public boolean isPagamentoBoleto() {
 		return null != codigoFormaPagamento && DomFormaPagamento.BOLETO.equals(codigoFormaPagamento);
+	}
+
+	public boolean isPagamentoPendente() {
+		return null != status && DomStatus.PAGAMENTO_PENDENTE.equals(status);
+	}
+
+	public boolean isPago() {
+		return null != status && DomStatus.PAGO.equals(status);
+	}
+
+	public boolean isEnviado() {
+		return null != status && DomStatus.ENVIADO.equals(status);
 	}
 }

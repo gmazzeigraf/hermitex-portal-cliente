@@ -70,4 +70,20 @@ public class DomProduto {
 	}
 
 	public static DomGenero domGenero = new DomGenero();
+	
+	
+	public static class DomTipo extends DomBase {
+		public static final String ROUPA = "R";
+		public static final String SAPATO = "S";
+		public static final String BOLSA = "B";
+
+		DomTipo() {
+			mapa.put(ROUPA, "Roupa");
+			mapa.put(SAPATO, "Sapato");
+			mapa.put(BOLSA, "Bolsa");
+		}
+	}
+
+	public static DomTipo domTipo = new DomTipo();
+	
 }

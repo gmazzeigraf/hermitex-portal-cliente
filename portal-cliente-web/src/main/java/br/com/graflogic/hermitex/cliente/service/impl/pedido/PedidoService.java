@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -21,21 +20,9 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.mundipagg.api.models.CreateAddressRequest;
-import com.mundipagg.api.models.CreateBoletoPaymentRequest;
-import com.mundipagg.api.models.CreateCardRequest;
-import com.mundipagg.api.models.CreateCreditCardPaymentRequest;
-import com.mundipagg.api.models.CreateCustomerRequest;
-import com.mundipagg.api.models.CreateOrderItemRequest;
-import com.mundipagg.api.models.CreateOrderRequest;
-import com.mundipagg.api.models.CreatePaymentRequest;
 
 import br.com.graflogic.base.service.gson.GsonUtil;
 import br.com.graflogic.commonutil.util.PessoaFisicaValidator;
@@ -45,7 +32,6 @@ import br.com.graflogic.hermitex.cliente.data.dom.DomPedido;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomFormaPagamento;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomStatus;
 import br.com.graflogic.hermitex.cliente.data.entity.aud.PedidoAuditoria;
-import br.com.graflogic.hermitex.cliente.data.entity.auxiliar.Municipio;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Filial;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.JanelaCompra;
@@ -64,14 +50,21 @@ import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosExcepti
 import br.com.graflogic.hermitex.cliente.service.exception.PagamentoException;
 import br.com.graflogic.hermitex.cliente.service.exception.ResultadoNaoEncontradoException;
 import br.com.graflogic.hermitex.cliente.service.impl.auxiliar.ConfiguracaoService;
-import br.com.graflogic.hermitex.cliente.service.impl.auxiliar.MunicipioService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.FilialService;
 import br.com.graflogic.hermitex.cliente.service.impl.produto.TamanhoProdutoService;
 import br.com.graflogic.hermitex.cliente.service.model.DadosPagamentoCartaoCredito;
 import br.com.graflogic.hermitex.cliente.service.model.FormaPagamento;
 import br.com.graflogic.hermitex.cliente.service.util.ExcelUtil;
-import br.com.graflogic.hermitex.cliente.web.util.SessionUtil;
+import br.com.graflogic.mundipagg.client.MundiPaggClient;
+import br.com.graflogic.mundipagg.model.BoletoTransaction;
+import br.com.graflogic.mundipagg.model.Buyer;
+import br.com.graflogic.mundipagg.model.CreditCard;
+import br.com.graflogic.mundipagg.model.CreditCardTransaction;
+import br.com.graflogic.mundipagg.model.Options;
+import br.com.graflogic.mundipagg.model.Order;
+import br.com.graflogic.mundipagg.model.SaleRequest;
+import br.com.graflogic.mundipagg.model.SaleResponse;
 import br.com.graflogic.utilities.datautil.copy.ObjectCopier;
 
 /**
@@ -82,11 +75,7 @@ import br.com.graflogic.utilities.datautil.copy.ObjectCopier;
 @Service
 public class PedidoService {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(PedidoService.class);
-
-	private static final String PAGAMENTO_TIPO_CARTAO_CREDITO = "credit_card";
-	private static final String PAGAMENTO_TIPO_BOLETO = "boleto";
-	private static final String PAGAMENTO_CARTAO_CREDITO_PREFIXO = "HERMITEX ";
+	private static final String OPERACAO_CARTAO_CREDITO = "AuthAndCapture";
 
 	@Autowired
 	private PedidoRepository repository;
@@ -113,14 +102,11 @@ public class PedidoService {
 	private FilialService filialService;
 
 	@Autowired
-	private MunicipioService municipioService;
-
-	@Autowired
 	private ConfiguracaoService configuracaoService;
 
 	// Fluxo
 	@Transactional(rollbackFor = Throwable.class)
-	public void cadastra(Pedido entity, DadosPagamentoCartaoCredito dadosPagamentoCartaoCredito) {
+	public void cadastra(Pedido entity, DadosPagamentoCartaoCredito dadosPagamentoCartaoCredito, Integer idUsuario) {
 		// Caso seja compra com carta, valida o documento do portador
 		if (entity.isPagamentoCartaoCredito()) {
 			String documentoPortador = dadosPagamentoCartaoCredito.getDocumentoPortador();
@@ -159,12 +145,14 @@ public class PedidoService {
 
 			entity.setItens(itens);
 
-			repository.update(entity);
+			executaAtualiza(entity);
 
-			registraAuditoria(entity.getId(), entity, DomEventoAuditoriaPedido.CADASTRO, null);
+			registraAuditoria(entity.getId(), entity, DomEventoAuditoriaPedido.CADASTRO, idUsuario, null);
 
 			// Envia o pagamento
 			enviaPagamento(entity, dadosPagamentoCartaoCredito);
+
+			executaAtualiza(entity);
 
 		} catch (Throwable t) {
 			entity.setItens(itens);
@@ -173,12 +161,44 @@ public class PedidoService {
 		}
 	}
 
-	public void atualiza(Pedido entity) {
+	public void atualiza(Pedido entity, Integer idUsuario) {
 		validaDados(entity);
 
 		executaAtualiza(entity);
 
-		registraAuditoria(entity.getId(), entity, DomEventoAuditoriaPedido.ATUALIZACAO, null);
+		registraAuditoria(entity.getId(), entity, DomEventoAuditoriaPedido.ATUALIZACAO, idUsuario, null);
+	}
+
+	public void paga(Pedido entity, Integer idUsuario, String observacao) {
+		entity.setStatus(DomStatus.PAGO);
+
+		executaAtualiza(entity);
+
+		registraAuditoria(entity.getId(), entity, DomEventoAuditoriaPedido.PAGAMENTO, idUsuario, observacao);
+	}
+
+	public void envia(Pedido entity, Integer idUsuario, String observacao) {
+		if (!entity.isPago()) {
+			throw new DadosInvalidosException("Apenas pedidos pagos podem ser marcados como enviados");
+		}
+
+		entity.setStatus(DomStatus.ENVIADO);
+
+		executaAtualiza(entity);
+
+		registraAuditoria(entity.getId(), entity, DomEventoAuditoriaPedido.ENVIO, idUsuario, observacao);
+	}
+
+	public void finaliza(Pedido entity, Integer idUsuario, String observacao) {
+		if (!entity.isEnviado()) {
+			throw new DadosInvalidosException("Apenas pedidos enviados podem ser marcados como finalizados");
+		}
+
+		entity.setStatus(DomStatus.FINALIZADO);
+
+		executaAtualiza(entity);
+
+		registraAuditoria(entity.getId(), entity, DomEventoAuditoriaPedido.FINALIZACAO, idUsuario, observacao);
 	}
 
 	private void executaAtualiza(Pedido entity) {
@@ -188,30 +208,6 @@ public class PedidoService {
 		} catch (OptimisticLockException e) {
 			throw new DadosDesatualizadosException();
 		}
-	}
-
-	public List<FormaPagamento> geraFormasPagamento(Cliente cliente, BigDecimal valorTotal) {
-		List<FormaPagamento> formasPagamento = new ArrayList<>();
-		formasPagamento.add(new FormaPagamento(DomFormaPagamento.BOLETO, 1));
-		formasPagamento.add(new FormaPagamento(DomFormaPagamento.CARTAO_CREDITO_1, 1));
-		formasPagamento.add(new FormaPagamento(DomFormaPagamento.CARTAO_CREDITO_2, 2));
-
-		for (FormaPagamento forma : formasPagamento) {
-			forma.setValor(valorTotal.divide(new BigDecimal(forma.getParcelas())).setScale(2, RoundingMode.HALF_EVEN));
-
-			String descricao = DomPedido.domFormaPagamento.getDeValor(forma.getCodigo());
-
-			if (DomFormaPagamento.BOLETO.equals(forma.getCodigo())) {
-				descricao += " " + cliente.getDiasBoleto() + " dias";
-
-			}
-
-			descricao += " R$ " + forma.getValor().toString().replace(".", ",");
-
-			forma.setDescricao(descricao);
-		}
-
-		return formasPagamento;
 	}
 
 	// Consulta
@@ -357,146 +353,102 @@ public class PedidoService {
 
 	// Pagamento
 	private void enviaPagamento(Pedido entity, DadosPagamentoCartaoCredito dadosPagamentoCartaoCredito) {
-		// Consulta os dados necessario para pagamento
-		Cliente cliente = clienteService.consultaPorId(entity.getIdCliente());
-		Filial filial = null;
-		if (null != entity.getIdFilial()) {
-			filial = filialService.consultaPorId(entity.getIdFilial());
-		}
-
-		Municipio municipioFaturamento = municipioService.consultaPorId(entity.getEnderecoFaturamento().getIdMunicipio());
-
-		entity.getEnderecoFaturamento().setNomeMunicipio(municipioFaturamento.getNome());
-
 		try {
-			// Ordem
-			CreateOrderRequest orderRequest = new CreateOrderRequest();
-			orderRequest.setPayments(new ArrayList<>());
-			orderRequest.setItems(new ArrayList<>());
-			orderRequest.setCode(entity.getId().toString());
+			// Consulta o cliente
+			Cliente cliente = clienteService.consultaPorId(entity.getIdCliente());
 
-			// Transacao
-			CreatePaymentRequest request = new CreatePaymentRequest();
-			request.setAmount(Integer.parseInt(entity.getValorTotal().setScale(2, RoundingMode.HALF_EVEN).toString().replace(".", "")));
+			// Ordem
+			Order order = new Order();
+			order.setOrderReference(entity.getId().toString());
+
+			// Requisicao
+			SaleRequest request = new SaleRequest();
 
 			// Pagamento
 			if (entity.isPagamentoCartaoCredito()) {
-				request.setPaymentMethod(PAGAMENTO_TIPO_CARTAO_CREDITO);
+				// Dados do cartao
+				CreditCard creditCard = new CreditCard();
+				creditCard.setCreditCardBrand(dadosPagamentoCartaoCredito.getBandeira());
+				creditCard.setCreditCardNumber(dadosPagamentoCartaoCredito.getNumero());
+				creditCard.setExpMonth(Integer.parseInt(dadosPagamentoCartaoCredito.getVencimento().substring(0, 2)));
+				creditCard.setExpYear(Integer.parseInt(dadosPagamentoCartaoCredito.getVencimento().substring(2)));
+				creditCard.setHolderName(dadosPagamentoCartaoCredito.getNomeImpresso());
+				creditCard.setSecurityCode(dadosPagamentoCartaoCredito.getCodigoSeguranca());
 
-				CreateCreditCardPaymentRequest creditCard = geraCreditCard(entity, dadosPagamentoCartaoCredito);
-				request.setCreditCard(creditCard);
+				// Dados da transacao
+				CreditCardTransaction transaction = new CreditCardTransaction();
+				transaction.setAmountInCents(Long.parseLong(entity.getValorTotal().toString().replace(".", "")));
+				transaction.setCreditCard(creditCard);
+				transaction.setInstallmentCount(dadosPagamentoCartaoCredito.getParcelas());
+				transaction.setCreditCardOperation(OPERACAO_CARTAO_CREDITO);
+				transaction.setTransactionReference(entity.getId().toString());
+
+				request.setCreditCardTransactionCollection(new ArrayList<>());
+				request.getCreditCardTransactionCollection().add(transaction);
 
 			} else if (entity.isPagamentoBoleto()) {
-				request.setPaymentMethod(PAGAMENTO_TIPO_BOLETO);
+				// Dados do boleto
+				BoletoTransaction transaction = new BoletoTransaction();
+				transaction.setAmountInCents(Long.parseLong(entity.getValorTotal().toString().replace(".", "")));
+				transaction.setBankNumber(configuracaoService.consulta(ConfiguracaoEnum.PAGAMENTO_BOLETO_CODIGO_BANCO));
+				transaction.setInstructions(configuracaoService.consulta(ConfiguracaoEnum.PAGAMENTO_BOLETO_INSTRUCAO));
+				transaction.setTransactionReference(entity.getId().toString());
 
-				CreateBoletoPaymentRequest boleto = geraBoleto(cliente, entity);
-				request.setBoleto(boleto);
+				// Configuracao
+				Options options = new Options();
+				options.setDaysToAddInBoletoExpirationDate(cliente.getDiasBoleto());
+				transaction.setOptions(options);
+
+				request.setBoletoTransactionCollection(new ArrayList<>());
+				request.getBoletoTransactionCollection().add(transaction);
+
 			}
 
 			// Cliente
-			CreateCustomerRequest customerRequest = geraCustomer(cliente, filial);
-			request.setCustomer(customerRequest);
-			orderRequest.setCustomer(customerRequest);
+			Buyer buyer = new Buyer();
+			if (null == entity.getIdFilial()) {
+				buyer.setName(cliente.getNomeFantasia());
+				buyer.setDocumentNumber(cliente.getCnpj());
 
-			orderRequest.getPayments().add(request);
+			} else {
+				Filial filial = filialService.consultaPorId(entity.getIdFilial());
 
-			// Itens
-			for (PedidoItem item : entity.getItens()) {
-				CreateOrderItemRequest itemRequest = new CreateOrderItemRequest();
-				itemRequest.setQuantity(item.getQuantidade());
-				itemRequest.setDescription(item.getTituloProduto());
-				itemRequest.setAmount(Integer.parseInt(item.getValorTotal().setScale(2, RoundingMode.HALF_EVEN).toString().replace(".", "")));
+				buyer.setName(filial.getNomeFantasia());
+				buyer.setDocumentNumber(filial.getCnpj());
 
-				orderRequest.getItems().add(itemRequest);
 			}
 
-			// Envio
-			LOGGER.info(GsonUtil.gson.toJson(orderRequest));
+			buyer.setDocumentType("CNPJ");
+			buyer.setPersonType("Company");
+			buyer.setAddressCollection(new ArrayList<>());
 
-			//			MundiAPIClient client = new MundiAPIClient(configuracaoService.consulta(ConfiguracaoEnum.PAGAMENTO_KEY), "");
-			//			GetOrderResponse orderResponse = client.getOrders().createOrder(orderRequest);
-			//
-			//			LOGGER.info(GsonUtil.gson.toJson(orderResponse));
+			request.setBuyer(buyer);
+			request.setOrder(order);
+
+			// Envia
+			MundiPaggClient client = new MundiPaggClient(configuracaoService.consulta(ConfiguracaoEnum.PAGAMENTO_URL),
+					configuracaoService.consulta(ConfiguracaoEnum.PAGAMENTO_MERCHANT_KEY));
+
+			SaleResponse response = client.enviaTransacao(request);
+
+			// Verifica se ocorreu erro
+			if (null != response.getErrorReport() && null != response.getErrorReport().getErrorItemCollection()
+					&& !response.getErrorReport().getErrorItemCollection().isEmpty()) {
+				throw new PagamentoException(response.getErrorReport().getErrorItemCollection().get(0).getDescription());
+			}
+
+			entity.setIdPagamento(response.getOrderResult().getOrderKey());
+
+			if (entity.isPagamentoCartaoCredito()) {
+				paga(entity, null, null);
+
+			} else if (entity.isPagamentoBoleto()) {
+				entity.setUrlBoleto(response.getBoletoTransactionResultCollection().get(0).getBoletoUrl());
+			}
 
 		} catch (Throwable t) {
 			throw new PagamentoException(t);
 		}
-	}
-
-	private CreateCreditCardPaymentRequest geraCreditCard(Pedido entity, DadosPagamentoCartaoCredito dadosPagamentoCartaoCredito) throws Throwable {
-		// Pagamento
-		CreateCreditCardPaymentRequest creditCardRequest = new CreateCreditCardPaymentRequest();
-		creditCardRequest.setInstallments(dadosPagamentoCartaoCredito.getParcelas());
-		creditCardRequest.setStatementDescriptor(PAGAMENTO_CARTAO_CREDITO_PREFIXO + entity.getId());
-		creditCardRequest.setCapture(true);
-		creditCardRequest.setRecurrence(false);
-
-		// Cartao
-		CreateCardRequest cardRequest = new CreateCardRequest();
-		cardRequest.setNumber(dadosPagamentoCartaoCredito.getNumero());
-		cardRequest.setHolderName(dadosPagamentoCartaoCredito.getNomeImpresso());
-		cardRequest.setHolderDocument(dadosPagamentoCartaoCredito.getDocumentoPortador());
-		cardRequest.setExpMonth(Integer.parseInt(dadosPagamentoCartaoCredito.getVencimento().substring(0, 2)));
-		cardRequest.setExpYear(Integer.parseInt(dadosPagamentoCartaoCredito.getVencimento().substring(2)));
-		cardRequest.setCvv(dadosPagamentoCartaoCredito.getCodigoSeguranca());
-		cardRequest.setBrand(dadosPagamentoCartaoCredito.getBandeira());
-		cardRequest.setPrivateLabel(false);
-
-		// Endereco faturamento
-		CreateAddressRequest addressRequest = geraAddress(entity.getEnderecoFaturamento());
-
-		cardRequest.setBillingAddress(addressRequest);
-
-		creditCardRequest.setCard(cardRequest);
-
-		return creditCardRequest;
-	}
-
-	private CreateBoletoPaymentRequest geraBoleto(Cliente cliente, Pedido entity) {
-		CreateBoletoPaymentRequest boletoRequest = new CreateBoletoPaymentRequest();
-		boletoRequest.setBank(configuracaoService.consulta(ConfiguracaoEnum.PAGAMENTO_BOLETO_CODIGO_BANCO));
-		boletoRequest.setInstructions(configuracaoService.consulta(ConfiguracaoEnum.PAGAMENTO_BOLETO_INSTRUCAO));
-		boletoRequest.setNossoNumero(entity.getId().toString());
-
-		// Gera a data de vencimento
-		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.DAY_OF_MONTH, cliente.getDiasBoleto());
-
-		boletoRequest.setDueAt(new DateTime(cal.getTime()));
-
-		// Endereco faturamento
-		CreateAddressRequest addressRequest = geraAddress(entity.getEnderecoFaturamento());
-
-		boletoRequest.setBillingAddress(addressRequest);
-
-		return boletoRequest;
-	}
-
-	private CreateCustomerRequest geraCustomer(Cliente cliente, Filial filial) {
-		CreateCustomerRequest customerRequest = new CreateCustomerRequest();
-		if (null != filial) {
-			customerRequest.setName(filial.getNomeFantasia());
-			customerRequest.setEmail(filial.getEmail());
-		} else {
-			customerRequest.setName(cliente.getNomeFantasia());
-			customerRequest.setEmail(cliente.getEmail());
-		}
-
-		return customerRequest;
-	}
-
-	private CreateAddressRequest geraAddress(PedidoEndereco endereco) {
-		CreateAddressRequest addressRequest = new CreateAddressRequest();
-		addressRequest.setStreet(endereco.getLogradouro());
-		addressRequest.setNumber(endereco.getNumero());
-		addressRequest.setZipCode(endereco.getCep());
-		addressRequest.setNeighborhood(endereco.getBairro());
-		addressRequest.setCity(endereco.getNomeMunicipio());
-		addressRequest.setState(endereco.getSiglaEstado());
-		addressRequest.setCountry("Brazil");
-		addressRequest.setComplement(endereco.getComplemento());
-
-		return addressRequest;
 	}
 
 	// Util
@@ -506,12 +458,12 @@ public class PedidoService {
 		}
 	}
 
-	private String registraAuditoria(Long id, Pedido objeto, String codigoEvento, String observacao) {
+	private String registraAuditoria(Long id, Pedido objeto, String codigoEvento, Integer idUsuario, String observacao) {
 		PedidoAuditoria evento = new PedidoAuditoria();
 		evento.setId(UUID.randomUUID().toString());
 		evento.setData(new Date());
 		evento.setIdRelacionado(id);
-		evento.setIdResponsavel(SessionUtil.getAuthenticatedUsuario().getId());
+		evento.setIdResponsavel(idUsuario);
 		evento.setCodigoEvento(codigoEvento);
 		evento.setObservacao(observacao);
 		if (null != objeto) {
@@ -535,5 +487,29 @@ public class PedidoService {
 	private void preencheRelacionados(Pedido entity) {
 		entity.setItens(consultaItensPorPedido(entity.getId()));
 		entity.setEnderecos(enderecoRepository.consultaPorPedido(entity.getId()));
+	}
+
+	public List<FormaPagamento> geraFormasPagamento(Cliente cliente, BigDecimal valorTotal) {
+		List<FormaPagamento> formasPagamento = new ArrayList<>();
+		formasPagamento.add(new FormaPagamento(DomFormaPagamento.BOLETO, 1));
+		formasPagamento.add(new FormaPagamento(DomFormaPagamento.CARTAO_CREDITO_1, 1));
+		formasPagamento.add(new FormaPagamento(DomFormaPagamento.CARTAO_CREDITO_2, 2));
+
+		for (FormaPagamento forma : formasPagamento) {
+			forma.setValor(valorTotal.divide(new BigDecimal(forma.getParcelas())).setScale(2, RoundingMode.HALF_EVEN));
+
+			String descricao = DomPedido.domFormaPagamento.getDeValor(forma.getCodigo());
+
+			if (DomFormaPagamento.BOLETO.equals(forma.getCodigo())) {
+				descricao += " " + cliente.getDiasBoleto() + " dias";
+
+			}
+
+			descricao += " R$ " + forma.getValor().toString().replace(".", ",");
+
+			forma.setDescricao(descricao);
+		}
+
+		return formasPagamento;
 	}
 }

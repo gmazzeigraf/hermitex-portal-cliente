@@ -11,6 +11,7 @@ import javax.persistence.Query;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Repository;
 
+import br.com.graflogic.hermitex.cliente.data.dom.DomAuditoria.DomEventoAuditoriaPedido;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.Pedido;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoSimple;
 import br.com.graflogic.utilities.datautil.repository.BaseRepository;
@@ -31,9 +32,11 @@ public class PedidoRepository extends BaseRepository<Pedido> {
 	public List<PedidoSimple> consulta(PedidoSimple filter) {
 		String queryStr = "SELECT ped.id, ped.vl_total, ped.cd_forma_pagamento, ped.status,"
 				+ " (SELECT COUNT(id) FROM tb_pedido_item WHERE id_pedido = ped.id) AS quantidade_itens, aud.data"
-				+ " FROM tb_pedido ped INNER JOIN tb_pedido_aud aud ON ped.id = aud.id_relacionado";
+				+ " FROM tb_pedido ped INNER JOIN tb_pedido_aud aud ON ped.id = aud.id_relacionado AND aud.cd_evento = ?";
 		String where = "";
 		List<Object> params = new ArrayList<>();
+
+		params.add(DomEventoAuditoriaPedido.CADASTRO);
 
 		if (null != filter.getIdCliente() && 0 != filter.getIdCliente()) {
 			where = generateWhere(where, "ped.id_cliente = ?");

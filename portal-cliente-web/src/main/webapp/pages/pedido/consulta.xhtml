@@ -312,11 +312,32 @@
 						</p:panelGrid>
 					</div>
 
+					<c:if test="#{pedidoController.entity.pagamentoBoleto and pedidoController.entity.pagamentoPendente}">
+						<div class="card card-w-title">
+							<h1>Pagamento</h1>
+
+							<p:panelGrid columns="1" id="pagamentoGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
+								<p:link href="#{pedidoController.entity.urlBoleto}" value="Visualizar boleto" target="_blank" style="font-size: 16px; font-weight: 700;" />
+							</p:panelGrid>
+						</div>
+					</c:if>
+
 					<p:messages />
 
 					<p:panelGrid columns="6" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
+						<p:commandButton id="baixaPagamentoButton" icon="fa fa-fw fa-money" value="#{labels.botao_baixar_pagamento}"
+							oncomplete="PF('baixaPagamentoDialog').show()" process="@this" update="editForm:idBaixaPagamentoDialog" styleClass="ui-grid-col-12 botao-verde"
+							rendered="#{pedidoController.pagamentoBaixavel}" />
+
+						<p:commandButton id="envioButton" icon="fa fa-fw fa-truck" value="#{labels.botao_enviar}" oncomplete="PF('envioDialog').show()"
+							process="@this" update="editForm:idEnvioDialog" styleClass="ui-grid-col-12 botao-verde" rendered="#{pedidoController.enviavel}" />
+
+						<p:commandButton id="finalizacaoButton" icon="fa fa-fw fa-check-square-o" value="#{labels.botao_finalizar}"
+							oncomplete="PF('finalizacaoDialog').show()" process="@this" update="editForm:idFinalizacaoDialog" styleClass="ui-grid-col-12 botao-verde"
+							rendered="#{pedidoController.finalizavel}" />
+
 						<p:commandButton icon="fa fa-fw fa-close" value="#{labels.botao_fechar}" actionListener="#{pedidoController.close}" process="@this"
-							update=":searchForm :editForm :routeBarForm" styleClass="ui-grid-col-12 botao-fechar" />
+							update=":searchForm :editForm :routeBarForm" styleClass="ui-grid-col-12 botao-fechar" oncomplete="scrollPageTop();" />
 					</p:panelGrid>
 				</div>
 			</div>
@@ -324,5 +345,59 @@
 	</ui:define>
 
 	<ui:define name="complement">
+		<p:dialog header="Confirmar baixa do pagamento?" id="idBaixaPagamentoDialog" widgetVar="baixaPagamentoDialog" height="90%" modal="true"
+			draggable="false" resizable="false" responsive="true">
+
+			<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" styleClass="ui-panelgrid-blank form-group">
+				<p:outputLabel value="Observação" styleClass="label" />
+				<p:inputTextarea id="observacaoBaixaPagamento" rows="3" cols="40" value="#{pedidoController.observacao}" styleClass="ui-grid-col-12"
+					maxlength="200" />
+			</p:panelGrid>
+
+			<p:spacer />
+
+			<p:panelGrid columns="2" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
+				<p:commandButton icon="fa fa-fw fa-check" value="#{labels.botao_sim}" actionListener="#{pedidoController.baixaPagamento}"
+					process="@this editForm:observacaoBaixaPagamento" styleClass="ui-grid-col-12" />
+				<p:commandButton icon="fa fa-fw fa-close" value="#{labels.botao_nao}" styleClass="ui-grid-col-12" onclick="PF('baixaPagamentoDialog').hide()"
+					process="@this" />
+			</p:panelGrid>
+		</p:dialog>
+
+		<p:dialog header="Confirmar envio do pedido?" id="idEnvioDialog" widgetVar="envioDialog" height="90%" modal="true" draggable="false"
+			resizable="false" responsive="true">
+
+			<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" styleClass="ui-panelgrid-blank form-group">
+				<p:outputLabel value="Observação" styleClass="label" />
+				<p:inputTextarea id="observacaoEnvio" rows="3" cols="40" value="#{pedidoController.observacao}" styleClass="ui-grid-col-12" maxlength="200" />
+			</p:panelGrid>
+
+			<p:spacer />
+
+			<p:panelGrid columns="2" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
+				<p:commandButton icon="fa fa-fw fa-check" value="#{labels.botao_sim}" actionListener="#{pedidoController.envia}"
+					process="@this editForm:observacaoEnvio" styleClass="ui-grid-col-12" />
+				<p:commandButton icon="fa fa-fw fa-close" value="#{labels.botao_nao}" styleClass="ui-grid-col-12" onclick="PF('envioDialog').hide()"
+					process="@this" />
+			</p:panelGrid>
+		</p:dialog>
+
+		<p:dialog header="Confirmar finalização do pedido?" id="idFinalizacaoDialog" widgetVar="finalizacaoDialog" height="90%" modal="true"
+			draggable="false" resizable="false" responsive="true">
+
+			<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" styleClass="ui-panelgrid-blank form-group">
+				<p:outputLabel value="Observação" styleClass="label" />
+				<p:inputTextarea id="observacaoFinalizacao" rows="3" cols="40" value="#{pedidoController.observacao}" styleClass="ui-grid-col-12" maxlength="200" />
+			</p:panelGrid>
+
+			<p:spacer />
+
+			<p:panelGrid columns="2" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
+				<p:commandButton icon="fa fa-fw fa-check" value="#{labels.botao_sim}" actionListener="#{pedidoController.finaliza}"
+					process="@this editForm:observacaoFinalizacao" styleClass="ui-grid-col-12" />
+				<p:commandButton icon="fa fa-fw fa-close" value="#{labels.botao_nao}" styleClass="ui-grid-col-12" onclick="PF('finalizacaoDialog').hide()"
+					process="@this" />
+			</p:panelGrid>
+		</p:dialog>
 	</ui:define>
 </ui:composition>

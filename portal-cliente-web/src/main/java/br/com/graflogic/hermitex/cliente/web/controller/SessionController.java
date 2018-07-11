@@ -3,8 +3,6 @@ package br.com.graflogic.hermitex.cliente.web.controller;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 
 import br.com.graflogic.base.service.util.I18NUtil;
@@ -51,12 +49,8 @@ public class SessionController extends BaseController implements InitializingBea
 	}
 
 	// Condicoes
-	public boolean isAuthenticated() {
-		if (null == SecurityContextHolder.getContext().getAuthentication()
-				|| SecurityContextHolder.getContext().getAuthentication() instanceof AnonymousAuthenticationToken) {
-			return false;
-		}
-		return true;
+	public boolean isAutenticado() {
+		return SessionUtil.isAutenticado();
 	}
 
 	public boolean isSenhaUsuarioDefinitiva() {

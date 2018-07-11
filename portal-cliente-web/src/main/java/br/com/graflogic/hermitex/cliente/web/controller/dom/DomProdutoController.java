@@ -38,4 +38,8 @@ public class DomProdutoController implements Serializable {
 	public Map<String, Object> getGeneroMap() {
 		return DomProduto.domGenero.getMap();
 	}
+
+	public Map<String, Object> getTipoMap() {
+		return DomProduto.domTipo.getMap();
+	}
 }

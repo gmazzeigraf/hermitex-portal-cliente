@@ -11,7 +11,7 @@
 					<div class="card card-w-title">
 						<h1>#{labels.consulta}</h1>
 						<p:panelGrid columns="1" id="filterGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
-							<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
+							<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group">
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 									<p:outputLabel for="clienteFilter" value="Cliente *" styleClass="label" />
 									<p:selectOneMenu id="clienteFilter" value="#{produtoController.filterEntity.idCliente}" styleClass="ui-grid-col-12" filter="true"
@@ -19,6 +19,14 @@
 										<f:selectItem itemLabel="Selecione" itemValue="" />
 										<f:selectItems value="#{produtoController.clientes}" var="item" itemLabel="#{item.razaoSocial}" itemValue="#{item.id}" />
 										<p:ajax process="@this" update=":searchForm" listener="#{produtoController.changeCliente}" />
+									</p:selectOneMenu>
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="tipoFilter" value="Tipo" styleClass="label" />
+									<p:selectOneMenu id="tipoFilter" value="#{produtoController.filterEntity.tipo}" styleClass="ui-grid-col-12">
+										<f:selectItem itemLabel="" itemValue="" />
+										<f:selectItems value="#{domProdutoController.tipoMap}" />
 									</p:selectOneMenu>
 								</p:panelGrid>
 
@@ -44,6 +52,7 @@
 									<p:outputLabel for="tituloFilter" value="Título" styleClass="label" />
 									<p:inputText id="tituloFilter" value="#{produtoController.filterEntity.titulo}" maxlength="20" styleClass="ui-grid-col-12" />
 								</p:panelGrid>
+
 
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 									<p:outputLabel for="generoFilter" value="Gênero" styleClass="label" />
@@ -94,6 +103,10 @@
 								<h:outputText value="#{entity.codigo}" />
 							</p:column>
 
+							<p:column headerText="Tipo" sortBy="#{entity.deTipo}">
+								<h:outputText value="#{entity.deTipo}" />
+							</p:column>
+
 							<p:column headerText="Título" sortBy="#{entity.titulo}">
 								<h:outputText value="#{entity.titulo}" />
 							</p:column>
@@ -104,7 +117,7 @@
 
 							<p:column styleClass="coluna-edicao">
 								<p:commandButton icon="fa fa-fw fa-pencil" title="#{labels.botao_editar}" update=":searchForm :editForm" process="@this" resetValues="true"
-									styleClass="ui-grid-col-12">
+									styleClass="ui-grid-col-12" oncomplete="scrollPageTop();">
 									<f:setPropertyActionListener value="#{entity}" target="#{produtoController.selectedEntity}" />
 								</p:commandButton>
 							</p:column>
@@ -130,6 +143,15 @@
 								<p:outputLabel for="codigo" value="Código" styleClass="label" />
 								<p:inputText id="codigo" value="#{produtoController.entity.codigo}" maxlength="20" styleClass="ui-grid-col-12" required="true"
 									requiredMessage="Favor informar o código" disabled="#{produtoController.editing}" />
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel for="tipo" value="Tipo" styleClass="label" />
+								<p:selectOneMenu id="tipo" value="#{produtoController.entity.tipo}" styleClass="ui-grid-col-12" required="true"
+									requiredMessage="Favor selecionar o tipo">
+									<f:selectItem itemLabel="Selecione" itemValue="" />
+									<f:selectItems value="#{domProdutoController.tipoMap}" />
+								</p:selectOneMenu>
 							</p:panelGrid>
 
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
@@ -295,7 +317,7 @@
 						</p:commandButton>
 
 						<p:commandButton icon="fa fa-fw fa-close" value="#{labels.botao_fechar}" actionListener="#{produtoController.close}" process="@this"
-							update=":searchForm :editForm" styleClass="ui-grid-col-12 botao-fechar" />
+							update=":searchForm :editForm" styleClass="ui-grid-col-12 botao-fechar" oncomplete="scrollPageTop();" />
 					</p:panelGrid>
 				</div>
 			</div>

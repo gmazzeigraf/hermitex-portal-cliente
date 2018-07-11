@@ -19,6 +19,8 @@ import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Filial;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.Pedido;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoEndereco;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoSimple;
+import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
+import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
 import br.com.graflogic.hermitex.cliente.service.impl.auxiliar.EstadoService;
 import br.com.graflogic.hermitex.cliente.service.impl.auxiliar.MunicipioService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
@@ -67,6 +69,8 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 
 	private PedidoEndereco enderecoEntrega;
 
+	private String observacao;
+
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		try {
@@ -113,7 +117,12 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 
 	@Override
 	protected void select(PedidoSimple entity) {
-		setEntity(service.consultaCompletoPorId(entity.getId()));
+		select(entity.getId());
+
+	}
+
+	private void select(Long id) {
+		setEntity(service.consultaCompletoPorId(id));
 
 		municipiosFaturamento.clear();
 		municipiosEntrega.clear();
@@ -123,6 +132,79 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 
 		municipiosFaturamento.addAll(municipioService.consulta(enderecoFaturamento.getSiglaEstado()));
 		municipiosEntrega.addAll(municipioService.consulta(enderecoEntrega.getSiglaEstado()));
+	}
+
+	// Fluxo
+	public void baixaPagamento() {
+		try {
+			service.paga(getEntity(), SessionUtil.getAuthenticatedUsuario().getId(), observacao);
+
+			returnInfoDialogMessage(I18NUtil.getLabel("sucesso"), "Pedido marcado como pago com sucesso");
+
+			afterOperacao();
+
+		} catch (DadosInvalidosException e) {
+			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), e.getMessage(), null);
+
+		} catch (DadosDesatualizadosException e) {
+			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Pedido com dados desatualizados, altere novamente", null);
+
+			select(getEntity().getId());
+
+		} catch (Throwable t) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao marcar pedido como pago, contate o administrador", t);
+		}
+	}
+
+	public void envia() {
+		try {
+			service.envia(getEntity(), SessionUtil.getAuthenticatedUsuario().getId(), observacao);
+
+			returnInfoDialogMessage(I18NUtil.getLabel("sucesso"), "Pedido marcado como enviado com sucesso");
+
+			afterOperacao();
+
+		} catch (DadosInvalidosException e) {
+			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), e.getMessage(), null);
+
+		} catch (DadosDesatualizadosException e) {
+			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Pedido com dados desatualizados, altere novamente", null);
+
+			select(getEntity().getId());
+
+		} catch (Throwable t) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao marcar pedido como enviado, contate o administrador", t);
+		}
+	}
+
+	public void finaliza() {
+		try {
+			service.finaliza(getEntity(), SessionUtil.getAuthenticatedUsuario().getId(), observacao);
+
+			returnInfoDialogMessage(I18NUtil.getLabel("sucesso"), "Pedido marcado como finalizado com sucesso");
+
+			afterOperacao();
+
+		} catch (DadosInvalidosException e) {
+			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), e.getMessage(), null);
+
+		} catch (DadosDesatualizadosException e) {
+			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Pedido com dados desatualizados, altere novamente", null);
+
+			select(getEntity().getId());
+
+		} catch (Throwable t) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao marcar pedido como finalizado, contate o administrador", t);
+		}
+	}
+
+	private void afterOperacao() {
+		select(getEntity().getId());
+		executeSearch();
+
+		updateComponent("editForm");
+		updateComponent("searchForm");
+		observacao = null;
 	}
 
 	// Util
@@ -142,6 +224,18 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 	// Condicoes
 	public boolean isClienteSelecionado() {
 		return null != getFilterEntity().getIdCliente() && 0 != getFilterEntity().getIdCliente();
+	}
+
+	public boolean isPagamentoBaixavel() {
+		return null != getEntity() && getEntity().isPagamentoPendente() && SessionUtil.isUsuarioAdministrador();
+	}
+
+	public boolean isEnviavel() {
+		return null != getEntity() && getEntity().isPago() && SessionUtil.isUsuarioAdministrador();
+	}
+
+	public boolean isFinalizavel() {
+		return null != getEntity() && getEntity().isEnviado() && SessionUtil.isUsuarioAdministrador();
 	}
 
 	// Getters e Setters
@@ -171,5 +265,13 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 
 	public PedidoEndereco getEnderecoEntrega() {
 		return enderecoEntrega;
+	}
+
+	public String getObservacao() {
+		return observacao;
+	}
+
+	public void setObservacao(String observacao) {
+		this.observacao = observacao;
 	}
 }

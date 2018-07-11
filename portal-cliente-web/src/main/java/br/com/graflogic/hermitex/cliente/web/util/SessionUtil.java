@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import javax.faces.context.FacesContext;
 
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,6 +20,14 @@ import br.com.graflogic.hermitex.cliente.web.security.UserInfo;
  *
  */
 public class SessionUtil {
+
+	public static boolean isAutenticado() {
+		if (null == SecurityContextHolder.getContext().getAuthentication()
+				|| SecurityContextHolder.getContext().getAuthentication() instanceof AnonymousAuthenticationToken) {
+			return false;
+		}
+		return true;
+	}
 
 	public static void redirecionaView(String view) throws IOException {
 		FacesContext.getCurrentInstance().getExternalContext().dispatch(view);

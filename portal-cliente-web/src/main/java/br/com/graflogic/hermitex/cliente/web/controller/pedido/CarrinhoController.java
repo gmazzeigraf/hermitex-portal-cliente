@@ -264,9 +264,13 @@ public class CarrinhoController extends BaseController implements InitializingBe
 				}
 			}
 
-			pedidoService.cadastra(pedido, pedido.isPagamentoCartaoCredito() ? dadosPagamentoCartaoCredito : null);
+			pedidoService.cadastra(pedido, pedido.isPagamentoCartaoCredito() ? dadosPagamentoCartaoCredito : null,
+					SessionUtil.getAuthenticatedUsuario().getId());
 
-			returnInfoMessage("Pedido " + pedido.getId() + " cadastrado com sucesso", getApplicationUrl() + "/pages/compra/produtos.jsf");
+			returnInfoMessage(
+					"Pedido " + pedido.getId() + " cadastrado com sucesso"
+							+ (pedido.isPagamentoBoleto() ? ", visualize o boleto na página dos pedidos" : ""),
+					getApplicationUrl() + "/pages/compra/produtos.jsf");
 
 			preparaNovoPedido();
 

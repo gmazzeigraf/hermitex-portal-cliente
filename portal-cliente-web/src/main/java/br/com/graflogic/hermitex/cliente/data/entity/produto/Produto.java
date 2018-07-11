@@ -41,6 +41,9 @@ public class Produto implements Serializable {
 	@Column(name = "id_cliente", nullable = false)
 	private Integer idCliente;
 
+	@Column(name = "tipo", nullable = false)
+	private String tipo;
+
 	@Column(name = "id_categoria", nullable = false)
 	private Integer idCategoria;
 
@@ -97,6 +100,14 @@ public class Produto implements Serializable {
 
 	public void setIdCliente(Integer idCliente) {
 		this.idCliente = idCliente;
+	}
+
+	public String getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
 	}
 
 	public Integer getIdCategoria() {
@@ -212,6 +223,10 @@ public class Produto implements Serializable {
 			return true;
 		}
 		return false;
+	}
+
+	public String getDeTipo() {
+		return DomProduto.domTipo.getDeValor(tipo);
 	}
 
 	public String getDeStatus() {

@@ -9,11 +9,11 @@
 	<packaging>war</packaging>
 
 	<dependencies>
-		<!-- GSON -->
+		<!-- REST -->
 		<dependency>
-			<groupId>org.danilopianini</groupId>
-			<artifactId>gson-extras</artifactId>
-			<version>0.1.0</version>
+			<groupId>br.com.graflogic.utilities</groupId>
+			<artifactId>rest-util</artifactId>
+			<version>1.1.0</version>
 		</dependency>
 
 		<!-- LOG -->
@@ -123,12 +123,6 @@
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
 			<version>3.10-FINAL</version>
-		</dependency>
-
-		<dependency>
-			<groupId>MundiAPILib</groupId>
-			<artifactId>MundiAPILib</artifactId>
-			<version>0.13.24</version>
 		</dependency>
 
 		<!-- JOB -->

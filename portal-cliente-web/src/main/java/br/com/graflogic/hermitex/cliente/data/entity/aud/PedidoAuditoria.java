@@ -29,7 +29,7 @@ public class PedidoAuditoria implements Serializable {
 	@Column(name = "data", nullable = false)
 	private Date data;
 
-	@Column(name = "id_responsavel", nullable = false)
+	@Column(name = "id_responsavel")
 	private Integer idResponsavel;
 
 	@Column(name = "cd_evento", nullable = false)
