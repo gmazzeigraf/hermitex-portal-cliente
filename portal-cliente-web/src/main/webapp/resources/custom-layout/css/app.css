@@ -154,7 +154,7 @@
 }
 
 .input-number-resp input {
-	width: 97.5% !important;
+	width: 98% !important;
 }
 
 .botao-verde {
@@ -203,6 +203,10 @@ input[readonly], input[disabled], textarea[readonly], textarea[disabled], div.ui
 
 button[disabled] {
 	opacity: .30 !important; filter: Alpha(Opacity = 30) !important; cursor: not-allowed !important;
+}
+
+textarea{
+	resize: none !important;
 }
 
 .ui-inputfield.ui-state-focus[readonly] {

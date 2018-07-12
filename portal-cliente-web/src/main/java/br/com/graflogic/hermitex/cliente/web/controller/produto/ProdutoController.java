@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
+import br.com.graflogic.base.service.gson.GsonUtil;
 import br.com.graflogic.base.service.util.I18NUtil;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.CategoriaProduto;
@@ -27,6 +28,7 @@ import br.com.graflogic.hermitex.cliente.data.entity.produto.TamanhoProduto;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
+import br.com.graflogic.hermitex.cliente.service.impl.model.LinhaTabelaMedidas;
 import br.com.graflogic.hermitex.cliente.service.impl.produto.CategoriaProdutoService;
 import br.com.graflogic.hermitex.cliente.service.impl.produto.ProdutoService;
 import br.com.graflogic.hermitex.cliente.service.impl.produto.SetorProdutoService;
@@ -72,6 +74,8 @@ public class ProdutoController extends CrudBaseController<Produto, Produto> impl
 
 	private int indexRelacionado;
 
+	private List<LinhaTabelaMedidas> conteudoTabelaMedidas;
+
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		try {
@@ -91,6 +95,8 @@ public class ProdutoController extends CrudBaseController<Produto, Produto> impl
 	@Override
 	protected boolean executeSave() {
 		try {
+			getEntity().setConteudoTabelaMedidas(GsonUtil.gson.toJson(conteudoTabelaMedidas));
+
 			if (isEditing()) {
 				try {
 					service.atualiza(getEntity());
@@ -131,11 +137,20 @@ public class ProdutoController extends CrudBaseController<Produto, Produto> impl
 		getEntity().setTamanhos(new ArrayList<>());
 		getEntity().setImagens(new ArrayList<>());
 		getEntity().setIdCliente(getFilterEntity().getIdCliente());
+
+		conteudoTabelaMedidas = new ArrayList<>();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void executeEdit(Produto entity) {
 		setEntity(service.consultaCompletoPorId(entity.getId()));
+
+		conteudoTabelaMedidas = GsonUtil.gson.fromJson(getEntity().getConteudoTabelaMedidas(), List.class);
+
+		if (null == conteudoTabelaMedidas) {
+			conteudoTabelaMedidas = new ArrayList<>();
+		}
 	}
 
 	@Override
@@ -207,6 +222,21 @@ public class ProdutoController extends CrudBaseController<Produto, Produto> impl
 		} catch (Throwable t) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao excluir tamanho, contate o administrador", t);
 		}
+	}
+
+	// Tabela Medidas
+	public void changeLinhasTabelaMedidas() {
+		try {
+			conteudoTabelaMedidas.clear();
+
+			for (int i = 0; i < getEntity().getLinhasTabelaMedidas(); i++) {
+				conteudoTabelaMedidas.add(new LinhaTabelaMedidas());
+			}
+
+		} catch (Throwable t) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao alterar tabela de medidas, contate o administrador", t);
+		}
+
 	}
 
 	// Util
@@ -358,5 +388,9 @@ public class ProdutoController extends CrudBaseController<Produto, Produto> impl
 
 	public void setIndexRelacionado(int indexRelacionado) {
 		this.indexRelacionado = indexRelacionado;
+	}
+
+	public List<LinhaTabelaMedidas> getConteudoTabelaMedidas() {
+		return conteudoTabelaMedidas;
 	}
 }

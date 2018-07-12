@@ -74,6 +74,12 @@ public class Produto implements Serializable {
 	@Column(name = "link_youtube", nullable = false)
 	private String linkYoutube;
 
+	@Column(name = "linhas_tabela_medidas", nullable = false)
+	private Integer linhasTabelaMedidas;
+
+	@Column(name = "ct_tabela_medidas", nullable = false)
+	private String conteudoTabelaMedidas;
+
 	@Column(name = "status", nullable = false)
 	private String status;
 
@@ -191,6 +197,22 @@ public class Produto implements Serializable {
 
 	public void setLinkYoutube(String linkYoutube) {
 		this.linkYoutube = linkYoutube;
+	}
+
+	public Integer getLinhasTabelaMedidas() {
+		return linhasTabelaMedidas;
+	}
+
+	public void setLinhasTabelaMedidas(Integer linhasTabelaMedidas) {
+		this.linhasTabelaMedidas = linhasTabelaMedidas;
+	}
+
+	public String getConteudoTabelaMedidas() {
+		return conteudoTabelaMedidas;
+	}
+
+	public void setConteudoTabelaMedidas(String conteudoTabelaMedidas) {
+		this.conteudoTabelaMedidas = conteudoTabelaMedidas;
 	}
 
 	public String getStatus() {

@@ -193,7 +193,7 @@
 							<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 									<p:outputLabel for="descricao" value="Descrição" styleClass="label" />
-									<p:editor id="descricao" value="#{produtoController.entity.descricao}" height="300" styleClass="ui-grid-col-12" required="true"
+									<p:textEditor id="descricao" value="#{produtoController.entity.descricao}" height="300" styleClass="ui-grid-col-12" required="true"
 										requiredMessage="Favor informar a descrição" />
 								</p:panelGrid>
 
@@ -274,6 +274,28 @@
 					</div>
 
 					<div class="card card-w-title">
+						<h1>Tabela Medidas</h1>
+
+						<p:panelGrid columns="1" id="tabelaMedidasGrid" layout="grid" styleClass="ui-panelgrid-blank">
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel for="linhasTabelaMedidas" value="Linhas" styleClass="label" />
+								
+								<p:inputNumber id="linhasTabelaMedidas" value="#{produtoController.entity.linhasTabelaMedidas}" styleClass="input-number-resp" required="true"
+									requiredMessage="Favor informar as linhas da tabela de medidas" decimalPlaces="0" validatorMessage="A quantidade deve ser entre 0 e 10">
+									<f:validateLongRange minimum="0" maximum="10" />
+									<p:ajax process="@this" update="tabelaMedidasGrid" resetValues="true" listener="#{produtoController.changeLinhasTabelaMedidas}" />
+								</p:inputNumber>
+
+								<h:outputText value="As colunas devem ser separadas por ','" styleClass="label" style="color: red;"/>
+								<p:dataGrid layout="grid" columns="1" value="#{produtoController.conteudoTabelaMedidas}" var="item" styleClass="produtos" emptyMessage="">
+									<p:inputText value="#{item.conteudo}" styleClass="ui-grid-col-12" />
+								</p:dataGrid>
+							</p:panelGrid>
+
+						</p:panelGrid>
+					</div>
+
+					<div class="card card-w-title">
 						<h1>Imagens</h1>
 
 						<p:panelGrid columns="1" id="imagensGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
@@ -325,7 +347,7 @@
 
 					<p:panelGrid columns="6" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
 						<p:commandButton id="submitButton" icon="fa fa-fw fa-save" value="#{labels.botao_gravar}" actionListener="#{produtoController.save}"
-							process=":editForm:informacoesGrid" update=":editForm :searchForm" styleClass="ui-grid-col-12" />
+							process=":editForm:informacoesGrid :editForm:tabelaMedidasGrid" update=":editForm :searchForm" styleClass="ui-grid-col-12" />
 
 						<p:commandButton id="inativacaoButton" icon="fa fa-fw fa-ban" value="#{labels.botao_inativar}" actionListener="#{produtoController.inativa}"
 							process="@this" update=":searchForm :editForm" styleClass="ui-grid-col-12 botao-vermelho"
