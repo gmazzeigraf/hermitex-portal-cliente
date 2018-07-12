@@ -23,6 +23,9 @@
 	.status-column {
 		width: 150px !important; text-align: center !important;
 	}
+	.valor-column {
+		width: 150px !important; text-align: center !important;
+	}
 	.resp-calendar input.hasDatepicker {
 		width: 83%;
 	}
@@ -33,7 +36,7 @@
 		display: block !important;
 	}
 	.layout-main {
-		min-height: 91.5vh !important; box-sizing: border-box !important;
+		min-height: 92vh !important; box-sizing: border-box !important;
 	}
 	.layout-wrapper .topbar .topbar-left {
 		padding-left: 20px !important;
@@ -85,7 +88,7 @@
 		display: none !important;
 	}
 	.layout-main {
-		min-height: 83% !important; box-sizing: border-box !important;
+		min-height: 87vh !important; box-sizing: border-box !important;
 	}
 	.imagem-capa {
 		text-align: center; width: 100% !important;
@@ -235,7 +238,7 @@ body.exception-body .exception-bottom .exception-wrapper .logo-icon {
 }
 
 .route-bar {
-	font-weight: 700 !important;
+	font-weight: 700 !important; line-height: 20px !important;
 }
 
 /* Medidas */
@@ -308,25 +311,25 @@ body.exception-body .exception-bottom .exception-wrapper .logo-icon {
 	background-image: url("#{resource['poseidon-layout:images/logo-white.png']}") !important;
 }
 
-/* Cor do fundo */
+/* Fundo */
 body.main-body {
 	/* 	background-color: #fff; */
 	
 }
 
-/* Cor do cabecalho */
+/* Cabecalho */
 .topbar, .topbar-left {
 	background-color: #2d353c !important; color: #fff !important;
 }
 
 /* Rodape */
 .footer {
-	padding-bottom: 0px !important;
+	padding-top: 0px !important;
 }
 
 /* Cor do rodape */
 .footer, .footer .card, .footer-text-right {
-	background-color: #2d353c; color: #fff !important; padding-bottom: 5px !important; padding-margin: 0px !important;
+	background-color: #2d353c; color: #fff !important; padding-bottom: 7px !important;
 }
 
 /* Fullscren */

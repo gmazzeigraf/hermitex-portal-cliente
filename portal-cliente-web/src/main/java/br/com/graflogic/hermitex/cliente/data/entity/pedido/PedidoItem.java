@@ -53,6 +53,9 @@ public class PedidoItem implements Serializable {
 	@Column(name = "vl_total", nullable = false)
 	private BigDecimal valorTotal;
 
+	@Column(name = "peso_total", nullable = false)
+	private BigDecimal pesoTotal;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_pedido", referencedColumnName = "id", insertable = false, updatable = false)
 	private Pedido pedido;
@@ -128,6 +131,14 @@ public class PedidoItem implements Serializable {
 
 	public void setValorTotal(BigDecimal valorTotal) {
 		this.valorTotal = valorTotal;
+	}
+
+	public BigDecimal getPesoTotal() {
+		return pesoTotal;
+	}
+
+	public void setPesoTotal(BigDecimal pesoTotal) {
+		this.pesoTotal = pesoTotal;
 	}
 
 	public Pedido getPedido() {

@@ -141,9 +141,12 @@ public class CarrinhoController extends BaseController implements InitializingBe
 	private void atualizaPedido() {
 		pedido.setValorProdutos(BigDecimal.ZERO);
 		pedido.setValorTotal(BigDecimal.ZERO);
+		pedido.setPesoTotal(BigDecimal.ZERO);
 
 		for (PedidoItem item : pedido.getItens()) {
 			pedido.setValorProdutos(pedido.getValorProdutos().add(item.getValorTotal()));
+
+			pedido.setPesoTotal(pedido.getPesoTotal().add(item.getPesoTotal()));
 		}
 
 		pedido.setValorTotal(pedido.getValorTotal().add(pedido.getValorProdutos()));

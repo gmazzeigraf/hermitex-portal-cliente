@@ -55,6 +55,9 @@ public class Pedido implements Serializable {
 	@Column(name = "vl_total", nullable = false)
 	private BigDecimal valorTotal;
 
+	@Column(name = "peso_total", nullable = false)
+	private BigDecimal pesoTotal;
+
 	@Column(name = "cd_forma_pagamento", nullable = false)
 	private String codigoFormaPagamento;
 
@@ -131,6 +134,14 @@ public class Pedido implements Serializable {
 
 	public void setValorTotal(BigDecimal valorTotal) {
 		this.valorTotal = valorTotal;
+	}
+
+	public BigDecimal getPesoTotal() {
+		return pesoTotal;
+	}
+
+	public void setPesoTotal(BigDecimal pesoTotal) {
+		this.pesoTotal = pesoTotal;
 	}
 
 	public String getCodigoFormaPagamento() {

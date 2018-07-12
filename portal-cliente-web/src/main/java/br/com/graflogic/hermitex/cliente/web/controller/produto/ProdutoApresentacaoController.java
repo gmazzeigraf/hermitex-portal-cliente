@@ -229,9 +229,11 @@ public class ProdutoApresentacaoController extends SearchBaseController<ProdutoA
 
 	public void calculaTotalItem() {
 		itemPedido.setValorTotal(BigDecimal.ZERO);
+		itemPedido.setPesoTotal(BigDecimal.ZERO);
 
 		if (itemPedido.getQuantidade() > 0) {
 			itemPedido.setValorTotal(itemPedido.getValorCorrigidoTamanho().multiply(new BigDecimal(itemPedido.getQuantidade())));
+			itemPedido.setPesoTotal(getEntity().getPeso().multiply(new BigDecimal(itemPedido.getQuantidade())));
 		}
 	}
 

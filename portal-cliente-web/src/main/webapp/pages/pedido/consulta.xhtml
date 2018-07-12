@@ -120,11 +120,10 @@
 					<div class="card card-w-title">
 						<h1>#{labels.informacoes}</h1>
 
-						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group">
+						<p:panelGrid columns="6" layout="grid" styleClass="ui-panelgrid-blank form-group">
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 								<h:outputText value="#" styleClass="label" />
 								<h:outputText value="#{pedidoController.entity.id}" />
-
 							</p:panelGrid>
 
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
@@ -138,6 +137,13 @@
 								<h:outputText value="Total" styleClass="label" />
 								<h:outputText value="#{pedidoController.entity.valorTotal}">
 									<f:convertNumber pattern="R$ #,##0.00" />
+								</h:outputText>
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{sessionController.usuarioAdministrador}">
+								<h:outputText value="Peso" styleClass="label" />
+								<h:outputText value="#{pedidoController.entity.pesoTotal}">
+									<f:convertNumber pattern="#,##0.000" />
 								</h:outputText>
 							</p:panelGrid>
 
@@ -329,8 +335,8 @@
 							oncomplete="PF('baixaPagamentoDialog').show()" process="@this" update="editForm:idBaixaPagamentoDialog" styleClass="ui-grid-col-12 botao-verde"
 							rendered="#{pedidoController.pagamentoBaixavel}" />
 
-						<p:commandButton id="envioButton" icon="fa fa-fw fa-truck" value="#{labels.botao_enviar}" oncomplete="PF('envioDialog').show()"
-							process="@this" update="editForm:idEnvioDialog" styleClass="ui-grid-col-12 botao-verde" rendered="#{pedidoController.enviavel}" />
+						<p:commandButton id="envioButton" icon="fa fa-fw fa-truck" value="#{labels.botao_enviar}" oncomplete="PF('envioDialog').show()" process="@this"
+							update="editForm:idEnvioDialog" styleClass="ui-grid-col-12 botao-verde" rendered="#{pedidoController.enviavel}" />
 
 						<p:commandButton id="finalizacaoButton" icon="fa fa-fw fa-check-square-o" value="#{labels.botao_finalizar}"
 							oncomplete="PF('finalizacaoDialog').show()" process="@this" update="editForm:idFinalizacaoDialog" styleClass="ui-grid-col-12 botao-verde"

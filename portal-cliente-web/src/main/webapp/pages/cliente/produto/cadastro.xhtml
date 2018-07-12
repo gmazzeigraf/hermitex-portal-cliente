@@ -99,16 +99,28 @@
 								<h:outputText value="#{entity.id}" />
 							</p:column>
 
-							<p:column headerText="Código" sortBy="#{entity.codigo}">
+							<p:column headerText="Código" sortBy="#{entity.codigo}" styleClass="id-column">
 								<h:outputText value="#{entity.codigo}" />
 							</p:column>
 
-							<p:column headerText="Tipo" sortBy="#{entity.deTipo}">
+							<p:column headerText="Tipo" sortBy="#{entity.deTipo}" styleClass="id-column">
 								<h:outputText value="#{entity.deTipo}" />
 							</p:column>
 
 							<p:column headerText="Título" sortBy="#{entity.titulo}">
 								<h:outputText value="#{entity.titulo}" />
+							</p:column>
+
+							<p:column headerText="Valor" sortBy="#{entity.valor}" styleClass="valor-column">
+								<h:outputText value="#{entity.valor}">
+									<f:convertNumber pattern="R$ #,##0.00" />
+								</h:outputText>
+							</p:column>
+
+							<p:column headerText="Peso" sortBy="#{entity.peso}" styleClass="valor-column">
+								<h:outputText value="#{entity.peso}">
+									<f:convertNumber pattern="#,##0.000" />
+								</h:outputText>
 							</p:column>
 
 							<p:column headerText="Status" sortBy="#{entity.deStatus}" styleClass="status-column">
@@ -139,81 +151,96 @@
 					<div class="card card-w-title">
 						<h1>#{labels.informacoes}</h1>
 						<p:panelGrid columns="1" id="informacoesGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<p:outputLabel for="codigo" value="Código" styleClass="label" />
-								<p:inputText id="codigo" value="#{produtoController.entity.codigo}" maxlength="20" styleClass="ui-grid-col-12" required="true"
-									requiredMessage="Favor informar o código" disabled="#{produtoController.editing}" />
+							<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="codigo" value="Código" styleClass="label" />
+									<p:inputText id="codigo" value="#{produtoController.entity.codigo}" maxlength="20" styleClass="ui-grid-col-12" required="true"
+										requiredMessage="Favor informar o código" disabled="#{produtoController.editing}" />
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="tipo" value="Tipo" styleClass="label" />
+									<p:selectOneMenu id="tipo" value="#{produtoController.entity.tipo}" styleClass="ui-grid-col-12" required="true"
+										requiredMessage="Favor selecionar o tipo">
+										<f:selectItem itemLabel="Selecione" itemValue="" />
+										<f:selectItems value="#{domProdutoController.tipoMap}" />
+									</p:selectOneMenu>
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="categoria" value="Categoria" styleClass="label" />
+									<p:selectOneMenu id="categoria" value="#{produtoController.entity.idCategoria}" styleClass="ui-grid-col-12" required="true"
+										requiredMessage="Favor selecionar a categoria">
+										<f:selectItem itemLabel="Selecione" itemValue="" />
+										<f:selectItems value="#{produtoController.categorias}" var="item" itemLabel="#{item.nome}" itemValue="#{item.id}" />
+									</p:selectOneMenu>
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="setor" value="Setor" styleClass="label" />
+									<p:selectOneMenu id="setor" value="#{produtoController.entity.idSetor}" styleClass="ui-grid-col-12" required="true"
+										requiredMessage="Favor selecionar o setor">
+										<f:selectItem itemLabel="Selecione" itemValue="" />
+										<f:selectItems value="#{produtoController.setores}" var="item" itemLabel="#{item.nome}" itemValue="#{item.id}" />
+									</p:selectOneMenu>
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="titulo" value="Título" styleClass="label" />
+									<p:inputText id="titulo" value="#{produtoController.entity.titulo}" maxlength="50" styleClass="ui-grid-col-12" required="true"
+										requiredMessage="Favor informar o título" />
+								</p:panelGrid>
 							</p:panelGrid>
 
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<p:outputLabel for="tipo" value="Tipo" styleClass="label" />
-								<p:selectOneMenu id="tipo" value="#{produtoController.entity.tipo}" styleClass="ui-grid-col-12" required="true"
-									requiredMessage="Favor selecionar o tipo">
-									<f:selectItem itemLabel="Selecione" itemValue="" />
-									<f:selectItems value="#{domProdutoController.tipoMap}" />
-								</p:selectOneMenu>
+							<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="descricao" value="Descrição" styleClass="label" />
+									<p:editor id="descricao" value="#{produtoController.entity.descricao}" height="300" styleClass="ui-grid-col-12" required="true"
+										requiredMessage="Favor informar a descrição" />
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="garantia" value="Garantia" styleClass="label" />
+									<p:inputTextarea id="garantia" value="#{produtoController.entity.garantia}" rows="3" maxlength="300" styleClass="ui-grid-col-12"
+										autoResize="false" />
+								</p:panelGrid>
 							</p:panelGrid>
 
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<p:outputLabel for="categoria" value="Categoria" styleClass="label" />
-								<p:selectOneMenu id="categoria" value="#{produtoController.entity.idCategoria}" styleClass="ui-grid-col-12" required="true"
-									requiredMessage="Favor selecionar a categoria">
-									<f:selectItem itemLabel="Selecione" itemValue="" />
-									<f:selectItems value="#{produtoController.categorias}" var="item" itemLabel="#{item.nome}" itemValue="#{item.id}" />
-								</p:selectOneMenu>
+							<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="genero" value="Gênero" styleClass="label" />
+									<p:selectOneMenu id="genero" value="#{produtoController.entity.genero}" styleClass="ui-grid-col-12" required="true"
+										requiredMessage="Favor selecionar o gênero">
+										<f:selectItem itemLabel="Selecione" itemValue="" />
+										<f:selectItems value="#{domProdutoController.generoMap}" />
+									</p:selectOneMenu>
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="valor" value="Valor" styleClass="label" />
+									<p:inputNumber id="valor" value="#{produtoController.entity.valor}" styleClass="input-number-resp" decimalSeparator="," thousandSeparator="."
+										decimalPlaces="2" maxValue="9999.99" required="true" requiredMessage="Favor informar o valor">
+									</p:inputNumber>
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="peso" value="Peso (kg)" styleClass="label" />
+									<p:inputNumber id="peso" value="#{produtoController.entity.peso}" styleClass="input-number-resp" decimalSeparator="," thousandSeparator="."
+										decimalPlaces="3" maxValue="9999.999" required="true" requiredMessage="Favor informar o peso">
+									</p:inputNumber>
+								</p:panelGrid>
 							</p:panelGrid>
 
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<p:outputLabel for="setor" value="Setor" styleClass="label" />
-								<p:selectOneMenu id="setor" value="#{produtoController.entity.idSetor}" styleClass="ui-grid-col-12" required="true"
-									requiredMessage="Favor selecionar o setor">
-									<f:selectItem itemLabel="Selecione" itemValue="" />
-									<f:selectItems value="#{produtoController.setores}" var="item" itemLabel="#{item.nome}" itemValue="#{item.id}" />
-								</p:selectOneMenu>
-							</p:panelGrid>
+							<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="linkYoutube" value="Link Youtube" styleClass="label" />
+									<p:inputText id="linkYoutube" value="#{produtoController.entity.linkYoutube}" maxlength="100" styleClass="ui-grid-col-12" />
+								</p:panelGrid>
 
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<p:outputLabel for="titulo" value="Título" styleClass="label" />
-								<p:inputText id="titulo" value="#{produtoController.entity.titulo}" maxlength="50" styleClass="ui-grid-col-12" required="true"
-									requiredMessage="Favor informar o título" />
+								<c:if test="#{fn:length(produtoController.entity.linkYoutube) > 0}">
+									<iframe src="#{produtoController.entity.linkYoutube}" class="video-youtube" />
+								</c:if>
 							</p:panelGrid>
-
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<p:outputLabel for="descricao" value="Descrição" styleClass="label" />
-								<p:editor id="descricao" value="#{produtoController.entity.descricao}" height="300" styleClass="ui-grid-col-12" required="true"
-									requiredMessage="Favor informar a descrição" />
-							</p:panelGrid>
-
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<p:outputLabel for="garantia" value="Garantia" styleClass="label" />
-								<p:inputTextarea id="garantia" value="#{produtoController.entity.garantia}" rows="3" maxlength="300" styleClass="ui-grid-col-12"
-									autoResize="false" />
-							</p:panelGrid>
-
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<p:outputLabel for="genero" value="Gênero" styleClass="label" />
-								<p:selectOneMenu id="genero" value="#{produtoController.entity.genero}" styleClass="ui-grid-col-12" required="true"
-									requiredMessage="Favor selecionar o gênero">
-									<f:selectItem itemLabel="Selecione" itemValue="" />
-									<f:selectItems value="#{domProdutoController.generoMap}" />
-								</p:selectOneMenu>
-							</p:panelGrid>
-
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<p:outputLabel for="valor" value="Valor" styleClass="label" />
-								<p:inputNumber id="valor" value="#{produtoController.entity.valor}" styleClass="input-number-resp" decimalSeparator="," thousandSeparator="."
-									maxValue="9999.99" required="true" requiredMessage="Favor informar o valor">
-								</p:inputNumber>
-							</p:panelGrid>
-
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<p:outputLabel for="linkYoutube" value="Link Youtube" styleClass="label" />
-								<p:inputText id="linkYoutube" value="#{produtoController.entity.linkYoutube}" maxlength="100" styleClass="ui-grid-col-12" />
-							</p:panelGrid>
-
-							<c:if test="#{fn:length(produtoController.entity.linkYoutube) > 0}">
-								<iframe src="#{produtoController.entity.linkYoutube}" class="video-youtube" />
-							</c:if>
 						</p:panelGrid>
 					</div>
 
@@ -346,7 +373,7 @@
 									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 										<p:outputLabel for="fator" value="Fator" styleClass="label" />
 										<p:inputNumber id="fator" value="#{produtoController.tamanho.fator}" styleClass="input-number-resp" decimalSeparator=","
-											thousandSeparator="." maxValue="9.99" required="true" requiredMessage="Favor informar o fator">
+											thousandSeparator="." maxValue="9.99" required="true" requiredMessage="Favor informar o fator" decimalPlaces="2">
 										</p:inputNumber>
 									</p:panelGrid>
 								</p:panelGrid>

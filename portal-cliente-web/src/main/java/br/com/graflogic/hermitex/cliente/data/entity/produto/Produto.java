@@ -68,6 +68,9 @@ public class Produto implements Serializable {
 	@Column(name = "valor", nullable = false)
 	private BigDecimal valor;
 
+	@Column(name = "peso", nullable = false)
+	private BigDecimal peso;
+
 	@Column(name = "link_youtube", nullable = false)
 	private String linkYoutube;
 
@@ -172,6 +175,14 @@ public class Produto implements Serializable {
 
 	public void setValor(BigDecimal valor) {
 		this.valor = valor;
+	}
+
+	public BigDecimal getPeso() {
+		return peso;
+	}
+
+	public void setPeso(BigDecimal peso) {
+		this.peso = peso;
 	}
 
 	public String getLinkYoutube() {
