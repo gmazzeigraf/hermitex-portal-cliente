@@ -157,7 +157,7 @@ public class FilialController extends CrudBaseController<Filial, Filial> impleme
 
 	@Override
 	protected void executeEdit(Filial entity) {
-		setEntity(service.consultaCompletoPorId(entity.getId()));
+		setEntity(service.consultaPorId(entity.getId()));
 
 		enderecoFaturamento = getEntity().getEnderecoFaturamento();
 		enderecoEntrega = getEntity().getEnderecoEntrega();

@@ -27,13 +27,13 @@ public class DomPedido {
 
 	public static class DomFormaPagamento extends DomBase {
 		public static final String BOLETO = "B";
-		public static final String CARTAO_CREDITO_1 = "1";
-		public static final String CARTAO_CREDITO_2 = "2";
+		public static final String CARTAO_CREDITO = "C";
+		public static final String FATURAMENTO = "F";
 
 		DomFormaPagamento() {
-			mapa.put(BOLETO, "Boleto 1x");
-			mapa.put(CARTAO_CREDITO_1, "Cartão de Crédito 1x");
-			mapa.put(CARTAO_CREDITO_2, "Cartão de Crédito 2x");
+			mapa.put(BOLETO, "Boleto");
+			mapa.put(CARTAO_CREDITO, "Cartão de crédito");
+			mapa.put(FATURAMENTO, "Faturamento");
 		}
 	}
 

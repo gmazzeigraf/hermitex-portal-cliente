@@ -160,7 +160,7 @@
 											<p:panelGrid columns="3" columnClasses="ui-grid-col-2, ui-grid-col-8, ui-grid-col-2" layout="grid">
 												<p:commandButton icon="fa fa-fw fa-minus" actionListener="#{produtoApresentacaoController.diminuiQuantidade}" process="@this"
 													global="false" update="quantidade valorTotalGrid" styleClass="ui-grid-col-12 botao-diminui-quantidade-item botao-produtos" />
-												<p:inputNumber id="quantidade" styleClass="input-number-resp" minValue="1" maxValue="999" decimalPlaces="0"
+												<p:inputNumber id="quantidade" styleClass="input-number-resp" minValue="1" maxValue="9999" decimalPlaces="0"
 													value="#{produtoApresentacaoController.itemPedido.quantidade}" required="true" requiredMessage="Favor informar a quantidade">
 													<p:ajax process="@this" update="valorTotalGrid" listener="#{produtoApresentacaoController.calculaTotalItem}" />
 												</p:inputNumber>

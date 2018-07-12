@@ -86,8 +86,10 @@
 
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 								<p:outputLabel for="ordem" value="Ordem" styleClass="label" />
-								<p:inputNumber id="ordem" value="#{tamanhoProdutoController.entity.ordem}" minValue="1" maxValue="99" styleClass="input-number-resp"
-									required="true" requiredMessage="Favor informar a ordem" decimalPlaces="0" />
+								<p:inputNumber id="ordem" value="#{tamanhoProdutoController.entity.ordem}" styleClass="input-number-resp" required="true"
+									requiredMessage="Favor informar a ordem" decimalPlaces="0" validatorMessage="A ordem deve ser entre 1 e 99">
+									<f:validateLongRange minimum="1" maximum="99" />
+								</p:inputNumber>
 							</p:panelGrid>
 						</p:panelGrid>
 					</div>

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.graflogic.base.service.gson.GsonUtil;
+import br.com.graflogic.base.service.util.CacheUtil;
 import br.com.graflogic.hermitex.cliente.data.dom.DomAuditoria.DomEventoAuditoriaCliente;
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomStatusCliente;
 import br.com.graflogic.hermitex.cliente.data.entity.aud.ClienteAuditoria;
@@ -36,6 +37,8 @@ import br.com.graflogic.utilities.datautil.copy.ObjectCopier;
 @Service
 public class ClienteService {
 
+	private static final String CACHE_NAME = "clientes";
+
 	@Autowired
 	private ClienteRepository repository;
 
@@ -47,6 +50,9 @@ public class ClienteService {
 
 	@Autowired
 	private ClienteContatoRepository contatoRepository;
+
+	@Autowired
+	private CacheUtil cacheUtil;
 
 	// Fluxo
 	@Transactional(rollbackFor = Throwable.class)
@@ -116,6 +122,8 @@ public class ClienteService {
 	private void executaAtualiza(Cliente entity) {
 		try {
 			repository.update(entity);
+			
+			cacheUtil.putOnCache(CACHE_NAME, entity.getId().toString(), null);
 
 		} catch (OptimisticLockException e) {
 			throw new DadosDesatualizadosException();
@@ -142,25 +150,24 @@ public class ClienteService {
 	}
 
 	public Cliente consultaPorId(Integer id) {
-		Cliente entity = repository.findById(id);
+		Object cacheObj = cacheUtil.findOnCache(CACHE_NAME, id.toString());
 
-		if (null == entity) {
-			throw new ResultadoNaoEncontradoException();
+		if (null == cacheObj) {
+			Cliente entity = repository.findById(id);
+
+			if (null == entity) {
+				throw new ResultadoNaoEncontradoException();
+			}
+
+			preencheRelacionados(entity);
+
+			// Atualiza o cache
+			cacheUtil.putOnCache(CACHE_NAME, id.toString(), ObjectCopier.copy(entity));
+
+			cacheObj = cacheUtil.findOnCache(CACHE_NAME, id.toString());
 		}
 
-		return entity;
-	}
-
-	public Cliente consultaCompletoPorId(Integer id) {
-		Cliente entity = repository.findById(id);
-
-		if (null == entity) {
-			throw new ResultadoNaoEncontradoException();
-		}
-
-		preencheRelacionados(entity);
-
-		return entity;
+		return (Cliente) ObjectCopier.copy(cacheObj);
 	}
 
 	// Util

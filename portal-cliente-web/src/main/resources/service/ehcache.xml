@@ -3,15 +3,20 @@
 	monitoring="autodetect" dynamicConfig="true">
 	<defaultCache maxElementsInMemory="50" eternal="false" overflowToDisk="false" memoryStoreEvictionPolicy="LFU" />
 
-	<cache name="configuracoes" eternal="true" maxElementsInMemory="100" overflowToDisk="false" memoryStoreEvictionPolicy="LFU" />
+	<cache name="configuracoes" eternal="true" maxElementsInMemory="0" overflowToDisk="false" memoryStoreEvictionPolicy="LFU" />
 
 	<cache name="estados" eternal="true" maxElementsInMemory="1" overflowToDisk="false" memoryStoreEvictionPolicy="LFU" />
 
 	<cache name="municipios" eternal="true" maxElementsInMemory="30" overflowToDisk="false" memoryStoreEvictionPolicy="LFU" />
 
-	<cache name="perfisUsuario" eternal="false" maxElementsInMemory="10" timeToLiveSeconds="1200" overflowToDisk="false" memoryStoreEvictionPolicy="LFU" />
+	<cache name="perfisUsuario" eternal="false" maxElementsInMemory="0" timeToLiveSeconds="1200" overflowToDisk="false" memoryStoreEvictionPolicy="LFU" />
 
 	<cache name="permissoesAcesso" eternal="true" maxElementsInMemory="10" overflowToDisk="false" memoryStoreEvictionPolicy="LFU" />
+
+	<!-- Cadastro -->
+	<cache name="clientes" eternal="false" maxElementsInMemory="0" timeToLiveSeconds="3600" overflowToDisk="false" memoryStoreEvictionPolicy="LFU" />
+	
+	<cache name="filiais" eternal="false" maxElementsInMemory="0" timeToLiveSeconds="3600" overflowToDisk="false" memoryStoreEvictionPolicy="LFU" />
 
 	<!-- Produto -->
 	<cache name="setoresProduto" eternal="false" maxElementsInMemory="0" timeToLiveSeconds="3600" overflowToDisk="false" memoryStoreEvictionPolicy="LFU" />

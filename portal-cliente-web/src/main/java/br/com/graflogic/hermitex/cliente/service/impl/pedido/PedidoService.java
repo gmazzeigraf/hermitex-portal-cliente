@@ -149,8 +149,10 @@ public class PedidoService {
 
 			registraAuditoria(entity.getId(), entity, DomEventoAuditoriaPedido.CADASTRO, idUsuario, null);
 
-			// Envia o pagamento
-			enviaPagamento(entity, dadosPagamentoCartaoCredito);
+			if (entity.isPagamentoFaturamento() || entity.isPagamentoBoleto()) {
+				// Envia o pagamento
+				enviaPagamento(entity, dadosPagamentoCartaoCredito);
+			}
 
 			executaAtualiza(entity);
 
@@ -492,20 +494,26 @@ public class PedidoService {
 	public List<FormaPagamento> geraFormasPagamento(Cliente cliente, BigDecimal valorTotal) {
 		List<FormaPagamento> formasPagamento = new ArrayList<>();
 		formasPagamento.add(new FormaPagamento(DomFormaPagamento.BOLETO, 1));
-		formasPagamento.add(new FormaPagamento(DomFormaPagamento.CARTAO_CREDITO_1, 1));
-		formasPagamento.add(new FormaPagamento(DomFormaPagamento.CARTAO_CREDITO_2, 2));
+
+		for (int i = 1; i <= cliente.getMaximoParcelasCartao(); i++) {
+			formasPagamento.add(new FormaPagamento(DomFormaPagamento.CARTAO_CREDITO, i));
+		}
+
+		if (cliente.isFaturamento()) {
+			formasPagamento.add(new FormaPagamento(DomFormaPagamento.FATURAMENTO, 1));
+		}
 
 		for (FormaPagamento forma : formasPagamento) {
-			forma.setValor(valorTotal.divide(new BigDecimal(forma.getParcelas())).setScale(2, RoundingMode.HALF_EVEN));
+			forma.setValor(valorTotal.divide(new BigDecimal(forma.getParcelas()), 2, RoundingMode.HALF_EVEN));
 
 			String descricao = DomPedido.domFormaPagamento.getDeValor(forma.getCodigo());
 
 			if (DomFormaPagamento.BOLETO.equals(forma.getCodigo())) {
 				descricao += " " + cliente.getDiasBoleto() + " dias";
 
+			} else if (DomFormaPagamento.CARTAO_CREDITO.equals(forma.getCodigo())) {
+				descricao += " " + forma.getParcelas() + "x R$ " + forma.getValor().toString().replace(".", ",");
 			}
-
-			descricao += " R$ " + forma.getValor().toString().replace(".", ",");
 
 			forma.setDescricao(descricao);
 		}

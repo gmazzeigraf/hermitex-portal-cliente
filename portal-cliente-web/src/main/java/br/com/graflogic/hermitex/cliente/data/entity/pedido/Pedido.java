@@ -229,12 +229,15 @@ public class Pedido implements Serializable {
 	}
 
 	public boolean isPagamentoCartaoCredito() {
-		return null != codigoFormaPagamento && (DomFormaPagamento.CARTAO_CREDITO_1.equals(codigoFormaPagamento)
-				|| DomFormaPagamento.CARTAO_CREDITO_2.equals(codigoFormaPagamento));
+		return null != codigoFormaPagamento && DomFormaPagamento.CARTAO_CREDITO.equals(codigoFormaPagamento);
 	}
 
 	public boolean isPagamentoBoleto() {
 		return null != codigoFormaPagamento && DomFormaPagamento.BOLETO.equals(codigoFormaPagamento);
+	}
+
+	public boolean isPagamentoFaturamento() {
+		return null != codigoFormaPagamento && DomFormaPagamento.FATURAMENTO.equals(codigoFormaPagamento);
 	}
 
 	public boolean isPagamentoPendente() {

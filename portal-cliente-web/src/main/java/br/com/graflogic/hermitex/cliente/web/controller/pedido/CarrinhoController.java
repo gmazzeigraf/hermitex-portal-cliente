@@ -152,8 +152,6 @@ public class CarrinhoController extends BaseController implements InitializingBe
 		pedido.setValorTotal(pedido.getValorTotal().add(pedido.getValorProdutos()));
 		pedido.setValorTotal(pedido.getValorTotal().add(pedido.getValorFrete()));
 		pedido.setValorTotal(pedido.getValorTotal().setScale(2, RoundingMode.HALF_EVEN));
-
-		formasPagamento = pedidoService.geraFormasPagamento(cliente, pedido.getValorTotal());
 	}
 
 	private void preparaNovoPedido() {
@@ -179,9 +177,7 @@ public class CarrinhoController extends BaseController implements InitializingBe
 
 		// Prepara o pedido de acordo com o tipo de usuario
 		if (SessionUtil.isUsuarioCliente()) {
-			pedido.setIdCliente(((UsuarioCliente) SessionUtil.getAuthenticatedUsuario()).getIdCliente());
-
-			Cliente cliente = clienteService.consultaCompletoPorId(pedido.getIdCliente());
+			pedido.setIdCliente(cliente.getId());
 
 			enderecoFaturamento.setSiglaEstado(cliente.getEnderecoFaturamento().getSiglaEstado());
 			enderecoFaturamento.setIdMunicipio(cliente.getEnderecoFaturamento().getIdMunicipio());
@@ -203,7 +199,7 @@ public class CarrinhoController extends BaseController implements InitializingBe
 			pedido.setIdCliente(((UsuarioFilial) SessionUtil.getAuthenticatedUsuario()).getIdCliente());
 			pedido.setIdFilial(((UsuarioFilial) SessionUtil.getAuthenticatedUsuario()).getIdFilial());
 
-			Filial filial = filialService.consultaCompletoPorId(pedido.getIdFilial());
+			Filial filial = filialService.consultaPorId(pedido.getIdFilial());
 
 			enderecoFaturamento.setSiglaEstado(filial.getEnderecoFaturamento().getSiglaEstado());
 			enderecoFaturamento.setIdMunicipio(filial.getEnderecoFaturamento().getIdMunicipio());
@@ -236,6 +232,8 @@ public class CarrinhoController extends BaseController implements InitializingBe
 				returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Não existe janela de compras cadastrada", null);
 				return;
 			}
+
+			formasPagamento = pedidoService.geraFormasPagamento(cliente, pedido.getValorTotal());
 
 			redirectView(getApplicationUrl() + "/pages/compra/pagamento.jsf");
 

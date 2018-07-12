@@ -151,7 +151,23 @@
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 								<p:outputLabel for="diasBoleto" value="Dias Boleto" styleClass="label" />
 								<p:inputNumber id="diasBoleto" styleClass="input-number-resp" value="#{clienteController.entity.diasBoleto}" required="true"
-									requiredMessage="Favor informar os dias do boleto" minValue="1" maxValue="30" decimalPlaces="0" />
+									requiredMessage="Favor informar os dias do boleto" decimalPlaces="0" validatorMessage="Os dias do boleto devem ser entre 1 e 60">
+									<f:validateLongRange minimum="1" maximum="60" />
+								</p:inputNumber>
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel for="maximoParcelasCartao" value="Máximo Parcelas Cartão" styleClass="label" />
+								<p:inputNumber id="maximoParcelasCartao" styleClass="input-number-resp" value="#{clienteController.entity.maximoParcelasCartao}"
+									required="true" requiredMessage="Favor informar o máximo de parcelas no cartão" decimalPlaces="0"
+									validatorMessage="O máximo de parcelas deve ser entre 1 e 12">
+									<f:validateLongRange minimum="1" maximum="12" />
+								</p:inputNumber>
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel for="faturamento" value="Faturamento" styleClass="label" />
+								<p:selectBooleanCheckbox id="faturamento" styleClass="input-number-resp" value="#{clienteController.entity.faturamento}" />
 							</p:panelGrid>
 						</p:panelGrid>
 					</div>

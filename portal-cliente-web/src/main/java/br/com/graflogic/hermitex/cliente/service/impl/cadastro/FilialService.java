@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.graflogic.base.service.gson.GsonUtil;
+import br.com.graflogic.base.service.util.CacheUtil;
 import br.com.graflogic.hermitex.cliente.data.dom.DomAuditoria.DomEventoAuditoriaFilial;
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomStatusFilial;
 import br.com.graflogic.hermitex.cliente.data.entity.aud.FilialAuditoria;
@@ -36,6 +37,8 @@ import br.com.graflogic.utilities.datautil.copy.ObjectCopier;
 @Service
 public class FilialService {
 
+	private static final String CACHE_NAME = "filiais";
+
 	@Autowired
 	private FilialRepository repository;
 
@@ -47,6 +50,9 @@ public class FilialService {
 
 	@Autowired
 	private FilialContatoRepository contatoRepository;
+
+	@Autowired
+	private CacheUtil cacheUtil;
 
 	// Fluxo
 	@Transactional(rollbackFor = Throwable.class)
@@ -113,6 +119,8 @@ public class FilialService {
 		try {
 			repository.update(entity);
 
+			cacheUtil.putOnCache(CACHE_NAME, entity.getId().toString(), null);
+
 		} catch (OptimisticLockException e) {
 			throw new DadosDesatualizadosException();
 		}
@@ -134,25 +142,24 @@ public class FilialService {
 	}
 
 	public Filial consultaPorId(Integer id) {
-		Filial entity = repository.findById(id);
+		Object cacheObj = cacheUtil.findOnCache(CACHE_NAME, id.toString());
 
-		if (null == entity) {
-			throw new ResultadoNaoEncontradoException();
+		if (null == cacheObj) {
+			Filial entity = repository.findById(id);
+
+			if (null == entity) {
+				throw new ResultadoNaoEncontradoException();
+			}
+
+			preencheRelacionados(entity);
+
+			// Atualiza o cache
+			cacheUtil.putOnCache(CACHE_NAME, id.toString(), ObjectCopier.copy(entity));
+
+			cacheObj = cacheUtil.findOnCache(CACHE_NAME, id.toString());
 		}
 
-		return entity;
-	}
-
-	public Filial consultaCompletoPorId(Integer id) {
-		Filial entity = repository.findById(id);
-
-		if (null == entity) {
-			throw new ResultadoNaoEncontradoException();
-		}
-
-		preencheRelacionados(entity);
-
-		return entity;
+		return (Filial) ObjectCopier.copy(cacheObj);
 	}
 
 	// Util

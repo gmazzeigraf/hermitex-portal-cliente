@@ -104,29 +104,30 @@
 				<div class="ui-g-12">
 					<div class="card card-w-title">
 						<h1>#{labels.informacoes}</h1>
-						<p:panelGrid columns="1" id="informacoesGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-6" layout="grid">
+						<p:panelGrid columns="2" id="informacoesGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 								<p:outputLabel for="descricao" value="Descrição" styleClass="label" />
-								<p:inputText id="descricao" value="#{janelaCompraController.entity.descricao}" maxlength="100" styleClass="ui-grid-col-12" />
+								<p:inputText id="descricao" value="#{janelaCompraController.entity.descricao}" maxlength="100" styleClass="ui-grid-col-12"
+									disabled="#{janelaCompraController.entity.fechada}" />
 							</p:panelGrid>
 
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-6" layout="grid">
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel for="quantidadePedido" value="Pedidos" styleClass="label" />
+								<p:inputText id="quantidadePedido" value="#{janelaCompraController.entity.quantidadePedido}" styleClass="ui-grid-col-12" disabled="true" />
+							</p:panelGrid>
+							
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 								<p:outputLabel for="dataAbertura" value="Data Abertura" styleClass="label" />
 								<p:calendar id="dataAbertura" value="#{janelaCompraController.entity.dataAbertura}" pattern="dd/MM/yyyy" locale="br" readonlyInput="false"
 									navigator="true" showOn="button" styleClass="resp-calendar" mask="99/99/9999" converterMessage="Data abertura inválida" required="true"
 									requiredMessage="Favor informar a data abertura" disabled="#{janelaCompraController.editing}" />
 							</p:panelGrid>
 
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-6" layout="grid">
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 								<p:outputLabel for="dataFechamento" value="Data Fechamento" styleClass="label" />
 								<p:calendar id="dataFechamento" value="#{janelaCompraController.entity.dataFechamento}" pattern="dd/MM/yyyy" locale="br" readonlyInput="false"
 									navigator="true" showOn="button" styleClass="resp-calendar" mask="99/99/9999" converterMessage="Data fechamento inválida" required="true"
 									requiredMessage="Favor informar a data fechamento" disabled="#{janelaCompraController.editing}" />
-							</p:panelGrid>
-
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-6" layout="grid">
-								<p:outputLabel for="quantidadePedido" value="Pedidos" styleClass="label" />
-								<p:inputText id="quantidadePedido" value="#{janelaCompraController.entity.quantidadePedido}" styleClass="ui-grid-col-12" disabled="true" />
 							</p:panelGrid>
 						</p:panelGrid>
 					</div>

@@ -148,7 +148,7 @@ public class ClienteController extends CrudBaseController<Cliente, Cliente> impl
 
 	@Override
 	protected void executeEdit(Cliente entity) {
-		setEntity(service.consultaCompletoPorId(entity.getId()));
+		setEntity(service.consultaPorId(entity.getId()));
 
 		enderecoFaturamento = getEntity().getEnderecoFaturamento();
 		enderecoEntrega = getEntity().getEnderecoEntrega();
