@@ -54,8 +54,6 @@
 								disabled="#{!categoriaProdutoController.clienteSelecionado}" />
 						</p:panelGrid>
 
-						<p:spacer styleClass="display-desktop" />
-
 						<p:dataTable id="dtbEntities" widgetVar="dtb" var="entity" value="#{categoriaProdutoController.entities}" rowKey="#{entity.id}" paginator="true"
 							paginatorPosition="bottom" reflow="true" rows="10"
 							emptyMessage="#{null != categoriaProdutoController.entities ? messages.nenhum_resultado_encontrado : messages.realize_pesquisa}">

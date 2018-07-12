@@ -49,8 +49,6 @@
 								disabled="#{!janelaCompraController.clienteSelecionado}" />
 						</p:panelGrid>
 
-						<p:spacer styleClass="display-desktop" />
-
 						<p:dataTable id="dtbEntities" widgetVar="dtb" var="entity" value="#{janelaCompraController.entities}" rowKey="#{entity.id}" paginator="true"
 							paginatorPosition="bottom" reflow="true" rows="10"
 							emptyMessage="#{null != janelaCompraController.entities ? messages.nenhum_resultado_encontrado : messages.realize_pesquisa}">

@@ -42,8 +42,6 @@
 								update=":searchForm :editForm" process="@this" resetValues="true" styleClass="ui-grid-col-12 botao-adicionar" />
 						</p:panelGrid>
 
-						<p:spacer styleClass="display-desktop" />
-
 						<p:dataTable id="dtbEntities" widgetVar="dtb" var="entity" value="#{representanteController.entities}" rowKey="#{entity.id}" paginator="true"
 							paginatorPosition="bottom" reflow="true" rows="10"
 							emptyMessage="#{null != representanteController.entities ? messages.nenhum_resultado_encontrado : messages.realize_pesquisa}">
@@ -192,8 +190,6 @@
 							<p:commandButton value="#{labels.botao_adicionar}" icon="fa fa-fw fa-plus" actionListener="#{representanteController.prepareAddContato}"
 								process="@this" resetValues="true" styleClass="ui-grid-col-12 botao-adicionar" update="editForm:idContatoDialog" />
 						</p:panelGrid>
-
-						<p:spacer styleClass="display-desktop" />
 
 						<p:dataTable id="dtbContatos" widgetVar="dtbContato" var="entity" value="#{representanteController.entity.contatos}" rowKey="#{entity.id}"
 							reflow="true" emptyMessage="Nenhum contato encontrado" rowIndexVar="index">

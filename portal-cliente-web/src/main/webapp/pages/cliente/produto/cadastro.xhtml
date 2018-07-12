@@ -89,8 +89,6 @@
 								disabled="#{!produtoController.clienteSelecionado}" />
 						</p:panelGrid>
 
-						<p:spacer styleClass="display-desktop" />
-
 						<p:dataTable id="dtbEntities" widgetVar="dtb" var="entity" value="#{produtoController.entities}" rowKey="#{entity.id}" paginator="true"
 							paginatorPosition="bottom" reflow="true" rows="10"
 							emptyMessage="#{null != produtoController.entities ? messages.nenhum_resultado_encontrado : messages.realize_pesquisa}">
@@ -251,8 +249,6 @@
 							<p:commandButton value="#{labels.botao_adicionar}" icon="fa fa-fw fa-plus" actionListener="#{produtoController.prepareAddTamanho}"
 								process="@this" resetValues="true" styleClass="ui-grid-col-12 botao-adicionar" update="editForm:idTamanhoDialog" />
 						</p:panelGrid>
-
-						<p:spacer styleClass="display-desktop" />
 
 						<p:dataTable id="dtbTamanhos" widgetVar="dtbTamanho" var="entity" value="#{produtoController.entity.tamanhos}" rowKey="#{entity.id}"
 							reflow="true" emptyMessage="Nenhum tamanho encontrado" rowIndexVar="index">

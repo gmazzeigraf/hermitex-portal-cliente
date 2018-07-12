@@ -12,7 +12,7 @@
 				<div class="ui-g-12">
 					<div class="card card-w-title">
 						<p:panelGrid columns="1" id="filterGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
-							<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group">
+							<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid"
 									rendered="#{sessionController.usuarioAdministrador or sessionController.usuarioRepresentante}">
 									<p:outputLabel for="clienteFilter" value="Cliente *" styleClass="label" />
@@ -69,8 +69,6 @@
 
 							<p:defaultCommand target="searchButton" scope="filterGrid" />
 						</p:panelGrid>
-
-						<p:spacer styleClass="display-desktop" />
 
 						<p:dataTable id="dtbEntities" widgetVar="dtb" var="entity" value="#{pedidoController.entities}" rowKey="#{entity.id}" paginator="true"
 							paginatorPosition="bottom" reflow="true" rows="10"

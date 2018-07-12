@@ -6,7 +6,7 @@
 		display: none !important;
 	}
 	.route-bar {
-		margin-top: 10px !important; line-height: 40px !important;
+		margin-top: 5px !important; line-height: 40px !important;
 	}
 	.layout-menu-container {
 		border-top: none !important;
@@ -113,15 +113,11 @@
 }
 
 .card h1 {
-	font-weight: 700 !important; margin: 10px 0 !important;
+	font-weight: 700 !important; margin-bottom: 10px !important; margin-top: 0px !important;
 }
 
 .ui-panelgrid.form-group .ui-panelgrid-cell {
 	padding: 4px !important;
-}
-
-.layout-wrapper.menu-layout-horizontal .layout-menu-container .layout-menu>li>ul {
-	width: 275px !important;
 }
 
 .div-botoes {
@@ -323,13 +319,16 @@ body.main-body {
 }
 
 /* Rodape */
-.footer {
-	padding-top: 0px !important;
+.footer .card, .footer-text-right {
+	background-color: #2d353c; color: #fff !important; padding-bottom: 7px !important;
 }
 
-/* Cor do rodape */
-.footer, .footer .card, .footer-text-right {
-	background-color: #2d353c; color: #fff !important; padding-bottom: 7px !important;
+.footer .card {
+	margin-bottom: 5px !important;
+}
+
+.layout-wrapper .footer {
+	padding-bottom: 0px !important;
 }
 
 /* Fullscren */
