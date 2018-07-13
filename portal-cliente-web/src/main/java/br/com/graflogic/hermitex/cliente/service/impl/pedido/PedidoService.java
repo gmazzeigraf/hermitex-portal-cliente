@@ -149,7 +149,7 @@ public class PedidoService {
 
 			registraAuditoria(entity.getId(), entity, DomEventoAuditoriaPedido.CADASTRO, idUsuario, null);
 
-			if (entity.isPagamentoFaturamento() || entity.isPagamentoBoleto()) {
+			if (entity.isPagamentoCartaoCredito() || entity.isPagamentoBoleto()) {
 				// Envia o pagamento
 				enviaPagamento(entity, dadosPagamentoCartaoCredito);
 			}
@@ -484,14 +484,14 @@ public class PedidoService {
 
 	public List<FormaPagamento> geraFormasPagamento(Cliente cliente, BigDecimal valorTotal) {
 		List<FormaPagamento> formasPagamento = new ArrayList<>();
-		formasPagamento.add(new FormaPagamento(DomFormaPagamento.BOLETO, 1));
+		formasPagamento.add(new FormaPagamento(formasPagamento.size(), DomFormaPagamento.BOLETO, 1));
 
 		for (int i = 1; i <= cliente.getMaximoParcelasCartao(); i++) {
-			formasPagamento.add(new FormaPagamento(DomFormaPagamento.CARTAO_CREDITO, i));
+			formasPagamento.add(new FormaPagamento(formasPagamento.size(), DomFormaPagamento.CARTAO_CREDITO, i));
 		}
 
 		if (cliente.isFaturamento()) {
-			formasPagamento.add(new FormaPagamento(DomFormaPagamento.FATURAMENTO, 1));
+			formasPagamento.add(new FormaPagamento(formasPagamento.size(), DomFormaPagamento.FATURAMENTO, 1));
 		}
 
 		for (FormaPagamento forma : formasPagamento) {

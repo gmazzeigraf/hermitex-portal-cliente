@@ -74,8 +74,8 @@
 							paginatorPosition="bottom" reflow="true" rows="10"
 							emptyMessage="#{null != pedidoController.entities ? messages.nenhum_resultado_encontrado : messages.realize_pesquisa}">
 
-							<p:column headerText="#" sortBy="#{entity.id}" styleClass="id-column">
-								<h:outputText value="#{entity.id}" />
+							<p:column headerText="#" sortBy="#{entity.formattedId}" styleClass="id-column">
+								<h:outputText value="#{entity.formattedId}" />
 							</p:column>
 
 							<p:column headerText="Data" sortBy="#{entity.dataCadastro}">
@@ -121,7 +121,7 @@
 						<p:panelGrid columns="6" layout="grid" styleClass="ui-panelgrid-blank form-group">
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 								<h:outputText value="#" styleClass="label" />
-								<h:outputText value="#{pedidoController.entity.id}" />
+								<h:outputText value="#{pedidoController.entity.formattedId}" />
 							</p:panelGrid>
 
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
@@ -149,6 +149,12 @@
 								<h:outputText value="Forma Pagamento" styleClass="label" />
 								<h:outputText value="#{pedidoController.entity.formaPagamento}" />
 							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{sessionController.usuarioAdministrador}">
+								<h:outputText value="ID Pagamento" styleClass="label" />
+								<h:outputText value="#{pedidoController.entity.idPagamento}" />
+							</p:panelGrid>
+
 
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 								<h:outputText value="Status" styleClass="label" />

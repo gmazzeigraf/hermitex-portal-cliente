@@ -42,7 +42,7 @@
 							paginatorPosition="bottom" reflow="true" rows="10"
 							emptyMessage="#{null != tamanhoProdutoController.entities ? messages.nenhum_resultado_encontrado : messages.realize_pesquisa}">
 
-							<p:column headerText="Código" sortBy="#{entity.codigo}" styleClass="id-column">
+							<p:column headerText="Código" sortBy="#{entity.codigo}">
 								<h:outputText value="#{entity.codigo}" />
 							</p:column>
 

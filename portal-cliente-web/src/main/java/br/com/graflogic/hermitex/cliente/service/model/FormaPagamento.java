@@ -9,10 +9,13 @@ import java.math.BigDecimal;
  */
 public class FormaPagamento {
 
-	public FormaPagamento(String codigo, Integer parcelas) {
+	public FormaPagamento(Integer sequencial, String codigo, Integer parcelas) {
+		this.sequencial = sequencial;
 		this.codigo = codigo;
 		this.parcelas = parcelas;
 	}
+
+	private Integer sequencial;
 
 	private String codigo;
 
@@ -21,6 +24,14 @@ public class FormaPagamento {
 	private Integer parcelas;
 
 	private BigDecimal valor;
+
+	public Integer getSequencial() {
+		return sequencial;
+	}
+
+	public void setSequencial(Integer sequencial) {
+		this.sequencial = sequencial;
+	}
 
 	public String getCodigo() {
 		return codigo;

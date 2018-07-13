@@ -15,6 +15,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -250,5 +251,9 @@ public class Pedido implements Serializable {
 
 	public boolean isEnviado() {
 		return null != status && DomStatus.ENVIADO.equals(status);
+	}
+
+	public String getFormattedId() {
+		return StringUtils.leftPad(id.toString(), 10, "0");
 	}
 }

@@ -27,7 +27,7 @@ public class PedidoItemRepository extends BaseRepository<PedidoItem> {
 
 	@SuppressWarnings("unchecked")
 	public List<PedidoItem> consultaPorPedido(Long idPedido) {
-		String queryStr = "SELECT ite.id, ite.id_pedido, ite.id_produto, ite.cd_tamanho, ite.quantidade, ite.vl_unitario, ite.vl_corrigido_tamanho, ite.vl_total,"
+		String queryStr = "SELECT ite.id, ite.id_pedido, ite.id_produto, ite.cd_tamanho, ite.quantidade, ite.vl_unitario, ite.vl_corrigido_tamanho, ite.vl_total, peso_total,"
 				+ " pro.codigo, pro.titulo, img.id AS id_imagem"
 				+ " FROM tb_pedido_item ite INNER JOIN tb_produto pro ON ite.id_produto = pro.id INNER JOIN tb_produto_imagem img ON pro.id = img.id_produto"
 				+ " INNER JOIN tb_tamanho_produto tam ON tam.codigo = ite.cd_tamanho";
@@ -66,9 +66,10 @@ public class PedidoItemRepository extends BaseRepository<PedidoItem> {
 			entity.setValorUnitario((BigDecimal) row[5]);
 			entity.setValorCorrigidoTamanho((BigDecimal) row[6]);
 			entity.setValorTotal((BigDecimal) row[7]);
-			entity.setCodigoProduto((String) row[8]);
-			entity.setTituloProduto((String) row[9]);
-			entity.setIdImagemCapaProduto((String) row[10]);
+			entity.setPesoTotal((BigDecimal) row[8]);
+			entity.setCodigoProduto((String) row[9]);
+			entity.setTituloProduto((String) row[10]);
+			entity.setIdImagemCapaProduto((String) row[11]);
 
 			entities.add(entity);
 		}

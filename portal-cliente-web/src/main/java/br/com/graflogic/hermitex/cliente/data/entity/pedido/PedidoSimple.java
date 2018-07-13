@@ -6,6 +6,8 @@ import java.util.Date;
 
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.StringUtils;
+
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido;
 
 /**
@@ -136,5 +138,9 @@ public class PedidoSimple implements Serializable {
 
 	public String getDeStatus() {
 		return DomPedido.domStatus.getDeValor(status);
+	}
+
+	public String getFormattedId() {
+		return StringUtils.leftPad(id.toString(), 10, "0");
 	}
 }

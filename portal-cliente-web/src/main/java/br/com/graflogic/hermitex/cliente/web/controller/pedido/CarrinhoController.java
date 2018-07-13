@@ -88,6 +88,10 @@ public class CarrinhoController extends BaseController implements InitializingBe
 
 	private String mensagemJanelaCompra;
 
+	private String mensagemConclusaoPedido;
+
+	private Integer sequencialFormaPagamento;
+
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		try {
@@ -158,6 +162,8 @@ public class CarrinhoController extends BaseController implements InitializingBe
 		if (!SessionUtil.isUsuarioCliente() && !SessionUtil.isUsuarioFilial()) {
 			return;
 		}
+
+		sequencialFormaPagamento = null;
 
 		pedido = new Pedido();
 		pedido.setItens(new ArrayList<>());
@@ -249,29 +255,24 @@ public class CarrinhoController extends BaseController implements InitializingBe
 				return;
 			}
 
+			if (!isFormaPagamentoSelecionada()) {
+				returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Favor selecionar a forma de pagamento", null);
+				return;
+			}
+
 			enderecoFaturamento.setPedido(pedido);
 			enderecoEntrega.setPedido(pedido);
 
 			pedido.getEnderecos().add(enderecoFaturamento);
 			pedido.getEnderecos().add(enderecoEntrega);
 
-			for (FormaPagamento forma : formasPagamento) {
-				if (pedido.getCodigoFormaPagamento().equals(forma.getCodigo())) {
-					pedido.setFormaPagamento(forma.getDescricao());
-
-					if (pedido.isPagamentoCartaoCredito()) {
-						dadosPagamentoCartaoCredito.setParcelas(forma.getParcelas());
-					}
-				}
-			}
-
 			pedidoService.cadastra(pedido, pedido.isPagamentoCartaoCredito() ? dadosPagamentoCartaoCredito : null,
 					SessionUtil.getAuthenticatedUsuario().getId());
 
-			returnInfoMessage(
-					"Pedido " + pedido.getId() + " cadastrado com sucesso"
-							+ (pedido.isPagamentoBoleto() ? ", visualize o boleto na página dos pedidos" : ""),
-					getApplicationUrl() + "/pages/compra/produtos.jsf");
+			mensagemConclusaoPedido = "Pedido " + pedido.getFormattedId() + " efetuado com sucesso"
+					+ (pedido.isPagamentoBoleto() ? ", visualize o boleto na" : ", para mais informações acesse a") + " página \"Pedido / Consulta\"";
+
+			redirectView(getApplicationUrl() + "/pages/compra/conclusao.jsf");
 
 			preparaNovoPedido();
 
@@ -283,6 +284,28 @@ public class CarrinhoController extends BaseController implements InitializingBe
 
 		} catch (Throwable t) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao cadastrar pedido, contate o administrador", t);
+		}
+	}
+
+	public void changeFormaPagamento() {
+		try {
+			if (isFormaPagamentoSelecionada()) {
+				// Obtem a forma de pagamento
+				FormaPagamento formaPagamento = formasPagamento.get(sequencialFormaPagamento);
+				pedido.setCodigoFormaPagamento(formaPagamento.getCodigo());
+				pedido.setFormaPagamento(formaPagamento.getDescricao());
+
+				if (pedido.isPagamentoCartaoCredito()) {
+					dadosPagamentoCartaoCredito.setParcelas(formaPagamento.getParcelas());
+				}
+			} else {
+				pedido.setCodigoFormaPagamento(null);
+				pedido.setFormaPagamento(null);
+				dadosPagamentoCartaoCredito.setParcelas(null);
+			}
+
+		} catch (Throwable t) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao alterar forma de pagamento, contate o administrador", t);
 		}
 	}
 
@@ -303,6 +326,11 @@ public class CarrinhoController extends BaseController implements InitializingBe
 		} catch (Throwable t) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao consultar janela de compras, contate o administrador", t);
 		}
+	}
+
+	// Condicoes
+	public boolean isFormaPagamentoSelecionada() {
+		return null != sequencialFormaPagamento && sequencialFormaPagamento >= 0;
 	}
 
 	// Getters e Setters
@@ -344,5 +372,17 @@ public class CarrinhoController extends BaseController implements InitializingBe
 
 	public String getMensagemJanelaCompra() {
 		return mensagemJanelaCompra;
+	}
+
+	public String getMensagemConclusaoPedido() {
+		return mensagemConclusaoPedido;
+	}
+
+	public Integer getSequencialFormaPagamento() {
+		return sequencialFormaPagamento;
+	}
+
+	public void setSequencialFormaPagamento(Integer sequencialFormaPagamento) {
+		this.sequencialFormaPagamento = sequencialFormaPagamento;
 	}
 }

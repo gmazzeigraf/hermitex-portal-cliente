@@ -2,7 +2,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/pages/templates/template.xhtml"
 	xmlns:fn="http://java.sun.com/jsp/jstl/functions" xmlns:c="http://java.sun.com/jsp/jstl/core">
 
-	<ui:define name="viewname">#{labels.menu_carrinho}</ui:define>
+	<ui:define name="viewname">#{labels.menu_carrinho} / Pagamento</ui:define>
 
 	<ui:define name="content">
 		<h:form id="mainForm">
@@ -125,78 +125,78 @@
 
 					<div class="card card-w-title">
 						<h1>Pagamento</h1>
-						<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group" id="dadosPagamentoGrid">
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-4" layout="grid">
-								<p:outputLabel for="formaPagamento" value="Forma Pagamento" styleClass="label" />
-								<p:selectOneMenu id="formaPagamento" value="#{carrinhoController.pedido.codigoFormaPagamento}" styleClass="ui-grid-col-12" required="true"
-									requiredMessage="Favor selecionar a forma de pagamento">
-									<f:selectItem itemLabel="Selecione" itemValue="" />
-									<f:selectItems value="#{carrinhoController.formasPagamento}" var="item" itemLabel="#{item.descricao}" itemValue="#{item.codigo}" />
-									<p:ajax process="@this" update="dadosPagamentoGrid" />
-								</p:selectOneMenu>
-							</p:panelGrid>
+						<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group" rendered="#{fn:length(carrinhoController.pedido.itens) > 0}">
+							<p:spacer styleClass="display-desktop" />
 
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{carrinhoController.pedido.pagamentoCartaoCredito}">
-								<h3>Dados do cartão</h3>
-								<p:panelGrid columns="1" columnClasses="ui-grid-col-4" layout="grid">
-									<p:outputLabel for="bandeira" value="Bandeira" styleClass="label" />
-									<p:selectOneMenu id="bandeira" value="#{carrinhoController.dadosPagamentoCartaoCredito.bandeira}" styleClass="ui-grid-col-12" required="true"
-										requiredMessage="Favor selecionar a bandeira do cartão">
-										<f:selectItem itemLabel="Selecione" itemValue="" />
-										<f:selectItems value="#{domPedidoController.bandeiraCartaoCreditoMap}" />
+							<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group" id="dadosPagamentoGrid">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="formaPagamento" value="Forma Pagamento *" styleClass="label" />
+									<p:selectOneMenu id="formaPagamento" value="#{carrinhoController.sequencialFormaPagamento}" styleClass="ui-grid-col-12">
+										<f:selectItem itemLabel="Selecione" itemValue="-1" />
+										<f:selectItems value="#{carrinhoController.formasPagamento}" var="item" itemLabel="#{item.descricao}" itemValue="#{item.sequencial}" />
+										<p:ajax process="@this" update="dadosPagamentoGrid" listener="#{carrinhoController.changeFormaPagamento}" />
 									</p:selectOneMenu>
 								</p:panelGrid>
 
-								<p:panelGrid columns="1" columnClasses="ui-grid-col-4" layout="grid">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{carrinhoController.pedido.pagamentoCartaoCredito}">
+									<h3>Dados do cartão</h3>
 									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-										<p:outputLabel for="nomeImpresso" value="Nome Impresso" styleClass="label" />
-										<p:inputText id="nomeImpresso" value="#{carrinhoController.dadosPagamentoCartaoCredito.nomeImpresso}" styleClass="ui-grid-col-12"
-											required="true" requiredMessage="Favor informar o nome impresso no cartão" maxlength="40" />
+										<p:outputLabel for="bandeira" value="Bandeira" styleClass="label" />
+										<p:selectOneMenu id="bandeira" value="#{carrinhoController.dadosPagamentoCartaoCredito.bandeira}" styleClass="ui-grid-col-12"
+											required="true" requiredMessage="Favor selecionar a bandeira do cartão">
+											<f:selectItem itemLabel="Selecione" itemValue="" />
+											<f:selectItems value="#{domPedidoController.bandeiraCartaoCreditoMap}" />
+										</p:selectOneMenu>
+									</p:panelGrid>
+
+									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+										<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+											<p:outputLabel for="nomeImpresso" value="Nome Impresso" styleClass="label" />
+											<p:inputText id="nomeImpresso" value="#{carrinhoController.dadosPagamentoCartaoCredito.nomeImpresso}" styleClass="ui-grid-col-12"
+												required="true" requiredMessage="Favor informar o nome impresso no cartão" maxlength="40" />
+										</p:panelGrid>
+									</p:panelGrid>
+
+									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+										<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+											<p:outputLabel for="documentoPortador" value="Documento Portador" styleClass="label" />
+											<p:inputText id="documentoPortador" value="#{carrinhoController.dadosPagamentoCartaoCredito.documentoPortador}" styleClass="ui-grid-col-12"
+												required="true" requiredMessage="Favor informar o nome impresso no cartão" maxlength="14" onkeypress="mascara(this, inteiro);" />
+										</p:panelGrid>
+									</p:panelGrid>
+
+									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+										<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+											<p:outputLabel for="numero" value="Número" styleClass="label" />
+											<p:inputMask id="numero" value="#{carrinhoController.dadosPagamentoCartaoCredito.numero}" styleClass="ui-grid-col-12" required="true"
+												requiredMessage="Favor informar o número do cartão" mask="9999 9999 9999 9999" converter="maskConverter" />
+										</p:panelGrid>
+									</p:panelGrid>
+
+									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+										<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+											<p:outputLabel for="vencimento" value="Vencimento" styleClass="label" />
+											<p:inputMask id="vencimento" value="#{carrinhoController.dadosPagamentoCartaoCredito.vencimento}" styleClass="ui-grid-col-12"
+												required="true" requiredMessage="Favor informar o vencimento do cartão" mask="99/9999" placeholder="mm/aaaa" converter="maskConverter" />
+										</p:panelGrid>
+									</p:panelGrid>
+
+									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+										<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+											<p:outputLabel for="codigoSeguranca" value="Código Segurança" styleClass="label" />
+											<p:inputMask id="codigoSeguranca" value="#{carrinhoController.dadosPagamentoCartaoCredito.codigoSeguranca}" styleClass="ui-grid-col-12"
+												required="true" requiredMessage="Favor informar o vencimento do cartão" mask="999" converter="maskConverter" />
+										</p:panelGrid>
 									</p:panelGrid>
 								</p:panelGrid>
 
-								<p:panelGrid columns="1" columnClasses="ui-grid-col-4" layout="grid">
-									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-										<p:outputLabel for="documentoPortador" value="Documento Portador" styleClass="label" />
-										<p:inputText id="documentoPortador" value="#{carrinhoController.dadosPagamentoCartaoCredito.documentoPortador}" styleClass="ui-grid-col-12"
-											required="true" requiredMessage="Favor informar o nome impresso no cartão" maxlength="14" onkeypress="mascara(this, inteiro);" />
-									</p:panelGrid>
-								</p:panelGrid>
 
-								<p:panelGrid columns="1" columnClasses="ui-grid-col-4" layout="grid">
-									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-										<p:outputLabel for="numero" value="Número" styleClass="label" />
-										<p:inputMask id="numero" value="#{carrinhoController.dadosPagamentoCartaoCredito.numero}" styleClass="ui-grid-col-12" required="true"
-											requiredMessage="Favor informar o número do cartão" mask="9999 9999 9999 9999" converter="maskConverter"  />
-									</p:panelGrid>
-								</p:panelGrid>
-
-								<p:panelGrid columns="1" columnClasses="ui-grid-col-4" layout="grid">
-									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-										<p:outputLabel for="vencimento" value="Vencimento" styleClass="label" />
-										<p:inputMask id="vencimento" value="#{carrinhoController.dadosPagamentoCartaoCredito.vencimento}" styleClass="ui-grid-col-12"
-											required="true" requiredMessage="Favor informar o vencimento do cartão" mask="99/9999" placeholder="mm/aaaa" converter="maskConverter" />
-									</p:panelGrid>
-								</p:panelGrid>
-
-								<p:panelGrid columns="1" columnClasses="ui-grid-col-4" layout="grid">
-									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-										<p:outputLabel for="codigoSeguranca" value="Código Segurança" styleClass="label" />
-										<p:inputMask id="codigoSeguranca" value="#{carrinhoController.dadosPagamentoCartaoCredito.codigoSeguranca}" styleClass="ui-grid-col-12"
-											required="true" requiredMessage="Favor informar o vencimento do cartão" mask="999" converter="maskConverter"  />
-									</p:panelGrid>
-								</p:panelGrid>
-							</p:panelGrid>
-
-							<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group" rendered="#{fn:length(carrinhoController.pedido.itens) > 0}">
-								<p:spacer styleClass="display-desktop" />
 								<p:commandButton icon="fa fa-fw fa-check" value="#{labels.botao_finalizar_pedido}" update="mainForm" process="mainForm"
-									styleClass="ui-grid-col-12" actionListener="#{carrinhoController.finalizaPedido}" onsuccess="liberaRefresh();" />
+									styleClass="ui-grid-col-12" actionListener="#{carrinhoController.finalizaPedido}" onsuccess="liberaRefresh();"
+									disabled="#{!carrinhoController.formaPagamentoSelecionada}" />
 							</p:panelGrid>
 						</p:panelGrid>
 					</div>
-
-					<p:growl id="messagesGrowl" />
 				</div>
 			</div>
 		</h:form>
