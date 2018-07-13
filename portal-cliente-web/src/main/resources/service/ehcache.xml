@@ -15,8 +15,14 @@
 
 	<!-- Cadastro -->
 	<cache name="clientes" eternal="false" maxElementsInMemory="0" timeToLiveSeconds="3600" overflowToDisk="false" memoryStoreEvictionPolicy="LFU" />
-	
+
 	<cache name="filiais" eternal="false" maxElementsInMemory="0" timeToLiveSeconds="3600" overflowToDisk="false" memoryStoreEvictionPolicy="LFU" />
+	
+	<cache name="representantes" eternal="false" maxElementsInMemory="0" timeToLiveSeconds="3600" overflowToDisk="false" memoryStoreEvictionPolicy="LFU" />
+
+	<cache name="produtos" eternal="false" maxElementsInMemory="0" timeToLiveSeconds="3600" overflowToDisk="false" memoryStoreEvictionPolicy="LFU" />
+	
+	<cache name="tabelasMedidas" eternal="false" maxElementsInMemory="0" timeToLiveSeconds="3600" overflowToDisk="false" memoryStoreEvictionPolicy="LFU" />
 
 	<!-- Produto -->
 	<cache name="setoresProduto" eternal="false" maxElementsInMemory="0" timeToLiveSeconds="3600" overflowToDisk="false" memoryStoreEvictionPolicy="LFU" />

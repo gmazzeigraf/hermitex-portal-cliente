@@ -122,7 +122,7 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 	}
 
 	private void select(Long id) {
-		setEntity(service.consultaCompletoPorId(id));
+		setEntity(service.consultaPorId(id));
 
 		municipiosFaturamento.clear();
 		municipiosEntrega.clear();

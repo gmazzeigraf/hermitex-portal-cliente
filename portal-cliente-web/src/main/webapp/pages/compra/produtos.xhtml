@@ -14,7 +14,7 @@
 			<div class="ui-g">
 				<div class="ui-g-12">
 					<div class="card card-w-title">
-					<h:outputText value="#{carrinhoController.mensagemJanelaCompra}" styleClass="label" style="color: red;" />
+						<h:outputText value="#{carrinhoController.mensagemJanelaCompra}" styleClass="label" style="color: red;" />
 						<p:panelGrid columns="1" id="filterGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
 							<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{sessionController.usuarioAdministrador}">
@@ -184,14 +184,28 @@
 										</p:panelGrid>
 									</p:panelGrid>
 								</p:panelGrid>
+							</p:panelGrid>
 
+							<p:spacer styleClass="display-desktop" />
+							<p:spacer styleClass="display-desktop" />
+
+							<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group"
+								rendered="#{fn:length(produtoApresentacaoController.tabelaMedidas) > 0}">
+								<h1>Tabela de medidas</h1>
 								<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
-									<p:commandLink value="Faça o download de nossa fita métrica" onclick="liberaRefresh(); PrimeFaces.monitorDownload(showStatus, hideStatus)"
-										process="@this" ajax="false" immediate="true" styleClass="link-fita-metrica">
-										<p:fileDownload value="#{produtoApresentacaoController.fitaMetrica}" />
-									</p:commandLink>
+									<h:outputText value="#{produtoApresentacaoController.tabelaMedidas}" escape="false" />
 								</p:panelGrid>
+							</p:panelGrid>
 
+							<p:spacer styleClass="display-desktop" rendered="#{fn:length(produtoApresentacaoController.tabelaMedidas) > 0}" />
+							<p:spacer styleClass="display-desktop" rendered="#{fn:length(produtoApresentacaoController.tabelaMedidas) > 0}" />
+
+							<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group" columnClasses="ui-grid-col-6, ui-grid-col-6"
+								style="margin-top: 20px;">
+								<p:commandLink value="Faça o download de nossa fita métrica" onclick="liberaRefresh(); PrimeFaces.monitorDownload(showStatus, hideStatus)"
+									process="@this" ajax="false" immediate="true" styleClass="link-fita-metrica">
+									<p:fileDownload value="#{produtoApresentacaoController.fitaMetrica}" />
+								</p:commandLink>
 								<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
 									<c:if test="#{fn:length(produtoApresentacaoController.entity.linkYoutube) > 0}">
 										<iframe src="#{produtoApresentacaoController.entity.linkYoutube}" class="video-youtube" />
@@ -202,7 +216,7 @@
 							<p:spacer styleClass="display-desktop" />
 							<p:spacer styleClass="display-desktop" />
 
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" style="margin-top: 20px;">
 								<p:commandButton icon="fa fa-fw fa-arrow-left" value="#{labels.botao_voltar}" actionListener="#{produtoApresentacaoController.close}"
 									process="@this" update=":searchForm :editForm :routeBarForm" styleClass="ui-grid-col-12 botao-produtos" oncomplete="scrollPageTop();" />
 							</p:panelGrid>

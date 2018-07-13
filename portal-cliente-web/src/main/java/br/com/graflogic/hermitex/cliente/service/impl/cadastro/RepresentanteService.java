@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.graflogic.base.service.gson.GsonUtil;
+import br.com.graflogic.base.service.util.CacheUtil;
 import br.com.graflogic.hermitex.cliente.data.dom.DomAuditoria.DomEventoAuditoriaRepresentante;
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomStatusRepresentante;
 import br.com.graflogic.hermitex.cliente.data.entity.aud.RepresentanteAuditoria;
@@ -36,6 +37,8 @@ import br.com.graflogic.utilities.datautil.copy.ObjectCopier;
 @Service
 public class RepresentanteService {
 
+	private static final String CACHE_NAME = "representantes";
+
 	@Autowired
 	private RepresentanteRepository repository;
 
@@ -47,6 +50,9 @@ public class RepresentanteService {
 
 	@Autowired
 	private RepresentanteContatoRepository contatoRepository;
+
+	@Autowired
+	private CacheUtil cacheUtil;
 
 	// Fluxo
 	@Transactional(rollbackFor = Throwable.class)
@@ -117,6 +123,8 @@ public class RepresentanteService {
 		try {
 			repository.update(entity);
 
+			cacheUtil.putOnCache(CACHE_NAME, entity.getId().toString(), null);
+
 		} catch (OptimisticLockException e) {
 			throw new DadosDesatualizadosException();
 		}
@@ -135,25 +143,24 @@ public class RepresentanteService {
 	}
 
 	public Representante consultaPorId(Integer id) {
-		Representante entity = repository.findById(id);
+		Object cacheObj = cacheUtil.findOnCache(CACHE_NAME, id.toString());
 
-		if (null == entity) {
-			throw new ResultadoNaoEncontradoException();
+		if (null == cacheObj) {
+			Representante entity = repository.findById(id);
+
+			if (null == entity) {
+				throw new ResultadoNaoEncontradoException();
+			}
+
+			preencheRelacionados(entity);
+
+			// Atualiza o cache
+			cacheUtil.putOnCache(CACHE_NAME, id.toString(), ObjectCopier.copy(entity));
+
+			cacheObj = cacheUtil.findOnCache(CACHE_NAME, id.toString());
 		}
 
-		return entity;
-	}
-
-	public Representante consultaCompletoPorId(Integer id) {
-		Representante entity = repository.findById(id);
-
-		if (null == entity) {
-			throw new ResultadoNaoEncontradoException();
-		}
-
-		preencheRelacionados(entity);
-
-		return entity;
+		return (Representante) ObjectCopier.copy(cacheObj);
 	}
 
 	// Util

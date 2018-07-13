@@ -75,6 +75,8 @@ public class ProdutoApresentacaoController extends SearchBaseController<ProdutoA
 
 	private ProdutoApresentacaoLista produtoApresentacao;
 
+	private String tabelaMedidas;
+
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		try {
@@ -113,9 +115,11 @@ public class ProdutoApresentacaoController extends SearchBaseController<ProdutoA
 
 	@Override
 	protected void select(ProdutoApresentacaoLista entity) {
-		setEntity(service.consultaCompletoPorId(entity.getId()));
+		setEntity(service.consultaPorId(entity.getId()));
 
 		this.produtoApresentacao = entity;
+
+		this.tabelaMedidas = service.geraTabelaMedidas(entity.getId());
 
 		preparaNovoItem();
 	}
@@ -272,5 +276,9 @@ public class ProdutoApresentacaoController extends SearchBaseController<ProdutoA
 
 	public PedidoItem getItemPedido() {
 		return itemPedido;
+	}
+
+	public String getTabelaMedidas() {
+		return tabelaMedidas;
 	}
 }

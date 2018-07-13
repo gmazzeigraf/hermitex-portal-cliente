@@ -279,18 +279,20 @@
 						<p:panelGrid columns="1" id="tabelaMedidasGrid" layout="grid" styleClass="ui-panelgrid-blank">
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 								<p:outputLabel for="linhasTabelaMedidas" value="Linhas" styleClass="label" />
-								
+
 								<p:inputNumber id="linhasTabelaMedidas" value="#{produtoController.entity.linhasTabelaMedidas}" styleClass="input-number-resp" required="true"
 									requiredMessage="Favor informar as linhas da tabela de medidas" decimalPlaces="0" validatorMessage="A quantidade deve ser entre 0 e 10">
 									<f:validateLongRange minimum="0" maximum="10" />
 									<p:ajax process="@this" update="tabelaMedidasGrid" resetValues="true" listener="#{produtoController.changeLinhasTabelaMedidas}" />
 								</p:inputNumber>
 
-								<h:outputText value="As colunas devem ser separadas por ','" styleClass="label" style="color: red;"/>
+								<h:outputText value="As colunas devem ser separadas por ';'" styleClass="label" style="color: red;" />
 								<p:dataGrid layout="grid" columns="1" value="#{produtoController.conteudoTabelaMedidas}" var="item" styleClass="produtos" emptyMessage="">
 									<p:inputText value="#{item.conteudo}" styleClass="ui-grid-col-12" />
 								</p:dataGrid>
 							</p:panelGrid>
+
+							<h:outputText value="#{produtoController.tabelaMedidas}" escape="false" />
 
 						</p:panelGrid>
 					</div>

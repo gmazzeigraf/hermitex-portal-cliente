@@ -9,9 +9,12 @@ import javax.persistence.NoResultException;
 import javax.persistence.OptimisticLockException;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.google.gson.internal.LinkedTreeMap;
 
 import br.com.graflogic.base.service.gson.GsonUtil;
 import br.com.graflogic.base.service.util.CacheUtil;
@@ -40,7 +43,11 @@ import br.com.graflogic.utilities.datautil.copy.ObjectCopier;
 @Service
 public class ProdutoService {
 
+	private static final String CACHE_NAME = "produtos";
+
 	private static final String IMAGENS_CACHE_NAME = "imagensProduto";
+
+	private static final String TABELAS_MEDIDAS_CACHE_NAME = "tabelasMedidas";
 
 	@Autowired
 	private ProdutoRepository repository;
@@ -126,6 +133,10 @@ public class ProdutoService {
 		try {
 			repository.update(entity);
 
+			cacheUtil.putOnCache(CACHE_NAME, entity.getId().toString(), null);
+			
+			cacheUtil.putOnCache(TABELAS_MEDIDAS_CACHE_NAME, entity.getId().toString(), null);
+
 		} catch (OptimisticLockException e) {
 			throw new DadosDesatualizadosException();
 		}
@@ -187,25 +198,90 @@ public class ProdutoService {
 	}
 
 	public Produto consultaPorId(Integer id) {
-		Produto entity = repository.findById(id);
+		Object cacheObj = cacheUtil.findOnCache(CACHE_NAME, id.toString());
 
-		if (null == entity) {
-			throw new ResultadoNaoEncontradoException();
+		if (null == cacheObj) {
+			Produto entity = repository.findById(id);
+
+			if (null == entity) {
+				throw new ResultadoNaoEncontradoException();
+			}
+
+			preencheRelacionados(entity);
+
+			// Atualiza o cache
+			cacheUtil.putOnCache(CACHE_NAME, id.toString(), ObjectCopier.copy(entity));
+
+			cacheObj = cacheUtil.findOnCache(CACHE_NAME, id.toString());
 		}
 
-		return entity;
+		return (Produto) ObjectCopier.copy(cacheObj);
 	}
 
-	public Produto consultaCompletoPorId(Integer id) {
-		Produto entity = repository.findById(id);
+	// Tabela Medidas
+	public String geraTabelaMedidas(Integer idProduto) {
+		Object cacheObj = cacheUtil.findOnCache(TABELAS_MEDIDAS_CACHE_NAME, idProduto.toString());
 
-		if (null == entity) {
-			throw new ResultadoNaoEncontradoException();
+		if (null == cacheObj) {
+			Produto produto = consultaPorId(idProduto);
+
+			cacheObj = geraTabelaMedidas(produto.getConteudoTabelaMedidas());
+
+			// Atualiza o cache
+			cacheUtil.putOnCache(TABELAS_MEDIDAS_CACHE_NAME, idProduto.toString(), cacheObj);
+
+			cacheObj = cacheUtil.findOnCache(TABELAS_MEDIDAS_CACHE_NAME, idProduto.toString());
 		}
 
-		preencheRelacionados(entity);
+		return (String) cacheObj;
+	}
 
-		return entity;
+	@SuppressWarnings("unchecked")
+	public String geraTabelaMedidas(String conteudo) {
+
+		String conteudoTabela = "";
+
+		if (StringUtils.isNotEmpty(conteudo)) {
+			conteudoTabela += "<table class=\"tabela-medidas\" cellspacing=\"0\">";
+
+			List<LinkedTreeMap<String, String>> linhas = GsonUtil.gson.fromJson(conteudo, List.class);
+
+			for (int i = 0; i < linhas.size(); i++) {
+				String linha = linhas.get(i).get("conteudo");
+
+				String tagColuna = "";
+
+				String conteudoLinha = "<tr>";
+
+				if (0 == i) {
+					tagColuna = "th";
+				} else {
+					tagColuna = "td";
+				}
+
+				String[] colunas = linha.split(";");
+
+				for (int x = 0; x < colunas.length; x++) {
+					String conteudoColuna = "<" + tagColuna;
+
+					if (x == 0) {
+						conteudoColuna += " class=\"coluna-referencia\"";
+					}
+
+					conteudoColuna += ">" + colunas[x] + "</" + tagColuna + ">";
+
+					conteudoLinha += conteudoColuna;
+				}
+
+				conteudoLinha += "</tr>";
+
+				conteudoTabela += conteudoLinha;
+			}
+
+			conteudoTabela += "</table>";
+		}
+
+		return conteudoTabela;
 	}
 
 	// Util

@@ -130,7 +130,7 @@ public class RepresentanteController extends CrudBaseController<Representante, R
 
 	@Override
 	protected void executeEdit(Representante entity) {
-		setEntity(service.consultaCompletoPorId(entity.getId()));
+		setEntity(service.consultaPorId(entity.getId()));
 
 		enderecoCadastro = getEntity().getEnderecoCadastro();
 

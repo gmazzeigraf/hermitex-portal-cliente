@@ -76,6 +76,8 @@ public class ProdutoController extends CrudBaseController<Produto, Produto> impl
 
 	private List<LinhaTabelaMedidas> conteudoTabelaMedidas;
 
+	private String tabelaMedidas;
+
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		try {
@@ -139,17 +141,20 @@ public class ProdutoController extends CrudBaseController<Produto, Produto> impl
 		getEntity().setIdCliente(getFilterEntity().getIdCliente());
 
 		conteudoTabelaMedidas = new ArrayList<>();
+		tabelaMedidas = null;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void executeEdit(Produto entity) {
-		setEntity(service.consultaCompletoPorId(entity.getId()));
+		setEntity(service.consultaPorId(entity.getId()));
 
 		conteudoTabelaMedidas = GsonUtil.gson.fromJson(getEntity().getConteudoTabelaMedidas(), List.class);
 
 		if (null == conteudoTabelaMedidas) {
 			conteudoTabelaMedidas = new ArrayList<>();
+		} else {
+			tabelaMedidas = service.geraTabelaMedidas(getEntity().getConteudoTabelaMedidas());
 		}
 	}
 
@@ -392,5 +397,9 @@ public class ProdutoController extends CrudBaseController<Produto, Produto> impl
 
 	public List<LinhaTabelaMedidas> getConteudoTabelaMedidas() {
 		return conteudoTabelaMedidas;
+	}
+
+	public String getTabelaMedidas() {
+		return tabelaMedidas;
 	}
 }

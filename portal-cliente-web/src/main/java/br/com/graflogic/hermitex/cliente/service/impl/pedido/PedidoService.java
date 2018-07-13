@@ -158,6 +158,7 @@ public class PedidoService {
 
 		} catch (Throwable t) {
 			entity.setItens(itens);
+			entity.setId(null);
 
 			throw t;
 		}
@@ -225,16 +226,6 @@ public class PedidoService {
 	}
 
 	public Pedido consultaPorId(Long id) {
-		Pedido entity = repository.findById(id);
-
-		if (null == entity) {
-			throw new ResultadoNaoEncontradoException();
-		}
-
-		return entity;
-	}
-
-	public Pedido consultaCompletoPorId(Long id) {
 		Pedido entity = repository.findById(id);
 
 		if (null == entity) {
