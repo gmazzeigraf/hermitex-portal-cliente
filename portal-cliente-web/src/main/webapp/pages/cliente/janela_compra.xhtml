@@ -139,19 +139,19 @@
 							process=":editForm:informacoesGrid" update=":editForm :searchForm" styleClass="ui-grid-col-12"
 							rendered="#{!janelaCompraController.editing or janelaCompraController.entity.ativa}" />
 
-						<p:commandButton id="fechamentoButton" icon="fa fa-fw fa-lock" value="Fechar janela" actionListener="#{janelaCompraController.fecha}"
+						<p:commandButton id="fechamentoButton" icon="fa fa-fw fa-lock" value="#{labels.botao_fechar} janela" actionListener="#{janelaCompraController.fecha}"
 							process="@this" update=":searchForm :editForm" styleClass="ui-grid-col-12 botao-verde"
 							rendered="#{janelaCompraController.editing and janelaCompraController.entity.ativa}">
 							<p:confirm header="Confirmação" message="Confirmar fechamento?" icon="ui-icon-alert" />
 						</p:commandButton>
 
-						<p:commandButton id="reaberturaButton" icon="fa fa-fw fa-unlock" value="Reabrir janela" actionListener="#{janelaCompraController.reabre}"
+						<p:commandButton id="reaberturaButton" icon="fa fa-fw fa-unlock" value="#{labels.botao_reabrir}" actionListener="#{janelaCompraController.reabre}"
 							process="@this" update=":searchForm :editForm" styleClass="ui-grid-col-12"
 							rendered="#{janelaCompraController.editing and janelaCompraController.entity.fechada}">
 							<p:confirm header="Confirmação" message="Confirmar reabertura?" icon="ui-icon-alert" />
 						</p:commandButton>
 						
-						<p:commandButton id="cancelamentoButton" icon="fa fa-fw fa-warning" value="Cancelar janela" actionListener="#{janelaCompraController.cancela}"
+						<p:commandButton id="cancelamentoButton" icon="fa fa-fw fa-ban" value="#{labels.botao_cancelar}" actionListener="#{janelaCompraController.cancela}"
 							process="@this" update=":searchForm :editForm" styleClass="ui-grid-col-12 botao-vermelho"
 							rendered="#{janelaCompraController.editing and janelaCompraController.entity.ativa}">
 							<p:confirm header="Confirmação" message="Confirmar cancelamento?" icon="ui-icon-alert" />
