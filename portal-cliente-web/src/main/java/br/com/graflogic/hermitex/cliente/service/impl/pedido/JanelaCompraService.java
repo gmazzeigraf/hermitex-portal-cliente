@@ -61,9 +61,7 @@ public class JanelaCompraService {
 
 	@Transactional(rollbackFor = Throwable.class)
 	public void fecha(JanelaCompra entity) {
-		JanelaCompra entityAtual = consultaPorId(entity.getId());
-
-		if (!DomStatusJanelaCompra.CADASTRADA.equals(entityAtual.getStatus()) && !DomStatusJanelaCompra.REABERTA.equals(entityAtual.getStatus())) {
+		if (!entity.isAtiva()) {
 			throw new DadosInvalidosException("A janela não está ativa para ser fechada");
 		}
 
@@ -81,9 +79,7 @@ public class JanelaCompraService {
 
 	@Transactional(rollbackFor = Throwable.class)
 	public void reabre(JanelaCompra entity) {
-		JanelaCompra entityAtual = consultaPorId(entity.getId());
-
-		if (!DomStatusJanelaCompra.FECHADA.equals(entityAtual.getStatus())) {
+		if (!entity.isFechada()) {
 			throw new DadosInvalidosException("A janela não está fechada para ser reaberta");
 		}
 
@@ -95,6 +91,25 @@ public class JanelaCompraService {
 		executaAtualiza(entity);
 
 		registraAuditoria(entity.getId(), entity, DomEventoAuditoriaJanelaCompra.REABERTURA, null);
+	}
+
+	@Transactional(rollbackFor = Throwable.class)
+	public void cancela(JanelaCompra entity) {
+		if (!entity.isAtiva()) {
+			throw new DadosInvalidosException("A janela não está ativa para ser cancelada");
+		}
+
+		List<PedidoSimple> pedidos = pedidoService.consultaPorJanelaCompra(entity.getId());
+
+		if (!pedidos.isEmpty()) {
+			throw new DadosInvalidosException("Janelas com pedidos não podem ser canceladas");
+		}
+
+		entity.setStatus(DomStatusJanelaCompra.CANCELADA);
+
+		executaAtualiza(entity);
+
+		registraAuditoria(entity.getId(), entity, DomEventoAuditoriaJanelaCompra.CANCELAMENTO, null);
 	}
 
 	private void executaAtualiza(JanelaCompra entity) {

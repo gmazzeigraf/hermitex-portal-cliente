@@ -14,6 +14,7 @@ import javax.persistence.criteria.Root;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Repository;
 
+import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomStatusJanelaCompra;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.JanelaCompra;
 import br.com.graflogic.utilities.datautil.repository.BaseRepository;
 
@@ -53,11 +54,14 @@ public class JanelaCompraRepository extends BaseRepository<JanelaCompra> {
 
 	public boolean isJanelaComprasDisponivel(Integer idCliente, Date dataAbertura, Date dataFechamento) {
 		Query query = getEntityManager().createNativeQuery("SELECT (COUNT(id) = 0) FROM tb_janela_compra"
-				+ " WHERE id_cliente = ? AND (CAST(? AS DATE) BETWEEN dt_abertura AND dt_fechamento OR CAST(? AS DATE) BETWEEN dt_abertura AND dt_fechamento)");
+				+ " WHERE id_cliente = ? AND (CAST(? AS DATE) BETWEEN dt_abertura AND dt_fechamento OR CAST(? AS DATE) BETWEEN dt_abertura AND dt_fechamento)"
+				+ " AND status IN (?, ?)");
 
 		query.setParameter(1, idCliente);
 		query.setParameter(2, dataAbertura);
 		query.setParameter(3, dataFechamento);
+		query.setParameter(4, DomStatusJanelaCompra.CADASTRADA);
+		query.setParameter(5, DomStatusJanelaCompra.FECHADA);
 
 		boolean disponivel = (boolean) query.getSingleResult();
 

@@ -164,15 +164,12 @@ public class PedidoService {
 		}
 	}
 
-	public void atualiza(Pedido entity, Integer idUsuario) {
-		validaDados(entity);
-
-		executaAtualiza(entity);
-
-		registraAuditoria(entity.getId(), entity, DomEventoAuditoriaPedido.ATUALIZACAO, idUsuario, null);
-	}
-
+	@Transactional(rollbackFor = Throwable.class)
 	public void paga(Pedido entity, Integer idUsuario, String observacao) {
+		if (!entity.isPagamentoPendente()) {
+			throw new DadosInvalidosException("Apenas pedidos com pagamento pendente podem ser marcados como pagos");
+		}
+
 		entity.setStatus(DomStatus.PAGO);
 
 		executaAtualiza(entity);
@@ -180,6 +177,7 @@ public class PedidoService {
 		registraAuditoria(entity.getId(), entity, DomEventoAuditoriaPedido.PAGAMENTO, idUsuario, observacao);
 	}
 
+	@Transactional(rollbackFor = Throwable.class)
 	public void envia(Pedido entity, Integer idUsuario, String observacao) {
 		if (!entity.isPago()) {
 			throw new DadosInvalidosException("Apenas pedidos pagos podem ser marcados como enviados");
@@ -192,6 +190,7 @@ public class PedidoService {
 		registraAuditoria(entity.getId(), entity, DomEventoAuditoriaPedido.ENVIO, idUsuario, observacao);
 	}
 
+	@Transactional(rollbackFor = Throwable.class)
 	public void finaliza(Pedido entity, Integer idUsuario, String observacao) {
 		if (!entity.isEnviado()) {
 			throw new DadosInvalidosException("Apenas pedidos enviados podem ser marcados como finalizados");
@@ -223,6 +222,20 @@ public class PedidoService {
 		filter.setIdJanelaCompra(idJanela);
 
 		return consulta(filter);
+	}
+
+	public Pedido consultaPorIdClienteFilial(Long id, Integer idCliente, Integer idFilial) {
+		Pedido pedido = consultaPorId(id);
+
+		if (!idCliente.equals(pedido.getIdCliente())) {
+			throw new ResultadoNaoEncontradoException();
+		}
+
+		if (null != idFilial && 0 != idFilial && !idFilial.equals(pedido.getIdFilial())) {
+			throw new ResultadoNaoEncontradoException();
+		}
+
+		return pedido;
 	}
 
 	public Pedido consultaPorId(Long id) {

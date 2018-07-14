@@ -143,16 +143,24 @@ public class DomAuditoria {
 
 	public static class DomEventoAuditoriaPedido extends DomBase {
 		public static final String CADASTRO = "C";
-		public static final String ATUALIZACAO = "A";
 		public static final String PAGAMENTO = "P";
 		public static final String ENVIO = "E";
 		public static final String FINALIZACAO = "F";
 
 		DomEventoAuditoriaPedido() {
 			mapa.put(CADASTRO, "Cadastro");
-			mapa.put(ATUALIZACAO, "Atualização");
 			mapa.put(PAGAMENTO, "Pagamento");
 			mapa.put(ENVIO, "Envio");
+			mapa.put(FINALIZACAO, "Finalização");
+		}
+	}
+
+	public static class DomEventoAuditoriaSolicitacaoTroca extends DomBase {
+		public static final String CADASTRO = "C";
+		public static final String FINALIZACAO = "F";
+
+		DomEventoAuditoriaSolicitacaoTroca() {
+			mapa.put(CADASTRO, "Cadastro");
 			mapa.put(FINALIZACAO, "Finalização");
 		}
 	}
@@ -161,11 +169,13 @@ public class DomAuditoria {
 		public static final String CADASTRO = "C";
 		public static final String FECHAMENTO = "F";
 		public static final String REABERTURA = "R";
+		public static final String CANCELAMENTO = "L";
 
 		DomEventoAuditoriaJanelaCompra() {
 			mapa.put(CADASTRO, "Cadastro");
 			mapa.put(FECHAMENTO, "Fechamento");
 			mapa.put(REABERTURA, "Reabertura");
+			mapa.put(CANCELAMENTO, "Cancelamento");
 		}
 	}
 

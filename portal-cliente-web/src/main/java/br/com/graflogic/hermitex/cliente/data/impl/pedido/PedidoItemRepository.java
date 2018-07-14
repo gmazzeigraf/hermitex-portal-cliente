@@ -29,14 +29,13 @@ public class PedidoItemRepository extends BaseRepository<PedidoItem> {
 	public List<PedidoItem> consultaPorPedido(Long idPedido) {
 		String queryStr = "SELECT ite.id, ite.id_pedido, ite.id_produto, ite.cd_tamanho, ite.quantidade, ite.vl_unitario, ite.vl_corrigido_tamanho, ite.vl_total, peso_total,"
 				+ " pro.codigo, pro.titulo, img.id AS id_imagem"
-				+ " FROM tb_pedido_item ite INNER JOIN tb_produto pro ON ite.id_produto = pro.id INNER JOIN tb_produto_imagem img ON pro.id = img.id_produto"
+				+ " FROM tb_pedido_item ite INNER JOIN tb_produto pro ON ite.id_produto = pro.id INNER JOIN tb_produto_imagem img ON pro.id = img.id_produto AND img.in_capa = ?"
 				+ " INNER JOIN tb_tamanho_produto tam ON tam.codigo = ite.cd_tamanho";
 
 		String where = "";
 
 		List<Object> params = new ArrayList<>();
 
-		where = generateWhere(where, "img.in_capa = ?");
 		params.add(DomBoolean.SIM);
 
 		where = generateWhere(where, "ite.id_pedido = ?");

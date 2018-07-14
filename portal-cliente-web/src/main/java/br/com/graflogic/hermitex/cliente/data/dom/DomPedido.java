@@ -69,13 +69,28 @@ public class DomPedido {
 		public static final String CADASTRADA = "C";
 		public static final String FECHADA = "F";
 		public static final String REABERTA = "R";
+		public static final String CANCELADA = "L";
 
 		DomStatusJanelaCompra() {
 			mapa.put(CADASTRADA, "Cadastrada");
 			mapa.put(FECHADA, "Fechada");
 			mapa.put(REABERTA, "Reaberta");
+			mapa.put(CANCELADA, "Canacelada");
 		}
 	}
 
 	public static DomStatusJanelaCompra domStatusJanelaCompra = new DomStatusJanelaCompra();
+
+	public static class DomStatusSolicitacaoTroca extends DomBase {
+		public static final String CADASTRADA = "C";
+		public static final String FINALIZADA = "F";
+
+		DomStatusSolicitacaoTroca() {
+			mapa.put(CADASTRADA, "Cadastrada");
+			mapa.put(FINALIZADA, "Finalizada");
+		}
+	}
+
+	public static DomStatusSolicitacaoTroca domStatusSolicitacaoTroca = new DomStatusSolicitacaoTroca();
+
 }

@@ -34,4 +34,8 @@ public class DomPedidoController implements Serializable {
 	public Map<String, Object> getStatusJanelaCompraMap() {
 		return DomPedido.domStatusJanelaCompra.getMap();
 	}
+
+	public Map<String, Object> getStatusSolicitacaoTrocaMap() {
+		return DomPedido.domStatusSolicitacaoTroca.getMap();
+	}
 }

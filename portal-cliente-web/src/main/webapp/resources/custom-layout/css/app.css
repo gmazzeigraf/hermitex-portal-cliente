@@ -24,7 +24,10 @@
 		width: 150px !important; text-align: center !important;
 	}
 	.valor-column {
-		width: 150px !important; text-align: center !important;
+		width: 150px !important;
+	}
+	.data-column {
+		width: 200px !important;
 	}
 	.resp-calendar input.hasDatepicker {
 		width: 83%;
@@ -205,7 +208,7 @@ button[disabled] {
 	opacity: .30 !important; filter: Alpha(Opacity = 30) !important; cursor: not-allowed !important;
 }
 
-textarea{
+textarea {
 	resize: none !important;
 }
 

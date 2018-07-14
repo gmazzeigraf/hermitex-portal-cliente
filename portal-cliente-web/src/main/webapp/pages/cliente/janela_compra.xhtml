@@ -2,7 +2,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/pages/templates/crud_template.xhtml"
 	xmlns:fn="http://java.sun.com/jsp/jstl/functions" xmlns:c="http://java.sun.com/jsp/jstl/core">
 
-	<ui:define name="viewname">#{labels.menu_cliente} / #{labels.menu_cliente_produto} / #{labels.menu_cliente_janela_compra} </ui:define>
+	<ui:define name="viewname">#{labels.menu_cliente} / #{labels.menu_cliente_janela_compra} </ui:define>
 
 	<ui:define name="search">
 		<c:if test="#{null == janelaCompraController.entity}">
@@ -26,7 +26,7 @@
 									<p:outputLabel for="statusFilter" value="Status" styleClass="label" />
 									<p:selectOneMenu id="statusFilter" value="#{janelaCompraController.filterEntity.status}" styleClass="ui-grid-col-12">
 										<f:selectItem itemLabel="" itemValue="" />
-										<f:selectItems value="#{domPedidooController.statusJanelaCompraMap}" />
+										<f:selectItems value="#{domPedidoController.statusJanelaCompraMap}" />
 									</p:selectOneMenu>
 								</p:panelGrid>
 							</p:panelGrid>
@@ -61,13 +61,13 @@
 								<h:outputText value="#{entity.descricao}" />
 							</p:column>
 
-							<p:column headerText="Data Abertura" sortBy="#{entity.dataAbertura}">
+							<p:column headerText="Data Abertura" sortBy="#{entity.dataAbertura}" styleClass="data-column">
 								<h:outputText value="#{entity.dataAbertura}">
 									<f:convertDateTime pattern="dd/MM/yyyy" timeZone="America/Sao_Paulo" />
 								</h:outputText>
 							</p:column>
 
-							<p:column headerText="Data Fechamento" sortBy="#{entity.dataFechamento}">
+							<p:column headerText="Data Fechamento" sortBy="#{entity.dataFechamento}" styleClass="data-column">
 								<h:outputText value="#{entity.dataFechamento}">
 									<f:convertDateTime pattern="dd/MM/yyyy" timeZone="America/Sao_Paulo" />
 								</h:outputText>
@@ -108,7 +108,7 @@
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 								<p:outputLabel for="descricao" value="Descrição" styleClass="label" />
 								<p:inputText id="descricao" value="#{janelaCompraController.entity.descricao}" maxlength="100" styleClass="ui-grid-col-12"
-									disabled="#{janelaCompraController.entity.fechada}" />
+									disabled="#{!janelaCompraController.entity.ativa}" />
 							</p:panelGrid>
 
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
@@ -140,7 +140,7 @@
 							rendered="#{!janelaCompraController.editing or janelaCompraController.entity.ativa}" />
 
 						<p:commandButton id="fechamentoButton" icon="fa fa-fw fa-lock" value="Fechar janela" actionListener="#{janelaCompraController.fecha}"
-							process="@this" update=":searchForm :editForm" styleClass="ui-grid-col-12 botao-vermelho"
+							process="@this" update=":searchForm :editForm" styleClass="ui-grid-col-12 botao-verde"
 							rendered="#{janelaCompraController.editing and janelaCompraController.entity.ativa}">
 							<p:confirm header="Confirmação" message="Confirmar fechamento?" icon="ui-icon-alert" />
 						</p:commandButton>
@@ -149,6 +149,12 @@
 							process="@this" update=":searchForm :editForm" styleClass="ui-grid-col-12"
 							rendered="#{janelaCompraController.editing and janelaCompraController.entity.fechada}">
 							<p:confirm header="Confirmação" message="Confirmar reabertura?" icon="ui-icon-alert" />
+						</p:commandButton>
+						
+						<p:commandButton id="cancelamentoButton" icon="fa fa-fw fa-warning" value="Cancelar janela" actionListener="#{janelaCompraController.cancela}"
+							process="@this" update=":searchForm :editForm" styleClass="ui-grid-col-12 botao-vermelho"
+							rendered="#{janelaCompraController.editing and janelaCompraController.entity.ativa}">
+							<p:confirm header="Confirmação" message="Confirmar cancelamento?" icon="ui-icon-alert" />
 						</p:commandButton>
 
 						<p:commandButton icon="fa fas fa-file-excel-o" value="Extração" ajax="false"

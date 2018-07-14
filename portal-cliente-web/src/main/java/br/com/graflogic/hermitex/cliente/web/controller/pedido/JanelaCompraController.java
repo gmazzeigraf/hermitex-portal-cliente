@@ -114,9 +114,7 @@ public class JanelaCompraController extends CrudBaseController<JanelaCompra, Jan
 
 			returnInfoMessage("Janela fechada com sucesso", null);
 
-			edit(getEntity());
-
-			search();
+			afterOperacao();
 
 		} catch (DadosInvalidosException e) {
 			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), e.getMessage(), null);
@@ -137,9 +135,7 @@ public class JanelaCompraController extends CrudBaseController<JanelaCompra, Jan
 
 			returnInfoMessage("Janela reaberta com sucesso", null);
 
-			edit(getEntity());
-
-			search();
+			afterOperacao();
 
 		} catch (DadosInvalidosException e) {
 			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), e.getMessage(), null);
@@ -154,6 +150,27 @@ public class JanelaCompraController extends CrudBaseController<JanelaCompra, Jan
 		}
 	}
 
+	public void cancela() {
+		try {
+			service.cancela(getEntity());
+
+			returnInfoMessage("Janela cancelada com sucesso", null);
+
+			afterOperacao();
+
+		} catch (DadosInvalidosException e) {
+			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), e.getMessage(), null);
+
+		} catch (DadosDesatualizadosException e) {
+			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Registro com dados desatualizados, altere novamente", null);
+
+			edit(getEntity());
+
+		} catch (Throwable t) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao cancelar janela, contate o administrador", t);
+		}
+	}
+
 	public StreamedContent getExtracaoExcel() throws IOException {
 		try {
 			byte[] extracao = service.geraExtracao(getEntity());
@@ -164,6 +181,14 @@ public class JanelaCompraController extends CrudBaseController<JanelaCompra, Jan
 			returnFatalDialogMessage("Erro", "Erro ao gerar a extração, contate o administrador", t);
 			return null;
 		}
+	}
+
+	private void afterOperacao() {
+		edit(getEntity());
+		executeSearch();
+
+		updateComponent("editForm");
+		updateComponent("searchForm");
 	}
 
 	// Condicoes

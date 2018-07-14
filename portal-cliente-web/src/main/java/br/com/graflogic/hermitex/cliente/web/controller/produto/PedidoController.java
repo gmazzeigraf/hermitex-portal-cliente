@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 import br.com.graflogic.base.service.util.I18NUtil;
+import br.com.graflogic.hermitex.cliente.data.dom.DomAcesso.DomPermissaoAcesso;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioCliente;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioFilial;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioRepresentante;
@@ -76,6 +77,8 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 		try {
 			setFilterEntity(new PedidoSimple());
 
+			filiais = new ArrayList<>();
+
 			if (SessionUtil.isUsuarioAdministrador()) {
 				clientes = clienteService.consulta(new Cliente());
 
@@ -93,7 +96,6 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 
 			if (null != getFilterEntity().getIdCliente()) {
 				changeCliente();
-
 			}
 
 			estados = estadoService.consulta();
@@ -211,6 +213,8 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 	public void changeCliente() {
 		try {
 			setEntities(null);
+			getFilterEntity().setIdFilial(null);
+			filiais.clear();
 
 			if (isClienteSelecionado() && !SessionUtil.isUsuarioFilial()) {
 				filiais = filialService.consultaPorCliente(getFilterEntity().getIdCliente(), false);
@@ -227,15 +231,16 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 	}
 
 	public boolean isPagamentoBaixavel() {
-		return null != getEntity() && getEntity().isPagamentoPendente() && SessionUtil.isUsuarioAdministrador();
+		return null != getEntity() && getEntity().isPagamentoPendente()
+				&& SessionUtil.possuiPermissao(DomPermissaoAcesso.ROLE_PEDIDO_BAIXA_PAGAMENTO);
 	}
 
 	public boolean isEnviavel() {
-		return null != getEntity() && getEntity().isPago() && SessionUtil.isUsuarioAdministrador();
+		return null != getEntity() && getEntity().isPago() && SessionUtil.possuiPermissao(DomPermissaoAcesso.ROLE_PEDIDO_ENVIO);
 	}
 
 	public boolean isFinalizavel() {
-		return null != getEntity() && getEntity().isEnviado() && SessionUtil.isUsuarioAdministrador();
+		return null != getEntity() && getEntity().isEnviado() && SessionUtil.possuiPermissao(DomPermissaoAcesso.ROLE_PEDIDO_FINALIZACAO);
 	}
 
 	// Getters e Setters

@@ -1,0 +1,2 @@
+- Liberacao de permissoes existentes no perfil do usuario para alteração de perfis
+- Padronizar controllers com acoes (Pedido, Janela de compras e Solicitações de Troca) afterSave, afterOperacao

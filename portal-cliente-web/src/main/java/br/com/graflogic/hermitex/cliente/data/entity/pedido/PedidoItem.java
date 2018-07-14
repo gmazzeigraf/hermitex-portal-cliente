@@ -60,6 +60,7 @@ public class PedidoItem implements Serializable {
 	@JoinColumn(name = "id_pedido", referencedColumnName = "id", insertable = false, updatable = false)
 	private Pedido pedido;
 
+	// Apresentacao
 	@Transient
 	private String codigoProduto;
 

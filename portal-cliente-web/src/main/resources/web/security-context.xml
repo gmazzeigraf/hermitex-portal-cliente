@@ -46,6 +46,7 @@
 
 		<!-- Pedido -->
 		<intercept-url pattern="/pages/pedido/consulta.jsf" access="hasAnyRole('ROLE_PEDIDO_CONSULTA')" />
+		<intercept-url pattern="/pages/pedido/solicitacao_troca.jsf" access="hasAnyRole('ROLE_PEDIDO_SOLICITACAO_TROCA')" />
 
 		<!-- Misc -->
 		<intercept-url pattern="/pages/publico/**" access="permitAll" />
