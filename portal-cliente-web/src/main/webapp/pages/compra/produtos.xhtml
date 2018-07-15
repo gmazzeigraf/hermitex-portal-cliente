@@ -112,7 +112,7 @@
 							<p:spacer styleClass="display-desktop" />
 
 							<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group" columnClasses="ui-grid-col-6, ui-grid-col-6">
-								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" style="text-align: center;">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" style="text-align: center;" id="imagensProdutoGrid">
 									<p:galleria value="#{produtoApresentacaoController.entity.imagens}" var="imagem" showCaption="false" autoPlay="false" style="width: 100%;"
 										styleClass="galleria-produtos">
 										<p:graphicImage cache="true" value="#{sessionController.getUrlImagem(imagem.id, 20)}" title="" />
@@ -151,6 +151,11 @@
 										<h:outputText value="#{produtoApresentacaoController.itemPedido.valorCorrigidoTamanho}">
 											<f:convertNumber pattern="R$ #,##0.00" />
 										</h:outputText>
+									</p:panelGrid>
+
+									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{sec:areAnyGranted('ROLE_COMPRA_VISUALIZACAO_ESTOQUE')}">
+										<h:outputText value="Estoque" styleClass="label" />
+										<h:outputText value="#{produtoApresentacaoController.entity.quantidadeEstoque}" />
 									</p:panelGrid>
 
 									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid"

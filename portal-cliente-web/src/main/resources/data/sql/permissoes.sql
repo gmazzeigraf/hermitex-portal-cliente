@@ -30,13 +30,14 @@ INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_RE
 
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_PRODUTOS', 'Produtos', 'ACF');
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_COMPRA', 'Compra', 'CF');
+INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_COMPRA_VISUALIZACAO_ESTOQUE', 'Compra - Visualização Estoque', 'ACF');
 
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_PEDIDO_CONSULTA', 'Pedido / Consulta', 'ACFR');
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_PEDIDO_SOLICITACAO_TROCA', 'Pedido / Solicitação Troca', 'ACF');
-INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_PEDIDO_SOLICITACAO_TROCA_FINALIZACAO', 'Pedido / Solicitação Troca / Finalização', 'A');
-INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_PEDIDO_BAIXA_PAGAMENTO', 'Pedido / Consulta / Baixa Pagamento', 'A');
-INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_PEDIDO_ENVIO', 'Pedido / Consulta / Envio', 'A');
-INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_PEDIDO_FINALIZACAO', 'Pedido / Consulta / Finalização', 'A');
+INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_PEDIDO_SOLICITACAO_TROCA_FINALIZACAO', 'Pedido / Solicitação Troca - Finalização', 'A');
+INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_PEDIDO_BAIXA_PAGAMENTO', 'Pedido / Consulta - Baixa Pagamento', 'A');
+INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_PEDIDO_ENVIO', 'Pedido / Consulta - Envio', 'A');
+INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_PEDIDO_FINALIZACAO', 'Pedido / Consulta - Finalização', 'A');
 
 -- Cria  FK
 ALTER TABLE tb_perfil_usuario_permissao_acesso ADD CONSTRAINT fk_perfil_usuario_permissao_acesso_permissao

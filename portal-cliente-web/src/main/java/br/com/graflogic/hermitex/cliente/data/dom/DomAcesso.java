@@ -62,8 +62,6 @@ public class DomAcesso {
 	public static DomStatusPerfilUsuario domStatusPerfilUsuario = new DomStatusPerfilUsuario();
 
 	public static class DomPermissaoAcesso extends DomBase {
-		public static final String ROLE_COMPRA = "ROLE_COMPRA";
-		
 		public static final String ROLE_PEDIDO_BAIXA_PAGAMENTO = "ROLE_PEDIDO_BAIXA_PAGAMENTO";
 		public static final String ROLE_PEDIDO_ENVIO = "ROLE_PEDIDO_ENVIO";
 		public static final String ROLE_PEDIDO_FINALIZACAO = "ROLE_PEDIDO_FINALIZACAO";

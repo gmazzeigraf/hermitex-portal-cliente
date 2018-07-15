@@ -6,6 +6,7 @@
 
 	<ui:define name="content">
 		<h:form id="mainForm">
+			<f:event listener="#{carrinhoController.preparaTelaPagamento}" type="preRenderView" />
 			<div class="ui-g">
 				<div class="ui-g-12">
 					<div class="card card-w-title">

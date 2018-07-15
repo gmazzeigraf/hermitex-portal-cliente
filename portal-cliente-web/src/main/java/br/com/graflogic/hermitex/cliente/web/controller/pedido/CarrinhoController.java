@@ -239,8 +239,6 @@ public class CarrinhoController extends BaseController implements InitializingBe
 				return;
 			}
 
-			formasPagamento = pedidoService.geraFormasPagamento(cliente, pedido.getValorTotal());
-
 			redirectView(getApplicationUrl() + "/pages/compra/pagamento.jsf");
 
 		} catch (Throwable t) {
@@ -269,8 +267,10 @@ public class CarrinhoController extends BaseController implements InitializingBe
 			pedidoService.cadastra(pedido, pedido.isPagamentoCartaoCredito() ? dadosPagamentoCartaoCredito : null,
 					SessionUtil.getAuthenticatedUsuario().getId());
 
-			mensagemConclusaoPedido = "Pedido " + pedido.getFormattedId() + " efetuado com sucesso"
-					+ (pedido.isPagamentoBoleto() ? ", visualize o boleto na" : ", para mais informações acesse a") + " página \"Pedido / Consulta\"";
+			mensagemConclusaoPedido = "Pedido " + pedido.getFormattedId()
+					+ " efetuado com sucesso" + (pedido.isPagamentoBoleto()
+							? ", visualize o boleto <a href=\"" + pedido.getUrlBoleto() + "\" target=\"_blank\">aqui</a> ou na" : ", para mais informações acesse a")
+					+ " página \"Pedido / Consulta\"";
 
 			redirectView(getApplicationUrl() + "/pages/compra/conclusao.jsf");
 
@@ -284,6 +284,19 @@ public class CarrinhoController extends BaseController implements InitializingBe
 
 		} catch (Throwable t) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao cadastrar pedido, contate o administrador", t);
+		}
+	}
+
+	public void preparaTelaPagamento() {
+		try {
+			formasPagamento = pedidoService.geraFormasPagamento(cliente, pedido.getValorTotal());
+
+			if (pedido.getItens().isEmpty()) {
+				redirectView(getApplicationUrl() + "/pages/compra/produtos.jsf");
+			}
+
+		} catch (Throwable t) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao atualizar formas de pagamento, contate o administrador", t);
 		}
 	}
 
