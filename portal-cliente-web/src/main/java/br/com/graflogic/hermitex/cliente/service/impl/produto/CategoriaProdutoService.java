@@ -50,6 +50,8 @@ public class CategoriaProdutoService {
 		repository.store(entity);
 
 		registraAuditoria(entity.getId(), entity, DomEventoAuditoriaCategoriaProduto.CADASTRO, null);
+
+		limpaCache(entity.getIdCliente());
 	}
 
 	@Transactional(rollbackFor = Throwable.class)
@@ -80,6 +82,8 @@ public class CategoriaProdutoService {
 	private void executaAtualiza(CategoriaProduto entity) {
 		try {
 			repository.update(entity);
+
+			limpaCache(entity.getIdCliente());
 
 		} catch (OptimisticLockException e) {
 			throw new DadosDesatualizadosException();
@@ -148,5 +152,10 @@ public class CategoriaProdutoService {
 		auditoriaRepository.store(evento);
 
 		return evento.getId();
+	}
+
+	private void limpaCache(Integer idCliente) {
+		cacheUtil.putOnCache(CACHE_NAME, idCliente.toString(), null);
+		cacheUtil.putOnCache(CACHE_NAME, idCliente.toString() + "ativas", null);
 	}
 }

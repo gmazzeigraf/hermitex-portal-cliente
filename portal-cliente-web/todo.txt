@@ -2,4 +2,7 @@
 - Padronizar controllers com acoes (Pedido, Janela de compras e Solicitações de Troca) afterSave, afterOperacao
 OK- Configurar quantidade de estoque por produto
 OK - Apresentar estoque apenas para usuarios com permissao
-- Tratamento para navegacao das paginas de compra
+OK - Tratamento para navegacao das paginas de compra
+- HTTPS
+- Instalacao do Postgres no ambiente de producao
+- Verificar possibilidade do subdominio corporativo.hermitex.com.br

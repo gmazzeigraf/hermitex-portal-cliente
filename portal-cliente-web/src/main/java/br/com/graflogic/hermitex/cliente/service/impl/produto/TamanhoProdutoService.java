@@ -59,6 +59,8 @@ public class TamanhoProdutoService {
 		repository.store(entity);
 
 		registraAuditoria(entity.getCodigo(), entity, DomEventoAuditoriaTamanhoProduto.CADASTRO, null);
+
+		limpaCache();
 	}
 
 	@Transactional(rollbackFor = Throwable.class)
@@ -89,6 +91,8 @@ public class TamanhoProdutoService {
 	private void executaAtualiza(TamanhoProduto entity) {
 		try {
 			repository.update(entity);
+
+			limpaCache();
 
 		} catch (OptimisticLockException e) {
 			throw new DadosDesatualizadosException();
@@ -158,5 +162,10 @@ public class TamanhoProdutoService {
 		auditoriaRepository.store(evento);
 
 		return evento.getId();
+	}
+
+	private void limpaCache() {
+		cacheUtil.putOnCache(CACHE_NAME, "ativos", null);
+		cacheUtil.putOnCache(CACHE_NAME, "all", null);
 	}
 }
