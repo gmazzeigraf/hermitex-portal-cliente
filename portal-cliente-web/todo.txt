@@ -6,3 +6,4 @@ OK - Tratamento para navegacao das paginas de compra
 - HTTPS
 - Instalacao do Postgres no ambiente de producao
 - Verificar possibilidade do subdominio corporativo.hermitex.com.br
+- Filtros das telas da credoras incorretos (Filial ao inves de Cliente, Cliente ao inves de Credora)
