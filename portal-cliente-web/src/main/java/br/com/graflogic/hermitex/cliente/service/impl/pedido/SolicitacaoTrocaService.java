@@ -15,6 +15,7 @@ import br.com.graflogic.base.service.gson.GsonUtil;
 import br.com.graflogic.hermitex.cliente.data.dom.DomAuditoria.DomEventoAuditoriaSolicitacaoTroca;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomStatusSolicitacaoTroca;
 import br.com.graflogic.hermitex.cliente.data.entity.aud.SolicitacaoTrocaAuditoria;
+import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoItem;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.SolicitacaoTroca;
 import br.com.graflogic.hermitex.cliente.data.impl.aud.SolicitacaoTrocaAuditoriaRepository;
 import br.com.graflogic.hermitex.cliente.data.impl.pedido.SolicitacaoTrocaRepository;
@@ -38,10 +39,28 @@ public class SolicitacaoTrocaService {
 	@Autowired
 	private SolicitacaoTrocaAuditoriaRepository auditoriaRepository;
 
+	@Autowired
+	private PedidoService pedidoService;
+
 	// Fluxo
 	@Transactional(rollbackFor = Throwable.class)
 	public void cadastra(SolicitacaoTroca entity) {
-		// TODO Valida a quantidade e se ja foi feita para o produto
+		List<SolicitacaoTroca> solicitacoes = consultaPorPedidoItem(entity.getIdPedidoItem());
+
+		PedidoItem pedidoItem = pedidoService.consultaItemPorId(entity.getIdPedidoItem());
+		Integer quantidadeDisponivel = pedidoItem.getQuantidade();
+
+		for (SolicitacaoTroca solicitacao : solicitacoes) {
+			quantidadeDisponivel -= solicitacao.getQuantidade();
+		}
+
+		if (0 == quantidadeDisponivel) {
+			throw new DadosInvalidosException("Nenhuma unidade está disponível para troca");
+
+		} else if (quantidadeDisponivel < entity.getQuantidade()) {
+			throw new DadosInvalidosException("Apenas " + quantidadeDisponivel + " unidades estão disponíveis para troca");
+
+		}
 
 		entity.setStatus(DomStatusSolicitacaoTroca.CADASTRADA);
 
@@ -75,6 +94,13 @@ public class SolicitacaoTrocaService {
 	// Consulta
 	public List<SolicitacaoTroca> consulta(SolicitacaoTroca entity) {
 		return repository.consulta(entity);
+	}
+
+	public List<SolicitacaoTroca> consultaPorPedidoItem(Long idPedidoItem) {
+		SolicitacaoTroca filter = new SolicitacaoTroca();
+		filter.setIdPedidoItem(idPedidoItem);
+
+		return consulta(filter);
 	}
 
 	public SolicitacaoTroca consultaPorId(Long id) {

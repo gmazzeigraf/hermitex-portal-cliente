@@ -50,6 +50,11 @@ public class SolicitacaoTrocaRepository extends BaseRepository<SolicitacaoTroca>
 			where = generateWhere(where, "ped.id_filial = ?");
 			params.add(filter.getIdFilial());
 		}
+		
+		if (null != filter.getIdPedidoItem() && 0 != filter.getIdPedidoItem()) {
+			where = generateWhere(where, "soc.id_pedido_item = ?");
+			params.add(filter.getIdPedidoItem());
+		}
 
 		if (StringUtils.isNotEmpty(filter.getStatus())) {
 			where = generateWhere(where, "soc.status = ?");

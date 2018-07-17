@@ -126,12 +126,16 @@
 					<div class="card card-w-title">
 						<h1>#{labels.informacoes}</h1>
 						<p:panelGrid columns="1" id="informacoesGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+							<p:panelGrid columns="2" columnClasses="ui-grid-col-10, ui-grid-col-2" layout="grid">
 								<p:outputLabel for="pedido" value="Pedido" styleClass="label" />
+								<p:spacer />
+
 								<p:inputNumber id="pedido" value="#{solicitacaoTrocaController.entity.idPedido}" styleClass="input-number-resp" required="true"
-									requiredMessage="Favor informar o pedido" decimalPlaces="0" disabled="#{solicitacaoTrocaController.editing}">
-									<p:ajax process="@this" update="informacoesGrid" listener="#{solicitacaoTrocaController.consultaPedido}" />
-								</p:inputNumber>
+									requiredMessage="Favor informar o pedido" decimalPlaces="0"
+									disabled="#{solicitacaoTrocaController.editing or null != solicitacaoTrocaController.pedido}"
+									placeholder="Informe o número do pedido e clique em Pesquisar" />
+								<p:commandButton icon="fa fa-fw fa-search" value="#{labels.botao_pesquisar}" actionListener="#{solicitacaoTrocaController.consultaPedido}"
+									process="pedido" update="informacoesGrid" styleClass="ui-grid-col-12" rendered="#{null == solicitacaoTrocaController.pedido}" />
 							</p:panelGrid>
 
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{null != solicitacaoTrocaController.pedido}">
@@ -144,7 +148,7 @@
 								</p:selectOneMenu>
 							</p:panelGrid>
 
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{null != solicitacaoTrocaController.pedido}">
 								<p:outputLabel for="quantidade" value="Quantidade" styleClass="label" />
 								<p:inputNumber id="quantidade" value="#{solicitacaoTrocaController.entity.quantidade}" styleClass="input-number-resp" required="true"
 									requiredMessage="Favor informar a quantidade" decimalPlaces="0" disabled="#{solicitacaoTrocaController.editing}" />
@@ -157,7 +161,7 @@
 					<p:panelGrid columns="6" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
 						<p:commandButton id="submitButton" icon="fa fa-fw fa-save" value="#{labels.botao_gravar}" actionListener="#{solicitacaoTrocaController.save}"
 							process=":editForm:informacoesGrid" update=":editForm :searchForm" styleClass="ui-grid-col-12"
-							rendered="#{!solicitacaoTrocaController.editing or solicitacaoTrocaController.entity.cadastrada}" />
+							rendered="#{!solicitacaoTrocaController.editing}" />
 
 						<p:commandButton id="finalizacaoButton" icon="fa fa-fw fa-check-square-o" value="#{labels.botao_finalizar}"
 							oncomplete="PF('finalizacaoDialog').show()" process="@this" update="editForm:idFinalizacaoDialog" styleClass="ui-grid-col-12 botao-verde"

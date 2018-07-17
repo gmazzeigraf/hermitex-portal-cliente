@@ -254,6 +254,10 @@ public class PedidoService {
 		return itemRepository.consultaPorPedido(id);
 	}
 
+	public PedidoItem consultaItemPorId(Long idItem) {
+		return itemRepository.findById(idItem);
+	}
+
 	// Extracao
 	public byte[] geraExtracao(List<PedidoItem> itens) throws IOException {
 		// Obtem todos os produtos e tamanhos de todos os pedidos
