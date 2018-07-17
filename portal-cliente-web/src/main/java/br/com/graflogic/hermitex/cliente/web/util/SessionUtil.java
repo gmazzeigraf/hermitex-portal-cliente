@@ -12,6 +12,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import br.com.graflogic.hermitex.cliente.data.dom.DomAcesso.DomTipoUsuario;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.Usuario;
+import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioCliente;
+import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioFilial;
 import br.com.graflogic.hermitex.cliente.web.security.UserInfo;
 
 /**
@@ -82,5 +84,19 @@ public class SessionUtil {
 
 	public static boolean isUsuarioRepresentante() {
 		return isTipo(DomTipoUsuario.REPRESENTANTE);
+	}
+
+	public static Integer getIdCliente() {
+		Integer idCliente = null;
+
+		if (SessionUtil.isUsuarioCliente()) {
+			idCliente = ((UsuarioCliente) getAuthenticatedUsuario()).getIdCliente();
+
+		} else if (SessionUtil.isUsuarioFilial()) {
+			idCliente = ((UsuarioFilial) getAuthenticatedUsuario()).getIdCliente();
+
+		}
+
+		return idCliente;
 	}
 }

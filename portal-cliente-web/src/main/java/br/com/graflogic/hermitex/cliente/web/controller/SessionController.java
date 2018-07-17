@@ -1,5 +1,8 @@
 package br.com.graflogic.hermitex.cliente.web.controller;
 
+import javax.faces.application.Resource;
+import javax.faces.context.FacesContext;
+
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
@@ -68,7 +71,7 @@ public class SessionController extends BaseController implements InitializingBea
 	public boolean isUsuarioFilial() {
 		return SessionUtil.isUsuarioFilial();
 	}
-	
+
 	public boolean isUsuarioRepresentante() {
 		return SessionUtil.isUsuarioRepresentante();
 	}
@@ -76,6 +79,27 @@ public class SessionController extends BaseController implements InitializingBea
 	// Produto
 	public String getUrlImagem(String idImagem, Integer miniatura) {
 		String url = "/imagens?idImagem=" + idImagem + "&miniatura=" + (null != miniatura ? miniatura : "");
+
+		return url;
+	}
+
+	public String getUrlLogotipo() {
+		Integer idCliente = SessionUtil.getIdCliente();
+
+		if (null != idCliente) {
+			return getUrlLogotipo(idCliente);
+
+		} else {
+			FacesContext context = FacesContext.getCurrentInstance();
+			Resource resource = context.getApplication().getResourceHandler().createResource("images/logo-black.png", "poseidon-layout");
+			String url = resource.getRequestPath();
+
+			return url;
+		}
+	}
+
+	public String getUrlLogotipo(Integer idCliente) {
+		String url = "/logotipo?idCliente=" + idCliente;
 
 		return url;
 	}

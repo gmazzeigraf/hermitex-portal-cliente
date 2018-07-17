@@ -11,10 +11,10 @@ INSERT INTO tb_configuracao VALUES ('usuario.email_nova_senha.conteudo', '<meta 
 <p>Troque sua senha no primeiro acesso.</p>
 <p>Obrigado,</p><p>Acesse&nbsp;<a href="http://localhost:8080/web">http://localhost:8080/web</a>.</p>');
 
-INSERT INTO tb_configuracao VALUES ('email.servidor', 'br432.hostgator.com.br');
+INSERT INTO tb_configuracao VALUES ('email.servidor', 'email-ssl.com.br');
 INSERT INTO tb_configuracao VALUES ('email.porta', '465');
-INSERT INTO tb_configuracao VALUES ('email.usuario', 'no-reply@graflogic.com.br');
-INSERT INTO tb_configuracao VALUES ('email.senha', 'n127415');
+INSERT INTO tb_configuracao VALUES ('email.usuario', 'no-reply@hermitex.com.br');
+INSERT INTO tb_configuracao VALUES ('email.senha', 'Hermitex@@1966');
 INSERT INTO tb_configuracao VALUES ('email.ssl', 'true');
 
 INSERT INTO tb_configuracao VALUES ('web.url', 'http://localhost:8080/web');

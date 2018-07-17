@@ -13,17 +13,17 @@
 						<p:panelGrid columns="1" id="filterGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
 							<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-									<p:outputLabel for="razaoSocialFilter" value="Razão Social" styleClass="label" />
-									<p:inputText id="razaoSocialFilter" value="#{clienteController.filterEntity.razaoSocial}" maxlength="100" styleClass="ui-grid-col-12" />
-								</p:panelGrid>
-
-								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 									<p:outputLabel for="representanteFilter" value="Representante" styleClass="label" />
 									<p:selectOneMenu id="representanteFilter" value="#{clienteController.filterEntity.idRepresentante}" styleClass="ui-grid-col-12" filter="true"
 										filterMatchMode="startsWith">
 										<f:selectItem itemLabel="" itemValue="" />
 										<f:selectItems value="#{clienteController.representantes}" var="item" itemLabel="#{item.razaoSocial}" itemValue="#{item.id}" />
 									</p:selectOneMenu>
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="razaoSocialFilter" value="Razão Social" styleClass="label" />
+									<p:inputText id="razaoSocialFilter" value="#{clienteController.filterEntity.razaoSocial}" maxlength="100" styleClass="ui-grid-col-12" />
 								</p:panelGrid>
 
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
@@ -319,6 +319,20 @@
 								</p:commandButton>
 							</p:column>
 						</p:dataTable>
+					</div>
+
+					<div class="card card-w-title">
+						<h1>Logotipo</h1>
+
+						<p:panelGrid columns="1" id="logotipoGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
+							<h:outputText value="A imagem será apresentada após a gravação do cadastro." styleClass="label" />
+
+							<p:fileUpload fileUploadListener="#{clienteController.uploadLogotipo}" mode="advanced" dragDropSupport="false" sizeLimit="200000"
+								cancelLabel="Cancelar" label="Adicionar" invalidSizeMessage="O tamanho do máximo do logotipo é de 200 Kb" update="editForm:logotipoGrid"
+								auto="true" allowTypes="/(\.|\/)(png)$/" invalidFileMessage="A imagem deve ser PNG" accept="image/png" />
+
+							<p:graphicImage cache="true" value="#{sessionController.getUrlLogotipo(clienteController.entity.id)}" title="" />
+						</p:panelGrid>
 					</div>
 
 					<p:messages />

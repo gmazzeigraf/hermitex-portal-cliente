@@ -234,7 +234,7 @@ textarea {
 }
 
 body.exception-body .exception-bottom .exception-wrapper .logo-icon {
-	width: 100px; display: block; margin: 0 auto 5px auto;
+	width: 100px; display: block; margin: 0 auto px auto;
 }
 
 .route-bar {
@@ -345,10 +345,6 @@ body.main-body {
 
 .topbar-left {
 	padding: 0 !important; background-color: #fff !important; border-bottom: 2px solid #002554 !important;
-}
-
-#topbar-menu-button i, #menu-button i {
-	color: #fff !important;
 }
 
 /* Rodape */

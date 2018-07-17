@@ -214,7 +214,16 @@ public class PerfilUsuarioController extends CrudBaseController<PerfilUsuario, P
 	// Util
 	private void carregaPermissoes() {
 		permissoes.getSource().clear();
-		permissoes.getSource().addAll(permissoesDisponiveis);
+		if (!SessionUtil.isUsuarioAdministrador() && SessionUtil.getAuthenticatedUsuario().getTipo().equals(getFilterEntity().getTipoUsuario())) {
+			List<PermissaoAcesso> permissoesUsuarioLogado = permissaoService
+					.consultaPorPerfilUsuario(SessionUtil.getAuthenticatedUsuario().getIdPerfil());
+
+			permissoes.getSource().addAll(permissoesUsuarioLogado);
+
+		} else {
+			permissoes.getSource().addAll(permissoesDisponiveis);
+		}
+
 		permissoes.getTarget().clear();
 	}
 

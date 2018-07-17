@@ -70,7 +70,8 @@ public class JanelaCompraRepository extends BaseRepository<JanelaCompra> {
 
 	public JanelaCompra consultaPorClienteData(Integer idCliente, Date data) {
 		Query query = getEntityManager().createNativeQuery(
-				"SELECT * FROM tb_janela_compra WHERE id_cliente = ? AND CAST(? AS DATE) BETWEEN dt_abertura AND dt_fechamento", JanelaCompra.class);
+				"SELECT * FROM tb_janela_compra WHERE id_cliente = ? AND CAST(? AS DATE) BETWEEN dt_abertura AND dt_fechamento ORDER BY 1 DESC LIMIT 1",
+				JanelaCompra.class);
 
 		query.setParameter(1, idCliente);
 		query.setParameter(2, data);

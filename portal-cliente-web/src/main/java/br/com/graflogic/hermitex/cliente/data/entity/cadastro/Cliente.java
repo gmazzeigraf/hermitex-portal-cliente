@@ -6,10 +6,12 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -84,6 +86,9 @@ public class Cliente implements Serializable {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "cliente", orphanRemoval = true)
 	@LazyCollection(LazyCollectionOption.TRUE)
 	private List<ClienteContato> contatos;
+
+	@OneToOne(cascade = CascadeType.ALL, mappedBy = "cliente", orphanRemoval = true, fetch = FetchType.LAZY)
+	private ClienteLogotipo logotipo;
 
 	public Integer getId() {
 		return id;
@@ -203,6 +208,14 @@ public class Cliente implements Serializable {
 
 	public void setContatos(List<ClienteContato> contatos) {
 		this.contatos = contatos;
+	}
+
+	public ClienteLogotipo getLogotipo() {
+		return logotipo;
+	}
+
+	public void setLogotipo(ClienteLogotipo logotipo) {
+		this.logotipo = logotipo;
 	}
 
 	public boolean isAtivo() {

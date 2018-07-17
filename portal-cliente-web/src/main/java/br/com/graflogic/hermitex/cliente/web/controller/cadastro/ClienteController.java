@@ -1,9 +1,15 @@
 package br.com.graflogic.hermitex.cliente.web.controller.cadastro;
 
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -18,6 +24,7 @@ import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.ClienteContato;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.ClienteEndereco;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.ClienteEnderecoPK;
+import br.com.graflogic.hermitex.cliente.data.entity.cadastro.ClienteLogotipo;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Representante;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
@@ -93,7 +100,11 @@ public class ClienteController extends CrudBaseController<Cliente, Cliente> impl
 	@Override
 	protected boolean executeSave() {
 		try {
-			// TODO Enviar logotipo
+			if (StringUtils.isEmpty(getEntity().getLogotipo().getConteudo())) {
+				returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Favor enviar o logotipo", null);
+				return false;
+			}
+
 			getEntity().getEnderecos().clear();
 			getEntity().getEnderecos().add(enderecoFaturamento);
 			getEntity().getEnderecos().add(enderecoEntrega);
@@ -136,6 +147,7 @@ public class ClienteController extends CrudBaseController<Cliente, Cliente> impl
 		setEntity(new Cliente());
 		getEntity().setContatos(new ArrayList<ClienteContato>());
 		getEntity().setEnderecos(new ArrayList<ClienteEndereco>());
+		getEntity().setLogotipo(new ClienteLogotipo());
 
 		contato = new ClienteContato();
 
@@ -349,6 +361,35 @@ public class ClienteController extends CrudBaseController<Cliente, Cliente> impl
 
 		} catch (Throwable t) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao excluir contato, contate o administrador", t);
+		}
+	}
+
+	// Logotipo
+	public void uploadLogotipo(FileUploadEvent event) {
+		try {
+			byte[] conteudoLogotipo = IOUtils.toByteArray(event.getFile().getInputstream());
+
+			getEntity().getLogotipo().setConteudo(Base64.encodeBase64String(conteudoLogotipo));
+
+		} catch (Throwable t) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao realizar upload do logotipo, contate o administrador", t);
+		}
+	}
+
+	public StreamedContent getLogotipo() {
+		try {
+			if (StringUtils.isNotEmpty(getEntity().getLogotipo().getConteudo())) {
+				byte[] conteudoArquivo = service.downloadLogotipo(getEntity().getLogotipo());
+
+				return new DefaultStreamedContent(new ByteArrayInputStream(conteudoArquivo), "", getEntity().getId() + ".jpg");
+
+			} else {
+				return null;
+			}
+
+		} catch (Throwable t) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao realizar download do logotipo, contate o administrador", t);
+			return null;
 		}
 	}
 

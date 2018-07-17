@@ -4,7 +4,9 @@
 
 	<div class="topbar clearfix">
 		<div class="topbar-left">
-			<div class="logo"></div>
+			<div class="logo">
+				<p:graphicImage cache="true" value="#{sessionController.urlLogotipo}" title="" />
+			</div>
 		</div>
 
 		<c:if test="#{sessionController.autenticado}">
