@@ -103,6 +103,13 @@ public class CarrinhoController extends BaseController implements InitializingBe
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		try {
+			if (SessionUtil.isUsuarioCliente() || SessionUtil.isUsuarioFilial()) {
+				cliente = clienteService.consultaPorId(SessionUtil.getIdCliente());
+
+			} else {
+				return;
+			}
+
 			estados = estadoService.consulta();
 			municipiosFaturamento = new ArrayList<Municipio>();
 			municipiosEntrega = new ArrayList<>();
@@ -111,11 +118,7 @@ public class CarrinhoController extends BaseController implements InitializingBe
 
 			tiposFrete = new ArrayList<>();
 
-			if (SessionUtil.isUsuarioCliente() || SessionUtil.isUsuarioFilial()) {
-				cliente = clienteService.consultaPorId(SessionUtil.getIdCliente());
-			}
-
-			iniciaPassos();
+			iniciaPassos(false);
 
 			preparaNovoPedido();
 
@@ -150,11 +153,13 @@ public class CarrinhoController extends BaseController implements InitializingBe
 	}
 
 	// Pedido
-	public void iniciaPassos() {
+	public void iniciaPassos(boolean direciona) {
 		try {
 			passo = 1;
 
-			redirectView(getApplicationUrl() + "/pages/compra/carrinho.jsf");
+			if (direciona) {
+				redirectView(getApplicationUrl() + "/pages/compra/carrinho.jsf");
+			}
 
 		} catch (Throwable t) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao acessar o carrinho, contate o administrador", t);

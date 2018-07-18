@@ -95,6 +95,6 @@
 			</div>
 		</div>
 
-		<p:remoteCommand name="iniciaPassosCarrinho" actionListener="#{carrinhoController.iniciaPassos}" oncomplete="liberaRefresh();" />
+		<p:remoteCommand name="iniciaPassosCarrinho" actionListener="#{carrinhoController.iniciaPassos(true)}" oncomplete="liberaRefresh();" />
 	</h:form>
 </ui:composition>

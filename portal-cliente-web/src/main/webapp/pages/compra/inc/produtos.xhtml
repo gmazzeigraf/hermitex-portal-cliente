@@ -11,7 +11,7 @@
 						emptyMessage="#{null != carrinhoController.pedido.itens ? 'Nenhum item adicionado no carrinho' : ''}" rowIndexVar="index">
 
 						<p:column headerText="" styleClass="id-column">
-							<p:graphicImage cache="true" value="#{sessionController.getUrlImagem(entity.idImagemCapaProduto, 2)}" title="" />
+							<p:graphicImage cache="true" value="#{sessionController.getUrlImagem(entity.idImagemCapaProduto, 1)}" title="" styleClass="imagem-capa" />
 						</p:column>
 
 						<p:column headerText="Código" styleClass="id-column">

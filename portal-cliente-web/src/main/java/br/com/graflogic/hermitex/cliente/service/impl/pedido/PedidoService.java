@@ -562,6 +562,8 @@ public class PedidoService {
 								}
 
 								if (null != embalagem) {
+									pesoFrete = pesoFrete.add(embalagem.getPeso());
+
 									if (pesoFrete.compareTo(BigDecimal.ONE) < 0) {
 										pesoFrete = BigDecimal.ONE;
 									}
@@ -613,7 +615,7 @@ public class PedidoService {
 				}
 
 				tipoFrete.setFretes(fretesTipoFrete);
-				tipoFrete.setValor(valorTipoFrete);
+				tipoFrete.setValor(valorTipoFrete.divide(new BigDecimal(0.88), 2, RoundingMode.HALF_EVEN));
 
 				tiposFrete.add(tipoFrete);
 
