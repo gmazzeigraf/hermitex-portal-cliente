@@ -204,7 +204,7 @@
 						</p:panelGrid>
 
 
-						<p:commandButton icon="fa fa-fw fa-check" value="#{labels.botao_finalizar_pedido}" update="mainForm" process="mainForm"
+						<p:commandButton icon="fa fa-fw fa-check" value="#{labels.botao_finalizar_pedido}" update=":mainForm :routeBarForm" process=":mainForm"
 							styleClass="ui-grid-col-12" actionListener="#{carrinhoController.finalizaPedido}" disabled="#{!carrinhoController.formaPagamentoSelecionada}" />
 					</p:panelGrid>
 				</p:panelGrid>
