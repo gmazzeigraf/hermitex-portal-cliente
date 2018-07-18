@@ -21,6 +21,8 @@
 	<cache name="representantes" eternal="false" maxElementsInMemory="0" timeToLiveSeconds="3600" overflowToDisk="false" memoryStoreEvictionPolicy="LFU" />
 
 	<cache name="produtos" eternal="false" maxElementsInMemory="0" timeToLiveSeconds="3600" overflowToDisk="false" memoryStoreEvictionPolicy="LFU" />
+	
+	<cache name="produtosSimples" eternal="false" maxElementsInMemory="0" timeToLiveSeconds="3600" overflowToDisk="false" memoryStoreEvictionPolicy="LFU" />
 
 	<cache name="tabelasMedidas" eternal="false" maxElementsInMemory="0" timeToLiveSeconds="3600" overflowToDisk="false" memoryStoreEvictionPolicy="LFU" />
 

@@ -93,4 +93,15 @@ public class DomPedido {
 
 	public static DomStatusSolicitacaoTroca domStatusSolicitacaoTroca = new DomStatusSolicitacaoTroca();
 
+	public static class DomServicoFrete extends DomBase {
+		public static final String SEDEX = "04162";
+		public static final String PAC = "04812";
+
+		DomServicoFrete() {
+			mapa.put(SEDEX, "SEDEX");
+			mapa.put(PAC, "PAC");
+		}
+	}
+
+	public static DomServicoFrete domServicoFrete = new DomServicoFrete();
 }

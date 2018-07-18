@@ -17,7 +17,7 @@ public class CorreiosClientIT {
 
 	@Before
 	public void setUp() {
-		client = new CorreiosClient("http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx", "12009903", "Y7T27", 5000, 15000);
+		client = new CorreiosClient("http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx", "12009903", "Y7T27");
 	}
 
 	@Test

@@ -1,9 +1,11 @@
 package br.com.graflogic.hermitex.cliente.service.impl.produto;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import javax.persistence.NoResultException;
 import javax.persistence.OptimisticLockException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,6 +85,8 @@ public class EmbalagemService {
 		try {
 			repository.update(entity);
 
+			cacheUtil.putOnCache(CACHE_NAME, entity.getId().toString(), null);
+
 			limpaCache();
 
 		} catch (OptimisticLockException e) {
@@ -126,15 +130,48 @@ public class EmbalagemService {
 	}
 
 	public Embalagem consultaPorId(Integer id) {
-		Embalagem entity = repository.findById(id);
+		Object cacheObj = cacheUtil.findOnCache(CACHE_NAME, id.toString());
 
-		if (null == entity) {
-			throw new ResultadoNaoEncontradoException();
+		if (null == cacheObj) {
+			Embalagem entity = repository.findById(id);
+
+			if (null == entity) {
+				throw new ResultadoNaoEncontradoException();
+			}
+
+			// Atualiza o cache
+			cacheUtil.putOnCache(CACHE_NAME, id.toString(), ObjectCopier.copy(entity));
+
+			cacheObj = cacheUtil.findOnCache(CACHE_NAME, id.toString());
 		}
 
-		return entity;
+		return (Embalagem) ObjectCopier.copy(cacheObj);
 	}
 
+	public Embalagem consultaPorTipoProdutoPeso(String tipoProduto, BigDecimal peso) {
+		try {
+			return repository.consultaPorTipoProdutoPeso(tipoProduto, peso);
+		} catch (NoResultException e) {
+			throw new ResultadoNaoEncontradoException();
+		}
+	}
+
+	public Embalagem consultaMaiorPesoPorTipoProduto(String tipoProduto) {
+		try {
+			return repository.consultaMaiorPesoPorTipoProduto(tipoProduto);
+		} catch (NoResultException e) {
+			throw new ResultadoNaoEncontradoException();
+		}
+	}
+
+	public Embalagem consultaPorTipoProdutoQuantidade(String tipoProduto, Integer quantidade) {
+		return repository.consultaPorTipoProdutoQuantidade(tipoProduto, quantidade);
+	}
+	
+	public Embalagem consultaMaiorQuantidadePorTipoProduto(String tipoProduto) {
+		return repository.consultaMaiorQuantidadePorTipoProduto(tipoProduto);
+	}
+	
 	// Util
 	private String registraAuditoria(Integer id, Embalagem objeto, String codigoEvento, String observacao) {
 		EmbalagemAuditoria evento = new EmbalagemAuditoria();

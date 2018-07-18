@@ -147,7 +147,7 @@ public class ProdutoController extends CrudBaseController<Produto, Produto> impl
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void executeEdit(Produto entity) {
-		setEntity(service.consultaPorId(entity.getId()));
+		setEntity(service.consultaCompletoPorId(entity.getId()));
 
 		conteudoTabelaMedidas = GsonUtil.gson.fromJson(getEntity().getConteudoTabelaMedidas(), List.class);
 

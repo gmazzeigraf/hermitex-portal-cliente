@@ -109,7 +109,7 @@ public class ProdutoApresentacaoController extends SearchBaseController<ProdutoA
 
 	@Override
 	protected void select(ProdutoApresentacaoLista entity) {
-		setEntity(service.consultaPorId(entity.getId()));
+		setEntity(service.consultaCompletoPorId(entity.getId()));
 
 		this.produtoApresentacao = entity;
 

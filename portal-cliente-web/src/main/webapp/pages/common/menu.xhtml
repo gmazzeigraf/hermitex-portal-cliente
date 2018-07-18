@@ -87,11 +87,14 @@
 
 						<p:menuitem id="menu_produtos" icon="fa fa-fw fa-barcode" value="#{labels.menu_produtos}" url="/pages/compra/produtos.jsf"
 							rendered="#{sec:isAllowed('/pages/compra/produtos.jsf', '')}" />
+
 						<p:menuitem id="menu_carrinho" icon="fa fa-fw fa-shopping-cart" value="#{fn:length(carrinhoController.pedido.itens)}"
-							url="/pages/compra/carrinho.jsf" rendered="#{sec:isAllowed('/pages/compra/carrinho.jsf', '')}" />
+							rendered="#{sec:isAllowed('/pages/compra/carrinho.jsf', '')}" oncomplete="iniciaPassosCarrinho()" />
 					</pp:menu>
 				</div>
 			</div>
 		</div>
+
+		<p:remoteCommand name="iniciaPassosCarrinho" actionListener="#{carrinhoController.iniciaPassos}" oncomplete="liberaRefresh();" />
 	</h:form>
 </ui:composition>

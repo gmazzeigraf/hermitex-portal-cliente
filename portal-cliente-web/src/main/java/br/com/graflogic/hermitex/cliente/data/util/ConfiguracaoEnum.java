@@ -18,7 +18,9 @@ public enum ConfiguracaoEnum {
 	PAGAMENTO_BOLETO_CODIGO_BANCO("pagamento_boleto.codigo_banco"), PAGAMENTO_BOLETO_INSTRUCAO("pagamento_boleto.instrucao"), PAGAMENTO_URL(
 			"pagamento.url"), PAGAMENTO_MERCHANT_KEY("pagamento.merchant_key"),
 
-	CORREIOS_CODIGO_EMPRESA("correios.codigo_empresa"), CORREIOS_SENHA("correios.senha"), CORREIOS_URL("correios.url")
+	CORREIOS_CODIGO_EMPRESA("correios.codigo_empresa"), CORREIOS_SENHA("correios.senha"), CORREIOS_URL("correios.url"),
+
+	FRETE_CEP_ORIGEM("frete.cep_origem")
 
 	;
 

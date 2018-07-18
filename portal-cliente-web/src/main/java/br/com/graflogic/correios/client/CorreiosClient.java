@@ -32,13 +32,13 @@ public class CorreiosClient extends WebServiceGatewaySupport {
 
 	private String senha;
 
-	public CorreiosClient(String url, String codigoEmpresa, String senha, int connectionTimeout, int readTimeout) {
+	public CorreiosClient(String url, String codigoEmpresa, String senha) {
 		Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
 		marshaller.setContextPath("br.com.graflogic.correios.model");
 
 		HttpComponentsMessageSender messageSender = new HttpComponentsMessageSender();
-		messageSender.setConnectionTimeout(connectionTimeout);
-		messageSender.setReadTimeout(readTimeout);
+		messageSender.setConnectionTimeout(15000);
+		messageSender.setReadTimeout(60000);
 
 		setMessageSender(messageSender);
 		setDefaultUri(url);

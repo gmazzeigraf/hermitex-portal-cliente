@@ -27,3 +27,5 @@ INSERT INTO tb_configuracao VALUES ('pagamento.url', 'https://sandbox.mundipaggo
 INSERT INTO tb_configuracao VALUES ('correios.codigo_empresa', '12009903');
 INSERT INTO tb_configuracao VALUES ('correios.senha', 'Y7T27');
 INSERT INTO tb_configuracao VALUES ('correios.url', 'http://ws.correios.com.br/calculador/CalcPrecoPrazo.asmx');
+
+INSERT INTO tb_configuracao VALUES ('frete.cep_origem', '13041311');

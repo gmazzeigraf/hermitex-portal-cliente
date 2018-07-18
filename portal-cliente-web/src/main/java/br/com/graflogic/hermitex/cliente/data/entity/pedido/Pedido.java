@@ -59,6 +59,9 @@ public class Pedido implements Serializable {
 	@Column(name = "peso_total", nullable = false)
 	private BigDecimal pesoTotal;
 
+	@Column(name = "qt_total_itens", nullable = false)
+	private Integer quantidadeTotalItens;
+
 	@Column(name = "cd_forma_pagamento", nullable = false)
 	private String codigoFormaPagamento;
 
@@ -88,6 +91,10 @@ public class Pedido implements Serializable {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "pedido", orphanRemoval = true)
 	@LazyCollection(LazyCollectionOption.TRUE)
 	private List<PedidoEndereco> enderecos;
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "pedido", orphanRemoval = true)
+	@LazyCollection(LazyCollectionOption.TRUE)
+	private List<PedidoFrete> fretes;
 
 	public Long getId() {
 		return id;
@@ -143,6 +150,14 @@ public class Pedido implements Serializable {
 
 	public void setPesoTotal(BigDecimal pesoTotal) {
 		this.pesoTotal = pesoTotal;
+	}
+
+	public Integer getQuantidadeTotalItens() {
+		return quantidadeTotalItens;
+	}
+
+	public void setQuantidadeTotalItens(Integer quantidadeTotalItens) {
+		this.quantidadeTotalItens = quantidadeTotalItens;
 	}
 
 	public String getCodigoFormaPagamento() {
@@ -215,6 +230,14 @@ public class Pedido implements Serializable {
 
 	public void setEnderecos(List<PedidoEndereco> enderecos) {
 		this.enderecos = enderecos;
+	}
+
+	public List<PedidoFrete> getFretes() {
+		return fretes;
+	}
+
+	public void setFretes(List<PedidoFrete> fretes) {
+		this.fretes = fretes;
 	}
 
 	public String getDeStatus() {

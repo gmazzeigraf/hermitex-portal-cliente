@@ -101,7 +101,6 @@ public class FilialController extends CrudBaseController<Filial, Filial> impleme
 	@Override
 	protected boolean executeSave() {
 		try {
-			// TODO Enviar logotipo
 			getEntity().getEnderecos().clear();
 			getEntity().getEnderecos().add(enderecoFaturamento);
 			getEntity().getEnderecos().add(enderecoEntrega);

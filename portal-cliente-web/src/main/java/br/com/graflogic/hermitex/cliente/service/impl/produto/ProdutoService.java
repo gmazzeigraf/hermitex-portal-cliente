@@ -45,6 +45,8 @@ public class ProdutoService {
 
 	private static final String CACHE_NAME = "produtos";
 
+	private static final String CACHE_SIMPLES_NAME = "produtosSimples";
+
 	private static final String IMAGENS_CACHE_NAME = "imagensProduto";
 
 	private static final String TABELAS_MEDIDAS_CACHE_NAME = "tabelasMedidas";
@@ -133,9 +135,7 @@ public class ProdutoService {
 		try {
 			repository.update(entity);
 
-			cacheUtil.putOnCache(CACHE_NAME, entity.getId().toString(), null);
-			
-			cacheUtil.putOnCache(TABELAS_MEDIDAS_CACHE_NAME, entity.getId().toString(), null);
+			limpaCache(entity.getId());
 
 		} catch (OptimisticLockException e) {
 			throw new DadosDesatualizadosException();
@@ -197,7 +197,7 @@ public class ProdutoService {
 		return repository.consultaApresentacaoLista(filter);
 	}
 
-	public Produto consultaPorId(Integer id) {
+	public Produto consultaCompletoPorId(Integer id) {
 		Object cacheObj = cacheUtil.findOnCache(CACHE_NAME, id.toString());
 
 		if (null == cacheObj) {
@@ -213,6 +213,25 @@ public class ProdutoService {
 			cacheUtil.putOnCache(CACHE_NAME, id.toString(), ObjectCopier.copy(entity));
 
 			cacheObj = cacheUtil.findOnCache(CACHE_NAME, id.toString());
+		}
+
+		return (Produto) ObjectCopier.copy(cacheObj);
+	}
+
+	public Produto consultaPorId(Integer id) {
+		Object cacheObj = cacheUtil.findOnCache(CACHE_SIMPLES_NAME, id.toString());
+
+		if (null == cacheObj) {
+			Produto entity = repository.findById(id);
+
+			if (null == entity) {
+				throw new ResultadoNaoEncontradoException();
+			}
+
+			// Atualiza o cache
+			cacheUtil.putOnCache(CACHE_SIMPLES_NAME, id.toString(), ObjectCopier.copy(entity));
+
+			cacheObj = cacheUtil.findOnCache(CACHE_SIMPLES_NAME, id.toString());
 		}
 
 		return (Produto) ObjectCopier.copy(cacheObj);
@@ -285,6 +304,12 @@ public class ProdutoService {
 	}
 
 	// Util
+	private void limpaCache(Integer id) {
+		cacheUtil.putOnCache(CACHE_NAME, id.toString(), null);
+		cacheUtil.putOnCache(CACHE_SIMPLES_NAME, id.toString(), null);
+		cacheUtil.putOnCache(TABELAS_MEDIDAS_CACHE_NAME, id.toString(), null);
+	}
+
 	private void validaDados(Produto entity) {
 		if (entity.getImagens().isEmpty()) {
 			throw new DadosInvalidosException("Ao menos uma imagem devem ser enviada");

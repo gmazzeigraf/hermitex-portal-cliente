@@ -46,7 +46,7 @@ public class MundiPaggClient {
 		LOGGER.debug("-> " + conteudoEnvio);
 
 		// Cria o cliente HTTP
-		RequestConfig config = RequestConfig.custom().setConnectTimeout(15000).setSocketTimeout(6000).build();
+		RequestConfig config = RequestConfig.custom().setConnectTimeout(15000).setSocketTimeout(60000).build();
 
 		CloseableHttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(config).build();
 

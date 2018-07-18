@@ -1,8 +1,10 @@
 package br.com.graflogic.hermitex.cliente.data.impl.produto;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -51,5 +53,43 @@ public class EmbalagemRepository extends BaseRepository<Embalagem> {
 		TypedQuery<Embalagem> typedQuery = getEntityManager().createQuery(query);
 
 		return (List<Embalagem>) typedQuery.getResultList();
+	}
+
+	public Embalagem consultaPorTipoProdutoPeso(String tipoProduto, BigDecimal peso) {
+		Query query = getEntityManager().createNativeQuery(
+				"SELECT * FROM tb_embalagem WHERE tp_produto = ? AND peso_maximo >= ? ORDER BY peso_maximo ASC LIMIT 1", Embalagem.class);
+
+		query.setParameter(1, tipoProduto);
+		query.setParameter(2, peso);
+
+		return (Embalagem) query.getSingleResult();
+	}
+
+	public Embalagem consultaMaiorPesoPorTipoProduto(String tipoProduto) {
+		Query query = getEntityManager().createNativeQuery("SELECT * FROM tb_embalagem WHERE tp_produto = ? ORDER BY peso_maximo DESC LIMIT 1",
+				Embalagem.class);
+
+		query.setParameter(1, tipoProduto);
+
+		return (Embalagem) query.getSingleResult();
+	}
+	
+	public Embalagem consultaPorTipoProdutoQuantidade(String tipoProduto, Integer quantidade) {
+		Query query = getEntityManager().createNativeQuery(
+				"SELECT * FROM tb_embalagem WHERE tp_produto = ? AND qt_maxima >= ? ORDER BY qt_maxima ASC LIMIT 1", Embalagem.class);
+
+		query.setParameter(1, tipoProduto);
+		query.setParameter(2, quantidade);
+
+		return (Embalagem) query.getSingleResult();
+	}
+
+	public Embalagem consultaMaiorQuantidadePorTipoProduto(String tipoProduto) {
+		Query query = getEntityManager().createNativeQuery("SELECT * FROM tb_embalagem WHERE tp_produto = ? ORDER BY qt_maxima DESC LIMIT 1",
+				Embalagem.class);
+
+		query.setParameter(1, tipoProduto);
+
+		return (Embalagem) query.getSingleResult();
 	}
 }
