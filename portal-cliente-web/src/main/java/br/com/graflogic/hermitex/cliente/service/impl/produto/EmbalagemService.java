@@ -165,13 +165,21 @@ public class EmbalagemService {
 	}
 
 	public Embalagem consultaPorTipoProdutoQuantidade(String tipoProduto, Integer quantidade) {
-		return repository.consultaPorTipoProdutoQuantidade(tipoProduto, quantidade);
+		try {
+			return repository.consultaPorTipoProdutoQuantidade(tipoProduto, quantidade);
+		} catch (NoResultException e) {
+			throw new ResultadoNaoEncontradoException();
+		}
 	}
-	
+
 	public Embalagem consultaMaiorQuantidadePorTipoProduto(String tipoProduto) {
-		return repository.consultaMaiorQuantidadePorTipoProduto(tipoProduto);
+		try {
+			return repository.consultaMaiorQuantidadePorTipoProduto(tipoProduto);
+		} catch (NoResultException e) {
+			throw new ResultadoNaoEncontradoException();
+		}
 	}
-	
+
 	// Util
 	private String registraAuditoria(Integer id, Embalagem objeto, String codigoEvento, String observacao) {
 		EmbalagemAuditoria evento = new EmbalagemAuditoria();

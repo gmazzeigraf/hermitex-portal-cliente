@@ -167,7 +167,15 @@
 
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 								<p:outputLabel for="faturamento" value="Faturamento" styleClass="label" />
-								<p:selectBooleanCheckbox id="faturamento" styleClass="input-number-resp" value="#{clienteController.entity.faturamento}" />
+								<p:selectBooleanCheckbox id="faturamento" styleClass="input-number-resp" value="#{clienteController.entity.faturamento}">
+									<p:ajax process="@this" update="descricaoFaturamentoGrid" />
+								</p:selectBooleanCheckbox>
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" id="descricaoFaturamentoGrid">
+								<p:outputLabel for="descricaoFaturamento" value="Descrição faturamento" styleClass="label" />
+								<p:inputText id="descricaoFaturamento" value="#{clienteController.entity.descricaoFaturamento}" maxlength="50" styleClass="ui-grid-col-12"
+									required="#{clienteController.entity.faturamento}" requiredMessage="Favor informar a descrição do faturamento" />
 							</p:panelGrid>
 						</p:panelGrid>
 					</div>

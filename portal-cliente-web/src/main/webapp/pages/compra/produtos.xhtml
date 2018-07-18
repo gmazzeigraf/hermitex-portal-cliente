@@ -47,9 +47,9 @@
 									</p:selectOneMenu>
 								</p:panelGrid>
 
-								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{sessionController.usuarioAdministrador}">
 									<p:outputLabel for="tituloFilter" value="Título" styleClass="label" />
-									<p:inputText id="tituloFilter" value="#{produtoApresentacaoController.filterEntity.titulo}" maxlength="20" styleClass="ui-grid-col-12">
+									<p:inputText id="tituloFilter" value="#{produtoApresentacaoController.filterEntity.titulo}" maxlength="50" styleClass="ui-grid-col-12">
 										<p:ajax process="@this" update=":searchForm" listener="#{produtoApresentacaoController.search}" />
 									</p:inputText>
 								</p:panelGrid>
@@ -63,7 +63,7 @@
 									</p:selectOneMenu>
 								</p:panelGrid>
 
-								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{sessionController.usuarioAdministrador}">
 									<p:outputLabel for="tamanhoFilter" value="Tamanho" styleClass="label" />
 									<p:selectOneMenu id="tamanhoFilter" value="#{produtoApresentacaoController.filterEntity.codigoTamanho}" styleClass="ui-grid-col-12">
 										<f:selectItem itemLabel="Todos" itemValue="" />
@@ -80,7 +80,10 @@
 							rendered="#{fn:length(produtoApresentacaoController.entities) > 0}" styleClass="produtos">
 							<p:panel header="#{entity.codigo}" style="text-align:center" styleClass="produtos">
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" styleClass="ui-panelgrid-blank form-group">
-									<p:graphicImage cache="true" value="#{sessionController.getUrlImagem(entity.idImagemCapa, 10)}" title="" styleClass="imagem-capa" />
+									<p:commandLink update=":searchForm :editForm :routeBarForm" process="@this" resetValues="true" oncomplete="scrollPageTop();">
+										<p:graphicImage cache="true" value="#{sessionController.getUrlImagem(entity.idImagemCapa, 10)}" title="" styleClass="imagem-capa" />
+										<f:setPropertyActionListener value="#{entity}" target="#{produtoApresentacaoController.selectedEntity}" />
+									</p:commandLink>
 
 									<h:outputText value="#{entity.titulo}" />
 
@@ -88,7 +91,7 @@
 										<f:convertNumber pattern="R$ #,##0.00" />
 									</h:outputText>
 
-									<p:commandButton icon="fa fa-fw fa-folder-open" title="#{labels.botao_editar}" update=":searchForm :editForm :routeBarForm" process="@this"
+									<p:commandButton icon="fa fa-fw fa-folder-open" title="#{labels.botao_abrir}" update=":searchForm :editForm :routeBarForm" process="@this"
 										resetValues="true" styleClass="ui-grid-col-12 botao-produtos" oncomplete="scrollPageTop();">
 										<f:setPropertyActionListener value="#{entity}" target="#{produtoApresentacaoController.selectedEntity}" />
 									</p:commandButton>

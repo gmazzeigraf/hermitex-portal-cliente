@@ -121,7 +121,7 @@ public class ProdutoRepository extends BaseRepository<Produto> {
 
 		if (StringUtils.isNotEmpty(filter.getTitulo())) {
 			where = generateWhere(where, "UPPER(pro.titulo) LIKE ?");
-			params.add("%" + filter.getTitulo() + "%");
+			params.add("%" + filter.getTitulo().toUpperCase() + "%");
 		}
 
 		if (StringUtils.isNotEmpty(filter.getGenero())) {

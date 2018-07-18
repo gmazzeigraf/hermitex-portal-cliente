@@ -51,6 +51,17 @@ public class SessionController extends BaseController implements InitializingBea
 		}
 	}
 
+	public void direcionaPaginaInicial() {
+		try {
+			if (SessionUtil.isUsuarioFilial() && isSenhaUsuarioDefinitiva()) {
+				SessionUtil.redirecionaView("/pages/compra/produtos.jsf");
+			}
+
+		} catch (Throwable t) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao direcionar pagina inicial, contate o administrador", null);
+		}
+	}
+
 	// Condicoes
 	public boolean isAutenticado() {
 		return SessionUtil.isAutenticado();

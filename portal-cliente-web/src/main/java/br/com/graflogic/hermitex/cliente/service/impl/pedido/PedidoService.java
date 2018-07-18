@@ -236,6 +236,19 @@ public class PedidoService {
 		registraAuditoria(entity.getId(), entity, DomEventoAuditoriaPedido.FINALIZACAO, idUsuario, observacao);
 	}
 
+	@Transactional(rollbackFor = Throwable.class)
+	public void cancela(Pedido entity, Integer idUsuario, String observacao) {
+		if (!entity.isPagamentoPendente() && !entity.isPago()) {
+			throw new DadosInvalidosException("Apenas pedidos pendentes de pagamento ou pagos podem ser cancelados");
+		}
+
+		entity.setStatus(DomStatus.CANCELADO);
+
+		executaAtualiza(entity);
+
+		registraAuditoria(entity.getId(), entity, DomEventoAuditoriaPedido.CANCELAMENTO, idUsuario, observacao);
+	}
+
 	private void executaAtualiza(Pedido entity) {
 		try {
 			repository.update(entity);
@@ -506,10 +519,16 @@ public class PedidoService {
 			Map<String, BigDecimal> pesos = new HashMap<>();
 			Map<String, Integer> quantidades = new HashMap<>();
 
+			// Separa os pesos e quantidades por tipo de produto
 			for (PedidoItem item : entity.getItens()) {
 				Produto produto = produtoService.consultaPorId(item.getIdProduto());
 
 				String tipoProduto = produto.getTipo();
+
+				// Caso seja bolsa, calcula junto de roupa
+				if (DomTipo.BOLSA.equals(tipoProduto)) {
+					tipoProduto = DomTipo.ROUPA;
+				}
 
 				if (!tiposProduto.contains(tipoProduto)) {
 					tiposProduto.add(tipoProduto);
@@ -525,6 +544,7 @@ public class PedidoService {
 
 			List<TipoFrete> tiposFrete = new ArrayList<>();
 
+			// Processa os tipos de frete
 			for (String servicoFrete : servicosFrete) {
 				TipoFrete tipoFrete = new TipoFrete();
 				tipoFrete.setCodigoServico(servicoFrete);
@@ -532,19 +552,32 @@ public class PedidoService {
 				List<PedidoFrete> fretesTipoFrete = new ArrayList<>();
 				BigDecimal valorTipoFrete = BigDecimal.ZERO;
 
+				// Processa os tipos de produto
 				tipoProdutoFor: {
 					for (String tipoProduto : tiposProduto) {
 						List<PedidoFrete> fretesTipoProduto = new ArrayList<>();
 
 						// Gera as embalagens
+						BigDecimal pesoRestante = BigDecimal.ZERO;
+						Integer quantidadeRestante = 0;
+
 						if (DomTipo.ROUPA.equals(tipoProduto)) {
-							BigDecimal pesoRestante = pesos.get(tipoProduto);
+							pesoRestante = pesos.get(tipoProduto);
 
-							while (pesoRestante.compareTo(BigDecimal.ZERO) > 0) {
-								BigDecimal pesoFrete = BigDecimal.ZERO;
+						} else if (DomTipo.SAPATO.equals(tipoProduto)) {
+							quantidadeRestante = quantidades.get(tipoProduto);
 
-								Embalagem embalagem = null;
-								try {
+						} else {
+							throw new DadosInvalidosException("Tipo de produto " + tipoProduto + " sem frete implementado");
+						}
+
+						while (pesoRestante.compareTo(BigDecimal.ZERO) > 0 || quantidadeRestante > 0) {
+							BigDecimal pesoFrete = BigDecimal.ZERO;
+							Integer quantidadeFrete = 0;
+
+							Embalagem embalagem = null;
+							try {
+								if (DomTipo.ROUPA.equals(tipoProduto)) {
 									// Consulta por peso
 									embalagem = embalagemService.consultaPorTipoProdutoPeso(tipoProduto, pesoRestante);
 
@@ -552,58 +585,88 @@ public class PedidoService {
 
 									pesoRestante = BigDecimal.ZERO;
 
-								} catch (ResultadoNaoEncontradoException e) {
-									// Consulta a maior
-									embalagem = embalagemService.consultaMaiorPesoPorTipoProduto(tipoProduto);
+								} else if (DomTipo.SAPATO.equals(tipoProduto)) {
+									// Consulta por quantidade
+									embalagem = embalagemService.consultaPorTipoProdutoQuantidade(tipoProduto, quantidadeRestante);
 
-									pesoFrete = embalagem.getPesoMaximo();
+									quantidadeFrete = quantidadeRestante;
 
-									pesoRestante = pesoRestante.subtract(embalagem.getPesoMaximo());
+									quantidadeRestante = 0;
+
 								}
 
-								if (null != embalagem) {
-									pesoFrete = pesoFrete.add(embalagem.getPeso());
+							} catch (ResultadoNaoEncontradoException e) {
+								try {
+									// Consulta a maior
+									if (DomTipo.ROUPA.equals(tipoProduto)) {
+										embalagem = embalagemService.consultaMaiorPesoPorTipoProduto(tipoProduto);
 
-									if (pesoFrete.compareTo(BigDecimal.ONE) < 0) {
-										pesoFrete = BigDecimal.ONE;
+										pesoFrete = embalagem.getPesoMaximo();
+
+										pesoRestante = pesoRestante.subtract(embalagem.getPesoMaximo());
+
+									} else if (DomTipo.SAPATO.equals(tipoProduto)) {
+										embalagem = embalagemService.consultaMaiorQuantidadePorTipoProduto(tipoProduto);
+
+										quantidadeFrete = embalagem.getQuantidadeMaxima();
+
+										quantidadeRestante = quantidadeRestante - embalagem.getQuantidadeMaxima();
+
 									}
 
-									CResultado resultado = client.calculaPrecoPrazo(Arrays.asList(servicoFrete),
-											configuracaoService.consulta(ConfiguracaoEnum.FRETE_CEP_ORIGEM), entity.getEnderecoEntrega().getCep(),
-											pesoFrete.intValue(), embalagem.getComprimento(), embalagem.getAltura(), embalagem.getLargura());
-
-									for (CServico servico : resultado.getServicos().getCServico()) {
-										BigDecimal valor = new BigDecimal(servico.getValor().replace(",", "."));
-
-										if (valor.compareTo(BigDecimal.ZERO) > 0) {
-											PedidoFrete frete = new PedidoFrete();
-											frete.setIdEmbalagem(embalagem.getId());
-											frete.setPesoItens(pesoFrete);
-											frete.setQuantidadeItens(0);
-											frete.setNomeEmbalagem(embalagem.getNome());
-											frete.setValor(valor);
-											frete.setCodigoServico(servicoFrete);
-											frete.setPrazoDias(Integer.parseInt(servico.getPrazoEntrega()));
-
-											fretesTipoProduto.add(frete);
-
-											valorTipoFrete = valorTipoFrete.add(valor);
-
-										} else {
-											fretesTipoFrete.clear();
-											break tipoProdutoFor;
-										}
-									}
+								} catch (ResultadoNaoEncontradoException x) {
+									throw new DadosInvalidosException("Nenhuma embalagem cadastrada para o tipo de produto " + tipoProduto);
 
 								}
 							}
-						} else if (DomTipo.SAPATO.equals(tipoProduto)) {
-							// TODO Frete sapato
-							throw new DadosInvalidosException("Frete não implementado para tipo de produto " + servicoFrete);
 
-						} else if (DomTipo.BOLSA.equals(tipoProduto)) {
-							// TODO Frete bolsa
-							throw new DadosInvalidosException("Frete não implementado para tipo de produto " + servicoFrete);
+							// Caso tenha embalagem, gera o frete
+							if (null != embalagem) {
+
+								// O peso de cada sapato foi definido com 1kg
+								if (DomTipo.SAPATO.equals(tipoProduto)) {
+									pesoFrete = BigDecimal.ONE.multiply(new BigDecimal(quantidadeFrete));
+								}
+
+								// Adiciona o peso da embalagem
+								pesoFrete = pesoFrete.add(embalagem.getPeso());
+
+								// Caso o peso total seja menor que um, define um que e o menor aceito pelos correios
+								if (pesoFrete.compareTo(BigDecimal.ONE) < 0) {
+									pesoFrete = BigDecimal.ONE;
+								}
+
+								// Consulta o frete
+								CResultado resultado = client.calculaPrecoPrazo(Arrays.asList(servicoFrete),
+										configuracaoService.consulta(ConfiguracaoEnum.FRETE_CEP_ORIGEM), entity.getEnderecoEntrega().getCep(),
+										pesoFrete.intValue(), embalagem.getComprimento(), embalagem.getAltura(), embalagem.getLargura());
+
+								for (CServico servico : resultado.getServicos().getCServico()) {
+									BigDecimal valor = new BigDecimal(servico.getValor().replace(",", "."));
+
+									// Caso o valor seja retornado, gera o frete
+									if (valor.compareTo(BigDecimal.ZERO) > 0) {
+										PedidoFrete frete = new PedidoFrete();
+										frete.setIdEmbalagem(embalagem.getId());
+										frete.setPesoItens(pesoFrete);
+										frete.setQuantidadeItens(quantidadeFrete);
+										frete.setNomeEmbalagem(embalagem.getNome());
+										frete.setValor(valor);
+										frete.setCodigoServico(servicoFrete);
+										frete.setPrazoDias(Integer.parseInt(servico.getPrazoEntrega()));
+
+										fretesTipoProduto.add(frete);
+
+										valorTipoFrete = valorTipoFrete.add(valor);
+
+									} else {
+										// Caso nao seja retornado valor, remove o tipo de frete
+										fretesTipoFrete.clear();
+										break tipoProdutoFor;
+									}
+								}
+
+							}
 						}
 
 						fretesTipoFrete.addAll(fretesTipoProduto);
@@ -672,7 +735,8 @@ public class PedidoService {
 
 	public List<FormaPagamento> geraFormasPagamento(Cliente cliente, BigDecimal valorTotal) {
 		List<FormaPagamento> formasPagamento = new ArrayList<>();
-		formasPagamento.add(new FormaPagamento(formasPagamento.size(), DomFormaPagamento.BOLETO, 1));
+		// TODO Descomentar apos primeira janela
+		//		formasPagamento.add(new FormaPagamento(formasPagamento.size(), DomFormaPagamento.BOLETO, 1));
 
 		for (int i = 1; i <= cliente.getMaximoParcelasCartao(); i++) {
 			formasPagamento.add(new FormaPagamento(formasPagamento.size(), DomFormaPagamento.CARTAO_CREDITO, i));
@@ -692,6 +756,9 @@ public class PedidoService {
 
 			} else if (DomFormaPagamento.CARTAO_CREDITO.equals(forma.getCodigo())) {
 				descricao += " " + forma.getParcelas() + "x R$ " + forma.getValor().toString().replace(".", ",");
+
+			} else if (DomFormaPagamento.FATURAMENTO.equals(forma.getCodigo())) {
+				descricao = cliente.getDescricaoFaturamento();
 			}
 
 			forma.setDescricao(descricao);

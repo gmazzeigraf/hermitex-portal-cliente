@@ -364,6 +364,11 @@ body.main-body {
 	padding-bottom: 0px !important;
 }
 
+/* Fonte padrao */
+body {
+	font-family: Roboto Regular !important;
+}
+
 /* Fullscren */
 html, body {
 	height: 100% !important;

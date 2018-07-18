@@ -72,6 +72,9 @@ public class Cliente implements Serializable {
 	@Column(name = "in_faturamento", nullable = false)
 	private String faturamento;
 
+	@Column(name = "ds_faturamento", nullable = false)
+	private String descricaoFaturamento;
+
 	@Column(name = "status", nullable = false)
 	private String status;
 
@@ -176,6 +179,14 @@ public class Cliente implements Serializable {
 
 	public void setFaturamento(boolean faturamento) {
 		this.faturamento = faturamento ? DomBoolean.SIM : DomBoolean.NAO;
+	}
+
+	public String getDescricaoFaturamento() {
+		return descricaoFaturamento;
+	}
+
+	public void setDescricaoFaturamento(String descricaoFaturamento) {
+		this.descricaoFaturamento = descricaoFaturamento;
 	}
 
 	public String getStatus() {

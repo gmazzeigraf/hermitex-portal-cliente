@@ -14,12 +14,14 @@ public class DomPedido {
 		public static final String PAGO = "G";
 		public static final String ENVIADO = "V";
 		public static final String FINALIZADO = "Z";
+		public static final String CANCELADO = "C";
 
 		DomStatus() {
 			mapa.put(PAGAMENTO_PENDENTE, "Pagamento Pendente");
 			mapa.put(PAGO, "Pago");
 			mapa.put(ENVIADO, "Enviado");
 			mapa.put(FINALIZADO, "Finalizado");
+			mapa.put(CANCELADO, "Cancelado");
 		}
 	}
 
@@ -75,7 +77,7 @@ public class DomPedido {
 			mapa.put(CADASTRADA, "Cadastrada");
 			mapa.put(FECHADA, "Fechada");
 			mapa.put(REABERTA, "Reaberta");
-			mapa.put(CANCELADA, "Canacelada");
+			mapa.put(CANCELADA, "Cancelada");
 		}
 	}
 

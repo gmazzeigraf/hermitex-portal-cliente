@@ -108,7 +108,7 @@
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 								<p:outputLabel for="descricao" value="Descrição" styleClass="label" />
 								<p:inputText id="descricao" value="#{janelaCompraController.entity.descricao}" maxlength="100" styleClass="ui-grid-col-12"
-									disabled="#{!janelaCompraController.entity.ativa}" />
+									disabled="#{janelaCompraController.editing and !janelaCompraController.entity.ativa}" />
 							</p:panelGrid>
 
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">

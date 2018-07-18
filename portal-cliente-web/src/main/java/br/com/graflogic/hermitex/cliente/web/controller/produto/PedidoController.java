@@ -197,6 +197,27 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 		}
 	}
 
+	public void cancela() {
+		try {
+			service.cancela(getEntity(), SessionUtil.getAuthenticatedUsuario().getId(), observacao);
+
+			returnInfoDialogMessage(I18NUtil.getLabel("sucesso"), "Pedido marcado como cancelado com sucesso");
+
+			afterOperacao();
+
+		} catch (DadosInvalidosException e) {
+			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), e.getMessage(), null);
+
+		} catch (DadosDesatualizadosException e) {
+			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Pedido com dados desatualizados, altere novamente", null);
+
+			select(getEntity().getId());
+
+		} catch (Throwable t) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao marcar pedido como cancelado, contate o administrador", t);
+		}
+	}
+
 	private void afterOperacao() {
 		select(getEntity().getId());
 		executeSearch();
@@ -238,6 +259,11 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 
 	public boolean isFinalizavel() {
 		return null != getEntity() && getEntity().isEnviado() && SessionUtil.possuiPermissao(DomPermissaoAcesso.ROLE_PEDIDO_FINALIZACAO);
+	}
+
+	public boolean isCancelavel() {
+		return null != getEntity() && (getEntity().isPagamentoPendente() || getEntity().isPago())
+				&& SessionUtil.possuiPermissao(DomPermissaoAcesso.ROLE_PEDIDO_CANCELAMENTO);
 	}
 
 	// Getters e Setters

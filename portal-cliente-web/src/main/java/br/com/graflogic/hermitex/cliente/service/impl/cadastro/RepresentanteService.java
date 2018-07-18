@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.graflogic.base.service.gson.GsonUtil;
 import br.com.graflogic.base.service.util.CacheUtil;
+import br.com.graflogic.hermitex.cliente.data.dom.DomAcesso.DomTipoUsuario;
 import br.com.graflogic.hermitex.cliente.data.dom.DomAuditoria.DomEventoAuditoriaRepresentante;
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomStatusRepresentante;
 import br.com.graflogic.hermitex.cliente.data.entity.aud.RepresentanteAuditoria;
@@ -26,6 +27,7 @@ import br.com.graflogic.hermitex.cliente.data.impl.cadastro.RepresentanteReposit
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
 import br.com.graflogic.hermitex.cliente.service.exception.ResultadoNaoEncontradoException;
+import br.com.graflogic.hermitex.cliente.service.impl.acesso.PerfilUsuarioService;
 import br.com.graflogic.hermitex.cliente.web.util.SessionUtil;
 import br.com.graflogic.utilities.datautil.copy.ObjectCopier;
 
@@ -50,6 +52,9 @@ public class RepresentanteService {
 
 	@Autowired
 	private RepresentanteContatoRepository contatoRepository;
+
+	@Autowired
+	private PerfilUsuarioService perfilUsuarioService;
 
 	@Autowired
 	private CacheUtil cacheUtil;
@@ -84,6 +89,9 @@ public class RepresentanteService {
 			repository.update(entity);
 
 			registraAuditoria(entity.getId(), entity, DomEventoAuditoriaRepresentante.CADASTRO, null);
+
+			// Cadastra o perfil de usuario padrao
+			perfilUsuarioService.cadastraPadrao(DomTipoUsuario.REPRESENTANTE, entity.getId());
 
 		} catch (Throwable t) {
 			entity.setContatos(contatos);

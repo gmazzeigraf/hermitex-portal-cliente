@@ -112,7 +112,7 @@ public class DomAuditoria {
 			mapa.put(ATIVACAO, "Ativação");
 		}
 	}
-	
+
 	public static class DomEventoAuditoriaEmbalagem extends DomBase {
 		public static final String CADASTRO = "C";
 		public static final String ATUALIZACAO = "A";
@@ -160,12 +160,14 @@ public class DomAuditoria {
 		public static final String PAGAMENTO = "P";
 		public static final String ENVIO = "E";
 		public static final String FINALIZACAO = "F";
+		public static final String CANCELAMENTO = "L";
 
 		DomEventoAuditoriaPedido() {
 			mapa.put(CADASTRO, "Cadastro");
 			mapa.put(PAGAMENTO, "Pagamento");
 			mapa.put(ENVIO, "Envio");
 			mapa.put(FINALIZACAO, "Finalização");
+			mapa.put(CANCELAMENTO, "Cancelamento");
 		}
 	}
 

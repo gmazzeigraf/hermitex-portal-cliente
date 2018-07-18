@@ -20,10 +20,12 @@ import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuarioAdminis
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuarioCliente;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuarioFilial;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuarioRepresentante;
+import br.com.graflogic.hermitex.cliente.data.entity.acesso.PermissaoAcesso;
 import br.com.graflogic.hermitex.cliente.data.entity.aud.PerfilUsuarioAuditoria;
 import br.com.graflogic.hermitex.cliente.data.impl.acesso.PerfilUsuarioRepository;
 import br.com.graflogic.hermitex.cliente.data.impl.aud.PerfilUsuarioAuditoriaRepository;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
+import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
 import br.com.graflogic.hermitex.cliente.service.exception.ResultadoNaoEncontradoException;
 import br.com.graflogic.hermitex.cliente.web.util.SessionUtil;
 import br.com.graflogic.utilities.datautil.copy.ObjectCopier;
@@ -43,6 +45,9 @@ public class PerfilUsuarioService {
 
 	@Autowired
 	private PerfilUsuarioAuditoriaRepository auditoriaRepository;
+
+	@Autowired
+	private PermissaoAcessoService permissaoAcessoService;
 
 	@Autowired
 	private CacheUtil cacheUtil;
@@ -92,6 +97,38 @@ public class PerfilUsuarioService {
 		} catch (OptimisticLockException e) {
 			throw new DadosDesatualizadosException();
 		}
+	}
+
+	public void cadastraPadrao(String tipoUsuario, Integer idRelacionado) {
+		// Consulta as permissoes para o tipo de usuario
+		List<PermissaoAcesso> permissoes = permissaoAcessoService.consulta(tipoUsuario);
+
+		// Cria o objeto de acordo com o tipo de usuario
+		PerfilUsuario entity = null;
+		if (DomTipoUsuario.CLIENTE.equals(tipoUsuario)) {
+			entity = new PerfilUsuarioCliente();
+			((PerfilUsuarioCliente) entity).setIdCliente(idRelacionado);
+
+		} else if (DomTipoUsuario.FILIAL.equals(tipoUsuario)) {
+			entity = new PerfilUsuarioFilial();
+			((PerfilUsuarioFilial) entity).setIdFilial(idRelacionado);
+
+		} else if (DomTipoUsuario.REPRESENTANTE.equals(tipoUsuario)) {
+			entity = new PerfilUsuarioRepresentante();
+			((PerfilUsuarioRepresentante) entity).setIdRepresentante(idRelacionado);
+
+		} else {
+			throw new DadosInvalidosException("Tipo de usuário desconhecido");
+		}
+
+		// Atribui o nome padrao
+		entity.setNome("ADMINISTRADOR");
+
+		// Atribui as permissoes
+		entity.setPermissoes(permissoes);
+
+		// Cadastra
+		cadastra(entity);
 	}
 
 	// Consulta

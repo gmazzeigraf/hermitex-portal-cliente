@@ -277,7 +277,7 @@
 					<div class="card card-w-title">
 						<h1>Produtos</h1>
 						<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
-							<p:dataTable id="dtbEntities" widgetVar="dtb" var="entity" value="#{pedidoController.entity.itens}" reflow="true"
+							<p:dataTable id="dtbItens" widgetVar="dtb" var="entity" value="#{pedidoController.entity.itens}" reflow="true"
 								emptyMessage="#{null != pedidoController.entity.itens ? 'Nenhum item cadastrado' : ''}" rowIndexVar="index">
 
 								<p:column headerText="" styleClass="id-column">
@@ -333,6 +333,45 @@
 						</div>
 					</c:if>
 
+					<c:if test="#{sessionController.usuarioAdministrador}">
+						<div class="card card-w-title">
+							<h1>Fretes</h1>
+							<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
+								<p:dataTable id="dtbFretes" widgetVar="dtb" var="entity" value="#{pedidoController.entity.fretes}" reflow="true"
+									emptyMessage="#{null != pedidoController.entity.itens ? 'Nenhum frete cadastrado' : ''}" rowIndexVar="index">
+
+									<p:column headerText="Serviço" styleClass="id-column">
+										<h:outputText value="#{entity.codigoServico}" />
+									</p:column>
+
+									<p:column headerText="Prazo (dias)" styleClass="coluna-valor">
+										<h:outputText value="#{entity.prazoDias}" />
+									</p:column>
+
+									<p:column headerText="Itens" styleClass="coluna-valor">
+										<h:outputText value="#{entity.quantidadeItens}" />
+									</p:column>
+
+									<p:column headerText="Peso" styleClass="coluna-valor">
+										<h:outputText value="#{entity.pesoItens}">
+											<f:convertNumber pattern="#,##0.000" />
+										</h:outputText>
+									</p:column>
+
+									<p:column headerText="Valor" styleClass="coluna-valor">
+										<h:outputText value="#{entity.valor}">
+											<f:convertNumber pattern="R$ #,##0.00" />
+										</h:outputText>
+									</p:column>
+
+									<p:column headerText="Embalagem" styleClass="coluna-center">
+										<h:outputText value="#{entity.nomeEmbalagem}" />
+									</p:column>
+								</p:dataTable>
+							</p:panelGrid>
+						</div>
+					</c:if>
+
 					<p:messages />
 
 					<p:panelGrid columns="6" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
@@ -346,6 +385,9 @@
 						<p:commandButton id="finalizacaoButton" icon="fa fa-fw fa-check-square-o" value="#{labels.botao_finalizar}"
 							oncomplete="PF('finalizacaoDialog').show()" process="@this" update="editForm:idFinalizacaoDialog" styleClass="ui-grid-col-12 botao-verde"
 							rendered="#{pedidoController.finalizavel}" />
+
+						<p:commandButton id="cancelamentoButton" icon="fa fa-fw fa-trash" value="#{labels.botao_cancelar}" oncomplete="PF('cancelamentoDialog').show()"
+							process="@this" update="editForm:idCancelamentoDialog" styleClass="ui-grid-col-12 botao-vermelho" rendered="#{pedidoController.cancelavel}" />
 
 						<p:commandButton icon="fa fa-fw fa-close" value="#{labels.botao_fechar}" actionListener="#{pedidoController.close}" process="@this"
 							update=":searchForm :editForm :routeBarForm" styleClass="ui-grid-col-12 botao-fechar" oncomplete="scrollPageTop();" />
@@ -407,6 +449,24 @@
 				<p:commandButton icon="fa fa-fw fa-check" value="#{labels.botao_sim}" actionListener="#{pedidoController.finaliza}"
 					process="@this editForm:observacaoFinalizacao" styleClass="ui-grid-col-12" />
 				<p:commandButton icon="fa fa-fw fa-close" value="#{labels.botao_nao}" styleClass="ui-grid-col-12" onclick="PF('finalizacaoDialog').hide()"
+					process="@this" />
+			</p:panelGrid>
+		</p:dialog>
+
+		<p:dialog header="Confirmar cancelamento do pedido?" id="idCancelamentoDialog" widgetVar="cancelamentoDialog" height="90%" modal="true"
+			draggable="false" resizable="false" responsive="true">
+
+			<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" styleClass="ui-panelgrid-blank form-group">
+				<p:outputLabel value="Observação" styleClass="label" />
+				<p:inputTextarea id="observacaoCancelamento" rows="3" cols="40" value="#{pedidoController.observacao}" styleClass="ui-grid-col-12" maxlength="200" />
+			</p:panelGrid>
+
+			<p:spacer />
+
+			<p:panelGrid columns="2" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
+				<p:commandButton icon="fa fa-fw fa-check" value="#{labels.botao_sim}" actionListener="#{pedidoController.cancela}"
+					process="@this editForm:observacaoCancelamento" styleClass="ui-grid-col-12" />
+				<p:commandButton icon="fa fa-fw fa-close" value="#{labels.botao_nao}" styleClass="ui-grid-col-12" onclick="PF('cancelamentoDialog').hide()"
 					process="@this" />
 			</p:panelGrid>
 		</p:dialog>

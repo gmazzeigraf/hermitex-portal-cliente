@@ -311,6 +311,10 @@ public class ProdutoService {
 	}
 
 	private void validaDados(Produto entity) {
+		if (StringUtils.isEmpty(entity.getCodigo())) {
+			throw new DadosInvalidosException("Favor informar o código");
+		}
+
 		if (entity.getImagens().isEmpty()) {
 			throw new DadosInvalidosException("Ao menos uma imagem devem ser enviada");
 		}
