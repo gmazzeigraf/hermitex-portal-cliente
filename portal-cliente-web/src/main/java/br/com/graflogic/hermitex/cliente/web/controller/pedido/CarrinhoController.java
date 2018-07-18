@@ -13,7 +13,6 @@ import org.springframework.stereotype.Controller;
 
 import br.com.graflogic.base.service.util.I18NUtil;
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomTipoEndereco;
-import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioCliente;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioFilial;
 import br.com.graflogic.hermitex.cliente.data.entity.auxiliar.Estado;
 import br.com.graflogic.hermitex.cliente.data.entity.auxiliar.Municipio;
@@ -101,12 +100,8 @@ public class CarrinhoController extends BaseController implements InitializingBe
 
 			formasPagamento = new ArrayList<>();
 
-			if (SessionUtil.isUsuarioCliente()) {
-				cliente = clienteService.consultaPorId(((UsuarioCliente) SessionUtil.getAuthenticatedUsuario()).getIdCliente());
-
-			} else if (SessionUtil.isUsuarioFilial()) {
-				cliente = clienteService.consultaPorId(((UsuarioFilial) SessionUtil.getAuthenticatedUsuario()).getIdCliente());
-
+			if (SessionUtil.isUsuarioCliente() || SessionUtil.isUsuarioFilial()) {
+				cliente = clienteService.consultaPorId(SessionUtil.getIdCliente());
 			}
 
 			preparaNovoPedido();
@@ -267,9 +262,9 @@ public class CarrinhoController extends BaseController implements InitializingBe
 			pedidoService.cadastra(pedido, pedido.isPagamentoCartaoCredito() ? dadosPagamentoCartaoCredito : null,
 					SessionUtil.getAuthenticatedUsuario().getId());
 
-			mensagemConclusaoPedido = "Pedido " + pedido.getFormattedId()
-					+ " efetuado com sucesso" + (pedido.isPagamentoBoleto()
-							? ", visualize o boleto <a href=\"" + pedido.getUrlBoleto() + "\" target=\"_blank\">aqui</a> ou na" : ", para mais informações acesse a")
+			mensagemConclusaoPedido = "Pedido " + pedido.getFormattedId() + " efetuado com sucesso"
+					+ (pedido.isPagamentoBoleto() ? ", visualize o boleto <a href=\"" + pedido.getUrlBoleto() + "\" target=\"_blank\">aqui</a> ou na"
+							: ", para mais informações acesse a")
 					+ " página \"Pedido / Consulta\"";
 
 			redirectView(getApplicationUrl() + "/pages/compra/conclusao.jsf");

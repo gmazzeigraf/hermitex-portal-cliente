@@ -294,7 +294,17 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 
 			service.alteraSenha(getEntity().getId(), senhaAtual, novaSenha);
 
+			Integer idCliente = SessionUtil.getIdCliente();
+
 			setEntity(service.consultaPorId(getEntity().getId()));
+
+			if (SessionUtil.isUsuarioCliente()) {
+				((UsuarioCliente) getEntity()).setIdCliente(idCliente);
+
+			} else if (SessionUtil.isUsuarioFilial()) {
+				((UsuarioFilial) getEntity()).setIdCliente(idCliente);
+
+			}
 
 			SessionUtil.getAuthenticatedUser().setUsuario(getEntity());
 

@@ -32,6 +32,18 @@ public class DomProduto {
 	}
 
 	public static DomStatusTamanho domStatusTamanho = new DomStatusTamanho();
+	
+	public static class DomStatusEmbalagem extends DomBase {
+		public static final String ATIVO = "A";
+		public static final String INATIVO = "I";
+
+		DomStatusEmbalagem() {
+			mapa.put(ATIVO, "Ativo");
+			mapa.put(INATIVO, "Inativo");
+		}
+	}
+
+	public static DomStatusEmbalagem domStatusEmbalagem = new DomStatusEmbalagem();
 
 	public static class DomStatusCategoria extends DomBase {
 		public static final String ATIVA = "A";

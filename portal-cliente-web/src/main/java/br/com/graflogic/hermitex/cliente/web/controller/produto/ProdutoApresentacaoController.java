@@ -14,8 +14,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 import br.com.graflogic.base.service.util.I18NUtil;
-import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioCliente;
-import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioFilial;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoItem;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.CategoriaProduto;
@@ -89,12 +87,8 @@ public class ProdutoApresentacaoController extends SearchBaseController<ProdutoA
 			if (SessionUtil.isUsuarioAdministrador()) {
 				clientes = clienteService.consultaAtivos();
 
-			} else if (SessionUtil.isUsuarioCliente()) {
-				getFilterEntity().setIdCliente(((UsuarioCliente) SessionUtil.getAuthenticatedUsuario()).getIdCliente());
-
-			} else if (SessionUtil.isUsuarioFilial()) {
-				getFilterEntity().setIdCliente(((UsuarioFilial) SessionUtil.getAuthenticatedUsuario()).getIdCliente());
-
+			} else if (SessionUtil.isUsuarioCliente() || SessionUtil.isUsuarioFilial()) {
+				getFilterEntity().setIdCliente(SessionUtil.getIdCliente());
 			}
 
 			if (null != getFilterEntity().getIdCliente()) {

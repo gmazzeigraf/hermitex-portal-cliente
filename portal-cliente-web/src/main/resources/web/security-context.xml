@@ -18,6 +18,7 @@
 		<intercept-url pattern="/pages/administracao/acesso/usuario.jsf" access="hasAnyRole('ROLE_ADM_ACESSO_USUARIO')" />
 
 		<intercept-url pattern="/pages/administracao/produto/tamanho.jsf" access="hasAnyRole('ROLE_ADM_PRODUTO_TAMANHO')" />
+		<intercept-url pattern="/pages/administracao/produto/embalagem.jsf" access="hasAnyRole('ROLE_ADM_PRODUTO_EMBALAGEM')" />
 
 		<!-- Cliente -->
 		<intercept-url pattern="/pages/cliente/cadastro.jsf" access="hasAnyRole('ROLE_CLI_CADASTRO')" />

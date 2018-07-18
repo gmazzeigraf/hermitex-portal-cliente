@@ -23,6 +23,8 @@
 							<p:submenu id="menu_administracao_produto" icon="fa fa-fw fa-tags" label="#{labels.menu_administracao_produto}">
 								<p:menuitem id="menu_administracao_produto_tamanho" icon="fa fa-fw fa-arrows" value="#{labels.menu_administracao_produto_tamanho}"
 									url="/pages/administracao/produto/tamanho.jsf" rendered="#{sec:isAllowed('/pages/administracao/produto/tamanho.jsf', '')}" />
+								<p:menuitem id="menu_administracao_produto_embalagem" icon="fa fa-fw fa-dropbox" value="#{labels.menu_administracao_produto_embalagem}"
+									url="/pages/administracao/produto/embalagem.jsf" rendered="#{sec:isAllowed('/pages/administracao/produto/embalagem.jsf', '')}" />
 							</p:submenu>
 						</p:submenu>
 

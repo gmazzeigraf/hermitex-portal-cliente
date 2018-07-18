@@ -6,14 +6,13 @@ import java.io.IOException;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicHeader;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.CoreConnectionPNames;
-import org.apache.http.params.HttpParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,10 +46,9 @@ public class MundiPaggClient {
 		LOGGER.debug("-> " + conteudoEnvio);
 
 		// Cria o cliente HTTP
-		HttpParams parametros = new BasicHttpParams();
-		parametros.setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, 15000);
-		parametros.setParameter(CoreConnectionPNames.SO_TIMEOUT, 60000);
-		HttpClient client = new DefaultHttpClient(parametros);
+		RequestConfig config = RequestConfig.custom().setConnectTimeout(15000).setSocketTimeout(6000).build();
+
+		CloseableHttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(config).build();
 
 		// Monta a requisicao
 		HttpPost post = new HttpPost(url + "/Sale/");

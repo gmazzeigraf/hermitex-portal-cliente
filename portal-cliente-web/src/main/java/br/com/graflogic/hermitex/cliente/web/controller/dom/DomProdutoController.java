@@ -27,6 +27,10 @@ public class DomProdutoController implements Serializable {
 		return DomProduto.domStatusTamanho.getMap();
 	}
 
+	public Map<String, Object> getStatusEmbalagemMap() {
+		return DomProduto.domStatusEmbalagem.getMap();
+	}
+
 	public Map<String, Object> getStatusCategoriaMap() {
 		return DomProduto.domStatusCategoria.getMap();
 	}

@@ -1,0 +1,200 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/pages/templates/crud_template.xhtml"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+	<ui:define name="viewname">#{labels.menu_administracao} / #{labels.menu_administracao_produto} / #{labels.menu_administracao_produto_embalagem} </ui:define>
+
+	<ui:define name="search">
+		<c:if test="#{null == embalagemController.entity}">
+			<div class="ui-g">
+				<div class="ui-g-12">
+					<div class="card card-w-title">
+						<h1>#{labels.consulta}</h1>
+						<p:panelGrid columns="1" id="filterGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
+							<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="nomeFilter" value="Nome" styleClass="label" />
+									<p:inputText id="nomeFilter" value="#{embalagemController.filterEntity.nome}" maxlength="50" styleClass="ui-grid-col-12" />
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="tipoProdutoFilter" value="Tipo Produto" styleClass="label" />
+									<p:selectOneMenu id="tipoProdutoFilter" value="#{embalagemController.filterEntity.tipoProduto}" styleClass="ui-grid-col-12">
+										<f:selectItem itemLabel="" itemValue="" />
+										<f:selectItems value="#{domProdutoController.tipoMap}" />
+									</p:selectOneMenu>
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="statusFilter" value="Status" styleClass="label" />
+									<p:selectOneMenu id="statusFilter" value="#{embalagemController.filterEntity.status}" styleClass="ui-grid-col-12">
+										<f:selectItem itemLabel="" itemValue="" />
+										<f:selectItems value="#{domProdutoController.statusEmbalagemMap}" />
+									</p:selectOneMenu>
+								</p:panelGrid>
+							</p:panelGrid>
+
+							<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank">
+								<p:spacer styleClass="display-desktop" />
+								<p:commandButton value="#{labels.botao_pesquisar}" id="searchButton" icon="fa fa-fw fa-search" update="dtbEntities searchMessages"
+									actionListener="#{embalagemController.search}" process="@this, filterGrid" oncomplete="PF('dtb').getPaginator().setPage(0);"
+									styleClass="ui-grid-col-4 botao-pesquisar" />
+							</p:panelGrid>
+
+							<p:messages id="searchMessages" />
+
+							<p:separator />
+
+							<p:defaultCommand target="searchButton" scope="filterGrid" />
+
+							<p:commandButton value="#{labels.botao_adicionar}" icon="fa fa-fw fa-plus" actionListener="#{embalagemController.add}"
+								update=":searchForm :editForm" process="@this" resetValues="true" styleClass="ui-grid-col-12 botao-adicionar" />
+						</p:panelGrid>
+
+						<p:dataTable id="dtbEntities" widgetVar="dtb" var="entity" value="#{embalagemController.entities}" rowKey="#{entity.id}" paginator="true"
+							paginatorPosition="bottom" reflow="true" rows="10"
+							emptyMessage="#{null != embalagemController.entities ? messages.nenhum_resultado_encontrado : messages.realize_pesquisa}">
+
+							<p:column headerText="#" sortBy="#{entity.id}" styleClass="id-column">
+								<h:outputText value="#{entity.id}" />
+							</p:column>
+
+							<p:column headerText="Nome" sortBy="#{entity.nome}">
+								<h:outputText value="#{entity.nome}" />
+							</p:column>
+
+							<p:column headerText="Tipo Produto" sortBy="#{entity.deTipoProduto}">
+								<h:outputText value="#{entity.deTipoProduto}" />
+							</p:column>
+
+							<p:column headerText="Quantidade Máxima" sortBy="#{entity.quantidadeMaxima}">
+								<h:outputText value="#{entity.quantidadeMaxima}" />
+							</p:column>
+
+							<p:column headerText="Peso Máximo" sortBy="#{entity.pesoMaximo}">
+								<h:outputText value="#{entity.pesoMaximo}">
+									<f:convertNumber pattern="#,##0.000" />
+								</h:outputText>
+							</p:column>
+
+							<p:column headerText="Status" sortBy="#{entity.deStatus}" styleClass="status-column">
+								<h:outputText value="#{entity.deStatus}" />
+							</p:column>
+
+							<p:column styleClass="coluna-edicao">
+								<p:commandButton icon="fa fa-fw fa-pencil" title="#{labels.botao_editar}" update=":searchForm :editForm" process="@this" resetValues="true"
+									styleClass="ui-grid-col-12">
+									<f:setPropertyActionListener value="#{entity}" target="#{embalagemController.selectedEntity}" />
+								</p:commandButton>
+							</p:column>
+
+							<f:facet name="footer">
+								<h:outputText value="#{fn:length(embalagemController.entities)} registro(s) encontrado(s)" />
+							</f:facet>
+						</p:dataTable>
+					</div>
+				</div>
+			</div>
+		</c:if>
+	</ui:define>
+
+	<ui:define name="edit">
+		<c:if test="#{null != embalagemController.entity}">
+			<div class="ui-g">
+				<div class="ui-g-12">
+					<div class="card card-w-title">
+						<h1>#{labels.informacoes}</h1>
+						<p:panelGrid columns="1" id="informacoesGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
+							<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="nome" value="Nome" styleClass="label" />
+									<p:inputText id="nome" value="#{embalagemController.entity.nome}" maxlength="50" styleClass="ui-grid-col-12" required="true"
+										requiredMessage="Favor informar o nome" />
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="tipoProduto" value="Tipo Produto" styleClass="label" />
+									<p:selectOneMenu id="tipoProduto" value="#{embalagemController.entity.tipoProduto}" styleClass="ui-grid-col-12" required="true"
+										requiredMessage="Favor selecionar o tipo produto">
+										<f:selectItem itemLabel="Selecione" itemValue="" />
+										<f:selectItems value="#{domProdutoController.tipoMap}" />
+									</p:selectOneMenu>
+								</p:panelGrid>
+							</p:panelGrid>
+
+							<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="pesoMaximo" value="Peso Máximo (kg)" styleClass="label" />
+									<p:inputNumber id="pesoMaximo" value="#{embalagemController.entity.pesoMaximo}" styleClass="input-number-resp" decimalSeparator=","
+										thousandSeparator="." decimalPlaces="3" maxValue="9999.999" required="true" requiredMessage="Favor informar o peso máximo">
+									</p:inputNumber>
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="quantidadeMaxima" value="Quantidad Máxima" styleClass="label" />
+									<p:inputNumber id="quantidadeMaxima" value="#{embalagemController.entity.quantidadeMaxima}" styleClass="input-number-resp" required="true"
+										requiredMessage="Favor informar a quantidade máxima" decimalPlaces="0" validatorMessage="A quantidade máxima deve ser entre 1 e 99">
+										<f:validateLongRange minimum="1" maximum="99" />
+									</p:inputNumber>
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="peso" value="Peso (kg)" styleClass="label" />
+									<p:inputNumber id="peso" value="#{embalagemController.entity.peso}" styleClass="input-number-resp" decimalSeparator="," thousandSeparator="."
+										decimalPlaces="3" maxValue="9999.999" required="true" requiredMessage="Favor informar o peso">
+									</p:inputNumber>
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="altura" value="Altura (cm)" styleClass="label" />
+									<p:inputNumber id="altura" value="#{embalagemController.entity.altura}" styleClass="input-number-resp" decimalSeparator=","
+										thousandSeparator="." decimalPlaces="2" maxValue="9999.99" required="true" requiredMessage="Favor informar a altura">
+									</p:inputNumber>
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="largura" value="Largura (cm)" styleClass="label" />
+									<p:inputNumber id="largura" value="#{embalagemController.entity.largura}" styleClass="input-number-resp" decimalSeparator=","
+										thousandSeparator="." decimalPlaces="2" maxValue="9999.99" required="true" requiredMessage="Favor informar a largura">
+									</p:inputNumber>
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="comprimento" value="Comprimento (cm)" styleClass="label" />
+									<p:inputNumber id="comprimento" value="#{embalagemController.entity.comprimento}" styleClass="input-number-resp" decimalSeparator=","
+										thousandSeparator="." decimalPlaces="2" maxValue="9999.99" required="true" requiredMessage="Favor informar o comprimento">
+									</p:inputNumber>
+								</p:panelGrid>
+							</p:panelGrid>
+						</p:panelGrid>
+					</div>
+
+					<p:messages />
+
+					<p:panelGrid columns="6" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
+						<p:commandButton id="submitButton" icon="fa fa-fw fa-save" value="#{labels.botao_gravar}" actionListener="#{embalagemController.save}"
+							process=":editForm:informacoesGrid" update=":editForm :searchForm" styleClass="ui-grid-col-12" />
+
+						<p:commandButton id="inativacaoButton" icon="fa fa-fw fa-ban" value="#{labels.botao_inativar}" actionListener="#{embalagemController.inativa}"
+							process="@this" update=":searchForm :editForm" styleClass="ui-grid-col-12 botao-vermelho"
+							rendered="#{embalagemController.editing and embalagemController.entity.ativo}">
+							<p:confirm header="Confirmação" message="Confirmar inativação?" icon="ui-icon-alert" />
+						</p:commandButton>
+
+						<p:commandButton id="ativacaoButton" icon="fa fa-fw fa-check-circle" value="#{labels.botao_ativar}"
+							actionListener="#{embalagemController.ativa}" process="@this" update=":searchForm :editForm" styleClass="ui-grid-col-12"
+							rendered="#{embalagemController.editing and embalagemController.entity.inativo}">
+							<p:confirm header="Confirmação" message="Confirmar ativação?" icon="ui-icon-alert" />
+						</p:commandButton>
+
+						<p:commandButton icon="fa fa-fw fa-close" value="#{labels.botao_fechar}" actionListener="#{embalagemController.close}" process="@this"
+							update=":searchForm :editForm" styleClass="ui-grid-col-12 botao-fechar" />
+					</p:panelGrid>
+				</div>
+			</div>
+		</c:if>
+	</ui:define>
+
+	<ui:define name="complement">
+	</ui:define>
+</ui:composition>

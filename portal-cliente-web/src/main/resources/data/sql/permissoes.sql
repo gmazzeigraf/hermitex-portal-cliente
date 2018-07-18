@@ -10,6 +10,7 @@ INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_AD
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_ADM_ACESSO_USUARIO', 'Administração / Acesso / Usuário', 'A');
 
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_ADM_PRODUTO_TAMANHO', 'Administração / Produto / Tamanho', 'A');
+INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_ADM_PRODUTO_EMBALAGEM', 'Administração / Produto / Embalagem', 'A');
 
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_CLI_CADASTRO', 'Cliente / Cadastro', 'A');
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_CLI_PRODUTO_CATEGORIA', 'Cliente / Produto / Categoria', 'A');

@@ -91,7 +91,7 @@ public class SessionController extends BaseController implements InitializingBea
 
 		} else {
 			FacesContext context = FacesContext.getCurrentInstance();
-			Resource resource = context.getApplication().getResourceHandler().createResource("images/logo-black.png", "poseidon-layout");
+			Resource resource = context.getApplication().getResourceHandler().createResource("images/logo-colored.png", "poseidon-layout");
 			String url = resource.getRequestPath();
 
 			return url;

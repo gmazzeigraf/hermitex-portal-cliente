@@ -21,12 +21,27 @@
 			</Pattern>
 		</layout>
 	</appender>
-	
+
 	<!--Daily rolling file appender -->
 	<appender name="MUNDIPAGG" class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<File>../app_logs/mundipagg.log</File>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 			<FileNamePattern>../app_logs/mundipagg.%d{yyyy-MM-dd}.log
+			</FileNamePattern>
+		</rollingPolicy>
+
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>
+				%d{HH:mm:ss.SSS}|%t|%msg%n
+			</Pattern>
+		</layout>
+	</appender>
+
+	<!--Daily rolling file appender -->
+	<appender name="CORREIOS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>../app_logs/correios.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>../app_logs/correios.%d{yyyy-MM-dd}.log
 			</FileNamePattern>
 		</rollingPolicy>
 
@@ -56,11 +71,24 @@
 		<level value="info" />
 		<appender-ref ref="FILE" />
 	</logger>
-	
+
 	<logger name="MUNDIPAGG">
 		<level value="debug" />
 		<appender-ref ref="MUNDIPAGG" />
 	</logger>
+
+	<logger name="CORREIOS">
+		<level value="debug" />
+		<appender-ref ref="CORREIOS" />
+	</logger>
+
+	<!-- <logger name="org.springframework.ws.client.MessageTracing"> -->
+	<!-- <level value="TRACE" /> -->
+	<!-- </logger> -->
+
+	<!-- <logger name="org.springframework.ws.server.MessageTracing"> -->
+	<!-- <level value="TRACE" /> -->
+	<!-- </logger> -->
 
 	<root>
 		<level value="error" />
