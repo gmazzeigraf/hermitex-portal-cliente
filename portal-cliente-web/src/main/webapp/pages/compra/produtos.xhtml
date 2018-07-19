@@ -120,15 +120,14 @@
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" style="text-align: center;" id="imagensProdutoGrid">
 									<p:galleria value="#{produtoApresentacaoController.entity.imagens}" var="imagem" showCaption="false" autoPlay="false" style="width: 100%;"
 										styleClass="galleria-produtos" id="galleria-imagens">
-										<img id="#{imagem.id}" src="/web#{sessionController.getUrlImagem(imagem.id, 20)}"
-											data-zoom-image="/web#{sessionController.getUrlImagem(imagem.id, null)}" />
-
+										<img id="#{imagem.id}" src="#{request.contextPath}#{sessionController.getUrlImagem(imagem.id, 20)}"
+											data-zoom-image="#{request.contextPath}#{sessionController.getUrlImagem(imagem.id, null)}" />
 										<script>
 											$("##{imagem.id}").elevateZoom();
 										</script>
 									</p:galleria>
 								</p:panelGrid>
-
+								
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" style="font-size: 16px !important;" id="dadosProdutoGrid">
 
 									<h1>#{produtoApresentacaoController.entity.titulo}</h1>
