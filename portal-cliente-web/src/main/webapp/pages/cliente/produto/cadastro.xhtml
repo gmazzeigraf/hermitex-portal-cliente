@@ -390,7 +390,7 @@
 									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 										<p:outputLabel for="tamanho" value="Tamanho" styleClass="label" />
 										<p:selectOneMenu id="tamanho" value="#{produtoController.tamanho.id.codigoTamanho}" styleClass="ui-grid-col-12" required="true"
-											requiredMessage="Favor selecionar o tamanho">
+											requiredMessage="Favor selecionar o tamanho" disabled="#{produtoController.editingRelated}">
 											<f:selectItem itemLabel="Selecione" itemValue="" />
 											<f:selectItems value="#{produtoController.tamanhos}" var="item" itemLabel="#{item.codigo}" itemValue="#{item.codigo}" />
 										</p:selectOneMenu>
