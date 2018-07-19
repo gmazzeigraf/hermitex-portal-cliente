@@ -24,7 +24,7 @@
 									<p:selectOneMenu id="clienteFilter" value="#{produtoApresentacaoController.filterEntity.idCliente}" styleClass="ui-grid-col-12" filter="true"
 										filterMatchMode="contains">
 										<f:selectItem itemLabel="Selecione" itemValue="" />
-										<f:selectItems value="#{produtoApresentacaoController.clientes}" var="item" itemLabel="#{item.razaoSocial}" itemValue="#{item.id}" />
+										<f:selectItems value="#{produtoApresentacaoController.clientes}" var="item" itemLabel="#{item.id} - #{item.razaoSocial}" itemValue="#{item.id}" />
 										<p:ajax process="@this" update=":searchForm" listener="#{produtoApresentacaoController.changeCliente}" />
 									</p:selectOneMenu>
 								</p:panelGrid>
