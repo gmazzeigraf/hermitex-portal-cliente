@@ -365,7 +365,7 @@ body.main-body {
 }
 
 /* Fonte padrao */
-body {
+body, body .ui-widget, body .ui-widget .ui-widget {
 	font-family: Roboto Regular !important;
 }
 

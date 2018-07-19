@@ -2,6 +2,7 @@ package br.com.graflogic.hermitex.cliente.data.entity.pedido;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -278,5 +279,9 @@ public class Pedido implements Serializable {
 
 	public String getFormattedId() {
 		return StringUtils.leftPad(id.toString(), 10, "0");
+	}
+
+	public String getFormattedValorTotal() {
+		return new DecimalFormat("R$ #,##0.00").format(valorTotal);
 	}
 }

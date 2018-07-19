@@ -125,9 +125,9 @@
 					<p:spacer styleClass="display-desktop" />
 
 					<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-						<p:outputLabel for="tipoFrete" value="Tipo Frete *" styleClass="label" />
+						<h3>Tipo</h3>
 						<p:selectOneMenu id="tipoFrete" value="#{carrinhoController.codigoServicoFrete}" styleClass="ui-grid-col-12">
-							<f:selectItem itemLabel="Selecione" itemValue="-1" />
+							<f:selectItem itemLabel="Selecione" itemValue="" />
 							<f:selectItems value="#{carrinhoController.tiposFrete}" var="item" itemLabel="#{item.descricao}" itemValue="#{item.codigoServico}" />
 							<p:ajax process="@this" update=":mainForm:dadosPagamentoGrid" listener="#{carrinhoController.changeTipoFrete}" />
 						</p:selectOneMenu>
@@ -141,8 +141,12 @@
 					<p:spacer styleClass="display-desktop" />
 
 					<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group" id="dadosPagamentoGrid">
+						<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{carrinhoController.tipoFreteSelecionado}">
+							<h3>Total do pedido: R$ #{carrinhoController.pedido.formattedValorTotal}</h3>
+						</p:panelGrid>
+
 						<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-							<p:outputLabel for="formaPagamento" value="Forma Pagamento *" styleClass="label" />
+							<h3>Forma</h3>
 							<p:selectOneMenu id="formaPagamento" value="#{carrinhoController.sequencialFormaPagamento}" styleClass="ui-grid-col-12"
 								disabled="#{!carrinhoController.tipoFreteSelecionado}">
 								<f:selectItem itemLabel="Selecione" itemValue="-1" />

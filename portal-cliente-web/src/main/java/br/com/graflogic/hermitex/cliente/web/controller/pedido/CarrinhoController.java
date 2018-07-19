@@ -190,7 +190,7 @@ public class CarrinhoController extends BaseController implements InitializingBe
 			return;
 		}
 
-		sequencialFormaPagamento = null;
+		sequencialFormaPagamento = -1;
 
 		formasPagamento.clear();
 
@@ -279,6 +279,7 @@ public class CarrinhoController extends BaseController implements InitializingBe
 			}
 
 			codigoServicoFrete = null;
+			sequencialFormaPagamento = -1;
 
 			tiposFrete.clear();
 			formasPagamento.clear();
