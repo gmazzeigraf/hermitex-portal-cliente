@@ -284,7 +284,7 @@ body .ui-widget-header {
 }
 
 .galleria-produtos img:hover {
-	transform: scale(1.5); /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
+/* 	transform: scale(1.5); (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
 }
 /* 	Correcao da altura da imagem da galleria */
 .ui-galleria, .ui-galleria-panel-wrapper, .ui-galleria-panel {

@@ -106,6 +106,8 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 
 				} else if (SessionUtil.isUsuarioCliente()) {
 					idEntidade = ((UsuarioCliente) SessionUtil.getAuthenticatedUsuario()).getIdCliente();
+					
+					changeEntidade();
 				}
 
 			} else if (isViewFilial()) {
@@ -120,6 +122,8 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 
 				} else if (SessionUtil.isUsuarioFilial()) {
 					idEntidade = ((UsuarioFilial) SessionUtil.getAuthenticatedUsuario()).getIdFilial();
+					
+					changeEntidade();
 
 				}
 
@@ -131,6 +135,8 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 
 				} else if (SessionUtil.isUsuarioRepresentante()) {
 					idEntidade = ((UsuarioRepresentante) SessionUtil.getAuthenticatedUsuario()).getIdRepresentante();
+					
+					changeEntidade();
 				}
 			}
 

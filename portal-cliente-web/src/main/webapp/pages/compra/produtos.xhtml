@@ -10,6 +10,8 @@
 	</ui:define>
 
 	<ui:define name="search">
+		<h:outputScript name="elevatezoom-master/jquery.elevatezoom.js" library="custom-layout" />
+
 		<c:if test="#{null == produtoApresentacaoController.entity}">
 			<div class="ui-g">
 				<div class="ui-g-12">
@@ -117,8 +119,13 @@
 							<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group" columnClasses="ui-grid-col-6, ui-grid-col-6">
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" style="text-align: center;" id="imagensProdutoGrid">
 									<p:galleria value="#{produtoApresentacaoController.entity.imagens}" var="imagem" showCaption="false" autoPlay="false" style="width: 100%;"
-										styleClass="galleria-produtos">
-										<p:graphicImage cache="true" value="#{sessionController.getUrlImagem(imagem.id, 20)}" title="" />
+										styleClass="galleria-produtos" id="galleria-imagens">
+										<img id="#{imagem.id}" src="/web#{sessionController.getUrlImagem(imagem.id, 20)}"
+											data-zoom-image="/web#{sessionController.getUrlImagem(imagem.id, null)}" />
+
+										<script>
+											$("##{imagem.id}").elevateZoom();
+										</script>
 									</p:galleria>
 								</p:panelGrid>
 
