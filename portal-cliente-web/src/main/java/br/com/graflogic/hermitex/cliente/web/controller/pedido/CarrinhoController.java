@@ -320,10 +320,15 @@ public class CarrinhoController extends BaseController implements InitializingBe
 			pedidoService.cadastra(pedido, pedido.isPagamentoCartaoCredito() ? dadosPagamentoCartaoCredito : null,
 					SessionUtil.getAuthenticatedUsuario().getId());
 
-			mensagemConclusaoPedido = "Pedido " + pedido.getFormattedId() + " efetuado com sucesso"
-					+ (pedido.isPagamentoBoleto() ? ", visualize o boleto <a href=\"" + pedido.getUrlBoleto() + "\" target=\"_blank\">aqui</a> ou na"
-							: ", para mais informações acesse a")
-					+ " página \"Pedido / Consulta\"";
+			mensagemConclusaoPedido = "Obrigado pela sua compra, o pedido " + pedido.getFormattedId() + " foi efetuado com sucesso. "
+			// Boleto
+					+ (pedido.isPagamentoBoleto() ? "Visualize o boleto <a href=\"" + pedido.getUrlBoleto() + "\" target=\"_blank\">aqui</a>."
+							// Faturamento
+							: (pedido.isPagamentoFaturamento() ? "Seus boletos serão encaminhados via e-mail no próximo dia útil."
+									// Outros
+									: ""))
+					// Todos
+					+ "<br /> Para mais informações acesse a página \"Pedido / Consulta\"";
 
 			passo = 3;
 
