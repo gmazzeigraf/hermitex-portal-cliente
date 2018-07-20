@@ -242,7 +242,7 @@
 								</p:panelGrid>
 
 								<c:if test="#{fn:length(produtoController.entity.linkYoutube) > 0}">
-									<iframe src="#{produtoController.entity.linkYoutube}" class="video-youtube" />
+									<iframe src="#{produtoController.entity.linkYoutube}#{sessionController.parametrosYoutube}" class="video-youtube" />
 								</c:if>
 							</p:panelGrid>
 						</p:panelGrid>

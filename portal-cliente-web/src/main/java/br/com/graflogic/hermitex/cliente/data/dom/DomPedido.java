@@ -96,10 +96,12 @@ public class DomPedido {
 	public static DomStatusSolicitacaoTroca domStatusSolicitacaoTroca = new DomStatusSolicitacaoTroca();
 
 	public static class DomServicoFrete extends DomBase {
+		public static final String RETIRADA_HERMITEX = "00001";
 		public static final String SEDEX = "04162";
 		public static final String PAC = "04812";
 
 		DomServicoFrete() {
+			mapa.put(RETIRADA_HERMITEX, "Retirada na Hermitex. Cidade de Campinas - SP");
 			mapa.put(SEDEX, "SEDEX");
 			mapa.put(PAC, "PAC");
 		}

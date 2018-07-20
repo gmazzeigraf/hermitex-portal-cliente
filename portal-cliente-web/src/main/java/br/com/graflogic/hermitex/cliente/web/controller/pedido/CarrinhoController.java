@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 
 import br.com.graflogic.base.service.util.I18NUtil;
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomTipoEndereco;
+import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomServicoFrete;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioFilial;
 import br.com.graflogic.hermitex.cliente.data.entity.auxiliar.Estado;
 import br.com.graflogic.hermitex.cliente.data.entity.auxiliar.Municipio;
@@ -284,16 +285,20 @@ public class CarrinhoController extends BaseController implements InitializingBe
 			tiposFrete.clear();
 			formasPagamento.clear();
 
-			tiposFrete = pedidoService.geraTiposFrete(pedido);
+			try {
+				tiposFrete = pedidoService.geraTiposFreteCorreios(pedido);
+			} catch (CorreiosException e) {
+				returnFatalDialogMessage(I18NUtil.getLabel("erro"),
+						"Cálculo de frete dos Correios indisponível, tente novamente mais tarde ou selecione outro tipo", e);
+			}
+
+			tiposFrete.add(pedidoService.geraTipoFreteRetirada());
 
 			if (pedido.getItens().isEmpty()) {
 				redirectView(getApplicationUrl() + "/pages/compra/produtos.jsf");
 			}
 
 			passo = 2;
-
-		} catch (CorreiosException e) {
-			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao calcular frete, contate o administrador", e);
 
 		} catch (Throwable t) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao prosseguir para pagamento, contate o administrador", t);
@@ -320,7 +325,7 @@ public class CarrinhoController extends BaseController implements InitializingBe
 			pedidoService.cadastra(pedido, pedido.isPagamentoCartaoCredito() ? dadosPagamentoCartaoCredito : null,
 					SessionUtil.getAuthenticatedUsuario().getId());
 
-			mensagemConclusaoPedido = "Obrigado pela sua compra, o pedido " + pedido.getFormattedId() + " foi efetuado com sucesso. "
+			mensagemConclusaoPedido = "Obrigado pela sua compra, o pedido <b>" + pedido.getFormattedId() + "</b> foi efetuado com sucesso. "
 			// Boleto
 					+ (pedido.isPagamentoBoleto() ? "Visualize o boleto <a href=\"" + pedido.getUrlBoleto() + "\" target=\"_blank\">aqui</a>."
 							// Faturamento
@@ -328,14 +333,17 @@ public class CarrinhoController extends BaseController implements InitializingBe
 									// Outros
 									: ""))
 					// Todos
-					+ "<br /> Para mais informações acesse a página \"Pedido / Consulta\"";
+					+ "<br /> Para mais informações acesse a página \"Pedido / Consulta\"" + "<br /> O pedido "
+					+ (DomServicoFrete.RETIRADA_HERMITEX.equals(codigoServicoFrete) ? "estará disponível" : " será despachado")
+					+ " em até 30 dias úteis após o fechamento da janela de compra.";
 
 			passo = 3;
 
 			preparaNovoPedido();
 
 		} catch (PagamentoException e) {
-			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao enviar o pagamento, contate o administrador", e);
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"),
+					e.mensagemAmigavel() ? e.getMessage() : "Erro ao enviar o pagamento, contate o administrador", e);
 
 		} catch (DadosInvalidosException e) {
 			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), e.getMessage(), null);

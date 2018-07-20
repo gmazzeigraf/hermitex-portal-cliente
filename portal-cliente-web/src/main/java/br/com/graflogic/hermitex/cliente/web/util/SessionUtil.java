@@ -14,6 +14,7 @@ import br.com.graflogic.hermitex.cliente.data.dom.DomAcesso.DomTipoUsuario;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.Usuario;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioCliente;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioFilial;
+import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioRepresentante;
 import br.com.graflogic.hermitex.cliente.web.security.UserInfo;
 
 /**
@@ -87,16 +88,38 @@ public class SessionUtil {
 	}
 
 	public static Integer getIdCliente() {
-		Integer idCliente = null;
+		Integer id = null;
 
 		if (SessionUtil.isUsuarioCliente()) {
-			idCliente = ((UsuarioCliente) getAuthenticatedUsuario()).getIdCliente();
+			id = ((UsuarioCliente) getAuthenticatedUsuario()).getIdCliente();
 
 		} else if (SessionUtil.isUsuarioFilial()) {
-			idCliente = ((UsuarioFilial) getAuthenticatedUsuario()).getIdCliente();
+			id = ((UsuarioFilial) getAuthenticatedUsuario()).getIdCliente();
 
 		}
 
-		return idCliente;
+		return id;
+	}
+
+	public static Integer getIdFilial() {
+		Integer id = null;
+
+		if (SessionUtil.isUsuarioFilial()) {
+			id = ((UsuarioFilial) getAuthenticatedUsuario()).getIdFilial();
+
+		}
+
+		return id;
+	}
+
+	public static Integer getIdRepresentante() {
+		Integer id = null;
+
+		if (SessionUtil.isUsuarioRepresentante()) {
+			id = ((UsuarioRepresentante) getAuthenticatedUsuario()).getIdRepresentante();
+
+		}
+
+		return id;
 	}
 }

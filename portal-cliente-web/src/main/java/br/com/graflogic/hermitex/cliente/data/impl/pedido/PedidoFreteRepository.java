@@ -27,7 +27,7 @@ public class PedidoFreteRepository extends BaseRepository<PedidoFrete> {
 	@SuppressWarnings("unchecked")
 	public List<PedidoFrete> consultaPorPedido(Long idPedido) {
 		String queryStr = "SELECT fre.id, fre.id_pedido, fre.id_embalagem, fre.peso_itens, fre.qt_itens, fre.valor, fre.prazo_dias, fre.cd_servico, emb.nome AS nome_embalagem"
-				+ " FROM tb_pedido_frete fre INNER JOIN tb_embalagem emb ON fre.id_embalagem = emb.id";
+				+ " FROM tb_pedido_frete fre LEFT JOIN tb_embalagem emb ON fre.id_embalagem = emb.id";
 
 		String where = "";
 

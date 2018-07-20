@@ -28,8 +28,9 @@
 								</a></li>
 							</form>
 						</ul></li>
-					<li class="topbar-item-name-web"><span>#{sessionController.authenticatedUser.principal.usuario.email}</span> <span>#{sessionController.authenticatedUser.principal.usuario.nome}</span>
-					</li>
+					<li class="topbar-item-name-web"><c:if test="#{null != sessionController.authenticatedUser.principal.empresa}">
+							<span>Empresa: #{sessionController.authenticatedUser.principal.empresa.razaoSocial}</span>
+						</c:if><span>E-mail: #{sessionController.authenticatedUser.principal.usuario.email}</span> <span>Nome: #{sessionController.authenticatedUser.principal.usuario.nome}</span></li>
 				</ul>
 			</div>
 		</c:if>

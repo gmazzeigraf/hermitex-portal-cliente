@@ -113,7 +113,15 @@
 					<div class="card card-w-title">
 						<p:panelGrid columns="3" id="produtoGrid" layout="grid" styleClass="ui-panelgrid-blank form-group"
 							columnClasses="ui-grid-col-2, ui-grid-col-8, ui-grid-col-2">
+							
+							<p:spacer styleClass="display-desktop" />
+							
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" style="margin-top: 20px;">
+								<p:commandButton icon="fa fa-fw fa-arrow-left" value="#{labels.botao_voltar}" actionListener="#{produtoApresentacaoController.close}"
+									process="@this" update=":searchForm :editForm :routeBarForm" styleClass="ui-grid-col-12 botao-produtos" oncomplete="scrollPageTop();" />
+							</p:panelGrid>
 
+							<p:spacer styleClass="display-desktop" />
 							<p:spacer styleClass="display-desktop" />
 
 							<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group" columnClasses="ui-grid-col-6, ui-grid-col-6">
@@ -222,7 +230,7 @@
 								</p:commandLink>
 								<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
 									<c:if test="#{fn:length(produtoApresentacaoController.entity.linkYoutube) > 0}">
-										<iframe src="#{produtoApresentacaoController.entity.linkYoutube}" class="video-youtube" />
+										<iframe src="#{produtoApresentacaoController.entity.linkYoutube}#{sessionController.parametrosYoutube}" class="video-youtube" />
 									</c:if>
 								</p:panelGrid>
 							</p:panelGrid>

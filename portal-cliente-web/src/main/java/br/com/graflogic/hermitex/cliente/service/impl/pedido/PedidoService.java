@@ -89,6 +89,8 @@ import br.com.graflogic.utilities.datautil.copy.ObjectCopier;
 @Service
 public class PedidoService {
 
+	private static final double FATOR_REGIME_TRIBUTARIO_FRETE = 0.85;
+
 	private static final String OPERACAO_CARTAO_CREDITO = "AuthAndCapture";
 
 	@Autowired
@@ -508,7 +510,7 @@ public class PedidoService {
 	}
 
 	// Frete
-	public List<TipoFrete> geraTiposFrete(Pedido entity) {
+	public List<TipoFrete> geraTiposFreteCorreios(Pedido entity) {
 		try {
 			CorreiosClient client = new CorreiosClient(configuracaoService.consulta(ConfiguracaoEnum.CORREIOS_URL),
 					configuracaoService.consulta(ConfiguracaoEnum.CORREIOS_CODIGO_EMPRESA),
@@ -678,7 +680,7 @@ public class PedidoService {
 				}
 
 				tipoFrete.setFretes(fretesTipoFrete);
-				tipoFrete.setValor(valorTipoFrete.divide(new BigDecimal(0.88), 2, RoundingMode.HALF_EVEN));
+				tipoFrete.setValor(valorTipoFrete.divide(new BigDecimal(FATOR_REGIME_TRIBUTARIO_FRETE), 2, RoundingMode.HALF_EVEN));
 
 				tiposFrete.add(tipoFrete);
 
@@ -689,6 +691,24 @@ public class PedidoService {
 		} catch (Throwable t) {
 			throw new CorreiosException(t);
 		}
+	}
+
+	public TipoFrete geraTipoFreteRetirada() {
+		TipoFrete tipo = new TipoFrete();
+		tipo.setFretes(new ArrayList<>());
+		tipo.setCodigoServico(DomServicoFrete.RETIRADA_HERMITEX);
+		tipo.setValor(BigDecimal.ZERO);
+
+		PedidoFrete frete = new PedidoFrete();
+		frete.setCodigoServico(DomServicoFrete.RETIRADA_HERMITEX);
+		frete.setValor(BigDecimal.ZERO);
+		frete.setPesoItens(BigDecimal.ZERO);
+		frete.setQuantidadeItens(0);
+		frete.setPrazoDias(0);
+
+		tipo.getFretes().add(frete);
+
+		return tipo;
 	}
 
 	// Util

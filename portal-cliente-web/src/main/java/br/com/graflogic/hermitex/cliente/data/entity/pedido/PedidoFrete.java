@@ -35,7 +35,7 @@ public class PedidoFrete implements Serializable {
 	@Column(name = "id_pedido", nullable = false)
 	private Long idPedido;
 
-	@Column(name = "id_embalagem", nullable = false)
+	@Column(name = "id_embalagem")
 	private Integer idEmbalagem;
 
 	@Column(name = "peso_itens", nullable = false)

@@ -136,6 +136,8 @@ public class ProdutoRepository extends BaseRepository<Produto> {
 
 		queryStr += where;
 
+		queryStr += " ORDER BY pro.genero, pro.id_categoria";
+
 		Query query = getEntityManager().createNativeQuery(queryStr);
 
 		for (int i = 0; i < params.size(); i++) {

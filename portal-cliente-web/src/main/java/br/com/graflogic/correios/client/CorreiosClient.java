@@ -37,7 +37,7 @@ public class CorreiosClient extends WebServiceGatewaySupport {
 		marshaller.setContextPath("br.com.graflogic.correios.model");
 
 		HttpComponentsMessageSender messageSender = new HttpComponentsMessageSender();
-		messageSender.setConnectionTimeout(15000);
+		messageSender.setConnectionTimeout(30000);
 		messageSender.setReadTimeout(60000);
 
 		setMessageSender(messageSender);

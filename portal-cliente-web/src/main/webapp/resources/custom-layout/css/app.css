@@ -35,6 +35,9 @@
 	.layout-wrapper .topbar .topbar-right .topbar-items>li>a .topbar-item-name-mobile {
 		display: none !important;
 	}
+	.topbar-items {
+		padding-top: 0px !important;
+	}
 	.topbar-item-name-web span {
 		display: block !important;
 	}
@@ -71,6 +74,11 @@
 	}
 	.resp-dialog {
 		min-height: 20vh !important; max-height: 70vh !important;
+	}
+
+	/* 	Galleria */
+	.ui-galleria-frame {
+		width: 20% !important;
 	}
 }
 
@@ -278,14 +286,12 @@ body .ui-widget-header {
 	background-color: #002554 !important; color: #fff !important;
 }
 
+/* Galleria */
 /* Galleria Produtos */
 .galleria-produtos {
 	border: 0px !important;
 }
 
-.galleria-produtos img:hover {
-/* 	transform: scale(1.5); (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
-}
 /* 	Correcao da altura da imagem da galleria */
 .ui-galleria, .ui-galleria-panel-wrapper, .ui-galleria-panel {
 	min-height: 200px;
@@ -295,9 +301,29 @@ body .ui-widget-header {
 	max-height: 100% !important;
 }
 
-/* Galleria nao ultrapassar a largura maxima */
 .ui-galleria, .ui-galleria-panel-wrapper, .ui-galleria-panel, .ui-galleria-panel img {
 	max-width: 100% !important; text-align: center;
+}
+
+.ui-galleria-frame-content {
+	width: 100% !important;
+}
+
+.ui-galleria-frame-content img {
+	max-height: 100px !important; height: 100% !important; width: auto !important;
+}
+
+.ui-galleria-filmstrip-wrapper, .ui-galleria-filmstrip, .ui-galleria-frame, .ui-galleria-frame-content {
+	height: 100px !important;
+}
+
+.ui-galleria-filmstrip {
+	width: 100% !important;
+}
+
+/* Alterado para que nao sobrepor o menu e o header */
+.ui-galleria-filmstrip {
+	z-index: 0 !important;
 }
 
 /* Cabecalho das tabelas */

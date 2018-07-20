@@ -22,9 +22,12 @@ public class UserInfo extends User {
 
 	private String ipOrigem;
 
-	public UserInfo(String codigo, String senha, Collection<? extends GrantedAuthority> permissoes, Usuario usuario) {
+	private Object empresa;
+
+	public UserInfo(String codigo, String senha, Collection<? extends GrantedAuthority> permissoes, Usuario usuario, Object empresa) {
 		super(codigo, senha, permissoes);
 		setUsuario(usuario);
+		setEmpresa(empresa);
 	}
 
 	public String getIdLogin() {
@@ -41,6 +44,14 @@ public class UserInfo extends User {
 
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
+	}
+
+	public Object getEmpresa() {
+		return empresa;
+	}
+
+	public void setEmpresa(Object empresa) {
+		this.empresa = empresa;
 	}
 
 	public String getIpOrigem() {

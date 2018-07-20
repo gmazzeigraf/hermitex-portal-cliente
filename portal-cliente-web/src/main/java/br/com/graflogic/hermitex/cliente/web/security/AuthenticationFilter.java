@@ -28,10 +28,13 @@ import br.com.graflogic.hermitex.cliente.data.entity.acesso.Usuario;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioAdministrador;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioCliente;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioFilial;
+import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioRepresentante;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Filial;
 import br.com.graflogic.hermitex.cliente.service.impl.acesso.UsuarioService;
 import br.com.graflogic.hermitex.cliente.service.impl.aud.AuditoriaService;
+import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.FilialService;
+import br.com.graflogic.hermitex.cliente.service.impl.cadastro.RepresentanteService;
 
 /**
  * 
@@ -56,7 +59,13 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
 	private AuditoriaService auditoriaService;
 
 	@Autowired
+	private ClienteService clienteService;
+
+	@Autowired
 	private FilialService filialService;
+
+	@Autowired
+	private RepresentanteService representanteService;
 
 	public AuthenticationFilter() {
 		super("/j_spring_security_check");
@@ -107,14 +116,21 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
 			// Consulta o usuario	
 			Usuario usuario = usuarioService.consultaPorEmail(email);
 
-			if (usuario instanceof UsuarioFilial) {
-				Filial filial = filialService.consultaPorId(((UsuarioFilial) usuario).getIdFilial());
+			Object empresa = null;
+			if (usuario instanceof UsuarioCliente) {
+				empresa = clienteService.consultaPorId(((UsuarioCliente) usuario).getIdCliente());
 
-				((UsuarioFilial) usuario).setIdCliente(filial.getIdCliente());
+			} else if (usuario instanceof UsuarioFilial) {
+				empresa = filialService.consultaPorId(((UsuarioFilial) usuario).getIdFilial());
+
+				((UsuarioFilial) usuario).setIdCliente(((Filial) empresa).getIdCliente());
+
+			} else if (usuario instanceof UsuarioRepresentante) {
+				empresa = representanteService.consultaPorId(((UsuarioRepresentante) usuario).getIdRepresentante());
 			}
 
 			// Prepara o objeto autenticado
-			UserInfo principal = new UserInfo(email, "", autenticacao.getAuthorities(), usuario);
+			UserInfo principal = new UserInfo(email, "", autenticacao.getAuthorities(), usuario, empresa);
 
 			List<GrantedAuthority> authorities = new ArrayList<>();
 

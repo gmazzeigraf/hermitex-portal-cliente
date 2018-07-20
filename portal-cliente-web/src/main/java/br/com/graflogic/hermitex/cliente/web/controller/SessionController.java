@@ -30,9 +30,14 @@ public class SessionController extends BaseController implements InitializingBea
 	@Value("${build.date}")
 	private String dataBuild;
 
+	private String parametrosYoutube;
+
+	private Object empresa;
+
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		try {
+			parametrosYoutube = "?rel=0&modestbranding=1";
 
 		} catch (Throwable t) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao iniciar a sessão, contate o administrador", t);
@@ -122,5 +127,13 @@ public class SessionController extends BaseController implements InitializingBea
 
 	public String getDataBuild() {
 		return dataBuild;
+	}
+
+	public String getParametrosYoutube() {
+		return parametrosYoutube;
+	}
+
+	public Object getEmpresa() {
+		return empresa;
 	}
 }

@@ -176,7 +176,7 @@
 
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-									<p:outputLabel for="documentoPortador" value="Documento Portador" styleClass="label" />
+									<p:outputLabel for="documentoPortador" value="CPF/CNPJ do Portador" styleClass="label" />
 									<p:inputText id="documentoPortador" value="#{carrinhoController.dadosPagamentoCartaoCredito.documentoPortador}" styleClass="ui-grid-col-12"
 										required="true" requiredMessage="Favor informar o nome impresso no cartão" maxlength="14" onkeypress="mascara(this, inteiro);" />
 								</p:panelGrid>
@@ -184,7 +184,7 @@
 
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-									<p:outputLabel for="numero" value="Número" styleClass="label" />
+									<p:outputLabel for="numero" value="Número do Cartão" styleClass="label" />
 									<p:inputMask id="numero" value="#{carrinhoController.dadosPagamentoCartaoCredito.numero}" styleClass="ui-grid-col-12" required="true"
 										requiredMessage="Favor informar o número do cartão" mask="9999 9999 9999 9999" converter="maskConverter" />
 								</p:panelGrid>
