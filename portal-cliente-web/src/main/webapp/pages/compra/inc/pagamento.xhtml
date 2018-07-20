@@ -142,7 +142,7 @@
 
 					<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group" id="dadosPagamentoGrid">
 						<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{carrinhoController.tipoFreteSelecionado}">
-							<h3>Total do pedido: R$ #{carrinhoController.pedido.formattedValorTotal}</h3>
+							<h3>Total do pedido: #{carrinhoController.pedido.formattedValorTotal}</h3>
 						</p:panelGrid>
 
 						<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">

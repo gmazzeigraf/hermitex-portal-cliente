@@ -246,11 +246,21 @@ public class Pedido implements Serializable {
 	}
 
 	public PedidoEndereco getEnderecoFaturamento() {
-		return enderecos.get(enderecos.indexOf(new PedidoEndereco(new PedidoEnderecoPK(id, DomTipoEndereco.FATURAMENTO))));
+		return getEndereco(DomTipoEndereco.FATURAMENTO);
 	}
 
 	public PedidoEndereco getEnderecoEntrega() {
-		return enderecos.get(enderecos.indexOf(new PedidoEndereco(new PedidoEnderecoPK(id, DomTipoEndereco.ENTREGA))));
+		return getEndereco(DomTipoEndereco.ENTREGA);
+	}
+
+	private PedidoEndereco getEndereco(String tipo) {
+		for (PedidoEndereco endereco : enderecos) {
+			if (tipo.equals(endereco.getId().getTipo())) {
+				return endereco;
+			}
+		}
+
+		return null;
 	}
 
 	public boolean isPagamentoCartaoCredito() {

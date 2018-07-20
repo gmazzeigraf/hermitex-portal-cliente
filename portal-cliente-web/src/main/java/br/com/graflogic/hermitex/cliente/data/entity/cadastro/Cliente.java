@@ -249,10 +249,20 @@ public class Cliente implements Serializable {
 	}
 
 	public ClienteEndereco getEnderecoFaturamento() {
-		return enderecos.get(enderecos.indexOf(new ClienteEndereco(new ClienteEnderecoPK(id, DomTipoEndereco.FATURAMENTO))));
+		return getEndereco(DomTipoEndereco.FATURAMENTO);
 	}
 
 	public ClienteEndereco getEnderecoEntrega() {
-		return enderecos.get(enderecos.indexOf(new ClienteEndereco(new ClienteEnderecoPK(id, DomTipoEndereco.ENTREGA))));
+		return getEndereco(DomTipoEndereco.ENTREGA);
+	}
+
+	private ClienteEndereco getEndereco(String tipo) {
+		for (ClienteEndereco endereco : enderecos) {
+			if (tipo.equals(endereco.getId().getTipo())) {
+				return endereco;
+			}
+		}
+
+		return null;
 	}
 }

@@ -191,10 +191,20 @@ public class Filial implements Serializable {
 	}
 
 	public FilialEndereco getEnderecoFaturamento() {
-		return enderecos.get(enderecos.indexOf(new FilialEndereco(new FilialEnderecoPK(id, DomTipoEndereco.FATURAMENTO))));
+		return getEndereco(DomTipoEndereco.FATURAMENTO);
 	}
 
 	public FilialEndereco getEnderecoEntrega() {
-		return enderecos.get(enderecos.indexOf(new FilialEndereco(new FilialEnderecoPK(id, DomTipoEndereco.ENTREGA))));
+		return getEndereco(DomTipoEndereco.ENTREGA);
+	}
+
+	private FilialEndereco getEndereco(String tipo) {
+		for (FilialEndereco endereco : enderecos) {
+			if (tipo.equals(endereco.getId().getTipo())) {
+				return endereco;
+			}
+		}
+
+		return null;
 	}
 }

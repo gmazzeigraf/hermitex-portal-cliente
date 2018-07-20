@@ -24,7 +24,8 @@
 									<p:selectOneMenu id="clienteFilter" value="#{produtoApresentacaoController.filterEntity.idCliente}" styleClass="ui-grid-col-12" filter="true"
 										filterMatchMode="contains">
 										<f:selectItem itemLabel="Selecione" itemValue="" />
-										<f:selectItems value="#{produtoApresentacaoController.clientes}" var="item" itemLabel="#{item.id} - #{item.razaoSocial}" itemValue="#{item.id}" />
+										<f:selectItems value="#{produtoApresentacaoController.clientes}" var="item" itemLabel="#{item.id} - #{item.razaoSocial}"
+											itemValue="#{item.id}" />
 										<p:ajax process="@this" update=":searchForm" listener="#{produtoApresentacaoController.changeCliente}" />
 									</p:selectOneMenu>
 								</p:panelGrid>
@@ -80,7 +81,7 @@
 
 						<p:dataGrid var="entity" value="#{produtoApresentacaoController.entities}" layout="grid" columns="4"
 							rendered="#{fn:length(produtoApresentacaoController.entities) > 0}" styleClass="produtos">
-							<p:panel header="#{entity.codigo}" style="text-align:center" styleClass="produtos">
+							<p:panel header="Código: #{entity.codigo}" style="text-align:center" styleClass="produtos">
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" styleClass="ui-panelgrid-blank form-group">
 									<p:commandLink update=":searchForm :editForm :routeBarForm" process="@this" resetValues="true" oncomplete="scrollPageTop();">
 										<p:graphicImage cache="true" value="#{sessionController.getUrlImagem(entity.idImagemCapa, 10)}" title="" styleClass="imagem-capa" />
@@ -113,9 +114,9 @@
 					<div class="card card-w-title">
 						<p:panelGrid columns="3" id="produtoGrid" layout="grid" styleClass="ui-panelgrid-blank form-group"
 							columnClasses="ui-grid-col-2, ui-grid-col-8, ui-grid-col-2">
-							
+
 							<p:spacer styleClass="display-desktop" />
-							
+
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" style="margin-top: 20px;">
 								<p:commandButton icon="fa fa-fw fa-arrow-left" value="#{labels.botao_voltar}" actionListener="#{produtoApresentacaoController.close}"
 									process="@this" update=":searchForm :editForm :routeBarForm" styleClass="ui-grid-col-12 botao-produtos" oncomplete="scrollPageTop();" />
@@ -135,7 +136,7 @@
 										</script>
 									</p:galleria>
 								</p:panelGrid>
-								
+
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" style="font-size: 16px !important;" id="dadosProdutoGrid">
 
 									<h1>#{produtoApresentacaoController.entity.titulo}</h1>
@@ -224,8 +225,9 @@
 
 							<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group" columnClasses="ui-grid-col-6, ui-grid-col-6"
 								style="margin-top: 20px;">
-								<p:commandLink value="Faça o download de nossa fita métrica" onclick="liberaRefresh(); PrimeFaces.monitorDownload(showStatus, hideStatus)"
-									process="@this" ajax="false" immediate="true" styleClass="link-fita-metrica">
+								<p:commandLink value="Faça o download de nossa fita métrica" onclick="liberaRefresh();" 
+									process=" @this" ajax="false"
+									immediate="true" styleClass="link-fita-metrica">
 									<p:fileDownload value="#{produtoApresentacaoController.fitaMetrica}" />
 								</p:commandLink>
 								<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
