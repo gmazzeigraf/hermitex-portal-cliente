@@ -10,8 +10,6 @@ import org.springframework.stereotype.Controller;
 
 import br.com.graflogic.base.service.util.I18NUtil;
 import br.com.graflogic.hermitex.cliente.data.dom.DomAcesso.DomPermissaoAcesso;
-import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioCliente;
-import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioFilial;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Filial;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.Pedido;
@@ -64,14 +62,15 @@ public class SolicitacaoTrocaController extends CrudBaseController<SolicitacaoTr
 
 			filiais = new ArrayList<>();
 
+			getFilterEntity().setIdCliente(SessionUtil.getIdCliente());
+
 			if (SessionUtil.isUsuarioAdministrador()) {
 				clientes = clienteService.consulta(new Cliente());
 
 			} else if (SessionUtil.isUsuarioCliente()) {
-				getFilterEntity().setIdCliente(((UsuarioCliente) SessionUtil.getAuthenticatedUsuario()).getIdCliente());
 
 			} else if (SessionUtil.isUsuarioFilial()) {
-				getFilterEntity().setIdFilial(((UsuarioFilial) SessionUtil.getAuthenticatedUsuario()).getIdFilial());
+				getFilterEntity().setIdFilial(SessionUtil.getIdFilial());
 			}
 
 			if (null != getFilterEntity().getIdCliente()) {

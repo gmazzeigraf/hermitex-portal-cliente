@@ -15,7 +15,6 @@ import org.springframework.stereotype.Controller;
 import br.com.graflogic.base.service.util.I18NUtil;
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomTipoEndereco;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomServicoFrete;
-import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioFilial;
 import br.com.graflogic.hermitex.cliente.data.entity.auxiliar.Estado;
 import br.com.graflogic.hermitex.cliente.data.entity.auxiliar.Municipio;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
@@ -237,8 +236,8 @@ public class CarrinhoController extends BaseController implements InitializingBe
 			enderecoEntrega.setComplemento(cliente.getEnderecoEntrega().getComplemento());
 
 		} else if (SessionUtil.isUsuarioFilial()) {
-			pedido.setIdCliente(((UsuarioFilial) SessionUtil.getAuthenticatedUsuario()).getIdCliente());
-			pedido.setIdFilial(((UsuarioFilial) SessionUtil.getAuthenticatedUsuario()).getIdFilial());
+			pedido.setIdCliente(cliente.getId());
+			pedido.setIdFilial(SessionUtil.getIdFilial());
 
 			Filial filial = filialService.consultaPorId(pedido.getIdFilial());
 

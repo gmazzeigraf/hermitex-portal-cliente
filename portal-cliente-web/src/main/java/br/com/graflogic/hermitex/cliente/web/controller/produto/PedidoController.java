@@ -10,8 +10,6 @@ import org.springframework.stereotype.Controller;
 
 import br.com.graflogic.base.service.util.I18NUtil;
 import br.com.graflogic.hermitex.cliente.data.dom.DomAcesso.DomPermissaoAcesso;
-import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioFilial;
-import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioRepresentante;
 import br.com.graflogic.hermitex.cliente.data.entity.auxiliar.Estado;
 import br.com.graflogic.hermitex.cliente.data.entity.auxiliar.Municipio;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
@@ -84,11 +82,10 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 				clientes = clienteService.consulta(new Cliente());
 
 			} else if (SessionUtil.isUsuarioFilial()) {
-				getFilterEntity().setIdFilial(((UsuarioFilial) SessionUtil.getAuthenticatedUsuario()).getIdFilial());
+				getFilterEntity().setIdFilial(SessionUtil.getIdFilial());
 
 			} else if (SessionUtil.isUsuarioRepresentante()) {
-				clientes = clienteService
-						.consultaPorRepresentante(((UsuarioRepresentante) SessionUtil.getAuthenticatedUsuario()).getIdRepresentante());
+				clientes = clienteService.consultaPorRepresentante(SessionUtil.getIdRepresentante());
 			}
 
 			if (null != getFilterEntity().getIdCliente()) {

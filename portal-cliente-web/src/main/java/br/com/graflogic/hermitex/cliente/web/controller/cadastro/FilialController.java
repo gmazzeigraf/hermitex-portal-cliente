@@ -12,7 +12,6 @@ import org.springframework.stereotype.Controller;
 import br.com.graflogic.base.service.util.I18NUtil;
 import br.com.graflogic.commonutil.util.StringUtil;
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomTipoEndereco;
-import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioCliente;
 import br.com.graflogic.hermitex.cliente.data.entity.auxiliar.Estado;
 import br.com.graflogic.hermitex.cliente.data.entity.auxiliar.Municipio;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
@@ -90,7 +89,7 @@ public class FilialController extends CrudBaseController<Filial, Filial> impleme
 				clientes = clienteService.consulta(new Cliente());
 
 			} else if (SessionUtil.isUsuarioCliente()) {
-				getFilterEntity().setIdCliente(((UsuarioCliente) SessionUtil.getAuthenticatedUsuario()).getIdCliente());
+				getFilterEntity().setIdCliente(SessionUtil.getIdCliente());
 			}
 
 		} catch (Throwable t) {

@@ -105,8 +105,8 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 					entidades.addAll(clienteService.consulta(new Cliente()));
 
 				} else if (SessionUtil.isUsuarioCliente()) {
-					idEntidade = ((UsuarioCliente) SessionUtil.getAuthenticatedUsuario()).getIdCliente();
-					
+					idEntidade = SessionUtil.getIdCliente();
+
 					changeEntidade();
 				}
 
@@ -117,12 +117,11 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 					entidades.addAll(filialService.consulta(new Filial()));
 
 				} else if (SessionUtil.isUsuarioCliente()) {
-					entidades
-							.addAll(filialService.consultaPorCliente(((UsuarioCliente) SessionUtil.getAuthenticatedUsuario()).getIdCliente(), false));
+					entidades.addAll(filialService.consultaPorCliente(SessionUtil.getIdCliente(), false));
 
 				} else if (SessionUtil.isUsuarioFilial()) {
-					idEntidade = ((UsuarioFilial) SessionUtil.getAuthenticatedUsuario()).getIdFilial();
-					
+					idEntidade = SessionUtil.getIdFilial();
+
 					changeEntidade();
 
 				}
@@ -134,8 +133,8 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 					entidades.addAll(representanteService.consulta(new Representante()));
 
 				} else if (SessionUtil.isUsuarioRepresentante()) {
-					idEntidade = ((UsuarioRepresentante) SessionUtil.getAuthenticatedUsuario()).getIdRepresentante();
-					
+					idEntidade = SessionUtil.getIdRepresentante();
+
 					changeEntidade();
 				}
 			}

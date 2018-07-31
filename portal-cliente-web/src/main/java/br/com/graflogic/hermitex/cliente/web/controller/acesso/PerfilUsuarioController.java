@@ -16,9 +16,6 @@ import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuarioCliente
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuarioFilial;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuarioRepresentante;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.PermissaoAcesso;
-import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioCliente;
-import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioFilial;
-import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioRepresentante;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Filial;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Representante;
@@ -86,7 +83,7 @@ public class PerfilUsuarioController extends CrudBaseController<PerfilUsuario, P
 					entidades.addAll(clienteService.consulta(new Cliente()));
 
 				} else if (SessionUtil.isUsuarioCliente()) {
-					idEntidade = ((UsuarioCliente) SessionUtil.getAuthenticatedUsuario()).getIdCliente();
+					idEntidade = SessionUtil.getIdCliente();
 				}
 
 			} else if (isViewFilial()) {
@@ -96,11 +93,10 @@ public class PerfilUsuarioController extends CrudBaseController<PerfilUsuario, P
 					entidades.addAll(filialService.consulta(new Filial()));
 
 				} else if (SessionUtil.isUsuarioCliente()) {
-					entidades
-							.addAll(filialService.consultaPorCliente(((UsuarioCliente) SessionUtil.getAuthenticatedUsuario()).getIdCliente(), false));
+					entidades.addAll(filialService.consultaPorCliente(SessionUtil.getIdCliente(), false));
 
 				} else if (SessionUtil.isUsuarioFilial()) {
-					idEntidade = ((UsuarioFilial) SessionUtil.getAuthenticatedUsuario()).getIdFilial();
+					idEntidade = SessionUtil.getIdFilial();
 
 				}
 			} else if (isViewRepresentante()) {
@@ -110,7 +106,7 @@ public class PerfilUsuarioController extends CrudBaseController<PerfilUsuario, P
 					entidades.addAll(representanteService.consulta(new Representante()));
 
 				} else if (SessionUtil.isUsuarioRepresentante()) {
-					idEntidade = ((UsuarioRepresentante) SessionUtil.getAuthenticatedUsuario()).getIdRepresentante();
+					idEntidade = SessionUtil.getIdRepresentante();
 				}
 
 			}
