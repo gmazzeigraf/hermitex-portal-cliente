@@ -133,7 +133,7 @@ public class PedidoSimple implements Serializable {
 	}
 
 	public String getDeTipoPagamento() {
-		return DomPedido.domFormaPagamento.getDeValor(codigoFormaPagamento);
+		return DomPedido.domTipoFormaPagamento.getDeValor(codigoFormaPagamento);
 	}
 
 	public String getDeStatus() {

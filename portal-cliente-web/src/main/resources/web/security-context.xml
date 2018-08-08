@@ -29,6 +29,7 @@
 		<intercept-url pattern="/pages/cliente/acesso/perfil.jsf" access="hasAnyRole('ROLE_CLI_ACESSO_PERFIL')" />
 		<intercept-url pattern="/pages/cliente/acesso/usuario.jsf" access="hasAnyRole('ROLE_CLI_ACESSO_USUARIO')" />
 		<intercept-url pattern="/pages/cliente/janela_compra.jsf" access="hasAnyRole('ROLE_CLI_JANELA_COMPRA')" />
+		<intercept-url pattern="/pages/cliente/forma_pagamento.jsf" access="hasAnyRole('ROLE_CLI_FORMA_PAGAMENTO')" />
 
 		<!-- Filial -->
 		<intercept-url pattern="/pages/filial/cadastro.jsf" access="hasAnyRole('ROLE_FIL_CADASTRO')" />

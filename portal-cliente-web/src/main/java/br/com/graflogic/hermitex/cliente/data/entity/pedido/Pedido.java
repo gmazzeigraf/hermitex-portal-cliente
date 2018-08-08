@@ -22,7 +22,7 @@ import org.hibernate.annotations.LazyCollectionOption;
 
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomTipoEndereco;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido;
-import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomFormaPagamento;
+import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomTipoFormaPagamento;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomStatus;
 
 /**
@@ -264,15 +264,15 @@ public class Pedido implements Serializable {
 	}
 
 	public boolean isPagamentoCartaoCredito() {
-		return null != codigoFormaPagamento && DomFormaPagamento.CARTAO_CREDITO.equals(codigoFormaPagamento);
+		return null != codigoFormaPagamento && DomTipoFormaPagamento.CARTAO_CREDITO.equals(codigoFormaPagamento);
 	}
 
 	public boolean isPagamentoBoleto() {
-		return null != codigoFormaPagamento && DomFormaPagamento.BOLETO.equals(codigoFormaPagamento);
+		return null != codigoFormaPagamento && DomTipoFormaPagamento.BOLETO.equals(codigoFormaPagamento);
 	}
 
 	public boolean isPagamentoFaturamento() {
-		return null != codigoFormaPagamento && DomFormaPagamento.FATURAMENTO.equals(codigoFormaPagamento);
+		return null != codigoFormaPagamento && DomTipoFormaPagamento.FATURAMENTO.equals(codigoFormaPagamento);
 	}
 
 	public boolean isPagamentoPendente() {

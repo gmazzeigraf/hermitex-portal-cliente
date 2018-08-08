@@ -1,0 +1,231 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/pages/templates/crud_template.xhtml"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+	<ui:define name="viewname">#{labels.menu_cliente} / #{labels.menu_cliente_forma_pagamento}</ui:define>
+
+	<ui:define name="search">
+		<c:if test="#{null == formaPagamentoController.entity}">
+			<div class="ui-g">
+				<div class="ui-g-12">
+					<div class="card card-w-title">
+						<h1>#{labels.consulta}</h1>
+						<p:panelGrid columns="1" id="filterGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
+							<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="clienteFilter" value="Cliente *" styleClass="label" />
+									<p:selectOneMenu id="clienteFilter" value="#{formaPagamentoController.filterEntity.idCliente}" styleClass="ui-grid-col-12" filter="true"
+										filterMatchMode="contains">
+										<f:selectItem itemLabel="Selecione" itemValue="" />
+										<f:selectItems value="#{formaPagamentoController.clientes}" var="item" itemLabel="#{item.id} - #{item.razaoSocial}" itemValue="#{item.id}" />
+										<p:ajax process="@this" update=":searchForm" listener="#{formaPagamentoController.changeCliente}" />
+									</p:selectOneMenu>
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="tipoFilter" value="Tipo" styleClass="label" />
+									<p:selectOneMenu id="tipoFilter" value="#{formaPagamentoController.filterEntity.tipo}" styleClass="ui-grid-col-12">
+										<f:selectItem itemLabel="" itemValue="" />
+										<f:selectItems value="#{domPedidoController.tipoFormaPagamentoMap}" />
+									</p:selectOneMenu>
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="statusFilter" value="Status" styleClass="label" />
+									<p:selectOneMenu id="statusFilter" value="#{formaPagamentoController.filterEntity.status}" styleClass="ui-grid-col-12">
+										<f:selectItem itemLabel="" itemValue="" />
+										<f:selectItems value="#{domPedidoController.statusFormaPagamentoMap}" />
+									</p:selectOneMenu>
+								</p:panelGrid>
+							</p:panelGrid>
+
+							<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank">
+								<p:spacer styleClass="display-desktop" />
+								<p:commandButton value="#{labels.botao_pesquisar}" id="searchButton" icon="fa fa-fw fa-search" update="dtbEntities searchMessages"
+									actionListener="#{formaPagamentoController.search}" process="@this, filterGrid" oncomplete="PF('dtb').getPaginator().setPage(0);"
+									styleClass="ui-grid-col-4 botao-pesquisar" disabled="#{!formaPagamentoController.clienteSelecionado}" />
+							</p:panelGrid>
+
+							<p:messages id="searchMessages" />
+
+							<p:separator />
+
+							<p:defaultCommand target="searchButton" scope="filterGrid" />
+
+							<p:commandButton value="#{labels.botao_adicionar}" icon="fa fa-fw fa-plus" actionListener="#{formaPagamentoController.add}"
+								update=":searchForm :editForm" process="@this" resetValues="true" styleClass="ui-grid-col-12 botao-adicionar"
+								disabled="#{!formaPagamentoController.clienteSelecionado}" />
+						</p:panelGrid>
+
+						<p:dataTable id="dtbEntities" widgetVar="dtb" var="entity" value="#{formaPagamentoController.entities}" rowKey="#{entity.id}" paginator="true"
+							paginatorPosition="bottom" reflow="true" rows="10"
+							emptyMessage="#{null != formaPagamentoController.entities ? messages.nenhum_resultado_encontrado : messages.realize_pesquisa}">
+
+							<p:column headerText="#" sortBy="#{entity.id}" styleClass="id-column">
+								<h:outputText value="#{entity.id}" />
+							</p:column>
+
+							<p:column headerText="Tipo" sortBy="#{entity.deTipo}">
+								<h:outputText value="#{entity.deTipo}" />
+							</p:column>
+
+							<p:column headerText="Parcelas" sortBy="#{entity.quantidadeParcelas}">
+								<h:outputText value="#{entity.quantidadeParcelas}" />
+							</p:column>
+
+							<p:column headerText="% Desconto" sortBy="#{entity.porcentagemDesconto}">
+								<h:outputText value="#{entity.porcentagemDesconto}">
+									<f:convertNumber pattern="#,##0.00" />
+								</h:outputText>
+							</p:column>
+
+							<p:column headerText="Status" sortBy="#{entity.deStatus}" styleClass="status-column">
+								<h:outputText value="#{entity.deStatus}" />
+							</p:column>
+
+							<p:column styleClass="coluna-edicao">
+								<p:commandButton icon="fa fa-fw fa-pencil" title="#{labels.botao_editar}" update=":searchForm :editForm" process="@this" resetValues="true"
+									styleClass="ui-grid-col-12">
+									<f:setPropertyActionListener value="#{entity}" target="#{formaPagamentoController.selectedEntity}" />
+								</p:commandButton>
+							</p:column>
+
+							<f:facet name="footer">
+								<h:outputText value="#{fn:length(formaPagamentoController.entities)} registro(s) encontrado(s)" />
+							</f:facet>
+						</p:dataTable>
+					</div>
+				</div>
+			</div>
+		</c:if>
+	</ui:define>
+
+	<ui:define name="edit">
+		<c:if test="#{null != formaPagamentoController.entity}">
+			<div class="ui-g">
+				<div class="ui-g-12">
+					<div class="card card-w-title">
+						<h1>#{labels.informacoes}</h1>
+						<p:panelGrid columns="3" id="informacoesGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel for="tipo" value="Tipo" styleClass="label" />
+								<p:selectOneMenu id="tipo" value="#{formaPagamentoController.entity.tipo}" styleClass="ui-grid-col-12" required="true"
+									requiredMessage="Favor selecionar o tipo">
+									<f:selectItem itemLabel="Selecione" itemValue="" />
+									<f:selectItems value="#{domPedidoController.tipoFormaPagamentoMap}" />
+									<p:ajax process="@this" update="informacoesGrid" listener="#{formaPagamentoController.changeTipo}" />
+								</p:selectOneMenu>
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{formaPagamentoController.quantidadeParcelasHabilitada}">
+								<p:outputLabel for="quantidadeParcelas" value="Quantidade Parcelas" styleClass="label" />
+								<p:inputNumber id="quantidadeParcelas" value="#{formaPagamentoController.entity.quantidadeParcelas}" styleClass="input-number-resp"
+									required="true" requiredMessage="Favor informar a quantidade de parcelas" decimalPlaces="0"
+									validatorMessage="A quantidade de parcelas deve ser entre 1 e 12">
+									<f:validateLongRange minimum="1" maximum="12" />
+								</p:inputNumber>
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{formaPagamentoController.configuracaoHabilitada}">
+								<p:outputLabel for="configuracao" value="Configuração" styleClass="label" rendered="#{!formaPagamentoController.boleto}" />
+								<p:outputLabel for="configuracao" value="Configuração (Os dias devem ser separados por ';')" styleClass="label"
+									rendered="#{formaPagamentoController.boleto}" />
+								<p:inputText id="configuracao" value="#{formaPagamentoController.entity.configuracao}" maxlength="100" styleClass="ui-grid-col-12"
+									required="true" requiredMessage="Favor informar a configuração" />
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel for="porcentagemDesconto" value="% Desconto" styleClass="label" />
+								<p:inputNumber id="porcentagemDesconto" value="#{formaPagamentoController.entity.porcentagemDesconto}" styleClass="input-number-resp"
+									decimalSeparator="," thousandSeparator="." decimalPlaces="2" maxValue="99.99" required="true"
+									requiredMessage="Favor informar a porcentagem de desconto">
+								</p:inputNumber>
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel for="valorPedidoMinimo" value="Valor Pedido Mínimo" styleClass="label" />
+								<p:inputNumber id="valorPedidoMinimo" value="#{formaPagamentoController.entity.valorPedidoMinimo}" styleClass="input-number-resp"
+									decimalSeparator="," thousandSeparator="." decimalPlaces="2" maxValue="99999999.99" required="true"
+									requiredMessage="Favor informar o valor mínimo do pedido">
+								</p:inputNumber>
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel for="creditoObrigatorio" value="Crédito Obrigatório" styleClass="label" />
+								<p:selectOneMenu id="creditoObrigatorio" value="#{formaPagamentoController.entity.creditoObrigatorio}" styleClass="ui-grid-col-12"
+									required="true" requiredMessage="Favor selecionar se o crédito é obrigatório">
+									<f:selectItems value="#{domGeralController.booleanMap}" />
+								</p:selectOneMenu>
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel for="lojaPropria" value="Loja Própria" styleClass="label" />
+								<p:selectOneMenu id="lojaPropria" value="#{formaPagamentoController.entity.lojaPropria}" styleClass="ui-grid-col-12" required="true"
+									requiredMessage="Favor selecionar a opção para loja própria">
+									<f:selectItems value="#{domGeralController.booleanMap}" />
+								</p:selectOneMenu>
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel for="franquia" value="Franquia" styleClass="label" />
+								<p:selectOneMenu id="franquia" value="#{formaPagamentoController.entity.franquia}" styleClass="ui-grid-col-12" required="true"
+									requiredMessage="Favor selecionar a opção para franquia">
+									<f:selectItems value="#{domGeralController.booleanMap}" />
+								</p:selectOneMenu>
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel for="filial" value="Filial" styleClass="label" />
+								<p:selectOneMenu id="filial" value="#{formaPagamentoController.entity.filial}" styleClass="ui-grid-col-12" required="true"
+									requiredMessage="Favor selecionar a opção para filial">
+									<f:selectItems value="#{domGeralController.booleanMap}" />
+								</p:selectOneMenu>
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel for="unidade" value="Unidade" styleClass="label" />
+								<p:selectOneMenu id="unidade" value="#{formaPagamentoController.entity.unidade}" styleClass="ui-grid-col-12" required="true"
+									requiredMessage="Favor selecionar a opção para unidade">
+									<f:selectItems value="#{domGeralController.booleanMap}" />
+								</p:selectOneMenu>
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel for="cliente" value="Cliente" styleClass="label" />
+								<p:selectOneMenu id="cliente" value="#{formaPagamentoController.entity.cliente}" styleClass="ui-grid-col-12" required="true"
+									requiredMessage="Favor selecionar a opção para cliente">
+									<f:selectItems value="#{domGeralController.booleanMap}" />
+								</p:selectOneMenu>
+							</p:panelGrid>
+						</p:panelGrid>
+					</div>
+
+					<p:messages />
+
+					<p:panelGrid columns="6" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
+						<p:commandButton id="submitButton" icon="fa fa-fw fa-save" value="#{labels.botao_gravar}" actionListener="#{formaPagamentoController.save}"
+							process=":editForm:informacoesGrid" update=":editForm :searchForm" styleClass="ui-grid-col-12" />
+
+						<p:commandButton id="inativacaoButton" icon="fa fa-fw fa-ban" value="#{labels.botao_inativar}"
+							actionListener="#{formaPagamentoController.inativa}" process="@this" update=":searchForm :editForm" styleClass="ui-grid-col-12 botao-vermelho"
+							rendered="#{formaPagamentoController.editing and formaPagamentoController.entity.ativa}">
+							<p:confirm header="Confirmação" message="Confirmar inativação?" icon="ui-icon-alert" />
+						</p:commandButton>
+
+						<p:commandButton id="ativacaoButton" icon="fa fa-fw fa-check-circle" value="#{labels.botao_ativar}"
+							actionListener="#{formaPagamentoController.ativa}" process="@this" update=":searchForm :editForm" styleClass="ui-grid-col-12"
+							rendered="#{formaPagamentoController.editing and formaPagamentoController.entity.inativa}">
+							<p:confirm header="Confirmação" message="Confirmar ativação?" icon="ui-icon-alert" />
+						</p:commandButton>
+
+						<p:commandButton icon="fa fa-fw fa-close" value="#{labels.botao_fechar}" actionListener="#{formaPagamentoController.close}" process="@this"
+							update=":searchForm :editForm" styleClass="ui-grid-col-12 botao-fechar" />
+					</p:panelGrid>
+				</div>
+			</div>
+		</c:if>
+	</ui:define>
+
+	<ui:define name="complement">
+	</ui:define>
+</ui:composition>

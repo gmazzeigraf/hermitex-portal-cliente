@@ -52,6 +52,9 @@
 
 							<p:menuitem id="menu_cliente_janela_compra" icon="fa fa-fw fa-calendar" value="#{labels.menu_cliente_janela_compra}"
 								url="/pages/cliente/janela_compra.jsf" rendered="#{sec:isAllowed('/pages/cliente/janela_compra.jsf', '')}" />
+
+							<p:menuitem id="menu_cliente_forma_pagamento" icon="fa fa-fw fa-credit-card" value="#{labels.menu_cliente_forma_pagamento}"
+								url="/pages/cliente/forma_pagamento.jsf" rendered="#{sec:isAllowed('/pages/cliente/forma_pagamento.jsf', '')}" />
 						</p:submenu>
 
 						<p:submenu id="menu_filial" icon="fa fa-fw fa-briefcase" label="#{labels.menu_filial}">

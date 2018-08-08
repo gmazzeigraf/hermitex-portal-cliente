@@ -23,8 +23,12 @@ public class DomPedidoController implements Serializable {
 		return DomPedido.domStatus.getMap();
 	}
 
-	public Map<String, Object> getFormaPagamentoMap() {
-		return DomPedido.domFormaPagamento.getMap();
+	public Map<String, Object> getTipoFormaPagamentoMap() {
+		return DomPedido.domTipoFormaPagamento.getMap();
+	}
+
+	public Map<String, Object> getStatusFormaPagamentoMap() {
+		return DomPedido.domStatusFormaPagamento.getMap();
 	}
 
 	public Map<String, Object> getBandeiraCartaoCreditoMap() {

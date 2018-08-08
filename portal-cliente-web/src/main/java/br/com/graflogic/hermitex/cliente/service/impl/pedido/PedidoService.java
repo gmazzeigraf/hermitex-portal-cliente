@@ -33,7 +33,7 @@ import br.com.graflogic.correios.model.CResultado;
 import br.com.graflogic.correios.model.CServico;
 import br.com.graflogic.hermitex.cliente.data.dom.DomAuditoria.DomEventoAuditoriaPedido;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido;
-import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomFormaPagamento;
+import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomTipoFormaPagamento;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomServicoFrete;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomStatus;
 import br.com.graflogic.hermitex.cliente.data.dom.DomProduto.DomTipo;
@@ -759,25 +759,25 @@ public class PedidoService {
 		// formasPagamento.add(new FormaPagamento(formasPagamento.size(), DomFormaPagamento.BOLETO, 1));
 
 		for (int i = 1; i <= cliente.getMaximoParcelasCartao(); i++) {
-			formasPagamento.add(new FormaPagamento(formasPagamento.size(), DomFormaPagamento.CARTAO_CREDITO, i));
+			formasPagamento.add(new FormaPagamento(formasPagamento.size(), DomTipoFormaPagamento.CARTAO_CREDITO, i));
 		}
 
 		if (cliente.isFaturamento()) {
-			formasPagamento.add(new FormaPagamento(formasPagamento.size(), DomFormaPagamento.FATURAMENTO, 1));
+			formasPagamento.add(new FormaPagamento(formasPagamento.size(), DomTipoFormaPagamento.FATURAMENTO, 1));
 		}
 
 		for (FormaPagamento forma : formasPagamento) {
 			forma.setValor(valorTotal.divide(new BigDecimal(forma.getParcelas()), 2, RoundingMode.HALF_EVEN));
 
-			String descricao = DomPedido.domFormaPagamento.getDeValor(forma.getCodigo());
+			String descricao = DomPedido.domTipoFormaPagamento.getDeValor(forma.getCodigo());
 
-			if (DomFormaPagamento.BOLETO.equals(forma.getCodigo())) {
+			if (DomTipoFormaPagamento.BOLETO.equals(forma.getCodigo())) {
 				descricao += " " + cliente.getDiasBoleto() + " dias";
 
-			} else if (DomFormaPagamento.CARTAO_CREDITO.equals(forma.getCodigo())) {
+			} else if (DomTipoFormaPagamento.CARTAO_CREDITO.equals(forma.getCodigo())) {
 				descricao += " " + forma.getParcelas() + "x R$ " + forma.getValor().toString().replace(".", ",");
 
-			} else if (DomFormaPagamento.FATURAMENTO.equals(forma.getCodigo())) {
+			} else if (DomTipoFormaPagamento.FATURAMENTO.equals(forma.getCodigo())) {
 				descricao = cliente.getDescricaoFaturamento();
 			}
 

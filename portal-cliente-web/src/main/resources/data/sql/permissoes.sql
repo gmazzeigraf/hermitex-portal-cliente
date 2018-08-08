@@ -20,6 +20,7 @@ INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_CL
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_CLI_ACESSO_PERFIL', 'Cliente / Acesso / Perfil', 'AC');
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_CLI_ACESSO_USUARIO', 'Cliente / Acesso / Usuário', 'AC');
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_CLI_JANELA_COMPRA', 'Cliente / Janela Compra', 'A');
+INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_CLI_FORMA_PAGAMENTO', 'Cliente / Forma Pagamento', 'A');
 
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_FIL_CADASTRO', 'Filial / Cadastro', 'AC');
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_FIL_ACESSO_PERFIL', 'Filial / Acesso / Perfil', 'ACF');

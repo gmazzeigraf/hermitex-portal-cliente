@@ -27,19 +27,31 @@ public class DomPedido {
 
 	public static DomStatus domStatus = new DomStatus();
 
-	public static class DomFormaPagamento extends DomBase {
+	public static class DomTipoFormaPagamento extends DomBase {
 		public static final String BOLETO = "B";
 		public static final String CARTAO_CREDITO = "C";
 		public static final String FATURAMENTO = "F";
 
-		DomFormaPagamento() {
+		DomTipoFormaPagamento() {
 			mapa.put(BOLETO, "Boleto");
 			mapa.put(CARTAO_CREDITO, "Cartão de crédito");
 			mapa.put(FATURAMENTO, "Faturamento");
 		}
 	}
 
-	public static DomFormaPagamento domFormaPagamento = new DomFormaPagamento();
+	public static DomTipoFormaPagamento domTipoFormaPagamento = new DomTipoFormaPagamento();
+
+	public static class DomStatusFormaPagamento extends DomBase {
+		public static final String ATIVA = "A";
+		public static final String INATIVA = "I";
+
+		DomStatusFormaPagamento() {
+			mapa.put(ATIVA, "Ativa");
+			mapa.put(INATIVA, "Inativa");
+		}
+	}
+
+	public static DomStatusFormaPagamento domStatusFormaPagamento = new DomStatusFormaPagamento();
 
 	public static class DomBandeiraCartaoCredito extends DomBase {
 		public static final String ELO = "Elo";
