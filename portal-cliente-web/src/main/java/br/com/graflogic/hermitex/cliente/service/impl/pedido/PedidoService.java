@@ -90,7 +90,7 @@ import br.com.graflogic.utilities.datautil.copy.ObjectCopier;
 @Service
 public class PedidoService {
 
-	private static final double FATOR_REGIME_TRIBUTARIO_FRETE = 0.85;
+	private static final double FATOR_REGIME_TRIBUTARIO_FRETE = 0.75;
 
 	private static final String OPERACAO_CARTAO_CREDITO = "AuthAndCapture";
 

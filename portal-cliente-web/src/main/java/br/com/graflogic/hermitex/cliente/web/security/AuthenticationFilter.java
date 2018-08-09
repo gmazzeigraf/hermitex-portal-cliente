@@ -27,6 +27,7 @@ import br.com.graflogic.hermitex.cliente.data.dom.DomAcesso.DomStatusSenhaUsuari
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomStatusCliente;
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomStatusFilial;
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomStatusRepresentante;
+import br.com.graflogic.hermitex.cliente.data.dom.DomGeral.DomBoolean;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.Usuario;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioAdministrador;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioCliente;
@@ -136,6 +137,10 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
 
 				if (!DomStatusFilial.ATIVO.equals(((Filial) empresa).getStatus())) {
 					throw new AuthenticationServiceException("Filial inativa, contate o administrador");
+				}
+
+				if (DomBoolean.SIM.equals(((Filial) empresa).getCompraBloqueada())) {
+					throw new AuthenticationServiceException("Compras indisponíveis, contate o administrador");
 				}
 
 			} else if (usuario instanceof UsuarioRepresentante) {

@@ -362,7 +362,7 @@ public class CarrinhoController extends BaseController implements InitializingBe
 
 			mensagemConclusaoPedido += "<br /> Para mais informações acesse a página \"Pedido / Consulta\"" + "<br /> O pedido "
 					+ (DomServicoFrete.RETIRADA_HERMITEX.equals(codigoServicoFrete) ? "estará disponível" : " será despachado")
-					+ " em até 30 dias úteis após o fechamento da janela de compra.";
+					+ " em até 40 dias úteis após o fechamento da janela de compra.";
 
 			passo = 3;
 

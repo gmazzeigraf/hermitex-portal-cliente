@@ -206,8 +206,8 @@ public class FormaPagamentoService {
 
 				valorTotal = valorTotal.subtract(entity.getValorDesconto()).setScale(2, RoundingMode.HALF_EVEN);
 
-				descricaoDesconto = " com " + entity.getPorcentagemDesconto().setScale(2, RoundingMode.HALF_EVEN).toString().replace(".", ",")
-						+ "% de desconto";
+				descricaoDesconto = " (com " + entity.getPorcentagemDesconto().setScale(2, RoundingMode.HALF_EVEN).toString().replace(".", ",")
+						+ "% de desconto)";
 
 			} else {
 				entity.setValorDesconto(BigDecimal.ZERO);
