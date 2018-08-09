@@ -22,7 +22,6 @@ import org.hibernate.annotations.LazyCollectionOption;
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro;
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomStatusCliente;
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomTipoEndereco;
-import br.com.graflogic.hermitex.cliente.data.dom.DomGeral.DomBoolean;
 import br.com.graflogic.utilities.datautil.util.FormatUtil;
 
 /**
@@ -62,18 +61,6 @@ public class Cliente implements Serializable {
 
 	@Column(name = "id_representante")
 	private Integer idRepresentante;
-
-	@Column(name = "dias_boleto", nullable = false)
-	private Integer diasBoleto;
-
-	@Column(name = "maximo_parcelas_cartao", nullable = false)
-	private Integer maximoParcelasCartao;
-
-	@Column(name = "in_faturamento", nullable = false)
-	private String faturamento;
-
-	@Column(name = "ds_faturamento", nullable = false)
-	private String descricaoFaturamento;
 
 	@Column(name = "status", nullable = false)
 	private String status;
@@ -155,38 +142,6 @@ public class Cliente implements Serializable {
 
 	public void setIdRepresentante(Integer idRepresentante) {
 		this.idRepresentante = idRepresentante;
-	}
-
-	public Integer getDiasBoleto() {
-		return diasBoleto;
-	}
-
-	public void setDiasBoleto(Integer diasBoleto) {
-		this.diasBoleto = diasBoleto;
-	}
-
-	public Integer getMaximoParcelasCartao() {
-		return maximoParcelasCartao;
-	}
-
-	public void setMaximoParcelasCartao(Integer maximoParcelasCartao) {
-		this.maximoParcelasCartao = maximoParcelasCartao;
-	}
-
-	public boolean isFaturamento() {
-		return DomBoolean.SIM.equals(faturamento);
-	}
-
-	public void setFaturamento(boolean faturamento) {
-		this.faturamento = faturamento ? DomBoolean.SIM : DomBoolean.NAO;
-	}
-
-	public String getDescricaoFaturamento() {
-		return descricaoFaturamento;
-	}
-
-	public void setDescricaoFaturamento(String descricaoFaturamento) {
-		this.descricaoFaturamento = descricaoFaturamento;
 	}
 
 	public String getStatus() {

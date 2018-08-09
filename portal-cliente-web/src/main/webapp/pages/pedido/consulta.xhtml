@@ -78,6 +78,10 @@
 							<p:column headerText="#" sortBy="#{entity.formattedId}" styleClass="id-column">
 								<h:outputText value="#{entity.formattedId}" />
 							</p:column>
+							
+							<p:column headerText="# Filial" sortBy="#{entity.idFilial}" styleClass="id-column">
+								<h:outputText value="#{entity.idFilial}" />
+							</p:column>
 
 							<p:column headerText="Data" sortBy="#{entity.dataCadastro}" styleClass="data-column">
 								<h:outputText value="#{entity.dataCadastro}">
@@ -151,8 +155,9 @@
 								<h:outputText value="#{pedidoController.entity.descricaoFormaPagamento}" />
 							</p:panelGrid>
 
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{sessionController.usuarioAdministrador}">
-								<h:outputText value="ID Pagamento" styleClass="label" />
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid"
+								rendered="#{sessionController.usuarioAdministrador and pedidoController.formaPagamento.cartaoCredito}">
+								<h:outputText value="ID Transação" styleClass="label" />
 								<h:outputText value="#{pedidoController.entity.idPagamento}" />
 							</p:panelGrid>
 
@@ -275,10 +280,10 @@
 					</div>
 
 					<div class="card card-w-title">
-						<h1>Produtos</h1>
+						<h1>Produto(s)</h1>
 						<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
 							<p:dataTable id="dtbItens" widgetVar="dtb" var="entity" value="#{pedidoController.entity.itens}" reflow="true"
-								emptyMessage="#{null != pedidoController.entity.itens ? 'Nenhum item cadastrado' : ''}" rowIndexVar="index">
+								emptyMessage="#{null != pedidoController.entity.itens ? 'Nenhum item encontrado' : ''}" rowIndexVar="index">
 
 								<p:column headerText="" styleClass="id-column">
 									<p:graphicImage cache="true" value="#{sessionController.getUrlImagem(entity.idImagemCapaProduto, 1)}" />
@@ -323,22 +328,38 @@
 						</p:panelGrid>
 					</div>
 
-					<c:if test="#{pedidoController.entity.pagamentoBoleto and pedidoController.entity.pagamentoPendente}">
+					<c:if test="#{pedidoController.formaPagamento.boleto and pedidoController.entity.pagamentoPendente}">
 						<div class="card card-w-title">
-							<h1>Pagamento</h1>
+							<h1>Boleto(s)</h1>
 
-							<p:panelGrid columns="1" id="pagamentoGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
-								<p:link href="#{pedidoController.entity.urlBoleto}" value="Visualizar boleto" target="_blank" style="font-size: 16px; font-weight: 700;" />
+							<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
+								<p:dataTable id="dtbBoletos" widgetVar="dtb" var="entity" value="#{pedidoController.entity.boletos}" reflow="true"
+									emptyMessage="#{null != pedidoController.entity.boletos ? 'Nenhum boleto encontrado' : ''}" rowIndexVar="index">
+
+									<p:column headerText="ID Transação" rendered="#{sessionController.usuarioAdministrador}">
+										<h:outputText value="#{entity.idPagamento}" />
+									</p:column>
+
+									<p:column headerText="Data Vencimento">
+										<h:outputText value="#{entity.dataVencimento}">
+											<f:convertDateTime pattern="dd/MM/yyyy" timeZone="America/Sao_Paulo" />
+										</h:outputText>
+									</p:column>
+
+									<p:column headerText="URL">
+										<p:link href="#{entity.url}" value="Visualizar boleto" target="_blank" style="font-size: 16px; font-weight: 700;" />
+									</p:column>
+								</p:dataTable>
 							</p:panelGrid>
 						</div>
 					</c:if>
 
 					<c:if test="#{sessionController.usuarioAdministrador}">
 						<div class="card card-w-title">
-							<h1>Fretes</h1>
+							<h1>Frete(s)</h1>
 							<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
 								<p:dataTable id="dtbFretes" widgetVar="dtb" var="entity" value="#{pedidoController.entity.fretes}" reflow="true"
-									emptyMessage="#{null != pedidoController.entity.itens ? 'Nenhum frete cadastrado' : ''}" rowIndexVar="index">
+									emptyMessage="#{null != pedidoController.entity.fretes ? 'Nenhum frete encontrado' : ''}" rowIndexVar="index">
 
 									<p:column headerText="Serviço" styleClass="id-column">
 										<h:outputText value="#{entity.codigoServico}" />

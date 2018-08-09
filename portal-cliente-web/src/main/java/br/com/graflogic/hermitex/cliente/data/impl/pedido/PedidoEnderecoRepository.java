@@ -1,4 +1,4 @@
-package br.com.graflogic.hermitex.cliente.data.impl.cadastro;
+package br.com.graflogic.hermitex.cliente.data.impl.pedido;
 
 import java.util.ArrayList;
 import java.util.List;

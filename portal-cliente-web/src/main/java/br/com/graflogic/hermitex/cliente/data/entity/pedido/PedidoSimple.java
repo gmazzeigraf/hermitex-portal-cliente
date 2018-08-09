@@ -23,8 +23,6 @@ public class PedidoSimple implements Serializable {
 
 	private BigDecimal valorTotal;
 
-	private String codigoFormaPagamento;
-
 	private String status;
 
 	private Integer quantidadeItens;
@@ -43,7 +41,7 @@ public class PedidoSimple implements Serializable {
 
 	@Transient
 	private Date dataCadastroAte;
-
+	
 	public Long getId() {
 		return id;
 	}
@@ -58,14 +56,6 @@ public class PedidoSimple implements Serializable {
 
 	public void setValorTotal(BigDecimal valorTotal) {
 		this.valorTotal = valorTotal;
-	}
-
-	public String getCodigoFormaPagamento() {
-		return codigoFormaPagamento;
-	}
-
-	public void setCodigoFormaPagamento(String codigoFormaPagamento) {
-		this.codigoFormaPagamento = codigoFormaPagamento;
 	}
 
 	public String getStatus() {
@@ -130,10 +120,6 @@ public class PedidoSimple implements Serializable {
 
 	public void setDataCadastroAte(Date dataCadastroAte) {
 		this.dataCadastroAte = dataCadastroAte;
-	}
-
-	public String getDeTipoPagamento() {
-		return DomPedido.domTipoFormaPagamento.getDeValor(codigoFormaPagamento);
 	}
 
 	public String getDeStatus() {

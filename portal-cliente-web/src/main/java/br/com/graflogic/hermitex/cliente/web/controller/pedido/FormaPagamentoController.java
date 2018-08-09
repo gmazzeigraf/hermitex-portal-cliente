@@ -54,25 +54,23 @@ public class FormaPagamentoController extends CrudBaseController<FormaPagamento,
 	protected boolean executeSave() {
 		try {
 			if (DomTipoFormaPagamento.BOLETO.equals(getEntity().getTipo())) {
-				String[] configuracoes = getEntity().getConfiguracao().split(";");
+				String[] dias = getEntity().getConfiguracao().split(";");
 
-				if (configuracoes.length != getEntity().getQuantidadeParcelas()) {
-					returnWarnDialogMessage(I18NUtil.getLabel("aviso"),
-							"A quantidade de configurações de dias do(s) boleto(s) deve ser a mesma de parcelas", null);
+				if (dias.length != getEntity().getQuantidadeParcelas()) {
+					returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "A quantidade de dias do(s) boleto(s) deve ser a mesma de parcelas", null);
 					return false;
 				}
 
-				for (String configuracao : configuracoes) {
-					if (!StringUtils.isNumeric(configuracao)) {
-						returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "A configuração " + configuracao + " deve ser numérica", null);
+				for (String dia : dias) {
+					if (!StringUtils.isNumeric(dia)) {
+						returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "O dia " + dia + " deve ser numérico", null);
 						return false;
 
 					} else {
-						Long dias = Long.parseLong(configuracao);
+						Long quantidadeDias = Long.parseLong(dia);
 
-						if (120 < dias) {
-							returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "A quantidade de dias " + configuracao + " deve ser no máximo 120",
-									null);
+						if (120 < quantidadeDias) {
+							returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "A quantidade de dias " + dia + " deve ser no máximo 120", null);
 							return false;
 						}
 					}
@@ -150,13 +148,8 @@ public class FormaPagamentoController extends CrudBaseController<FormaPagamento,
 
 	public void changeTipo() {
 		try {
-			if (!isConfiguracaoHabilitada()) {
-				getEntity().setConfiguracao("");
-			}
-
-			if (!isQuantidadeParcelasHabilitada()) {
-				getEntity().setQuantidadeParcelas(1);
-			}
+			getEntity().setConfiguracao("");
+			getEntity().setQuantidadeParcelas(1);
 
 		} catch (Throwable t) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao alterar tipo, contate o administrador", t);
@@ -209,30 +202,8 @@ public class FormaPagamentoController extends CrudBaseController<FormaPagamento,
 	}
 
 	public boolean isQuantidadeParcelasHabilitada() {
-		if (StringUtils.isNotEmpty(getEntity().getTipo())) {
-			if (isBoleto() || DomTipoFormaPagamento.CARTAO_CREDITO.equals(getEntity().getTipo())) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	public boolean isConfiguracaoHabilitada() {
-		if (StringUtils.isNotEmpty(getEntity().getTipo())) {
-			if (isBoleto()) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	public boolean isBoleto() {
-		if (StringUtils.isNotEmpty(getEntity().getTipo())) {
-			if (DomTipoFormaPagamento.BOLETO.equals(getEntity().getTipo())) {
-				return true;
-			}
+		if (getEntity().isBoleto() || getEntity().isCartaoCredito()) {
+			return true;
 		}
 
 		return false;

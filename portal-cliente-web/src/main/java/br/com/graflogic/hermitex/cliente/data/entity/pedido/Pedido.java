@@ -24,7 +24,6 @@ import org.hibernate.annotations.LazyCollectionOption;
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomTipoEndereco;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomStatus;
-import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomTipoFormaPagamento;
 
 /**
  * 
@@ -97,6 +96,10 @@ public class Pedido implements Serializable {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "pedido", orphanRemoval = true)
 	@LazyCollection(LazyCollectionOption.TRUE)
 	private List<PedidoFrete> fretes;
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "pedido", orphanRemoval = true)
+	@LazyCollection(LazyCollectionOption.TRUE)
+	private List<PedidoBoleto> boletos;
 
 	@Transient
 	private String tipoFormaPagamento;
@@ -245,6 +248,14 @@ public class Pedido implements Serializable {
 		this.fretes = fretes;
 	}
 
+	public List<PedidoBoleto> getBoletos() {
+		return boletos;
+	}
+
+	public void setBoletos(List<PedidoBoleto> boletos) {
+		this.boletos = boletos;
+	}
+
 	public String getTipoFormaPagamento() {
 		return tipoFormaPagamento;
 	}
@@ -273,18 +284,6 @@ public class Pedido implements Serializable {
 		}
 
 		return null;
-	}
-
-	public boolean isPagamentoCartaoCredito() {
-		return null != tipoFormaPagamento && DomTipoFormaPagamento.CARTAO_CREDITO.equals(tipoFormaPagamento);
-	}
-
-	public boolean isPagamentoBoleto() {
-		return null != tipoFormaPagamento && DomTipoFormaPagamento.BOLETO.equals(tipoFormaPagamento);
-	}
-
-	public boolean isPagamentoFaturamento() {
-		return null != tipoFormaPagamento && DomTipoFormaPagamento.FATURAMENTO.equals(tipoFormaPagamento);
 	}
 
 	public boolean isPagamentoPendente() {

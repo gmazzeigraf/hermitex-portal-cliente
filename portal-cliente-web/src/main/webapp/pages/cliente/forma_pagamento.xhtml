@@ -78,6 +78,12 @@
 									<f:convertNumber pattern="#,##0.00" />
 								</h:outputText>
 							</p:column>
+							
+							<p:column headerText="Valor Pedido Mínimo" sortBy="#{entity.valorPedidoMinimo}">
+								<h:outputText value="#{entity.valorPedidoMinimo}">
+									<f:convertNumber pattern="#,##0.00" />
+								</h:outputText>
+							</p:column>
 
 							<p:column headerText="Status" sortBy="#{entity.deStatus}" styleClass="status-column">
 								<h:outputText value="#{entity.deStatus}" />
@@ -126,12 +132,16 @@
 								</p:inputNumber>
 							</p:panelGrid>
 
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{formaPagamentoController.configuracaoHabilitada}">
-								<p:outputLabel for="configuracao" value="Configuração" styleClass="label" rendered="#{!formaPagamentoController.boleto}" />
-								<p:outputLabel for="configuracao" value="Configuração (Os dias devem ser separados por ';')" styleClass="label"
-									rendered="#{formaPagamentoController.boleto}" />
-								<p:inputText id="configuracao" value="#{formaPagamentoController.entity.configuracao}" maxlength="100" styleClass="ui-grid-col-12"
-									required="true" requiredMessage="Favor informar a configuração" />
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{formaPagamentoController.entity.boleto}">
+								<p:outputLabel for="dias" value="Dias (Os dias devem ser separados por ';')" styleClass="label" />
+								<p:inputText id="dias" value="#{formaPagamentoController.entity.configuracao}" maxlength="100" styleClass="ui-grid-col-12" required="true"
+									requiredMessage="Favor informar os dias" />
+							</p:panelGrid>
+							
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{formaPagamentoController.entity.faturamento}">
+								<p:outputLabel for="descricao" value="Descrição" styleClass="label" />
+								<p:inputText id="descricao" value="#{formaPagamentoController.entity.configuracao}" maxlength="100" styleClass="ui-grid-col-12" required="true"
+									requiredMessage="Favor informar a descrição" />
 							</p:panelGrid>
 
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">

@@ -147,15 +147,16 @@
 
 						<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 							<h3>Forma</h3>
-							<p:selectOneMenu id="formaPagamento" value="#{carrinhoController.sequencialFormaPagamento}" styleClass="ui-grid-col-12"
+							<p:selectOneMenu id="formaPagamento" value="#{carrinhoController.pedido.idFormaPagamento}" styleClass="ui-grid-col-12"
 								disabled="#{!carrinhoController.tipoFreteSelecionado}">
-								<f:selectItem itemLabel="Selecione" itemValue="-1" />
-								<f:selectItems value="#{carrinhoController.formasPagamento}" var="item" itemLabel="#{item.descricao}" itemValue="#{item.sequencial}" />
+								<f:selectItem itemLabel="Selecione" itemValue="" />
+								<f:selectItems value="#{carrinhoController.formasPagamento}" var="item" itemLabel="#{item.descricao}" itemValue="#{item.id}" />
 								<p:ajax process="@this" update="dadosPagamentoGrid" listener="#{carrinhoController.changeFormaPagamento}" />
 							</p:selectOneMenu>
 						</p:panelGrid>
 
-						<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{carrinhoController.pedido.pagamentoCartaoCredito}">
+						<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid"
+							rendered="#{carrinhoController.formaPagamentoSelecionada and carrinhoController.formaPagamento.cartaoCredito}">
 							<h3>Dados do cartão</h3>
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 								<p:outputLabel for="bandeira" value="Bandeira" styleClass="label" />

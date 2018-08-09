@@ -1,5 +1,8 @@
 package br.com.graflogic.hermitex.cliente.service.impl.produto;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -13,13 +16,18 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.graflogic.base.service.gson.GsonUtil;
 import br.com.graflogic.base.service.util.CacheUtil;
 import br.com.graflogic.hermitex.cliente.data.dom.DomAuditoria.DomEventoAuditoriaFormaPagamento;
+import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomTipoFilial;
+import br.com.graflogic.hermitex.cliente.data.dom.DomGeral.DomBoolean;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomStatusFormaPagamento;
 import br.com.graflogic.hermitex.cliente.data.entity.aud.FormaPagamentoAuditoria;
+import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Filial;
+import br.com.graflogic.hermitex.cliente.data.entity.pedido.Pedido;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.FormaPagamento;
 import br.com.graflogic.hermitex.cliente.data.impl.aud.FormaPagamentoAuditoriaRepository;
 import br.com.graflogic.hermitex.cliente.data.impl.produto.FormaPagamentoRepository;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
 import br.com.graflogic.hermitex.cliente.service.exception.ResultadoNaoEncontradoException;
+import br.com.graflogic.hermitex.cliente.service.impl.cadastro.FilialService;
 import br.com.graflogic.hermitex.cliente.web.util.SessionUtil;
 import br.com.graflogic.utilities.datautil.copy.ObjectCopier;
 
@@ -38,6 +46,9 @@ public class FormaPagamentoService {
 
 	@Autowired
 	private FormaPagamentoAuditoriaRepository auditoriaRepository;
+
+	@Autowired
+	private FilialService filialService;
 
 	@Autowired
 	private CacheUtil cacheUtil;
@@ -132,6 +143,94 @@ public class FormaPagamentoService {
 		}
 
 		return entity;
+	}
+
+	public List<FormaPagamento> gera(Pedido pedido) {
+		List<FormaPagamento> entities = new ArrayList<>();
+
+		// Consulta as ativas
+		List<FormaPagamento> entitiesAtivas = consultaPorCliente(pedido.getIdCliente(), true);
+
+		Filial filial = null;
+		if (null != pedido.getIdFilial()) {
+			// Consulta a filial
+			filial = filialService.consultaPorId(pedido.getIdFilial());
+
+			// Verifica se a compra esta bloqueada 
+			if (filialService.isCompraBloqueada(pedido.getIdFilial())) {
+				return entities;
+			}
+		}
+
+		// Separa as formas de acordo com as regras
+		for (FormaPagamento entity : entitiesAtivas) {
+			// Verifica se o pedido tem o valor minimo
+			if (pedido.getValorProdutos().compareTo(entity.getValorPedidoMinimo()) < 0) {
+				continue;
+			}
+
+			// Caso seja cliente, verifica
+			if (null == pedido.getIdFilial()) {
+				if (DomBoolean.SIM.equals(entity.getCliente())) {
+					entities.add(entity);
+				}
+			} else {
+				// Caso seja filial, verifica o credito e tipo
+				if (DomBoolean.SIM.equals(entity.getCreditoObrigatorio()) && DomBoolean.SIM.equals(filial.getSemCredito())) {
+					continue;
+				}
+
+				if ((DomTipoFilial.FILIAL.equals(filial.getTipo()) && DomBoolean.NAO.equals(entity.getFilial()))
+						|| (DomTipoFilial.FRANQUIA.equals(filial.getTipo()) && DomBoolean.NAO.equals(entity.getFranquia()))
+						|| (DomTipoFilial.LOJA_PROPRIA.equals(filial.getTipo()) && DomBoolean.NAO.equals(entity.getLojaPropria()))
+						|| (DomTipoFilial.UNIDADE.equals(filial.getTipo()) && DomBoolean.NAO.equals(entity.getUnidade()))) {
+					continue;
+				}
+
+				entities.add(entity);
+			}
+		}
+
+		// Gera as descricoes e descontos
+		for (FormaPagamento entity : entities) {
+			String descricao = entity.getDeTipo();
+
+			BigDecimal valorTotal = pedido.getValorTotal();
+
+			String descricaoDesconto = "";
+
+			if (BigDecimal.ZERO.compareTo(entity.getPorcentagemDesconto()) < 0) {
+				// Calcula o desconto
+				entity.setValorDesconto(pedido.getValorProdutos().divide(new BigDecimal("100")).multiply(entity.getPorcentagemDesconto()).setScale(2,
+						RoundingMode.HALF_EVEN));
+
+				valorTotal = valorTotal.subtract(entity.getValorDesconto()).setScale(2, RoundingMode.HALF_EVEN);
+
+				descricaoDesconto = " com " + entity.getPorcentagemDesconto().setScale(2, RoundingMode.HALF_EVEN).toString().replace(".", ",")
+						+ "% de desconto";
+
+			} else {
+				entity.setValorDesconto(BigDecimal.ZERO);
+			}
+
+			BigDecimal valorParcela = valorTotal.divide(new BigDecimal(entity.getQuantidadeParcelas()), 2, RoundingMode.HALF_EVEN);
+
+			if (entity.isBoleto() || entity.isCartaoCredito()) {
+				descricao += " " + entity.getQuantidadeParcelas() + "x de R$ " + valorParcela.toString().replace(".", ",") + descricaoDesconto;
+
+				if (entity.isBoleto()) {
+					descricao += " para " + entity.getConfiguracao().replace(";", "/") + " dias";
+				}
+
+			} else if (entity.isFaturamento()) {
+				descricao = entity.getConfiguracao() + descricaoDesconto;
+			}
+
+			entity.setDescricao(descricao);
+			entity.setValorParcela(valorParcela);
+		}
+
+		return entities;
 	}
 
 	// Util

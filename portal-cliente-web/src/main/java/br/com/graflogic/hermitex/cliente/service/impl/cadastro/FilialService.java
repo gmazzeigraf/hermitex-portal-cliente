@@ -189,6 +189,13 @@ public class FilialService {
 		return (Filial) ObjectCopier.copy(cacheObj);
 	}
 
+	// Validacao
+	public boolean isCompraBloqueada(Integer id) {
+		Filial entity = consultaPorId(id);
+
+		return DomBoolean.SIM.equals(entity.getCompraBloqueada());
+	}
+
 	// Util
 	private String registraAuditoria(Integer id, Filial objeto, String codigoEvento, String observacao) {
 		FilialAuditoria evento = new FilialAuditoria();

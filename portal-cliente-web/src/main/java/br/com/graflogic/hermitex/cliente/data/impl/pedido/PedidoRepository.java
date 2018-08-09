@@ -30,7 +30,7 @@ public class PedidoRepository extends BaseRepository<Pedido> {
 
 	@SuppressWarnings("unchecked")
 	public List<PedidoSimple> consulta(PedidoSimple filter) {
-		String queryStr = "SELECT ped.id, ped.vl_total, ped.cd_forma_pagamento, ped.status,"
+		String queryStr = "SELECT ped.id, ped.id_filial, ped.vl_total, ped.status,"
 				+ " (SELECT COUNT(id) FROM tb_pedido_item WHERE id_pedido = ped.id) AS quantidade_itens, aud.data"
 				+ " FROM tb_pedido ped INNER JOIN tb_pedido_aud aud ON ped.id = aud.id_relacionado AND aud.cd_evento = ?";
 		String where = "";
@@ -85,8 +85,8 @@ public class PedidoRepository extends BaseRepository<Pedido> {
 		for (Object[] row : rows) {
 			PedidoSimple entity = new PedidoSimple();
 			entity.setId(((BigInteger) row[0]).longValue());
-			entity.setValorTotal((BigDecimal) row[1]);
-			entity.setCodigoFormaPagamento(((Character) row[2]).toString());
+			entity.setIdFilial((Integer) row[1]);
+			entity.setValorTotal((BigDecimal) row[2]);
 			entity.setStatus(((Character) row[3]).toString());
 			entity.setQuantidadeItens(((BigInteger) row[4]).intValue());
 			entity.setDataCadastro((Date) row[5]);

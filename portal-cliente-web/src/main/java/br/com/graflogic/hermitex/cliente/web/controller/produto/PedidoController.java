@@ -17,6 +17,7 @@ import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Filial;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.Pedido;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoEndereco;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoSimple;
+import br.com.graflogic.hermitex.cliente.data.entity.produto.FormaPagamento;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
 import br.com.graflogic.hermitex.cliente.service.impl.auxiliar.EstadoService;
@@ -24,6 +25,7 @@ import br.com.graflogic.hermitex.cliente.service.impl.auxiliar.MunicipioService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.FilialService;
 import br.com.graflogic.hermitex.cliente.service.impl.pedido.PedidoService;
+import br.com.graflogic.hermitex.cliente.service.impl.produto.FormaPagamentoService;
 import br.com.graflogic.hermitex.cliente.web.util.SessionUtil;
 import br.com.graflogic.utilities.presentationutil.controller.SearchBaseController;
 
@@ -53,6 +55,9 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 	@Autowired
 	private MunicipioService municipioService;
 
+	@Autowired
+	private FormaPagamentoService formaPagamentoService;
+
 	private List<Cliente> clientes;
 
 	private List<Filial> filiais;
@@ -66,6 +71,8 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 	private PedidoEndereco enderecoFaturamento;
 
 	private PedidoEndereco enderecoEntrega;
+
+	private FormaPagamento formaPagamento;
 
 	private String observacao;
 
@@ -128,6 +135,8 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 
 		municipiosFaturamento.addAll(municipioService.consulta(enderecoFaturamento.getSiglaEstado()));
 		municipiosEntrega.addAll(municipioService.consulta(enderecoEntrega.getSiglaEstado()));
+
+		formaPagamento = formaPagamentoService.consultaPorId(getEntity().getIdFormaPagamento());
 	}
 
 	// Fluxo
@@ -228,7 +237,9 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 	public void changeCliente() {
 		try {
 			setEntities(null);
-			getFilterEntity().setIdFilial(null);
+			if (!SessionUtil.isUsuarioFilial()) {
+				getFilterEntity().setIdFilial(null);
+			}
 			filiais.clear();
 
 			if (isClienteSelecionado() && !SessionUtil.isUsuarioFilial()) {
@@ -290,6 +301,10 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 
 	public PedidoEndereco getEnderecoEntrega() {
 		return enderecoEntrega;
+	}
+
+	public FormaPagamento getFormaPagamento() {
+		return formaPagamento;
 	}
 
 	public String getObservacao() {

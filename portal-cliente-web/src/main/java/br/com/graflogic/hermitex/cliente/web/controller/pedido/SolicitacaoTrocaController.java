@@ -186,7 +186,9 @@ public class SolicitacaoTrocaController extends CrudBaseController<SolicitacaoTr
 	public void changeCliente() {
 		try {
 			setEntities(null);
-			getFilterEntity().setIdFilial(null);
+			if (!SessionUtil.isUsuarioFilial()) {
+				getFilterEntity().setIdFilial(null);
+			}
 			filiais.clear();
 
 			if (isClienteSelecionado() && !SessionUtil.isUsuarioFilial()) {

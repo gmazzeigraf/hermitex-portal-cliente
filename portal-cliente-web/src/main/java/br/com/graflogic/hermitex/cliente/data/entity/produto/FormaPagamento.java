@@ -15,6 +15,7 @@ import javax.persistence.Version;
 
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomStatusFormaPagamento;
+import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomTipoFormaPagamento;
 
 /**
  * 
@@ -78,6 +79,12 @@ public class FormaPagamento implements Serializable {
 
 	@Transient
 	private String descricao;
+
+	@Transient
+	private BigDecimal valorDesconto;
+
+	@Transient
+	private BigDecimal valorParcela;
 
 	public Integer getId() {
 		return id;
@@ -207,6 +214,22 @@ public class FormaPagamento implements Serializable {
 		this.descricao = descricao;
 	}
 
+	public BigDecimal getValorDesconto() {
+		return valorDesconto;
+	}
+
+	public void setValorDesconto(BigDecimal valorDesconto) {
+		this.valorDesconto = valorDesconto;
+	}
+
+	public BigDecimal getValorParcela() {
+		return valorParcela;
+	}
+
+	public void setValorParcela(BigDecimal valorParcela) {
+		this.valorParcela = valorParcela;
+	}
+
 	public boolean isAtiva() {
 		return null != status && DomStatusFormaPagamento.ATIVA.equals(status);
 	}
@@ -224,5 +247,17 @@ public class FormaPagamento implements Serializable {
 
 	public String getDeStatus() {
 		return DomPedido.domStatusFormaPagamento.getDeValor(status);
+	}
+
+	public boolean isCartaoCredito() {
+		return null != tipo && DomTipoFormaPagamento.CARTAO_CREDITO.equals(tipo);
+	}
+
+	public boolean isBoleto() {
+		return null != tipo && DomTipoFormaPagamento.BOLETO.equals(tipo);
+	}
+
+	public boolean isFaturamento() {
+		return null != tipo && DomTipoFormaPagamento.FATURAMENTO.equals(tipo);
 	}
 }
