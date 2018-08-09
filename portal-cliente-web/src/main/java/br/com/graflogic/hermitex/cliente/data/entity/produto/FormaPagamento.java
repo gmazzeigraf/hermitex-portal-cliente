@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido;
@@ -74,6 +75,9 @@ public class FormaPagamento implements Serializable {
 	@Version
 	@Column(name = "versao", nullable = false)
 	private Long versao;
+
+	@Transient
+	private String descricao;
 
 	public Integer getId() {
 		return id;
@@ -193,6 +197,14 @@ public class FormaPagamento implements Serializable {
 
 	public void setVersao(Long versao) {
 		this.versao = versao;
+	}
+
+	public String getDescricao() {
+		return descricao;
+	}
+
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
 	}
 
 	public boolean isAtiva() {

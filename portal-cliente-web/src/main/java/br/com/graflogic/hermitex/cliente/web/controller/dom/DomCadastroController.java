@@ -26,8 +26,12 @@ public class DomCadastroController implements Serializable {
 	public Map<String, Object> getStatusFilialMap() {
 		return DomCadastro.domStatusFilial.getMap();
 	}
-	
+
 	public Map<String, Object> getStatusRepresentanteMap() {
 		return DomCadastro.domStatusRepresentante.getMap();
+	}
+
+	public Map<String, Object> getTipoFilialMap() {
+		return DomCadastro.domTipoFilial.getMap();
 	}
 }

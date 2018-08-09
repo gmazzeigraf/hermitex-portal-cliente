@@ -16,6 +16,7 @@ import br.com.graflogic.base.service.util.CacheUtil;
 import br.com.graflogic.hermitex.cliente.data.dom.DomAcesso.DomTipoUsuario;
 import br.com.graflogic.hermitex.cliente.data.dom.DomAuditoria.DomEventoAuditoriaFilial;
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomStatusFilial;
+import br.com.graflogic.hermitex.cliente.data.dom.DomGeral.DomBoolean;
 import br.com.graflogic.hermitex.cliente.data.entity.aud.FilialAuditoria;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Filial;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.FilialContato;
@@ -121,6 +122,24 @@ public class FilialService {
 		executaAtualiza(entity);
 
 		registraAuditoria(entity.getId(), null, DomEventoAuditoriaFilial.ATIVACAO, null);
+	}
+
+	@Transactional(rollbackFor = Throwable.class)
+	public void bloqueiaCompra(Filial entity) {
+		entity.setCompraBloqueada(DomBoolean.SIM);
+
+		executaAtualiza(entity);
+
+		registraAuditoria(entity.getId(), null, DomEventoAuditoriaFilial.BLOQUEIO_COMPRA, null);
+	}
+
+	@Transactional(rollbackFor = Throwable.class)
+	public void desbloqueiaCompra(Filial entity) {
+		entity.setCompraBloqueada(DomBoolean.NAO);
+
+		executaAtualiza(entity);
+
+		registraAuditoria(entity.getId(), null, DomEventoAuditoriaFilial.DESBLOQUEIO_COMPRA, null);
 	}
 
 	private void executaAtualiza(Filial entity) {

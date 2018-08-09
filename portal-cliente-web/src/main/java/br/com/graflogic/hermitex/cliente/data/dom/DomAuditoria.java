@@ -76,12 +76,16 @@ public class DomAuditoria {
 		public static final String ATUALIZACAO = "A";
 		public static final String INATIVACAO = "I";
 		public static final String ATIVACAO = "T";
+		public static final String BLOQUEIO_COMPRA = "B";
+		public static final String DESBLOQUEIO_COMPRA = "D";
 
 		DomEventoAuditoriaFilial() {
 			mapa.put(CADASTRO, "Cadastro");
 			mapa.put(ATUALIZACAO, "Atualização");
 			mapa.put(INATIVACAO, "Inativação");
 			mapa.put(ATIVACAO, "Ativação");
+			mapa.put(BLOQUEIO_COMPRA, "Bloqueio Compra");
+			mapa.put(DESBLOQUEIO_COMPRA, "Desbloqueio Compra");
 		}
 	}
 
@@ -154,7 +158,7 @@ public class DomAuditoria {
 			mapa.put(ATIVACAO, "Ativação");
 		}
 	}
-	
+
 	public static class DomEventoAuditoriaFormaPagamento extends DomBase {
 		public static final String CADASTRO = "C";
 		public static final String ATUALIZACAO = "A";

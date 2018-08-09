@@ -11,7 +11,9 @@ import org.springframework.stereotype.Controller;
 
 import br.com.graflogic.base.service.util.I18NUtil;
 import br.com.graflogic.commonutil.util.StringUtil;
+import br.com.graflogic.hermitex.cliente.data.dom.DomAcesso.DomPermissaoAcesso;
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomTipoEndereco;
+import br.com.graflogic.hermitex.cliente.data.dom.DomGeral.DomBoolean;
 import br.com.graflogic.hermitex.cliente.data.entity.auxiliar.Estado;
 import br.com.graflogic.hermitex.cliente.data.entity.auxiliar.Municipio;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
@@ -151,6 +153,9 @@ public class FilialController extends CrudBaseController<Filial, Filial> impleme
 
 		changeEstadoFaturamento();
 		changeEstadoEntrega();
+
+		getEntity().setCompraBloqueada(DomBoolean.NAO);
+		getEntity().setSemCredito(DomBoolean.NAO);
 	}
 
 	@Override
@@ -409,9 +414,59 @@ public class FilialController extends CrudBaseController<Filial, Filial> impleme
 		}
 	}
 
+	public void bloqueiaCompra() {
+		try {
+			service.bloqueiaCompra(getEntity());
+
+			returnInfoMessage("Compra bloqueada com sucesso", null);
+
+			edit(getEntity());
+
+			search();
+
+		} catch (DadosDesatualizadosException e) {
+			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Registro com dados desatualizados, altere novamente", null);
+
+			edit(getEntity());
+
+		} catch (Throwable t) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao bloquear compra, contate o administrador", t);
+		}
+	}
+
+	public void desbloqueiaCompra() {
+		try {
+			service.desbloqueiaCompra(getEntity());
+
+			returnInfoMessage("Compra desbloqueada com sucesso", null);
+
+			edit(getEntity());
+
+			search();
+
+		} catch (DadosDesatualizadosException e) {
+			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Registro com dados desatualizados, altere novamente", null);
+
+			edit(getEntity());
+
+		} catch (Throwable t) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao desbloquear compra, contate o administrador", t);
+		}
+	}
+
 	// Condicoes
 	public boolean isClienteSelecionado() {
 		return null != getFilterEntity().getIdCliente() && 0 != getFilterEntity().getIdCliente();
+	}
+
+	public boolean isCompraBloqueavel() {
+		return isEditing() && SessionUtil.possuiPermissao(DomPermissaoAcesso.ROLE_FIL_CADASTRO_BLOQUEIO_COMPRA)
+				&& DomBoolean.NAO.equals(getEntity().getCompraBloqueada());
+	}
+
+	public boolean isCompraDesbloqueavel() {
+		return isEditing() && SessionUtil.possuiPermissao(DomPermissaoAcesso.ROLE_FIL_CADASTRO_BLOQUEIO_COMPRA)
+				&& DomBoolean.SIM.equals(getEntity().getCompraBloqueada());
 	}
 
 	// Getters e Setters

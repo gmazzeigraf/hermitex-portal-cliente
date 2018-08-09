@@ -20,6 +20,7 @@ import org.hibernate.annotations.LazyCollectionOption;
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro;
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomStatusFilial;
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomTipoEndereco;
+import br.com.graflogic.hermitex.cliente.data.dom.DomGeral;
 import br.com.graflogic.utilities.datautil.util.FormatUtil;
 
 /**
@@ -59,6 +60,15 @@ public class Filial implements Serializable {
 
 	@Column(name = "telefone", nullable = false)
 	private String telefone;
+
+	@Column(name = "tipo", nullable = false)
+	private String tipo;
+
+	@Column(name = "in_sem_credito", nullable = false)
+	private String semCredito;
+
+	@Column(name = "in_compra_bloqueada", nullable = false)
+	private String compraBloqueada;
 
 	@Column(name = "status", nullable = false)
 	private String status;
@@ -139,6 +149,30 @@ public class Filial implements Serializable {
 		this.telefone = telefone;
 	}
 
+	public String getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
+	}
+
+	public String getSemCredito() {
+		return semCredito;
+	}
+
+	public void setSemCredito(String semCredito) {
+		this.semCredito = semCredito;
+	}
+
+	public String getCompraBloqueada() {
+		return compraBloqueada;
+	}
+
+	public void setCompraBloqueada(String compraBloqueada) {
+		this.compraBloqueada = compraBloqueada;
+	}
+
 	public String getStatus() {
 		return status;
 	}
@@ -171,15 +205,23 @@ public class Filial implements Serializable {
 		this.contatos = contatos;
 	}
 
-	public boolean isAtivo() {
+	public boolean isAtiva() {
 		return null != status && DomStatusFilial.ATIVO.equals(status);
 	}
 
-	public boolean isInativo() {
+	public boolean isInativa() {
 		if (DomStatusFilial.INATIVO.equals(status)) {
 			return true;
 		}
 		return false;
+	}
+
+	public String getDeTipo() {
+		return DomCadastro.domTipoFilial.getDeValor(tipo);
+	}
+
+	public String getDeCompraBloqueada() {
+		return DomGeral.domBoolean.getDeValor(compraBloqueada);
 	}
 
 	public String getDeStatus() {

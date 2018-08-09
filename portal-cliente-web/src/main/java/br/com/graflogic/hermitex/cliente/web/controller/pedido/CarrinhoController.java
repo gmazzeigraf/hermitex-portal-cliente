@@ -24,6 +24,7 @@ import br.com.graflogic.hermitex.cliente.data.entity.pedido.Pedido;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoEndereco;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoEnderecoPK;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoItem;
+import br.com.graflogic.hermitex.cliente.data.entity.produto.FormaPagamento;
 import br.com.graflogic.hermitex.cliente.service.exception.CorreiosException;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
 import br.com.graflogic.hermitex.cliente.service.exception.PagamentoException;
@@ -34,7 +35,6 @@ import br.com.graflogic.hermitex.cliente.service.impl.cadastro.FilialService;
 import br.com.graflogic.hermitex.cliente.service.impl.pedido.JanelaCompraService;
 import br.com.graflogic.hermitex.cliente.service.impl.pedido.PedidoService;
 import br.com.graflogic.hermitex.cliente.service.model.DadosPagamentoCartaoCredito;
-import br.com.graflogic.hermitex.cliente.service.model.FormaPagamento;
 import br.com.graflogic.hermitex.cliente.service.model.TipoFrete;
 import br.com.graflogic.hermitex.cliente.web.util.SessionUtil;
 import br.com.graflogic.utilities.presentationutil.controller.BaseController;
@@ -93,8 +93,6 @@ public class CarrinhoController extends BaseController implements InitializingBe
 	private String mensagemJanelaCompra;
 
 	private String mensagemConclusaoPedido;
-
-	private Integer sequencialFormaPagamento;
 
 	private String codigoServicoFrete;
 
@@ -182,6 +180,7 @@ public class CarrinhoController extends BaseController implements InitializingBe
 
 		pedido.setValorTotal(pedido.getValorTotal().add(pedido.getValorProdutos()));
 		pedido.setValorTotal(pedido.getValorTotal().add(pedido.getValorFrete()));
+		pedido.setValorTotal(pedido.getValorTotal().subtract(pedido.getValorDesconto()));
 		pedido.setValorTotal(pedido.getValorTotal().setScale(2, RoundingMode.HALF_EVEN));
 	}
 
@@ -189,8 +188,6 @@ public class CarrinhoController extends BaseController implements InitializingBe
 		if (!SessionUtil.isUsuarioCliente() && !SessionUtil.isUsuarioFilial()) {
 			return;
 		}
-
-		sequencialFormaPagamento = -1;
 
 		formasPagamento.clear();
 
@@ -206,6 +203,7 @@ public class CarrinhoController extends BaseController implements InitializingBe
 		dadosPagamentoCartaoCredito = new DadosPagamentoCartaoCredito();
 
 		pedido.setValorProdutos(BigDecimal.ZERO);
+		pedido.setValorDesconto(BigDecimal.ZERO);
 		pedido.setValorFrete(BigDecimal.ZERO);
 		pedido.setValorTotal(BigDecimal.ZERO);
 
@@ -267,6 +265,8 @@ public class CarrinhoController extends BaseController implements InitializingBe
 
 	public void prosseguePagamento() {
 		try {
+			// TODO Caso seja filial, verifica se esta com compra bloqueada e emite alerta
+
 			enderecoFaturamento.setPedido(pedido);
 			enderecoEntrega.setPedido(pedido);
 
@@ -278,8 +278,16 @@ public class CarrinhoController extends BaseController implements InitializingBe
 				return;
 			}
 
+			// Recalcula o valor do pedido
+			pedido.setValorDesconto(BigDecimal.ZERO);
+			pedido.setValorFrete(BigDecimal.ZERO);
+
+			atualizaPedido();
+
 			codigoServicoFrete = null;
-			sequencialFormaPagamento = -1;
+
+			pedido.setIdFormaPagamento(null);
+			pedido.setTipoFormaPagamento(null);
 
 			tiposFrete.clear();
 			formasPagamento.clear();
@@ -321,18 +329,24 @@ public class CarrinhoController extends BaseController implements InitializingBe
 				return;
 			}
 
+			// Cadastra o pedido
 			pedidoService.cadastra(pedido, pedido.isPagamentoCartaoCredito() ? dadosPagamentoCartaoCredito : null,
 					SessionUtil.getAuthenticatedUsuario().getId());
 
-			mensagemConclusaoPedido = "Obrigado pela sua compra, o pedido <b>" + pedido.getFormattedId() + "</b> foi efetuado com sucesso. "
-			// Boleto
-					+ (pedido.isPagamentoBoleto() ? "Visualize o boleto <a href=\"" + pedido.getUrlBoleto() + "\" target=\"_blank\">aqui</a>."
-							// Faturamento
-							: (pedido.isPagamentoFaturamento() ? "Seus boletos serão encaminhados via e-mail no próximo dia útil."
-									// Outros
-									: ""))
-					// Todos
-					+ "<br /> Para mais informações acesse a página \"Pedido / Consulta\"" + "<br /> O pedido "
+			// Gera a mensagem de conclusao
+			mensagemConclusaoPedido = "Obrigado pela sua compra, o pedido <b>" + pedido.getFormattedId() + "</b> foi efetuado com sucesso.";
+
+			if (pedido.isPagamentoBoleto()) {
+				mensagemConclusaoPedido += " Para visualizar seu(s) boleto(s), acesse a página de pedidos";
+
+			} else if (pedido.isPagamentoCartaoCredito()) {
+
+			} else if (pedido.isPagamentoFaturamento()) {
+				mensagemConclusaoPedido += " Suas informações para pagamento serão encaminhadas via e-mail no próximo dia útil.";
+
+			}
+
+			mensagemConclusaoPedido += "<br /> Para mais informações acesse a página \"Pedido / Consulta\"" + "<br /> O pedido "
 					+ (DomServicoFrete.RETIRADA_HERMITEX.equals(codigoServicoFrete) ? "estará disponível" : " será despachado")
 					+ " em até 30 dias úteis após o fechamento da janela de compra.";
 
@@ -356,17 +370,28 @@ public class CarrinhoController extends BaseController implements InitializingBe
 	public void changeFormaPagamento() {
 		try {
 			if (isFormaPagamentoSelecionada()) {
+				FormaPagamento formaPagamentoSelecionada = null;
+
+				for (FormaPagamento formaPagamento : formasPagamento) {
+					if (pedido.getIdFormaPagamento().equals(formaPagamento.getId())) {
+						formaPagamentoSelecionada = formaPagamento;
+
+						break;
+					}
+				}
+
+				// TODO Aplica desconto caso necessario
+
 				// Obtem a forma de pagamento
-				FormaPagamento formaPagamento = formasPagamento.get(sequencialFormaPagamento);
-				pedido.setCodigoFormaPagamento(formaPagamento.getCodigo());
-				pedido.setFormaPagamento(formaPagamento.getDescricao());
+				pedido.setIdFormaPagamento(formaPagamentoSelecionada.getId());
+				pedido.setDescricaoFormaPagamento(formaPagamentoSelecionada.getDescricao());
 
 				if (pedido.isPagamentoCartaoCredito()) {
-					dadosPagamentoCartaoCredito.setParcelas(formaPagamento.getParcelas());
+					dadosPagamentoCartaoCredito.setParcelas(formaPagamentoSelecionada.getQuantidadeParcelas());
 				}
 			} else {
-				pedido.setCodigoFormaPagamento(null);
-				pedido.setFormaPagamento(null);
+				pedido.setTipoFormaPagamento(null);
+				pedido.setDescricaoFormaPagamento(null);
 				dadosPagamentoCartaoCredito.setParcelas(null);
 			}
 
@@ -380,7 +405,8 @@ public class CarrinhoController extends BaseController implements InitializingBe
 			pedido.getFretes().clear();
 			pedido.setValorFrete(BigDecimal.ZERO);
 			formasPagamento.clear();
-			sequencialFormaPagamento = -1;
+			pedido.setIdFormaPagamento(null);
+			pedido.setTipoFormaPagamento(null);
 
 			if (StringUtils.isNotEmpty(codigoServicoFrete)) {
 				for (TipoFrete tipoFrete : tiposFrete) {
@@ -390,7 +416,7 @@ public class CarrinhoController extends BaseController implements InitializingBe
 
 						atualizaPedido();
 
-						formasPagamento = pedidoService.geraFormasPagamento(cliente, pedido.getValorTotal());
+						formasPagamento = pedidoService.geraFormasPagamento(pedido);
 
 						break;
 					}
@@ -423,7 +449,7 @@ public class CarrinhoController extends BaseController implements InitializingBe
 
 	// Condicoes
 	public boolean isFormaPagamentoSelecionada() {
-		return null != sequencialFormaPagamento && sequencialFormaPagamento >= 0;
+		return null != pedido.getIdFormaPagamento() && 0 != pedido.getIdFormaPagamento();
 	}
 
 	public boolean isTipoFreteSelecionado() {
@@ -477,14 +503,6 @@ public class CarrinhoController extends BaseController implements InitializingBe
 
 	public String getMensagemConclusaoPedido() {
 		return mensagemConclusaoPedido;
-	}
-
-	public Integer getSequencialFormaPagamento() {
-		return sequencialFormaPagamento;
-	}
-
-	public void setSequencialFormaPagamento(Integer sequencialFormaPagamento) {
-		this.sequencialFormaPagamento = sequencialFormaPagamento;
 	}
 
 	public String getCodigoServicoFrete() {

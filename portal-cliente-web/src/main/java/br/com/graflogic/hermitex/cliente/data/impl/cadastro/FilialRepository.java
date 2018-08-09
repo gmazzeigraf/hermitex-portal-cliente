@@ -39,6 +39,10 @@ public class FilialRepository extends BaseRepository<Filial> {
 					builder.and(builder.like(builder.upper(table.<String>get("razaoSocial")), "%" + entity.getRazaoSocial().toUpperCase() + "%")));
 		}
 
+		if (StringUtils.isNotEmpty(entity.getTipo())) {
+			predicateList.add(builder.and(builder.equal(table.get("tipo"), entity.getTipo())));
+		}
+
 		if (StringUtils.isNotEmpty(entity.getStatus())) {
 			predicateList.add(builder.and(builder.equal(table.get("status"), entity.getStatus())));
 		}

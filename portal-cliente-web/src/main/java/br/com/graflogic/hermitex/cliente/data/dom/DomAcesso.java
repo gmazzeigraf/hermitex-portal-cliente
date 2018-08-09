@@ -67,6 +67,7 @@ public class DomAcesso {
 		public static final String ROLE_PEDIDO_FINALIZACAO = "ROLE_PEDIDO_FINALIZACAO";
 		public static final String ROLE_PEDIDO_CANCELAMENTO = "ROLE_PEDIDO_CANCELAMENTO";
 		public static final String ROLE_PEDIDO_SOLICITACAO_TROCA_FINALIZACAO = "ROLE_PEDIDO_SOLICITACAO_TROCA_FINALIZACAO";
+		public static final String ROLE_FIL_CADASTRO_BLOQUEIO_COMPRA = "ROLE_FIL_CADASTRO_BLOQUEIO_COMPRA";
 
 		DomPermissaoAcesso() {
 		}

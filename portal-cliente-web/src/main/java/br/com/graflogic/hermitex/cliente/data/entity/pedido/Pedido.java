@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.apache.commons.lang.StringUtils;
@@ -22,8 +23,8 @@ import org.hibernate.annotations.LazyCollectionOption;
 
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomTipoEndereco;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido;
-import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomTipoFormaPagamento;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomStatus;
+import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomTipoFormaPagamento;
 
 /**
  * 
@@ -54,6 +55,9 @@ public class Pedido implements Serializable {
 	@Column(name = "vl_frete", nullable = false)
 	private BigDecimal valorFrete;
 
+	@Column(name = "vl_desconto", nullable = false)
+	private BigDecimal valorDesconto;
+
 	@Column(name = "vl_total", nullable = false)
 	private BigDecimal valorTotal;
 
@@ -63,17 +67,14 @@ public class Pedido implements Serializable {
 	@Column(name = "qt_total_itens", nullable = false)
 	private Integer quantidadeTotalItens;
 
-	@Column(name = "cd_forma_pagamento", nullable = false)
-	private String codigoFormaPagamento;
+	@Column(name = "id_forma_pagamento", nullable = false)
+	private Integer idFormaPagamento;
 
 	@Column(name = "ds_forma_pagamento", nullable = false)
-	private String formaPagamento;
+	private String descricaoFormaPagamento;
 
 	@Column(name = "id_pagamento")
 	private String idPagamento;
-
-	@Column(name = "url_boleto")
-	private String urlBoleto;
 
 	@Column(name = "id_janela_compra", nullable = false)
 	private Integer idJanelaCompra;
@@ -96,6 +97,9 @@ public class Pedido implements Serializable {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "pedido", orphanRemoval = true)
 	@LazyCollection(LazyCollectionOption.TRUE)
 	private List<PedidoFrete> fretes;
+
+	@Transient
+	private String tipoFormaPagamento;
 
 	public Long getId() {
 		return id;
@@ -137,6 +141,14 @@ public class Pedido implements Serializable {
 		this.valorFrete = valorFrete;
 	}
 
+	public BigDecimal getValorDesconto() {
+		return valorDesconto;
+	}
+
+	public void setValorDesconto(BigDecimal valorDesconto) {
+		this.valorDesconto = valorDesconto;
+	}
+
 	public BigDecimal getValorTotal() {
 		return valorTotal;
 	}
@@ -161,20 +173,20 @@ public class Pedido implements Serializable {
 		this.quantidadeTotalItens = quantidadeTotalItens;
 	}
 
-	public String getCodigoFormaPagamento() {
-		return codigoFormaPagamento;
+	public Integer getIdFormaPagamento() {
+		return idFormaPagamento;
 	}
 
-	public void setCodigoFormaPagamento(String codigoFormaPagamento) {
-		this.codigoFormaPagamento = codigoFormaPagamento;
+	public void setIdFormaPagamento(Integer idFormaPagamento) {
+		this.idFormaPagamento = idFormaPagamento;
 	}
 
-	public String getFormaPagamento() {
-		return formaPagamento;
+	public String getDescricaoFormaPagamento() {
+		return descricaoFormaPagamento;
 	}
 
-	public void setFormaPagamento(String formaPagamento) {
-		this.formaPagamento = formaPagamento;
+	public void setDescricaoFormaPagamento(String descricaoFormaPagamento) {
+		this.descricaoFormaPagamento = descricaoFormaPagamento;
 	}
 
 	public String getIdPagamento() {
@@ -183,14 +195,6 @@ public class Pedido implements Serializable {
 
 	public void setIdPagamento(String idPagamento) {
 		this.idPagamento = idPagamento;
-	}
-
-	public String getUrlBoleto() {
-		return urlBoleto;
-	}
-
-	public void setUrlBoleto(String urlBoleto) {
-		this.urlBoleto = urlBoleto;
 	}
 
 	public Integer getIdJanelaCompra() {
@@ -241,6 +245,14 @@ public class Pedido implements Serializable {
 		this.fretes = fretes;
 	}
 
+	public String getTipoFormaPagamento() {
+		return tipoFormaPagamento;
+	}
+
+	public void setTipoFormaPagamento(String tipoFormaPagamento) {
+		this.tipoFormaPagamento = tipoFormaPagamento;
+	}
+
 	public String getDeStatus() {
 		return DomPedido.domStatus.getDeValor(status);
 	}
@@ -264,15 +276,15 @@ public class Pedido implements Serializable {
 	}
 
 	public boolean isPagamentoCartaoCredito() {
-		return null != codigoFormaPagamento && DomTipoFormaPagamento.CARTAO_CREDITO.equals(codigoFormaPagamento);
+		return null != tipoFormaPagamento && DomTipoFormaPagamento.CARTAO_CREDITO.equals(tipoFormaPagamento);
 	}
 
 	public boolean isPagamentoBoleto() {
-		return null != codigoFormaPagamento && DomTipoFormaPagamento.BOLETO.equals(codigoFormaPagamento);
+		return null != tipoFormaPagamento && DomTipoFormaPagamento.BOLETO.equals(tipoFormaPagamento);
 	}
 
 	public boolean isPagamentoFaturamento() {
-		return null != codigoFormaPagamento && DomTipoFormaPagamento.FATURAMENTO.equals(codigoFormaPagamento);
+		return null != tipoFormaPagamento && DomTipoFormaPagamento.FATURAMENTO.equals(tipoFormaPagamento);
 	}
 
 	public boolean isPagamentoPendente() {

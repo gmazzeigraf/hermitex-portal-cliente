@@ -58,4 +58,20 @@ public class DomCadastro {
 	}
 
 	public static DomTipoEndereco domTipoEndereco = new DomTipoEndereco();
+
+	public static class DomTipoFilial extends DomBase {
+		public static final String LOJA_PROPRIA = "P";
+		public static final String FRANQUIA = "F";
+		public static final String FILIAL = "L";
+		public static final String UNIDADE = "U";
+
+		DomTipoFilial() {
+			mapa.put(LOJA_PROPRIA, "Loja Própria");
+			mapa.put(FRANQUIA, "Franquia");
+			mapa.put(FILIAL, "Filial");
+			mapa.put(UNIDADE, "Unidade");
+		}
+	}
+
+	public static DomTipoFilial domTipoFilial = new DomTipoFilial();
 }

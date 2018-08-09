@@ -32,8 +32,6 @@ import br.com.graflogic.correios.client.CorreiosClient;
 import br.com.graflogic.correios.model.CResultado;
 import br.com.graflogic.correios.model.CServico;
 import br.com.graflogic.hermitex.cliente.data.dom.DomAuditoria.DomEventoAuditoriaPedido;
-import br.com.graflogic.hermitex.cliente.data.dom.DomPedido;
-import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomTipoFormaPagamento;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomServicoFrete;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomStatus;
 import br.com.graflogic.hermitex.cliente.data.dom.DomProduto.DomTipo;
@@ -47,6 +45,7 @@ import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoFrete;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoItem;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoSimple;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.Embalagem;
+import br.com.graflogic.hermitex.cliente.data.entity.produto.FormaPagamento;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.Produto;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.TamanhoProduto;
 import br.com.graflogic.hermitex.cliente.data.impl.aud.PedidoAuditoriaRepository;
@@ -64,10 +63,10 @@ import br.com.graflogic.hermitex.cliente.service.impl.auxiliar.ConfiguracaoServi
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.FilialService;
 import br.com.graflogic.hermitex.cliente.service.impl.produto.EmbalagemService;
+import br.com.graflogic.hermitex.cliente.service.impl.produto.FormaPagamentoService;
 import br.com.graflogic.hermitex.cliente.service.impl.produto.ProdutoService;
 import br.com.graflogic.hermitex.cliente.service.impl.produto.TamanhoProdutoService;
 import br.com.graflogic.hermitex.cliente.service.model.DadosPagamentoCartaoCredito;
-import br.com.graflogic.hermitex.cliente.service.model.FormaPagamento;
 import br.com.graflogic.hermitex.cliente.service.model.TipoFrete;
 import br.com.graflogic.hermitex.cliente.service.util.ExcelUtil;
 import br.com.graflogic.mundipagg.client.MundiPaggClient;
@@ -129,9 +128,14 @@ public class PedidoService {
 	@Autowired
 	private EmbalagemService embalagemService;
 
+	@Autowired
+	private FormaPagamentoService formaPagamentoService;
+
 	// Fluxo
 	@Transactional(rollbackFor = Throwable.class)
 	public void cadastra(Pedido entity, DadosPagamentoCartaoCredito dadosPagamentoCartaoCredito, Integer idUsuario) {
+		// TODO Caso seja filial, verifica se esta com compra bloqueada e emite alerta
+		
 		// Caso seja compra com carta, valida o documento do portador
 		if (entity.isPagamentoCartaoCredito()) {
 			String documentoPortador = dadosPagamentoCartaoCredito.getDocumentoPortador();
@@ -501,7 +505,8 @@ public class PedidoService {
 				paga(entity, null, null);
 
 			} else if (entity.isPagamentoBoleto()) {
-				entity.setUrlBoleto(response.getBoletoTransactionResultCollection().get(0).getBoletoUrl());
+				// TODO Adiciona o objeto boleto
+				//				entity.setUrlBoleto(response.getBoletoTransactionResultCollection().get(0).getBoletoUrl());
 			}
 
 		} catch (Throwable t) {
@@ -753,36 +758,35 @@ public class PedidoService {
 		entity.setFretes(freteRepository.consultaPorPedido(entity.getId()));
 	}
 
-	public List<FormaPagamento> geraFormasPagamento(Cliente cliente, BigDecimal valorTotal) {
+	public List<FormaPagamento> geraFormasPagamento(Pedido pedido) {
 		List<FormaPagamento> formasPagamento = new ArrayList<>();
-		// TODO Descomentar apos primeira janela
-		// formasPagamento.add(new FormaPagamento(formasPagamento.size(), DomFormaPagamento.BOLETO, 1));
 
-		for (int i = 1; i <= cliente.getMaximoParcelasCartao(); i++) {
-			formasPagamento.add(new FormaPagamento(formasPagamento.size(), DomTipoFormaPagamento.CARTAO_CREDITO, i));
-		}
-
-		if (cliente.isFaturamento()) {
-			formasPagamento.add(new FormaPagamento(formasPagamento.size(), DomTipoFormaPagamento.FATURAMENTO, 1));
-		}
-
-		for (FormaPagamento forma : formasPagamento) {
-			forma.setValor(valorTotal.divide(new BigDecimal(forma.getParcelas()), 2, RoundingMode.HALF_EVEN));
-
-			String descricao = DomPedido.domTipoFormaPagamento.getDeValor(forma.getCodigo());
-
-			if (DomTipoFormaPagamento.BOLETO.equals(forma.getCodigo())) {
-				descricao += " " + cliente.getDiasBoleto() + " dias";
-
-			} else if (DomTipoFormaPagamento.CARTAO_CREDITO.equals(forma.getCodigo())) {
-				descricao += " " + forma.getParcelas() + "x R$ " + forma.getValor().toString().replace(".", ",");
-
-			} else if (DomTipoFormaPagamento.FATURAMENTO.equals(forma.getCodigo())) {
-				descricao = cliente.getDescricaoFaturamento();
-			}
-
-			forma.setDescricao(descricao);
-		}
+		// TODO Gera as formas de pagamento de acordo com cliente, franquia e pedido
+		//		for (int i = 1; i <= cliente.getMaximoParcelasCartao(); i++) {
+		//			formasPagamento.add(new FormaPagamento(formasPagamento.size(), DomTipoFormaPagamento.CARTAO_CREDITO, i));
+		//		}
+		//
+		//		if (cliente.isFaturamento()) {
+		//			formasPagamento.add(new FormaPagamento(formasPagamento.size(), DomTipoFormaPagamento.FATURAMENTO, 1));
+		//		}
+		//
+		//		for (FormaPagamento forma : formasPagamento) {
+		//			forma.setValor(valorTotal.divide(new BigDecimal(forma.getParcelas()), 2, RoundingMode.HALF_EVEN));
+		//
+		//			String descricao = DomPedido.domTipoFormaPagamento.getDeValor(forma.getCodigo());
+		//
+		//			if (DomTipoFormaPagamento.BOLETO.equals(forma.getCodigo())) {
+		//				descricao += " " + cliente.getDiasBoleto() + " dias";
+		//
+		//			} else if (DomTipoFormaPagamento.CARTAO_CREDITO.equals(forma.getCodigo())) {
+		//				descricao += " " + forma.getParcelas() + "x R$ " + forma.getValor().toString().replace(".", ",");
+		//
+		//			} else if (DomTipoFormaPagamento.FATURAMENTO.equals(forma.getCodigo())) {
+		//				descricao = cliente.getDescricaoFaturamento();
+		//			}
+		//
+		//			forma.setDescricao(descricao);
+		//		}
 
 		return formasPagamento;
 	}
