@@ -24,12 +24,17 @@ import org.springframework.security.web.authentication.AbstractAuthenticationPro
 import org.springframework.security.web.util.TextEscapeUtils;
 
 import br.com.graflogic.hermitex.cliente.data.dom.DomAcesso.DomStatusSenhaUsuario;
+import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomStatusCliente;
+import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomStatusFilial;
+import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomStatusRepresentante;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.Usuario;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioAdministrador;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioCliente;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioFilial;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioRepresentante;
+import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Filial;
+import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Representante;
 import br.com.graflogic.hermitex.cliente.service.impl.acesso.UsuarioService;
 import br.com.graflogic.hermitex.cliente.service.impl.aud.AuditoriaService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
@@ -120,13 +125,25 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
 			if (usuario instanceof UsuarioCliente) {
 				empresa = clienteService.consultaPorId(((UsuarioCliente) usuario).getIdCliente());
 
+				if (!DomStatusCliente.ATIVO.equals(((Cliente) empresa).getStatus())) {
+					throw new AuthenticationServiceException("Cliente inativo, contate o administrador");
+				}
+
 			} else if (usuario instanceof UsuarioFilial) {
 				empresa = filialService.consultaPorId(((UsuarioFilial) usuario).getIdFilial());
 
 				((UsuarioFilial) usuario).setIdCliente(((Filial) empresa).getIdCliente());
 
+				if (!DomStatusFilial.ATIVO.equals(((Filial) empresa).getStatus())) {
+					throw new AuthenticationServiceException("Filial inativa, contate o administrador");
+				}
+
 			} else if (usuario instanceof UsuarioRepresentante) {
 				empresa = representanteService.consultaPorId(((UsuarioRepresentante) usuario).getIdRepresentante());
+
+				if (!DomStatusRepresentante.ATIVO.equals(((Representante) empresa).getStatus())) {
+					throw new AuthenticationServiceException("Representante inativo, contate o administrador");
+				}
 			}
 
 			// Prepara o objeto autenticado

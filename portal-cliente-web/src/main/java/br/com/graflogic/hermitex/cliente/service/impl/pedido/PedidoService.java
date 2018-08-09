@@ -141,6 +141,22 @@ public class PedidoService {
 			throw new DadosInvalidosException("Não foi possível prosseguir com a compra, contate o administrador");
 		}
 
+		// Verifica o status do cliente
+		Cliente cliente = clienteService.consultaPorId(entity.getIdCliente());
+
+		if (!cliente.isAtivo()) {
+			throw new DadosInvalidosException("Cliente inativo, contate o administrador");
+		}
+
+		if (null != entity.getIdFilial() && 0 != entity.getIdFilial()) {
+			// Caso seja filial, valida o status
+			Filial filial = filialService.consultaPorId(entity.getIdFilial());
+
+			if (!filial.isAtiva()) {
+				throw new DadosInvalidosException("Filial inativa, contate o administrador");
+			}
+		}
+
 		// Caso seja compra com carta, valida o documento do portador
 		if (formaPagamento.isCartaoCredito()) {
 			String documentoPortador = dadosPagamentoCartaoCredito.getDocumentoPortador();
