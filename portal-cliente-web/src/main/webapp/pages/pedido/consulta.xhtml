@@ -12,7 +12,7 @@
 				<div class="ui-g-12">
 					<div class="card card-w-title">
 						<h1>#{labels.consulta}</h1>
-						<p:panelGrid columns="1" id="filterGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
+						<p:panelGrid columns="1" id="filterGrid" layout="grid" styleClass="ui-panelgrid-blank form-group" rendered="#{!sessionController.usuarioFilial}">
 							<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid"
 									rendered="#{sessionController.usuarioAdministrador or sessionController.usuarioRepresentante}">
@@ -75,31 +75,31 @@
 							paginatorPosition="bottom" reflow="true" rows="10"
 							emptyMessage="#{null != pedidoController.entities ? messages.nenhum_resultado_encontrado : messages.realize_pesquisa}">
 
-							<p:column headerText="#" sortBy="#{entity.formattedId}" styleClass="id-column">
+							<p:column headerText="#" sortBy="#{entity.formattedId}" styleClass="coluna-center">
 								<h:outputText value="#{entity.formattedId}" />
 							</p:column>
-							
-							<p:column headerText="# Filial" sortBy="#{entity.idFilial}" styleClass="id-column">
+
+							<p:column headerText="# Filial" sortBy="#{entity.idFilial}" styleClass="coluna-center" rendered="#{!sessionController.usuarioFilial}">
 								<h:outputText value="#{entity.idFilial}" />
 							</p:column>
 
-							<p:column headerText="Data" sortBy="#{entity.dataCadastro}" styleClass="data-column">
+							<p:column headerText="Data" sortBy="#{entity.dataCadastro}" styleClass="coluna-center">
 								<h:outputText value="#{entity.dataCadastro}">
 									<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" timeZone="America/Sao_Paulo" />
 								</h:outputText>
 							</p:column>
 
-							<p:column headerText="Total" sortBy="#{entity.valorTotal}">
+							<p:column headerText="Total" sortBy="#{entity.valorTotal}" styleClass="coluna-center">
 								<h:outputText value="#{entity.valorTotal}">
 									<f:convertNumber pattern="R$ #,##0.00" />
 								</h:outputText>
 							</p:column>
 
-							<p:column headerText="Itens" sortBy="#{entity.quantidadeItens}">
+							<p:column headerText="Itens" sortBy="#{entity.quantidadeItens}" styleClass="coluna-center">
 								<h:outputText value="#{entity.quantidadeItens}" />
 							</p:column>
 
-							<p:column headerText="Status" sortBy="#{entity.deStatus}">
+							<p:column headerText="Status" sortBy="#{entity.deStatus}" styleClass="coluna-center" rendered="#{sessionController.usuarioAdministrador}">
 								<h:outputText value="#{entity.deStatus}" />
 							</p:column>
 
@@ -123,7 +123,7 @@
 					<div class="card card-w-title">
 						<h1>#{labels.informacoes}</h1>
 
-						<p:panelGrid columns="6" layout="grid" styleClass="ui-panelgrid-blank form-group">
+						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group">
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 								<h:outputText value="#" styleClass="label" />
 								<h:outputText value="#{pedidoController.entity.formattedId}" />
@@ -162,7 +162,7 @@
 							</p:panelGrid>
 
 
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{sessionController.usuarioAdministrador}">
 								<h:outputText value="Status" styleClass="label" />
 								<h:outputText value="#{pedidoController.entity.deStatus}" />
 							</p:panelGrid>
@@ -336,17 +336,17 @@
 								<p:dataTable id="dtbBoletos" widgetVar="dtb" var="entity" value="#{pedidoController.entity.boletos}" reflow="true"
 									emptyMessage="#{null != pedidoController.entity.boletos ? 'Nenhum boleto encontrado' : ''}" rowIndexVar="index">
 
-									<p:column headerText="ID Transação" rendered="#{sessionController.usuarioAdministrador}">
+									<p:column headerText="ID Transação" styleClass="coluna-center" rendered="#{sessionController.usuarioAdministrador}">
 										<h:outputText value="#{entity.idPagamento}" />
 									</p:column>
 
-									<p:column headerText="Data Vencimento">
+									<p:column headerText="Data Vencimento" styleClass="coluna-center">
 										<h:outputText value="#{entity.dataVencimento}">
 											<f:convertDateTime pattern="dd/MM/yyyy" timeZone="America/Sao_Paulo" />
 										</h:outputText>
 									</p:column>
 
-									<p:column headerText="URL">
+									<p:column headerText="URL" styleClass="coluna-center">
 										<p:link href="#{entity.url}" value="Visualizar boleto" target="_blank" style="font-size: 16px; font-weight: 700;" />
 									</p:column>
 								</p:dataTable>

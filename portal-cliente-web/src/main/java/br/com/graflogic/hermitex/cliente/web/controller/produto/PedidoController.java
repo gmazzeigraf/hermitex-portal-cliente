@@ -103,6 +103,10 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 			municipiosFaturamento = new ArrayList<Municipio>();
 			municipiosEntrega = new ArrayList<>();
 
+			if (SessionUtil.isUsuarioFilial()) {
+				search();
+			}
+
 		} catch (Throwable t) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao inicializar tela, contate o administrador", t);
 		}
