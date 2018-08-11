@@ -2,10 +2,7 @@ package br.com.graflogic.hermitex.cliente.service.impl.pedido;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -29,13 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.graflogic.base.service.gson.GsonUtil;
 import br.com.graflogic.commonutil.util.PessoaFisicaValidator;
 import br.com.graflogic.commonutil.util.PessoaJuridicaValidator;
-import br.com.graflogic.correios.client.CorreiosClient;
-import br.com.graflogic.correios.model.CResultado;
-import br.com.graflogic.correios.model.CServico;
 import br.com.graflogic.hermitex.cliente.data.dom.DomAuditoria.DomEventoAuditoriaPedido;
-import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomServicoFrete;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomStatus;
-import br.com.graflogic.hermitex.cliente.data.dom.DomProduto.DomTipo;
 import br.com.graflogic.hermitex.cliente.data.entity.aud.PedidoAuditoria;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Filial;
@@ -46,9 +38,7 @@ import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoEndereco;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoFrete;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoItem;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoSimple;
-import br.com.graflogic.hermitex.cliente.data.entity.produto.Embalagem;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.FormaPagamento;
-import br.com.graflogic.hermitex.cliente.data.entity.produto.Produto;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.TamanhoProduto;
 import br.com.graflogic.hermitex.cliente.data.impl.aud.PedidoAuditoriaRepository;
 import br.com.graflogic.hermitex.cliente.data.impl.pedido.PedidoBoletoRepository;
@@ -57,7 +47,6 @@ import br.com.graflogic.hermitex.cliente.data.impl.pedido.PedidoFreteRepository;
 import br.com.graflogic.hermitex.cliente.data.impl.pedido.PedidoItemRepository;
 import br.com.graflogic.hermitex.cliente.data.impl.pedido.PedidoRepository;
 import br.com.graflogic.hermitex.cliente.data.util.ConfiguracaoEnum;
-import br.com.graflogic.hermitex.cliente.service.exception.CorreiosException;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
 import br.com.graflogic.hermitex.cliente.service.exception.PagamentoException;
@@ -65,11 +54,8 @@ import br.com.graflogic.hermitex.cliente.service.exception.ResultadoNaoEncontrad
 import br.com.graflogic.hermitex.cliente.service.impl.auxiliar.ConfiguracaoService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.FilialService;
-import br.com.graflogic.hermitex.cliente.service.impl.produto.EmbalagemService;
-import br.com.graflogic.hermitex.cliente.service.impl.produto.ProdutoService;
 import br.com.graflogic.hermitex.cliente.service.impl.produto.TamanhoProdutoService;
 import br.com.graflogic.hermitex.cliente.service.model.DadosPagamentoCartaoCredito;
-import br.com.graflogic.hermitex.cliente.service.model.TipoFrete;
 import br.com.graflogic.hermitex.cliente.service.util.ExcelUtil;
 import br.com.graflogic.mundipagg.client.MundiPaggClient;
 import br.com.graflogic.mundipagg.model.BoletoTransaction;
@@ -89,8 +75,6 @@ import br.com.graflogic.utilities.datautil.copy.ObjectCopier;
  */
 @Service
 public class PedidoService {
-
-	private static final double FATOR_REGIME_TRIBUTARIO_FRETE = 0.75;
 
 	private static final String OPERACAO_CARTAO_CREDITO = "AuthAndCapture";
 
@@ -125,13 +109,7 @@ public class PedidoService {
 	private FilialService filialService;
 
 	@Autowired
-	private ProdutoService produtoService;
-
-	@Autowired
 	private ConfiguracaoService configuracaoService;
-
-	@Autowired
-	private EmbalagemService embalagemService;
 
 	// Fluxo
 	@Transactional(rollbackFor = Throwable.class)
@@ -568,208 +546,6 @@ public class PedidoService {
 		} catch (Throwable t) {
 			throw new PagamentoException(t);
 		}
-	}
-
-	// Frete
-	public List<TipoFrete> geraTiposFreteCorreios(Pedido entity) {
-		try {
-			CorreiosClient client = new CorreiosClient(configuracaoService.consulta(ConfiguracaoEnum.CORREIOS_URL),
-					configuracaoService.consulta(ConfiguracaoEnum.CORREIOS_CODIGO_EMPRESA),
-					configuracaoService.consulta(ConfiguracaoEnum.CORREIOS_SENHA));
-
-			// Separa os itens por tipo
-			List<String> tiposProduto = new ArrayList<>();
-			Map<String, BigDecimal> pesos = new HashMap<>();
-			Map<String, Integer> quantidades = new HashMap<>();
-
-			// Separa os pesos e quantidades por tipo de produto
-			for (PedidoItem item : entity.getItens()) {
-				Produto produto = produtoService.consultaPorId(item.getIdProduto());
-
-				String tipoProduto = produto.getTipo();
-
-				// Caso seja bolsa, calcula junto de roupa
-				if (DomTipo.BOLSA.equals(tipoProduto)) {
-					tipoProduto = DomTipo.ROUPA;
-				}
-
-				if (!tiposProduto.contains(tipoProduto)) {
-					tiposProduto.add(tipoProduto);
-					pesos.put(tipoProduto, BigDecimal.ZERO);
-					quantidades.put(tipoProduto, 0);
-				}
-
-				pesos.put(tipoProduto, pesos.get(tipoProduto).add(item.getPesoTotal()));
-				quantidades.put(tipoProduto, quantidades.get(tipoProduto) + item.getQuantidade());
-			}
-
-			List<String> servicosFrete = Arrays.asList(DomServicoFrete.PAC, DomServicoFrete.SEDEX);
-
-			List<TipoFrete> tiposFrete = new ArrayList<>();
-
-			// Processa os tipos de frete
-			for (String servicoFrete : servicosFrete) {
-				TipoFrete tipoFrete = new TipoFrete();
-				tipoFrete.setCodigoServico(servicoFrete);
-
-				List<PedidoFrete> fretesTipoFrete = new ArrayList<>();
-				BigDecimal valorTipoFrete = BigDecimal.ZERO;
-
-				// Processa os tipos de produto
-				tipoProdutoFor: {
-					for (String tipoProduto : tiposProduto) {
-						List<PedidoFrete> fretesTipoProduto = new ArrayList<>();
-
-						// Gera as embalagens
-						BigDecimal pesoRestante = BigDecimal.ZERO;
-						Integer quantidadeRestante = 0;
-
-						if (DomTipo.ROUPA.equals(tipoProduto)) {
-							pesoRestante = pesos.get(tipoProduto);
-
-						} else if (DomTipo.SAPATO.equals(tipoProduto)) {
-							quantidadeRestante = quantidades.get(tipoProduto);
-
-						} else {
-							throw new DadosInvalidosException("Tipo de produto " + tipoProduto + " sem frete implementado");
-						}
-
-						while (pesoRestante.compareTo(BigDecimal.ZERO) > 0 || quantidadeRestante > 0) {
-							BigDecimal pesoFrete = BigDecimal.ZERO;
-							Integer quantidadeFrete = 0;
-
-							Embalagem embalagem = null;
-							try {
-								if (DomTipo.ROUPA.equals(tipoProduto)) {
-									// Consulta por peso
-									embalagem = embalagemService.consultaPorTipoProdutoPeso(tipoProduto, pesoRestante);
-
-									pesoFrete = pesoRestante;
-
-									pesoRestante = BigDecimal.ZERO;
-
-								} else if (DomTipo.SAPATO.equals(tipoProduto)) {
-									// Consulta por quantidade
-									embalagem = embalagemService.consultaPorTipoProdutoQuantidade(tipoProduto, quantidadeRestante);
-
-									quantidadeFrete = quantidadeRestante;
-
-									quantidadeRestante = 0;
-
-								}
-
-							} catch (ResultadoNaoEncontradoException e) {
-								try {
-									// Consulta a maior
-									if (DomTipo.ROUPA.equals(tipoProduto)) {
-										embalagem = embalagemService.consultaMaiorPesoPorTipoProduto(tipoProduto);
-
-										pesoFrete = embalagem.getPesoMaximo();
-
-										pesoRestante = pesoRestante.subtract(embalagem.getPesoMaximo());
-
-									} else if (DomTipo.SAPATO.equals(tipoProduto)) {
-										embalagem = embalagemService.consultaMaiorQuantidadePorTipoProduto(tipoProduto);
-
-										quantidadeFrete = embalagem.getQuantidadeMaxima();
-
-										quantidadeRestante = quantidadeRestante - embalagem.getQuantidadeMaxima();
-
-									}
-
-								} catch (ResultadoNaoEncontradoException x) {
-									throw new DadosInvalidosException("Nenhuma embalagem cadastrada para o tipo de produto " + tipoProduto);
-
-								}
-							}
-
-							// Caso tenha embalagem, gera o frete
-							if (null != embalagem) {
-
-								// O peso de cada sapato foi definido com 1kg
-								if (DomTipo.SAPATO.equals(tipoProduto)) {
-									pesoFrete = BigDecimal.ONE.multiply(new BigDecimal(quantidadeFrete));
-								}
-
-								// Adiciona o peso da embalagem
-								pesoFrete = pesoFrete.add(embalagem.getPeso());
-
-								// Caso o peso total seja menor que um, define um que e o menor aceito pelos correios
-								if (pesoFrete.compareTo(BigDecimal.ONE) < 0) {
-									pesoFrete = BigDecimal.ONE;
-								}
-
-								// Consulta o frete
-								CResultado resultado = client.calculaPrecoPrazo(Arrays.asList(servicoFrete),
-										configuracaoService.consulta(ConfiguracaoEnum.FRETE_CEP_ORIGEM), entity.getEnderecoEntrega().getCep(),
-										pesoFrete.intValue(), embalagem.getComprimento(), embalagem.getAltura(), embalagem.getLargura());
-
-								for (CServico servico : resultado.getServicos().getCServico()) {
-									BigDecimal valor = new BigDecimal(servico.getValor().replace(",", "."));
-
-									// Caso o valor seja retornado, gera o frete
-									if (valor.compareTo(BigDecimal.ZERO) > 0) {
-										PedidoFrete frete = new PedidoFrete();
-										frete.setIdEmbalagem(embalagem.getId());
-										frete.setPesoItens(pesoFrete);
-										frete.setQuantidadeItens(quantidadeFrete);
-										frete.setNomeEmbalagem(embalagem.getNome());
-										frete.setValor(valor);
-										frete.setCodigoServico(servicoFrete);
-										frete.setPrazoDias(Integer.parseInt(servico.getPrazoEntrega()));
-
-										fretesTipoProduto.add(frete);
-
-										valorTipoFrete = valorTipoFrete.add(valor);
-
-									} else {
-										// Caso nao seja retornado valor, remove o tipo de frete
-										fretesTipoFrete.clear();
-										break tipoProdutoFor;
-									}
-								}
-
-							}
-						}
-
-						fretesTipoFrete.addAll(fretesTipoProduto);
-					}
-				}
-
-				if (fretesTipoFrete.isEmpty()) {
-					continue;
-				}
-
-				tipoFrete.setFretes(fretesTipoFrete);
-				tipoFrete.setValor(valorTipoFrete.divide(new BigDecimal(FATOR_REGIME_TRIBUTARIO_FRETE), 2, RoundingMode.HALF_EVEN));
-
-				tiposFrete.add(tipoFrete);
-
-			}
-
-			return tiposFrete;
-
-		} catch (Throwable t) {
-			throw new CorreiosException(t);
-		}
-	}
-
-	public TipoFrete geraTipoFreteRetirada() {
-		TipoFrete tipo = new TipoFrete();
-		tipo.setFretes(new ArrayList<>());
-		tipo.setCodigoServico(DomServicoFrete.RETIRADA_HERMITEX);
-		tipo.setValor(BigDecimal.ZERO);
-
-		PedidoFrete frete = new PedidoFrete();
-		frete.setCodigoServico(DomServicoFrete.RETIRADA_HERMITEX);
-		frete.setValor(BigDecimal.ZERO);
-		frete.setPesoItens(BigDecimal.ZERO);
-		frete.setQuantidadeItens(0);
-		frete.setPrazoDias(0);
-
-		tipo.getFretes().add(frete);
-
-		return tipo;
 	}
 
 	// Util

@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -21,6 +23,7 @@ import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Filial;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.JanelaCompra;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.Pedido;
+import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoBoleto;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoEndereco;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoEnderecoPK;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoItem;
@@ -32,6 +35,8 @@ import br.com.graflogic.hermitex.cliente.service.impl.auxiliar.EstadoService;
 import br.com.graflogic.hermitex.cliente.service.impl.auxiliar.MunicipioService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.FilialService;
+import br.com.graflogic.hermitex.cliente.service.impl.pedido.CarrinhoService;
+import br.com.graflogic.hermitex.cliente.service.impl.pedido.FreteService;
 import br.com.graflogic.hermitex.cliente.service.impl.pedido.JanelaCompraService;
 import br.com.graflogic.hermitex.cliente.service.impl.pedido.PedidoService;
 import br.com.graflogic.hermitex.cliente.service.impl.produto.FormaPagamentoService;
@@ -50,6 +55,8 @@ import br.com.graflogic.utilities.presentationutil.controller.BaseController;
 public class CarrinhoController extends BaseController implements InitializingBean {
 
 	private static final long serialVersionUID = 1141659331755233586L;
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(CarrinhoController.class);
 
 	@Autowired
 	private PedidoService pedidoService;
@@ -71,6 +78,12 @@ public class CarrinhoController extends BaseController implements InitializingBe
 
 	@Autowired
 	private FormaPagamentoService formaPagamentoService;
+
+	@Autowired
+	private FreteService freteService;
+
+	@Autowired
+	private CarrinhoService carrinhoService;
 
 	private List<Estado> estados;
 
@@ -103,6 +116,8 @@ public class CarrinhoController extends BaseController implements InitializingBe
 	private String codigoServicoFrete;
 
 	private Integer passo;
+
+	private String idCarrinho;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -138,6 +153,11 @@ public class CarrinhoController extends BaseController implements InitializingBe
 			if (itemPedido.getIdProduto().equals(item.getIdProduto()) && itemPedido.getCodigoTamanho().equals(item.getCodigoTamanho())) {
 				throw new DadosInvalidosException("Item e tamanho já adicionados no carrinho");
 			}
+		}
+
+		if (StringUtils.isEmpty(idCarrinho)) {
+			LOGGER.debug("Criando novo carrinho " + idCarrinho);
+			idCarrinho = carrinhoService.gera();
 		}
 
 		pedido.getItens().add(item);
@@ -205,6 +225,8 @@ public class CarrinhoController extends BaseController implements InitializingBe
 		tiposFrete.clear();
 
 		codigoServicoFrete = null;
+
+		idCarrinho = null;
 
 		pedido = new Pedido();
 		pedido.setItens(new ArrayList<>());
@@ -307,13 +329,13 @@ public class CarrinhoController extends BaseController implements InitializingBe
 			formasPagamento.clear();
 
 			try {
-				tiposFrete = pedidoService.geraTiposFreteCorreios(pedido);
+				tiposFrete = freteService.geraTiposCorreios(pedido);
 			} catch (CorreiosException e) {
 				returnFatalDialogMessage(I18NUtil.getLabel("erro"),
 						"Cálculo de frete dos Correios indisponível, tente novamente mais tarde ou selecione outro tipo", e);
 			}
 
-			tiposFrete.add(pedidoService.geraTipoFreteRetirada());
+			tiposFrete.add(freteService.geraTipoRetirada());
 
 			if (pedido.getItens().isEmpty()) {
 				redirectView(getApplicationUrl() + "/pages/compra/produtos.jsf");
@@ -347,22 +369,41 @@ public class CarrinhoController extends BaseController implements InitializingBe
 			pedidoService.cadastra(pedido, formaPagamento, formaPagamento.isCartaoCredito() ? dadosPagamentoCartaoCredito : null,
 					SessionUtil.getAuthenticatedUsuario().getId());
 
+			// Atualiza o carrinho com o pedido
+			carrinhoService.atualizaPedido(idCarrinho, pedido.getId());
+
 			// Gera a mensagem de conclusao
-			mensagemConclusaoPedido = "Obrigado pela sua compra, o pedido <b>" + pedido.getFormattedId() + "</b> foi efetuado com sucesso.";
+			mensagemConclusaoPedido = "<p>Obrigado pela sua compra, o pedido <b>" + pedido.getFormattedId() + "</b> foi efetuado com sucesso.";
+
+			mensagemConclusaoPedido += "<br/>Seu pedido "
+					+ (DomServicoFrete.RETIRADA_HERMITEX.equals(codigoServicoFrete) ? "estará disponível" : "será despachado")
+					+ " em até 40 dias úteis após o fechamento da janela de compra.</p>";
+
+			mensagemConclusaoPedido += "<p>Para mais informações acesse a página \"Pedido / Consulta\".</p>";
 
 			if (formaPagamento.isBoleto()) {
-				mensagemConclusaoPedido += " Para visualizar seu(s) boleto(s), acesse a página de pedidos.";
+				String sufixo = "";
+
+				if (pedido.getBoletos().size() > 1) {
+					sufixo = "s";
+				}
+
+				mensagemConclusaoPedido += "<p>Para visualizar seu" + sufixo + " boleto" + sufixo + ", clique no" + sufixo + " link" + sufixo
+						+ " abaixo.</p>";
+
+				SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+
+				for (PedidoBoleto boleto : pedido.getBoletos()) {
+					mensagemConclusaoPedido += "<p><a href=\"" + boleto.getUrl() + "\" target=\"_blank\">Vencimento "
+							+ df.format(boleto.getDataVencimento()) + "</a></p>";
+				}
 
 			} else if (formaPagamento.isCartaoCredito()) {
 
 			} else if (formaPagamento.isFaturamento()) {
-				mensagemConclusaoPedido += " Suas informações para pagamento serão encaminhadas via e-mail no próximo dia útil.";
+				mensagemConclusaoPedido += "<p>Suas informações para pagamento serão encaminhadas via e-mail no próximo dia útil.</p>";
 
 			}
-
-			mensagemConclusaoPedido += "<br /> Para mais informações acesse a página \"Pedido / Consulta\"" + "<br /> O pedido "
-					+ (DomServicoFrete.RETIRADA_HERMITEX.equals(codigoServicoFrete) ? "estará disponível" : " será despachado")
-					+ " em até 40 dias úteis após o fechamento da janela de compra.";
 
 			passo = 3;
 
