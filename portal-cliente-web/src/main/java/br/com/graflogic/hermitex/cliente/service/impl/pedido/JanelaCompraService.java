@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.graflogic.base.service.gson.GsonUtil;
 import br.com.graflogic.hermitex.cliente.data.dom.DomAuditoria.DomEventoAuditoriaJanelaCompra;
+import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomStatus;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomStatusJanelaCompra;
 import br.com.graflogic.hermitex.cliente.data.entity.aud.JanelaCompraAuditoria;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.JanelaCompra;
@@ -172,6 +173,11 @@ public class JanelaCompraService {
 		// Gera os itens
 		List<PedidoItem> itens = new ArrayList<>();
 		for (PedidoSimple pedido : pedidos) {
+			// Nao considera os pedidos cancelados
+			if (DomStatus.CANCELADO.equals(pedido.getStatus())) {
+				continue;
+			}
+
 			itens.addAll(pedidoService.consultaItensPorPedido(pedido.getId()));
 		}
 
