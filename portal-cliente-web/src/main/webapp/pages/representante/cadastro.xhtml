@@ -130,7 +130,7 @@
 
 						<p:panelGrid columns="1" id="enderecoCadastroGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
 							<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
-								<p:panelGrid columns="1" columnClasses="ui-grid-col-12, ui-grid-col-12, ui-grid-col-12" layout="grid">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 									<p:outputLabel for="cepCadastro" value="CEP" styleClass="label" />
 									<p:inputMask id="cepCadastro" styleClass="ui-grid-col-12" mask="99.999-999" value="#{representanteController.enderecoCadastro.cep}"
 										converter="maskConverter" validatorMessage="CEP inválido" required="true" requiredMessage="Favor informar o CEP">

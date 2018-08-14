@@ -76,6 +76,10 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 
 	private String observacao;
 
+	private Cliente cliente;
+
+	private Filial filial;
+
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		try {
@@ -141,6 +145,14 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 		municipiosEntrega.addAll(municipioService.consulta(enderecoEntrega.getSiglaEstado()));
 
 		formaPagamento = formaPagamentoService.consultaPorId(getEntity().getIdFormaPagamento());
+
+		cliente = clienteService.consultaPorId(getEntity().getIdCliente());
+
+		if (null != getEntity().getIdFilial() && 0 != getEntity().getIdFilial()) {
+			filial = filialService.consultaPorId(getEntity().getIdFilial());
+		} else {
+			filial = null;
+		}
 	}
 
 	// Fluxo
@@ -247,7 +259,7 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 			filiais.clear();
 
 			if (isClienteSelecionado() && !SessionUtil.isUsuarioFilial()) {
-				filiais = filialService.consultaPorCliente(getFilterEntity().getIdCliente(), false);
+				filiais.addAll(filialService.consultaPorCliente(getFilterEntity().getIdCliente(), false));
 			}
 
 		} catch (Throwable t) {
@@ -317,5 +329,13 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 
 	public void setObservacao(String observacao) {
 		this.observacao = observacao;
+	}
+
+	public Cliente getCliente() {
+		return cliente;
+	}
+
+	public Filial getFilial() {
+		return filial;
 	}
 }

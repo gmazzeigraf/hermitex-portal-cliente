@@ -170,11 +170,45 @@
 					</div>
 
 					<div class="card card-w-title">
+						<h1>Cliente</h1>
+
+						<p:panelGrid columns="2" id="clienteGrid" layout="grid" styleClass="ui-panelgrid-blank form-group" columnClasses="ui-grid-col-2, ui-grid-col-10">
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel value="CNPJ" styleClass="label" />
+								<p:outputLabel value="#{pedidoController.cliente.formattedCnpj}" />
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel value="Razão Social" styleClass="label" />
+								<p:outputLabel value="#{pedidoController.cliente.razaoSocial}" />
+							</p:panelGrid>
+						</p:panelGrid>
+					</div>
+
+					<c:if test="#{null != pedidoController.filial}">
+						<div class="card card-w-title">
+							<h1>Filial</h1>
+
+							<p:panelGrid columns="2" id="filialGrid" layout="grid" styleClass="ui-panelgrid-blank form-group" columnClasses="ui-grid-col-2, ui-grid-col-10">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel value="CNPJ" styleClass="label" />
+									<p:outputLabel value="#{pedidoController.filial.formattedCnpj}" />
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel value="Razão Social" styleClass="label" />
+									<p:outputLabel value="#{pedidoController.filial.razaoSocial}" />
+								</p:panelGrid>
+							</p:panelGrid>
+						</div>
+					</c:if>
+
+					<div class="card card-w-title">
 						<h1>Endereço Faturamento</h1>
 
 						<p:panelGrid columns="1" id="enderecoFaturamentoGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
 							<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
-								<p:panelGrid columns="1" columnClasses="ui-grid-col-12, ui-grid-col-12, ui-grid-col-12" layout="grid">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 									<p:outputLabel for="cepFaturamento" value="CEP" styleClass="label" />
 									<p:inputMask id="cepFaturamento" styleClass="ui-grid-col-12" mask="99.999-999" value="#{pedidoController.enderecoFaturamento.cep}"
 										converter="maskConverter" validatorMessage="CEP inválido" required="true" requiredMessage="Favor informar o CEP" disabled="true" />
@@ -229,7 +263,7 @@
 
 						<p:panelGrid columns="1" id="enderecoEntregaGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
 							<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
-								<p:panelGrid columns="1" columnClasses="ui-grid-col-12, ui-grid-col-12, ui-grid-col-12" layout="grid">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 									<p:outputLabel for="cepEntrega" value="CEP" styleClass="label" />
 									<p:inputMask id="cepEntrega" styleClass="ui-grid-col-12" mask="99.999-999" value="#{pedidoController.enderecoEntrega.cep}"
 										converter="maskConverter" validatorMessage="CEP inválido" required="true" requiredMessage="Favor informar o CEP" disabled="true" />

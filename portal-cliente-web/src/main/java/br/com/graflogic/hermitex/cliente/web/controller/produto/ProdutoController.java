@@ -252,8 +252,8 @@ public class ProdutoController extends CrudBaseController<Produto, Produto> impl
 			setores.clear();
 
 			if (isClienteSelecionado()) {
-				categorias = categoriaService.consultaPorCliente(getFilterEntity().getIdCliente(), false);
-				setores = setorService.consultaPorCliente(getFilterEntity().getIdCliente(), false);
+				categorias.addAll(categoriaService.consultaPorCliente(getFilterEntity().getIdCliente(), false));
+				setores.addAll(setorService.consultaPorCliente(getFilterEntity().getIdCliente(), false));
 			}
 
 		} catch (Throwable t) {

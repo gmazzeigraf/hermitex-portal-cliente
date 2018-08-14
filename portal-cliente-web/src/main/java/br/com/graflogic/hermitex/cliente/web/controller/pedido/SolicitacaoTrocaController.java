@@ -192,7 +192,7 @@ public class SolicitacaoTrocaController extends CrudBaseController<SolicitacaoTr
 			filiais.clear();
 
 			if (isClienteSelecionado() && !SessionUtil.isUsuarioFilial()) {
-				filiais = filialService.consultaPorCliente(getFilterEntity().getIdCliente(), false);
+				filiais.addAll(filialService.consultaPorCliente(getFilterEntity().getIdCliente(), false));
 			}
 
 		} catch (Throwable t) {

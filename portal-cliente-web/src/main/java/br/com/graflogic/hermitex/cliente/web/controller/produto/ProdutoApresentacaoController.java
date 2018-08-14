@@ -146,8 +146,8 @@ public class ProdutoApresentacaoController extends SearchBaseController<ProdutoA
 
 			if (isClienteSelecionado()) {
 				search();
-				categorias = categoriaService.consultaPorCliente(getFilterEntity().getIdCliente(), true);
-				setores = setorService.consultaPorCliente(getFilterEntity().getIdCliente(), true);
+				categorias.addAll(categoriaService.consultaPorCliente(getFilterEntity().getIdCliente(), true));
+				setores.addAll(setorService.consultaPorCliente(getFilterEntity().getIdCliente(), true));
 			}
 
 		} catch (Throwable t) {

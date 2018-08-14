@@ -151,7 +151,7 @@
 
 						<p:panelGrid columns="1" id="enderecoFaturamentoGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
 							<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
-								<p:panelGrid columns="1" columnClasses="ui-grid-col-12, ui-grid-col-12, ui-grid-col-12" layout="grid">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 									<p:outputLabel for="cepFaturamento" value="CEP" styleClass="label" />
 									<p:inputMask id="cepFaturamento" styleClass="ui-grid-col-12" mask="99.999-999" value="#{clienteController.enderecoFaturamento.cep}"
 										converter="maskConverter" validatorMessage="CEP inválido" required="true" requiredMessage="Favor informar o CEP">
@@ -212,7 +212,7 @@
 								actionListener="#{clienteController.copiaEnderecoFaturamento}" update="enderecoEntregaGrid" resetValues="true" />
 
 							<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
-								<p:panelGrid columns="1" columnClasses="ui-grid-col-12, ui-grid-col-12, ui-grid-col-12" layout="grid">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 									<p:outputLabel for="cepEntrega" value="CEP" styleClass="label" />
 									<p:inputMask id="cepEntrega" styleClass="ui-grid-col-12" mask="99.999-999" value="#{clienteController.enderecoEntrega.cep}"
 										converter="maskConverter" validatorMessage="CEP inválido" required="true" requiredMessage="Favor informar o CEP">

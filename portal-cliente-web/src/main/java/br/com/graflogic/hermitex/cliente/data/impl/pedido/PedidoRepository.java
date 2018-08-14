@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Repository;
 
 import br.com.graflogic.hermitex.cliente.data.dom.DomAuditoria.DomEventoAuditoriaPedido;
+import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomStatus;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.Pedido;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoSimple;
 import br.com.graflogic.utilities.datautil.repository.BaseRepository;
@@ -56,6 +57,9 @@ public class PedidoRepository extends BaseRepository<Pedido> {
 		if (StringUtils.isNotEmpty(filter.getStatus())) {
 			where = generateWhere(where, "ped.status = ?");
 			params.add(filter.getStatus());
+		} else {
+			where = generateWhere(where, "ped.status != ?");
+			params.add(DomStatus.CANCELADO);
 		}
 
 		if (null != filter.getDataCadastroDe()) {

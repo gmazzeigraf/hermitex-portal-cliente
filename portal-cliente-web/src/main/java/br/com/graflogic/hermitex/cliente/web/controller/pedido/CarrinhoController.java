@@ -329,7 +329,7 @@ public class CarrinhoController extends BaseController implements InitializingBe
 			formasPagamento.clear();
 
 			try {
-				tiposFrete = freteService.geraTiposCorreios(pedido);
+				tiposFrete.addAll(freteService.geraTiposCorreios(pedido));
 			} catch (CorreiosException e) {
 				returnFatalDialogMessage(I18NUtil.getLabel("erro"),
 						"Cálculo de frete dos Correios indisponível, tente novamente mais tarde ou selecione outro tipo", e);
@@ -465,7 +465,7 @@ public class CarrinhoController extends BaseController implements InitializingBe
 			if (isTipoFreteSelecionado()) {
 				for (TipoFrete tipoFrete : tiposFrete) {
 					if (codigoServicoFrete.equals(tipoFrete.getCodigoServico())) {
-						pedido.setFretes(tipoFrete.getFretes());
+						pedido.getFretes().addAll(tipoFrete.getFretes());
 						pedido.setValorFrete(tipoFrete.getValor());
 
 						break;
@@ -477,7 +477,7 @@ public class CarrinhoController extends BaseController implements InitializingBe
 
 			if (isTipoFreteSelecionado()) {
 				// Gera as formas de pagamento
-				formasPagamento = formaPagamentoService.gera(pedido);
+				formasPagamento.addAll(formaPagamentoService.gera(pedido));
 
 			}
 
