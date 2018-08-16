@@ -377,8 +377,8 @@ public class CarrinhoController extends BaseController implements InitializingBe
 			mensagemConclusaoPedido = "<p>Obrigado pela sua compra, o pedido <b>" + pedido.getFormattedId() + "</b> foi efetuado com sucesso.";
 
 			mensagemConclusaoPedido += "<br/>Seu pedido "
-					+ (DomServicoFrete.RETIRADA_HERMITEX.equals(codigoServicoFrete) ? "estará disponível" : "será despachado")
-					+ " em até 40 dias úteis após o fechamento da janela de compra.</p>";
+					+ (DomServicoFrete.RETIRADA_HERMITEX.equals(codigoServicoFrete) ? "estará disponível" : "será despachado") + " em até "
+					+ cliente.getQuantidadeDiasEntrega() + " dias úteis após o fechamento da janela de compra.</p>";
 
 			mensagemConclusaoPedido += "<p>Para mais informações acesse a página \"Pedido / Consulta\".</p>";
 

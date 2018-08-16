@@ -62,6 +62,9 @@ public class Cliente implements Serializable {
 	@Column(name = "id_representante")
 	private Integer idRepresentante;
 
+	@Column(name = "qt_dias_entrega", nullable = false)
+	private Integer quantidadeDiasEntrega;
+
 	@Column(name = "status", nullable = false)
 	private String status;
 
@@ -142,6 +145,14 @@ public class Cliente implements Serializable {
 
 	public void setIdRepresentante(Integer idRepresentante) {
 		this.idRepresentante = idRepresentante;
+	}
+
+	public Integer getQuantidadeDiasEntrega() {
+		return quantidadeDiasEntrega;
+	}
+
+	public void setQuantidadeDiasEntrega(Integer quantidadeDiasEntrega) {
+		this.quantidadeDiasEntrega = quantidadeDiasEntrega;
 	}
 
 	public String getStatus() {

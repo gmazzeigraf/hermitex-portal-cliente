@@ -141,6 +141,15 @@
 										itemDisabled="#{item.inativo}" />
 								</p:selectOneMenu>
 							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel for="quantidadeDiasEntrega" value="Dias Entrega" styleClass="label" />
+								<p:inputNumber id="quantidadeDiasEntrega" value="#{clienteController.entity.quantidadeDiasEntrega}" styleClass="input-number-resp"
+									required="true" requiredMessage="Favor informar a quantidade de dias para entrega" decimalPlaces="0"
+									validatorMessage="A quantidade de dias para entrega deve ser entre 1 e 99">
+									<f:validateLongRange minimum="1" maximum="99" />
+								</p:inputNumber>
+							</p:panelGrid>
 						</p:panelGrid>
 					</div>
 
@@ -311,8 +320,8 @@
 
 					<p:panelGrid columns="6" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
 						<p:commandButton id="submitButton" icon="fa fa-fw fa-save" value="#{labels.botao_gravar}" actionListener="#{clienteController.save}"
-							process=":editForm:informacoesGrid :editForm:enderecoFaturamentoGrid :editForm:enderecoEntregaGrid"
-							update=":editForm :searchForm" styleClass="ui-grid-col-12" />
+							process=":editForm:informacoesGrid :editForm:enderecoFaturamentoGrid :editForm:enderecoEntregaGrid" update=":editForm :searchForm"
+							styleClass="ui-grid-col-12" />
 
 						<p:commandButton id="inativacaoButton" icon="fa fa-fw fa-ban" value="#{labels.botao_inativar}" actionListener="#{clienteController.inativa}"
 							process="@this" update=":searchForm :editForm" styleClass="ui-grid-col-12 botao-vermelho"

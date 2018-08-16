@@ -4,62 +4,64 @@
 
 	<div class="ui-g">
 		<div class="ui-g-12">
-			<div class="card card-w-title">
-				<h1>Endereço Faturamento</h1>
+			<c:if test="false">
+				<div class="card card-w-title">
+					<h1>Endereço Faturamento</h1>
 
-				<h:outputText value="Caso seja necessário alterar o endereço, solicite ao responsável." styleClass="label" style="color: red;" />
+					<h:outputText value="Caso seja necessário alterar o endereço, solicite ao responsável." styleClass="label" style="color: red;" />
 
-				<p:panelGrid columns="1" id="enderecoFaturamentoGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
-					<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
-						<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-							<p:outputLabel for="cepFaturamento" value="CEP" styleClass="label" />
-							<p:inputMask id="cepFaturamento" styleClass="ui-grid-col-12" mask="99.999-999" value="#{carrinhoController.enderecoFaturamento.cep}"
-								converter="maskConverter" validatorMessage="CEP inválido" required="true" requiredMessage="Favor informar o CEP" disabled="true" />
+					<p:panelGrid columns="1" id="enderecoFaturamentoGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
+						<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel for="cepFaturamento" value="CEP" styleClass="label" />
+								<p:inputMask id="cepFaturamento" styleClass="ui-grid-col-12" mask="99.999-999" value="#{carrinhoController.enderecoFaturamento.cep}"
+									converter="maskConverter" validatorMessage="CEP inválido" required="true" requiredMessage="Favor informar o CEP" disabled="true" />
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel for="logradouroFaturamento" value="Logradouro" styleClass="label" />
+								<p:inputText id="logradouroFaturamento" value="#{carrinhoController.enderecoFaturamento.logradouro}" maxlength="100"
+									styleClass="ui-grid-col-12" required="true" requiredMessage="Favor informar o logradouro" disabled="true" />
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel for="numeroFaturamento" value="Número" styleClass="label" />
+								<p:inputText id="numeroFaturamento" value="#{carrinhoController.enderecoFaturamento.numero}" maxlength="10" styleClass="ui-grid-col-12"
+									required="true" requiredMessage="Favor informar o número" disabled="true" />
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel for="bairroFaturamento" value="Bairro" styleClass="label" />
+								<p:inputText id="bairroFaturamento" value="#{carrinhoController.enderecoFaturamento.bairro}" maxlength="100" styleClass="ui-grid-col-12"
+									required="true" requiredMessage="Favor informar o bairro" disabled="true" />
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel for="estadoFaturamento" value="Estado" styleClass="label" />
+								<p:selectOneMenu id="estadoFaturamento" value="#{carrinhoController.enderecoFaturamento.siglaEstado}" styleClass="ui-grid-col-12"
+									required="true" requiredMessage="Favor informar o estado" filter="true" filterMatchMode="startsWith" disabled="true">
+									<f:selectItem itemLabel="" itemValue="" />
+									<f:selectItems value="#{carrinhoController.estados}" var="item" itemLabel="#{item.nome}" itemValue="#{item.sigla}" />
+								</p:selectOneMenu>
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel for="municipioFaturamento" value="Município" styleClass="label" />
+								<p:selectOneMenu id="municipioFaturamento" value="#{carrinhoController.enderecoFaturamento.idMunicipio}" styleClass="ui-grid-col-12"
+									required="true" requiredMessage="Favor informar o município" filter="true" filterMatchMode="startsWith" disabled="true">
+									<f:selectItem itemLabel="" itemValue="" />
+									<f:selectItems value="#{carrinhoController.municipiosFaturamento}" var="item" itemLabel="#{item.nome}" itemValue="#{item.id}" />
+								</p:selectOneMenu>
+							</p:panelGrid>
 						</p:panelGrid>
-
-						<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-							<p:outputLabel for="logradouroFaturamento" value="Logradouro" styleClass="label" />
-							<p:inputText id="logradouroFaturamento" value="#{carrinhoController.enderecoFaturamento.logradouro}" maxlength="100"
-								styleClass="ui-grid-col-12" required="true" requiredMessage="Favor informar o logradouro" disabled="true" />
-						</p:panelGrid>
-
-						<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-							<p:outputLabel for="numeroFaturamento" value="Número" styleClass="label" />
-							<p:inputText id="numeroFaturamento" value="#{carrinhoController.enderecoFaturamento.numero}" maxlength="10" styleClass="ui-grid-col-12"
-								required="true" requiredMessage="Favor informar o número" disabled="true" />
-						</p:panelGrid>
-
-						<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-							<p:outputLabel for="bairroFaturamento" value="Bairro" styleClass="label" />
-							<p:inputText id="bairroFaturamento" value="#{carrinhoController.enderecoFaturamento.bairro}" maxlength="100" styleClass="ui-grid-col-12"
-								required="true" requiredMessage="Favor informar o bairro" disabled="true" />
-						</p:panelGrid>
-
-						<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-							<p:outputLabel for="estadoFaturamento" value="Estado" styleClass="label" />
-							<p:selectOneMenu id="estadoFaturamento" value="#{carrinhoController.enderecoFaturamento.siglaEstado}" styleClass="ui-grid-col-12"
-								required="true" requiredMessage="Favor informar o estado" filter="true" filterMatchMode="startsWith" disabled="true">
-								<f:selectItem itemLabel="" itemValue="" />
-								<f:selectItems value="#{carrinhoController.estados}" var="item" itemLabel="#{item.nome}" itemValue="#{item.sigla}" />
-							</p:selectOneMenu>
-						</p:panelGrid>
-
-						<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-							<p:outputLabel for="municipioFaturamento" value="Município" styleClass="label" />
-							<p:selectOneMenu id="municipioFaturamento" value="#{carrinhoController.enderecoFaturamento.idMunicipio}" styleClass="ui-grid-col-12"
-								required="true" requiredMessage="Favor informar o município" filter="true" filterMatchMode="startsWith" disabled="true">
-								<f:selectItem itemLabel="" itemValue="" />
-								<f:selectItems value="#{carrinhoController.municipiosFaturamento}" var="item" itemLabel="#{item.nome}" itemValue="#{item.id}" />
-							</p:selectOneMenu>
+						<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
+							<p:outputLabel for="complementoFaturamento" value="Complemento" styleClass="label" />
+							<p:inputText id="complementoFaturamento" value="#{carrinhoController.enderecoFaturamento.complemento}" maxlength="100"
+								styleClass="ui-grid-col-12" disabled="true" />
 						</p:panelGrid>
 					</p:panelGrid>
-					<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
-						<p:outputLabel for="complementoFaturamento" value="Complemento" styleClass="label" />
-						<p:inputText id="complementoFaturamento" value="#{carrinhoController.enderecoFaturamento.complemento}" maxlength="100"
-							styleClass="ui-grid-col-12" disabled="true" />
-					</p:panelGrid>
-				</p:panelGrid>
-			</div>
+				</div>
+			</c:if>
 
 			<div class="card card-w-title">
 				<h1>Endereço Entrega</h1>
