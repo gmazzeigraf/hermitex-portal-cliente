@@ -87,6 +87,9 @@ public class ProdutoApresentacaoController extends SearchBaseController<ProdutoA
 			if (SessionUtil.isUsuarioAdministrador()) {
 				clientes = clienteService.consultaAtivos();
 
+			} else if (SessionUtil.isUsuarioRepresentante()) {
+				clientes = clienteService.consultaPorRepresentante(SessionUtil.getIdRepresentante());
+
 			} else if (SessionUtil.isUsuarioCliente() || SessionUtil.isUsuarioFilial()) {
 				getFilterEntity().setIdCliente(SessionUtil.getIdCliente());
 			}

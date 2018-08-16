@@ -72,8 +72,11 @@ public class Pedido implements Serializable {
 	@Column(name = "ds_forma_pagamento", nullable = false)
 	private String descricaoFormaPagamento;
 
-	@Column(name = "id_pagamento")
-	private String idPagamento;
+	@Column(name = "id_ordem_pagamento")
+	private String idOrdemPagamento;
+
+	@Column(name = "id_transacao_pagamento")
+	private String idTransacaoPagamento;
 
 	@Column(name = "id_janela_compra", nullable = false)
 	private Integer idJanelaCompra;
@@ -192,12 +195,20 @@ public class Pedido implements Serializable {
 		this.descricaoFormaPagamento = descricaoFormaPagamento;
 	}
 
-	public String getIdPagamento() {
-		return idPagamento;
+	public String getIdOrdemPagamento() {
+		return idOrdemPagamento;
 	}
 
-	public void setIdPagamento(String idPagamento) {
-		this.idPagamento = idPagamento;
+	public void setIdOrdemPagamento(String idOrdemPagamento) {
+		this.idOrdemPagamento = idOrdemPagamento;
+	}
+
+	public String getIdTransacaoPagamento() {
+		return idTransacaoPagamento;
+	}
+
+	public void setIdTransacaoPagamento(String idTransacaoPagamento) {
+		this.idTransacaoPagamento = idTransacaoPagamento;
 	}
 
 	public Integer getIdJanelaCompra() {

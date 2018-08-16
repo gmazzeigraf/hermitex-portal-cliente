@@ -53,6 +53,18 @@ public class DomPedido {
 
 	public static DomStatusFormaPagamento domStatusFormaPagamento = new DomStatusFormaPagamento();
 
+	public static class DomStatusBoleto extends DomBase {
+		public static final String PENDENTE = "P";
+		public static final String PAGO = "G";
+
+		DomStatusBoleto() {
+			mapa.put(PENDENTE, "Pendente");
+			mapa.put(PAGO, "Pago");
+		}
+	}
+
+	public static DomStatusBoleto domStatusBoleto = new DomStatusBoleto();
+
 	public static class DomBandeiraCartaoCredito extends DomBase {
 		public static final String ELO = "Elo";
 		public static final String MASTERCARD = "Mastercard";

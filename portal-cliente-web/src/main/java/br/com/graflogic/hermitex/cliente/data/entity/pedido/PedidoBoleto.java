@@ -14,6 +14,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import br.com.graflogic.hermitex.cliente.data.dom.DomPedido;
+
 /**
  * 
  * @author gmazz
@@ -40,8 +42,11 @@ public class PedidoBoleto implements Serializable {
 	@Column(name = "url", nullable = false)
 	private String url;
 
-	@Column(name = "id_pagamento")
-	private String idPagamento;
+	@Column(name = "id_transacao_pagamento", nullable = false)
+	private String idTransacaoPagamento;
+
+	@Column(name = "status", nullable = false)
+	private String status;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_pedido", referencedColumnName = "id", insertable = false, updatable = false)
@@ -79,12 +84,20 @@ public class PedidoBoleto implements Serializable {
 		this.url = url;
 	}
 
-	public String getIdPagamento() {
-		return idPagamento;
+	public String getIdTransacaoPagamento() {
+		return idTransacaoPagamento;
 	}
 
-	public void setIdPagamento(String idPagamento) {
-		this.idPagamento = idPagamento;
+	public void setIdTransacaoPagamento(String idTransacaoPagamento) {
+		this.idTransacaoPagamento = idTransacaoPagamento;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public Pedido getPedido() {
@@ -93,5 +106,9 @@ public class PedidoBoleto implements Serializable {
 
 	public void setPedido(Pedido pedido) {
 		this.pedido = pedido;
+	}
+
+	public String getDeStatus() {
+		return DomPedido.domStatusBoleto.getDeValor(status);
 	}
 }

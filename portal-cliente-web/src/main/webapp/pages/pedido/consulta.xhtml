@@ -156,11 +156,16 @@
 							</p:panelGrid>
 
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid"
-								rendered="#{sessionController.usuarioAdministrador and pedidoController.formaPagamento.cartaoCredito}">
-								<h:outputText value="ID Transação" styleClass="label" />
-								<h:outputText value="#{pedidoController.entity.idPagamento}" />
+								rendered="#{sessionController.usuarioAdministrador and (pedidoController.formaPagamento.cartaoCredito or pedidoController.formaPagamento.boleto)}">
+								<h:outputText value="ID Ordem Pagamento" styleClass="label" />
+								<h:outputText value="#{pedidoController.entity.idOrdemPagamento}" />
 							</p:panelGrid>
 
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid"
+								rendered="#{sessionController.usuarioAdministrador and pedidoController.formaPagamento.cartaoCredito}">
+								<h:outputText value="ID Transação Pagamento" styleClass="label" />
+								<h:outputText value="#{pedidoController.entity.idTransacaoPagamento}" />
+							</p:panelGrid>
 
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{sessionController.usuarioAdministrador}">
 								<h:outputText value="Status" styleClass="label" />
@@ -371,7 +376,7 @@
 									emptyMessage="#{null != pedidoController.entity.boletos ? 'Nenhum boleto encontrado' : ''}" rowIndexVar="index">
 
 									<p:column headerText="ID Transação" styleClass="coluna-center" rendered="#{sessionController.usuarioAdministrador}">
-										<h:outputText value="#{entity.idPagamento}" />
+										<h:outputText value="#{entity.idTransacaoPagamento}" />
 									</p:column>
 
 									<p:column headerText="Data Vencimento" styleClass="coluna-center">

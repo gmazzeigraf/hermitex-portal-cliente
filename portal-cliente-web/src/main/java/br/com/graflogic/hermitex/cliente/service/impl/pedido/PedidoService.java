@@ -28,6 +28,7 @@ import br.com.graflogic.commonutil.util.PessoaFisicaValidator;
 import br.com.graflogic.commonutil.util.PessoaJuridicaValidator;
 import br.com.graflogic.hermitex.cliente.data.dom.DomAuditoria.DomEventoAuditoriaPedido;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomStatus;
+import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomStatusBoleto;
 import br.com.graflogic.hermitex.cliente.data.entity.aud.PedidoAuditoria;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Filial;
@@ -453,6 +454,8 @@ public class PedidoService {
 
 		SaleResponse response = enviaPagamento(entity, request);
 
+		entity.setIdOrdemPagamento(response.getOrderResult().getOrderKey());
+
 		for (int i = 0; i < quantidadeParcelas; i++) {
 			Integer diasVencimento = Integer.parseInt(dias[i]);
 
@@ -460,9 +463,10 @@ public class PedidoService {
 			calendarVencimento.add(Calendar.DAY_OF_YEAR, diasVencimento);
 
 			PedidoBoleto boleto = new PedidoBoleto();
-			boleto.setIdPagamento(response.getBoletoTransactionResultCollection().get(i).getTransactionKey());
+			boleto.setIdTransacaoPagamento(response.getBoletoTransactionResultCollection().get(i).getTransactionKey());
 			boleto.setUrl(response.getBoletoTransactionResultCollection().get(i).getBoletoUrl());
 			boleto.setDataVencimento(calendarVencimento.getTime());
+			boleto.setStatus(DomStatusBoleto.PENDENTE);
 
 			entity.getBoletos().add(boleto);
 		}
@@ -494,9 +498,10 @@ public class PedidoService {
 
 		SaleResponse response = enviaPagamento(entity, request);
 
-		paga(entity, null, null);
+		entity.setIdOrdemPagamento(response.getOrderResult().getOrderKey());
+		entity.setIdTransacaoPagamento(response.getCreditCardTransactionResultCollection().get(0).getTransactionKey());
 
-		entity.setIdPagamento(response.getCreditCardTransactionResultCollection().get(0).getTransactionKey());
+		paga(entity, null, null);
 	}
 
 	private SaleResponse enviaPagamento(Pedido entity, SaleRequest request) {

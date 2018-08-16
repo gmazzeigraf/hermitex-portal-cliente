@@ -307,6 +307,7 @@ public class CarrinhoController extends BaseController implements InitializingBe
 			enderecoFaturamento.setPedido(pedido);
 			enderecoEntrega.setPedido(pedido);
 
+			pedido.getEnderecos().clear();
 			pedido.getEnderecos().add(enderecoFaturamento);
 			pedido.getEnderecos().add(enderecoEntrega);
 

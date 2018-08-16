@@ -11,6 +11,14 @@
 		</p:dialog>
 	</p:ajaxStatus>
 
+	<p:dialog modal="true" widgetVar="calculandoFreteDialog" resizable="false" draggable="false" closable="false" showHeader="false"
+		style="background: transparent !important; border: 0 !important;">
+		<div style="text-align: center;">
+			<span style="color: #fff; font-size: 25px;">Calculando opções de frete...</span> <br />
+			<p:graphicImage name="images/loading.gif" library="poseidon-layout" />
+		</div>
+	</p:dialog>
+
 	<script type="text/javascript">
 		function showStatus() {
 			PF('statusDialog').show();
