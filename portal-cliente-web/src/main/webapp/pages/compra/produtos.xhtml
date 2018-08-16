@@ -159,7 +159,7 @@
 											requiredMessage="Favor selecionar o tamanho" styleClass="botao-produtos">
 											<f:selectItems value="#{produtoApresentacaoController.entity.tamanhos}" var="item" itemLabel="#{item.id.codigoTamanho}"
 												itemValue="#{item.id.codigoTamanho}" />
-											<p:ajax process="@this" global="false" update=":editForm:precoGrid :editForm:valorTotalGrid"
+											<p:ajax process="@this" global="false" update=":editForm:dadosProdutoGrid"
 												listener="#{produtoApresentacaoController.changeTamanho}" />
 										</p:selectOneButton>
 										<p:message for="tamanho" />
@@ -174,7 +174,7 @@
 
 									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{sec:areAnyGranted('ROLE_COMPRA_VISUALIZACAO_ESTOQUE')}">
 										<h:outputText value="Estoque" styleClass="label" />
-										<h:outputText value="#{produtoApresentacaoController.entity.quantidadeEstoque}" />
+										<h:outputText value="#{produtoApresentacaoController.quantidadeEstoque}" />
 									</p:panelGrid>
 
 									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid"

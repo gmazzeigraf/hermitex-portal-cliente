@@ -120,7 +120,7 @@
 									<f:convertNumber pattern="#,##0.000" />
 								</h:outputText>
 							</p:column>
-							
+
 							<p:column headerText="Status" sortBy="#{entity.deStatus}" styleClass="status-column">
 								<h:outputText value="#{entity.deStatus}" />
 							</p:column>
@@ -227,12 +227,6 @@
 										decimalPlaces="3" maxValue="9999.999" required="true" requiredMessage="Favor informar o peso">
 									</p:inputNumber>
 								</p:panelGrid>
-
-								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-									<p:outputLabel for="quantidadeEstoque" value="Estoque" styleClass="label" />
-									<p:inputNumber id="quantidadeEstoque" value="#{produtoController.entity.quantidadeEstoque}" styleClass="input-number-resp" required="true"
-										requiredMessage="Favor informar a quantidade no estoque" decimalPlaces="0" />
-								</p:panelGrid>
 							</p:panelGrid>
 
 							<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
@@ -267,6 +261,10 @@
 								<h:outputText value="#{entity.fator}">
 									<f:convertNumber pattern="#,##0.00" />
 								</h:outputText>
+							</p:column>
+
+							<p:column headerText="Estoque">
+								<h:outputText value="#{entity.quantidadeEstoque}" />
 							</p:column>
 
 							<p:column styleClass="coluna-edicao">
@@ -386,7 +384,7 @@
 						<h1>#{labels.informacoes}</h1>
 						<p:scrollPanel styleClass="resp-dialog">
 							<p:panelGrid columns="1" layout="grid" id="tamanhoGrid" styleClass="ui-panelgrid-blank form-group">
-								<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group">
+								<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
 									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 										<p:outputLabel for="tamanho" value="Tamanho" styleClass="label" />
 										<p:selectOneMenu id="tamanho" value="#{produtoController.tamanho.id.codigoTamanho}" styleClass="ui-grid-col-12" required="true"
@@ -400,6 +398,15 @@
 										<p:outputLabel for="fator" value="Fator" styleClass="label" />
 										<p:inputNumber id="fator" value="#{produtoController.tamanho.fator}" styleClass="input-number-resp" decimalSeparator=","
 											thousandSeparator="." maxValue="9.99" required="true" requiredMessage="Favor informar o fator" decimalPlaces="2">
+										</p:inputNumber>
+									</p:panelGrid>
+
+									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+										<p:outputLabel for="quantidadeEstoque" value="Estoque" styleClass="label" />
+										<p:inputNumber id="quantidadeEstoque" value="#{produtoController.tamanho.quantidadeEstoque}" styleClass="input-number-resp" required="true"
+											requiredMessage="Favor informar a quantidade no estoque" decimalPlaces="0"
+											validatorMessage="A quantidade no estoque deve ser entre 0 e 9999999">
+											<f:validateLongRange minimum="0" maximum="9999999" />
 										</p:inputNumber>
 									</p:panelGrid>
 								</p:panelGrid>

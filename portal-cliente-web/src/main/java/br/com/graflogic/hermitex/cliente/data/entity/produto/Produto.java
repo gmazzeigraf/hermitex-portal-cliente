@@ -80,9 +80,6 @@ public class Produto implements Serializable {
 	@Column(name = "ct_tabela_medidas", nullable = false)
 	private String conteudoTabelaMedidas;
 
-	@Column(name = "qt_estoque", nullable = false)
-	private Integer quantidadeEstoque;
-
 	@Column(name = "status", nullable = false)
 	private String status;
 
@@ -216,14 +213,6 @@ public class Produto implements Serializable {
 
 	public void setConteudoTabelaMedidas(String conteudoTabelaMedidas) {
 		this.conteudoTabelaMedidas = conteudoTabelaMedidas;
-	}
-
-	public Integer getQuantidadeEstoque() {
-		return quantidadeEstoque;
-	}
-
-	public void setQuantidadeEstoque(Integer quantidadeEstoque) {
-		this.quantidadeEstoque = quantidadeEstoque;
 	}
 
 	public String getStatus() {

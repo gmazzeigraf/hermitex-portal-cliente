@@ -29,6 +29,9 @@ public class ProdutoTamanho implements Serializable {
 	@Column(name = "fator", nullable = false)
 	private BigDecimal fator;
 
+	@Column(name = "qt_estoque", nullable = false)
+	private Integer quantidadeEstoque;
+
 	@MapsId("idProduto")
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_produto", referencedColumnName = "id", insertable = false, updatable = false)
@@ -52,6 +55,14 @@ public class ProdutoTamanho implements Serializable {
 
 	public void setFator(BigDecimal fator) {
 		this.fator = fator;
+	}
+
+	public Integer getQuantidadeEstoque() {
+		return quantidadeEstoque;
+	}
+
+	public void setQuantidadeEstoque(Integer quantidadeEstoque) {
+		this.quantidadeEstoque = quantidadeEstoque;
 	}
 
 	public Produto getProduto() {

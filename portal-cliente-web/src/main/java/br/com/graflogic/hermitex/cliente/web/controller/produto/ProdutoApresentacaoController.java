@@ -74,6 +74,8 @@ public class ProdutoApresentacaoController extends SearchBaseController<ProdutoA
 	private ProdutoApresentacaoLista produtoApresentacao;
 
 	private String tabelaMedidas;
+	
+	private Integer quantidadeEstoque;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -161,6 +163,8 @@ public class ProdutoApresentacaoController extends SearchBaseController<ProdutoA
 	public void changeTamanho() {
 		try {
 			itemPedido.setValorCorrigidoTamanho(itemPedido.getValorUnitario());
+			
+			quantidadeEstoque = 0;
 
 			// Caso o tamanho esteja selecionado calcula o valor pelo fato
 			if (StringUtils.isNotEmpty(itemPedido.getCodigoTamanho())) {
@@ -169,6 +173,7 @@ public class ProdutoApresentacaoController extends SearchBaseController<ProdutoA
 				for (ProdutoTamanho tamanho : getEntity().getTamanhos()) {
 					if (tamanho.getId().getCodigoTamanho().equals(itemPedido.getCodigoTamanho())) {
 						fator = tamanho.getFator();
+						quantidadeEstoque = tamanho.getQuantidadeEstoque();
 						break;
 					}
 				}
@@ -277,5 +282,9 @@ public class ProdutoApresentacaoController extends SearchBaseController<ProdutoA
 
 	public String getTabelaMedidas() {
 		return tabelaMedidas;
+	}
+
+	public Integer getQuantidadeEstoque() {
+		return quantidadeEstoque;
 	}
 }
