@@ -186,7 +186,13 @@
 					<div class="card card-w-title">
 						<h1>Cliente</h1>
 
-						<p:panelGrid columns="2" id="clienteGrid" layout="grid" styleClass="ui-panelgrid-blank form-group" columnClasses="ui-grid-col-2, ui-grid-col-10">
+						<p:panelGrid columns="4" id="clienteGrid" layout="grid" styleClass="ui-panelgrid-blank form-group"
+							columnClasses="ui-grid-col-1, ui-grid-col-2, ui-grid-col-4, ui-grid-col-5">
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel value="#" styleClass="label" />
+								<p:outputLabel value="#{pedidoController.cliente.id}" />
+							</p:panelGrid>
+
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 								<p:outputLabel value="CNPJ" styleClass="label" />
 								<p:outputLabel value="#{pedidoController.cliente.formattedCnpj}" />
@@ -196,6 +202,11 @@
 								<p:outputLabel value="Razão Social" styleClass="label" />
 								<p:outputLabel value="#{pedidoController.cliente.razaoSocial}" />
 							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel value="Nome Fantasia" styleClass="label" />
+								<p:outputLabel value="#{pedidoController.cliente.nomeFantasia}" />
+							</p:panelGrid>
 						</p:panelGrid>
 					</div>
 
@@ -203,7 +214,13 @@
 						<div class="card card-w-title">
 							<h1>Filial</h1>
 
-							<p:panelGrid columns="2" id="filialGrid" layout="grid" styleClass="ui-panelgrid-blank form-group" columnClasses="ui-grid-col-2, ui-grid-col-10">
+							<p:panelGrid columns="4" id="filialGrid" layout="grid" styleClass="ui-panelgrid-blank form-group"
+								columnClasses="ui-grid-col-1, ui-grid-col-2, ui-grid-col-4, ui-grid-col-5">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel value="#" styleClass="label" />
+									<p:outputLabel value="#{pedidoController.filial.id}" />
+								</p:panelGrid>
+
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 									<p:outputLabel value="CNPJ" styleClass="label" />
 									<p:outputLabel value="#{pedidoController.filial.formattedCnpj}" />
@@ -212,6 +229,11 @@
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 									<p:outputLabel value="Razão Social" styleClass="label" />
 									<p:outputLabel value="#{pedidoController.filial.razaoSocial}" />
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel value="Nome Fantasia" styleClass="label" />
+									<p:outputLabel value="#{pedidoController.filial.nomeFantasia}" />
 								</p:panelGrid>
 							</p:panelGrid>
 						</div>
