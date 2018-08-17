@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.LazyCollection;
@@ -84,6 +85,12 @@ public class Filial implements Serializable {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "filial", orphanRemoval = true)
 	@LazyCollection(LazyCollectionOption.TRUE)
 	private List<FilialContato> contatos;
+
+	@Transient
+	private String siglaEstadoFaturamento;
+
+	@Transient
+	private String siglaEstadoEntrega;
 
 	public Integer getId() {
 		return id;
@@ -203,6 +210,22 @@ public class Filial implements Serializable {
 
 	public void setContatos(List<FilialContato> contatos) {
 		this.contatos = contatos;
+	}
+
+	public String getSiglaEstadoFaturamento() {
+		return siglaEstadoFaturamento;
+	}
+
+	public void setSiglaEstadoFaturamento(String siglaEstadoFaturamento) {
+		this.siglaEstadoFaturamento = siglaEstadoFaturamento;
+	}
+
+	public String getSiglaEstadoEntrega() {
+		return siglaEstadoEntrega;
+	}
+
+	public void setSiglaEstadoEntrega(String siglaEstadoEntrega) {
+		this.siglaEstadoEntrega = siglaEstadoEntrega;
 	}
 
 	public boolean isAtiva() {

@@ -25,8 +25,8 @@
 									<p:selectOneMenu id="clienteFilter" value="#{produtoApresentacaoController.filterEntity.idCliente}" styleClass="ui-grid-col-12" filter="true"
 										filterMatchMode="contains">
 										<f:selectItem itemLabel="Selecione" itemValue="" />
-										<f:selectItems value="#{produtoApresentacaoController.clientes}" var="item" itemLabel="#{item.id} - #{item.razaoSocial}"
-											itemValue="#{item.id}" />
+										<f:selectItems value="#{produtoApresentacaoController.clientes}" var="item"
+											itemLabel="#{item.id} - #{fn:length(item.nomeFantasia) > 0 ? item.nomeFantasia : item.razaoSocial}" itemValue="#{item.id}" />
 										<p:ajax process="@this" update=":searchForm" listener="#{produtoApresentacaoController.changeCliente}" />
 									</p:selectOneMenu>
 								</p:panelGrid>
@@ -51,7 +51,8 @@
 									</p:selectOneMenu>
 								</p:panelGrid>
 
-								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{sessionController.usuarioAdministrador or sessionController.usuarioRepresentante}">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid"
+									rendered="#{sessionController.usuarioAdministrador or sessionController.usuarioRepresentante}">
 									<p:outputLabel for="tituloFilter" value="Título" styleClass="label" />
 									<p:inputText id="tituloFilter" value="#{produtoApresentacaoController.filterEntity.titulo}" maxlength="50" styleClass="ui-grid-col-12">
 										<p:ajax process="@this" update=":searchForm" listener="#{produtoApresentacaoController.search}" />
@@ -67,7 +68,8 @@
 									</p:selectOneMenu>
 								</p:panelGrid>
 
-								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{sessionController.usuarioAdministrador or sessionController.usuarioRepresentante}">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid"
+									rendered="#{sessionController.usuarioAdministrador or sessionController.usuarioRepresentante}">
 									<p:outputLabel for="tamanhoFilter" value="Tamanho" styleClass="label" />
 									<p:selectOneMenu id="tamanhoFilter" value="#{produtoApresentacaoController.filterEntity.codigoTamanho}" styleClass="ui-grid-col-12">
 										<f:selectItem itemLabel="Todos" itemValue="" />
@@ -159,8 +161,7 @@
 											requiredMessage="Favor selecionar o tamanho" styleClass="botao-produtos">
 											<f:selectItems value="#{produtoApresentacaoController.entity.tamanhos}" var="item" itemLabel="#{item.id.codigoTamanho}"
 												itemValue="#{item.id.codigoTamanho}" />
-											<p:ajax process="@this" global="false" update=":editForm:dadosProdutoGrid"
-												listener="#{produtoApresentacaoController.changeTamanho}" />
+											<p:ajax process="@this" global="false" update=":editForm:dadosProdutoGrid" listener="#{produtoApresentacaoController.changeTamanho}" />
 										</p:selectOneButton>
 										<p:message for="tamanho" />
 									</p:panelGrid>

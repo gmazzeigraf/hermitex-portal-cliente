@@ -42,6 +42,10 @@ public class UsuarioRepository extends BaseRepository<Usuario> {
 		if (StringUtils.isNotEmpty(entity.getNome())) {
 			predicateList.add(builder.and(builder.like(builder.upper(table.<String>get("nome")), "%" + entity.getNome().toUpperCase() + "%")));
 		}
+		
+		if (StringUtils.isNotEmpty(entity.getEmail())) {
+			predicateList.add(builder.and(builder.like(builder.upper(table.<String>get("email")), "%" + entity.getEmail().toUpperCase() + "%")));
+		}
 
 		if (null != entity.getIdPerfil() && 0 != entity.getIdPerfil()) {
 			predicateList.add(builder.and(builder.equal(table.get("idPerfil"), entity.getIdPerfil())));

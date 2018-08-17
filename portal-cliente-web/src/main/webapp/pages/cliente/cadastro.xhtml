@@ -11,19 +11,25 @@
 					<div class="card card-w-title">
 						<h1>#{labels.consulta}</h1>
 						<p:panelGrid columns="1" id="filterGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
-							<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
+							<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group">
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 									<p:outputLabel for="representanteFilter" value="Representante" styleClass="label" />
 									<p:selectOneMenu id="representanteFilter" value="#{clienteController.filterEntity.idRepresentante}" styleClass="ui-grid-col-12" filter="true"
 										filterMatchMode="startsWith">
 										<f:selectItem itemLabel="" itemValue="" />
-										<f:selectItems value="#{clienteController.representantes}" var="item" itemLabel="#{item.razaoSocial}" itemValue="#{item.id}" />
+										<f:selectItems value="#{clienteController.representantes}" var="item"
+											itemLabel="#{item.id} - #{fn:length(item.nomeFantasia) > 0 ? item.nomeFantasia : item.razaoSocial}" itemValue="#{item.id}" />
 									</p:selectOneMenu>
 								</p:panelGrid>
 
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 									<p:outputLabel for="razaoSocialFilter" value="Razão Social" styleClass="label" />
 									<p:inputText id="razaoSocialFilter" value="#{clienteController.filterEntity.razaoSocial}" maxlength="100" styleClass="ui-grid-col-12" />
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="nomeFantasiaFilter" value="Nome Fantasia" styleClass="label" />
+									<p:inputText id="nomeFantasiaFilter" value="#{filialController.filterEntity.nomeFantasia}" maxlength="100" styleClass="ui-grid-col-12" />
 								</p:panelGrid>
 
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
@@ -59,12 +65,16 @@
 								<h:outputText value="#{entity.id}" />
 							</p:column>
 
-							<p:column headerText="CNPJ" sortBy="#{entity.formattedCnpj}">
+							<p:column headerText="CNPJ" sortBy="#{entity.formattedCnpj}" styleClass="valor-column">
 								<h:outputText value="#{entity.formattedCnpj}" />
 							</p:column>
 
 							<p:column headerText="Razão Social" sortBy="#{entity.razaoSocial}">
 								<h:outputText value="#{entity.razaoSocial}" />
+							</p:column>
+
+							<p:column headerText="Nome Fantasia" sortBy="#{entity.nomeFantasia}">
+								<h:outputText value="#{entity.nomeFantasia}" />
 							</p:column>
 
 							<p:column headerText="Status" sortBy="#{entity.deStatus}" styleClass="status-column">
@@ -137,7 +147,8 @@
 								<p:selectOneMenu id="representante" value="#{clienteController.entity.idRepresentante}" styleClass="ui-grid-col-12" filter="true"
 									filterMatchMode="startsWith">
 									<f:selectItem itemLabel="" itemValue="" />
-									<f:selectItems value="#{clienteController.representantes}" var="item" itemLabel="#{item.razaoSocial}" itemValue="#{item.id}"
+									<f:selectItems value="#{clienteController.representantes}" var="item"
+										itemLabel="#{item.id} - #{fn:length(item.nomeFantasia) > 0 ? item.nomeFantasia : item.razaoSocial}" itemValue="#{item.id}"
 										itemDisabled="#{item.inativo}" />
 								</p:selectOneMenu>
 							</p:panelGrid>

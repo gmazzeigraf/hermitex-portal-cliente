@@ -39,11 +39,16 @@ public class RepresentanteRepository extends BaseRepository<Representante> {
 					builder.and(builder.like(builder.upper(table.<String>get("razaoSocial")), "%" + entity.getRazaoSocial().toUpperCase() + "%")));
 		}
 
+		if (StringUtils.isNotEmpty(entity.getNomeFantasia())) {
+			predicateList.add(
+					builder.and(builder.like(builder.upper(table.<String>get("nomeFantasia")), "%" + entity.getNomeFantasia().toUpperCase() + "%")));
+		}
+
 		if (StringUtils.isNotEmpty(entity.getStatus())) {
 			predicateList.add(builder.and(builder.equal(table.get("status"), entity.getStatus())));
 		}
 
-		query.orderBy(builder.asc(table.get("razaoSocial")));
+		query.orderBy(builder.asc(table.get("nomeFantasia")));
 		query.where(predicateList.toArray(new Predicate[predicateList.size()]));
 		TypedQuery<Representante> typedQuery = getEntityManager().createQuery(query);
 

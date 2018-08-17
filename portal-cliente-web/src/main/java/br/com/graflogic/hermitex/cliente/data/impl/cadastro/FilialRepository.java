@@ -6,13 +6,16 @@ import java.util.List;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Repository;
 
+import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomTipoEndereco;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Filial;
+import br.com.graflogic.hermitex.cliente.data.entity.cadastro.FilialEndereco;
 import br.com.graflogic.utilities.datautil.repository.BaseRepository;
 
 /**
@@ -39,6 +42,11 @@ public class FilialRepository extends BaseRepository<Filial> {
 					builder.and(builder.like(builder.upper(table.<String>get("razaoSocial")), "%" + entity.getRazaoSocial().toUpperCase() + "%")));
 		}
 
+		if (StringUtils.isNotEmpty(entity.getNomeFantasia())) {
+			predicateList.add(
+					builder.and(builder.like(builder.upper(table.<String>get("nomeFantasia")), "%" + entity.getNomeFantasia().toUpperCase() + "%")));
+		}
+
 		if (StringUtils.isNotEmpty(entity.getTipo())) {
 			predicateList.add(builder.and(builder.equal(table.get("tipo"), entity.getTipo())));
 		}
@@ -51,7 +59,21 @@ public class FilialRepository extends BaseRepository<Filial> {
 			predicateList.add(builder.and(builder.equal(table.get("idCliente"), entity.getIdCliente())));
 		}
 
-		query.orderBy(builder.asc(table.get("razaoSocial")));
+		if (StringUtils.isNotEmpty(entity.getSiglaEstadoFaturamento())) {
+			Join<Filial, FilialEndereco> join = table.join("enderecos");
+
+			predicateList.add(builder.and(builder.equal(join.get("siglaEstado"), entity.getSiglaEstadoFaturamento())));
+			predicateList.add(builder.and(builder.equal(join.get("id").get("tipo"), DomTipoEndereco.FATURAMENTO)));
+		}
+
+		if (StringUtils.isNotEmpty(entity.getSiglaEstadoEntrega())) {
+			Join<Filial, FilialEndereco> join = table.join("enderecos");
+
+			predicateList.add(builder.and(builder.equal(join.get("siglaEstado"), entity.getSiglaEstadoEntrega())));
+			predicateList.add(builder.and(builder.equal(join.get("id").get("tipo"), DomTipoEndereco.ENTREGA)));
+		}
+
+		query.orderBy(builder.asc(table.get("nomeFantasia")));
 		query.where(predicateList.toArray(new Predicate[predicateList.size()]));
 		TypedQuery<Filial> typedQuery = getEntityManager().createQuery(query);
 

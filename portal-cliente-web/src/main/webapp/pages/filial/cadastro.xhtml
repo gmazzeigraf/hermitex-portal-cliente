@@ -17,7 +17,8 @@
 									<p:selectOneMenu id="clienteFilter" value="#{filialController.filterEntity.idCliente}" styleClass="ui-grid-col-12" filter="true"
 										filterMatchMode="contains">
 										<f:selectItem itemLabel="Selecione" itemValue="" />
-										<f:selectItems value="#{filialController.clientes}" var="item" itemLabel="#{item.id} - #{item.razaoSocial}" itemValue="#{item.id}" />
+										<f:selectItems value="#{filialController.clientes}" var="item"
+											itemLabel="#{item.id} - #{fn:length(item.nomeFantasia) > 0 ? item.nomeFantasia : item.razaoSocial}" itemValue="#{item.id}" />
 										<p:ajax process="@this" update="searchForm" listener="#{filialController.changeCliente}" />
 									</p:selectOneMenu>
 								</p:panelGrid>
@@ -28,10 +29,33 @@
 								</p:panelGrid>
 
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="nomeFantasiaFilter" value="Nome Fantasia" styleClass="label" />
+									<p:inputText id="nomeFantasiaFilter" value="#{filialController.filterEntity.nomeFantasia}" maxlength="100" styleClass="ui-grid-col-12" />
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 									<p:outputLabel for="tipoFilter" value="Tipo" styleClass="label" />
 									<p:selectOneMenu id="tipoFilter" value="#{filialController.filterEntity.tipo}" styleClass="ui-grid-col-12">
 										<f:selectItem itemLabel="" itemValue="" />
 										<f:selectItems value="#{domCadastroController.tipoFilialMap}" />
+									</p:selectOneMenu>
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="estadoFaturamentoFilter" value="Estado Faturamento" styleClass="label" />
+									<p:selectOneMenu id="estadoFaturamentoFilter" value="#{filialController.filterEntity.siglaEstadoFaturamento}" styleClass="ui-grid-col-12"
+										filter="true" filterMatchMode="startsWith">
+										<f:selectItem itemLabel="" itemValue="" />
+										<f:selectItems value="#{filialController.estados}" var="item" itemLabel="#{item.nome}" itemValue="#{item.sigla}" />
+									</p:selectOneMenu>
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="estadoEntregaFilter" value="Estado Entrega" styleClass="label" />
+									<p:selectOneMenu id="estadoEntregaFilter" value="#{filialController.filterEntity.siglaEstadoEntrega}" styleClass="ui-grid-col-12"
+										filter="true" filterMatchMode="startsWith">
+										<f:selectItem itemLabel="" itemValue="" />
+										<f:selectItems value="#{filialController.estados}" var="item" itemLabel="#{item.nome}" itemValue="#{item.sigla}" />
 									</p:selectOneMenu>
 								</p:panelGrid>
 
@@ -69,7 +93,7 @@
 								<h:outputText value="#{entity.id}" />
 							</p:column>
 
-							<p:column headerText="CNPJ" sortBy="#{entity.formattedCnpj}">
+							<p:column headerText="CNPJ" sortBy="#{entity.formattedCnpj}" styleClass="valor-column">
 								<h:outputText value="#{entity.formattedCnpj}" />
 							</p:column>
 
@@ -77,7 +101,11 @@
 								<h:outputText value="#{entity.razaoSocial}" />
 							</p:column>
 
-							<p:column headerText="Tipo" sortBy="#{entity.deTipo}">
+							<p:column headerText="Nome Fantasia" sortBy="#{entity.nomeFantasia}">
+								<h:outputText value="#{entity.nomeFantasia}" />
+							</p:column>
+
+							<p:column headerText="Tipo" sortBy="#{entity.deTipo}" styleClass="valor-column">
 								<h:outputText value="#{entity.deTipo}" />
 							</p:column>
 
@@ -160,7 +188,7 @@
 									<f:selectItems value="#{domGeralController.booleanMap}" />
 								</p:selectOneMenu>
 							</p:panelGrid>
-							
+
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{sessionController.usuarioAdministrador}">
 								<p:outputLabel value="Compra Bloqueada" styleClass="label" />
 								<p:outputLabel value="#{filialController.entity.deCompraBloqueada}" />

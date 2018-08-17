@@ -29,6 +29,8 @@ public class PedidoSimple implements Serializable {
 
 	private Date dataCadastro;
 
+	private Integer idUsuarioCadastro;
+
 	// Filtros
 	private Integer idCliente;
 
@@ -41,7 +43,7 @@ public class PedidoSimple implements Serializable {
 
 	@Transient
 	private Date dataCadastroAte;
-	
+
 	public Long getId() {
 		return id;
 	}
@@ -80,6 +82,14 @@ public class PedidoSimple implements Serializable {
 
 	public void setDataCadastro(Date dataCadastro) {
 		this.dataCadastro = dataCadastro;
+	}
+
+	public Integer getIdUsuarioCadastro() {
+		return idUsuarioCadastro;
+	}
+
+	public void setIdUsuarioCadastro(Integer idUsuarioCadastro) {
+		this.idUsuarioCadastro = idUsuarioCadastro;
 	}
 
 	public Integer getIdCliente() {

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 
 import br.com.graflogic.base.service.util.I18NUtil;
 import br.com.graflogic.hermitex.cliente.data.dom.DomAcesso.DomPermissaoAcesso;
+import br.com.graflogic.hermitex.cliente.data.entity.acesso.Usuario;
 import br.com.graflogic.hermitex.cliente.data.entity.auxiliar.Estado;
 import br.com.graflogic.hermitex.cliente.data.entity.auxiliar.Municipio;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
@@ -20,6 +21,7 @@ import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoSimple;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.FormaPagamento;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
+import br.com.graflogic.hermitex.cliente.service.impl.acesso.UsuarioService;
 import br.com.graflogic.hermitex.cliente.service.impl.auxiliar.EstadoService;
 import br.com.graflogic.hermitex.cliente.service.impl.auxiliar.MunicipioService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
@@ -58,6 +60,9 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 	@Autowired
 	private FormaPagamentoService formaPagamentoService;
 
+	@Autowired
+	private UsuarioService usuarioService;
+
 	private List<Cliente> clientes;
 
 	private List<Filial> filiais;
@@ -67,6 +72,8 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 	private List<Municipio> municipiosFaturamento;
 
 	private List<Municipio> municipiosEntrega;
+
+	private PedidoSimple entitySimple;
 
 	private PedidoEndereco enderecoFaturamento;
 
@@ -79,6 +86,8 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 	private Cliente cliente;
 
 	private Filial filial;
+
+	private Usuario usuarioCadastro;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -128,8 +137,12 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 
 	@Override
 	protected void select(PedidoSimple entity) {
+		entitySimple = entity;
+
 		select(entity.getId());
 
+		// Consulta o usuario de cadastro
+		usuarioCadastro = usuarioService.consultaPorId(entity.getIdUsuarioCadastro());
 	}
 
 	private void select(Long id) {
@@ -311,6 +324,10 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 		return municipiosEntrega;
 	}
 
+	public PedidoSimple getEntitySimple() {
+		return entitySimple;
+	}
+
 	public PedidoEndereco getEnderecoFaturamento() {
 		return enderecoFaturamento;
 	}
@@ -337,5 +354,9 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 
 	public Filial getFilial() {
 		return filial;
+	}
+
+	public Usuario getUsuarioCadastro() {
+		return usuarioCadastro;
 	}
 }

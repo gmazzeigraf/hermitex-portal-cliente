@@ -39,6 +39,11 @@ public class ClienteRepository extends BaseRepository<Cliente> {
 					builder.and(builder.like(builder.upper(table.<String>get("razaoSocial")), "%" + entity.getRazaoSocial().toUpperCase() + "%")));
 		}
 
+		if (StringUtils.isNotEmpty(entity.getNomeFantasia())) {
+			predicateList.add(
+					builder.and(builder.like(builder.upper(table.<String>get("nomeFantasia")), "%" + entity.getNomeFantasia().toUpperCase() + "%")));
+		}
+
 		if (null != entity.getIdRepresentante() && 0 != entity.getIdRepresentante()) {
 			predicateList.add(builder.and(builder.equal(table.get("idRepresentante"), entity.getIdRepresentante())));
 		}
@@ -47,7 +52,7 @@ public class ClienteRepository extends BaseRepository<Cliente> {
 			predicateList.add(builder.and(builder.equal(table.get("status"), entity.getStatus())));
 		}
 
-		query.orderBy(builder.asc(table.get("razaoSocial")));
+		query.orderBy(builder.asc(table.get("nomeFantasia")));
 		query.where(predicateList.toArray(new Predicate[predicateList.size()]));
 		TypedQuery<Cliente> typedQuery = getEntityManager().createQuery(query);
 

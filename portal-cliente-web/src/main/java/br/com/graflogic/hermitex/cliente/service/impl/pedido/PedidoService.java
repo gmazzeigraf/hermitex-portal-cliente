@@ -328,9 +328,12 @@ public class PedidoService {
 		HashMap<String, Map<String, Integer>> produtosMap = new HashMap<>();
 		List<String> tamanhosItens = new ArrayList<>();
 
+		HashMap<String, String> titulosProdutosMap = new HashMap<>();
+
 		for (PedidoItem item : itens) {
 			if (!produtosMap.containsKey(item.getCodigoProduto())) {
 				produtosMap.put(item.getCodigoProduto(), new HashMap<String, Integer>());
+				titulosProdutosMap.put(item.getCodigoProduto(), item.getTituloProduto());
 			}
 
 			if (!tamanhosItens.contains(item.getCodigoTamanho())) {
@@ -399,7 +402,7 @@ public class PedidoService {
 
 			cell = row.createCell(cellIndex++);
 			cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-			cell.setCellValue(codigoProduto);
+			cell.setCellValue(codigoProduto + " - " + titulosProdutosMap.get(codigoProduto));
 			cell.setCellStyle(lineStyle);
 
 			for (String tamanho : tamanhosUtilizados) {

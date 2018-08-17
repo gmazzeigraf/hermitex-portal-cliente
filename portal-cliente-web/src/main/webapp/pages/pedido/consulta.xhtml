@@ -20,7 +20,8 @@
 									<p:selectOneMenu id="clienteFilter" value="#{pedidoController.filterEntity.idCliente}" styleClass="ui-grid-col-12" filter="true"
 										filterMatchMode="contains">
 										<f:selectItem itemLabel="Selecione" itemValue="" />
-										<f:selectItems value="#{pedidoController.clientes}" var="item" itemLabel="#{item.id} - #{item.razaoSocial}" itemValue="#{item.id}" />
+										<f:selectItems value="#{pedidoController.clientes}" var="item"
+											itemLabel="#{item.id} - #{fn:length(item.nomeFantasia) > 0 ? item.nomeFantasia : item.razaoSocial}" itemValue="#{item.id}" />
 										<p:ajax process="@this" update=":searchForm" listener="#{pedidoController.changeCliente}" />
 									</p:selectOneMenu>
 								</p:panelGrid>
@@ -30,7 +31,8 @@
 									<p:selectOneMenu id="filialFilter" value="#{pedidoController.filterEntity.idFilial}" styleClass="ui-grid-col-12" filter="true"
 										filterMatchMode="contains" disabled="#{!pedidoController.clienteSelecionado}">
 										<f:selectItem itemLabel="" itemValue="" />
-										<f:selectItems value="#{pedidoController.filiais}" var="item" itemLabel="#{item.id} - #{item.razaoSocial}" itemValue="#{item.id}" />
+										<f:selectItems value="#{pedidoController.filiais}" var="item"
+											itemLabel="#{item.id} - #{fn:length(item.nomeFantasia) > 0 ? item.nomeFantasia : item.razaoSocial}" itemValue="#{item.id}" />
 									</p:selectOneMenu>
 								</p:panelGrid>
 
@@ -130,6 +132,13 @@
 							</p:panelGrid>
 
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<h:outputText value="Data" styleClass="label" />
+								<h:outputText value="#{pedidoController.entitySimple.dataCadastro}">
+									<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" timeZone="America/Sao_Paulo" />
+								</h:outputText>
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 								<h:outputText value="Frete" styleClass="label" />
 								<h:outputText value="#{pedidoController.entity.valorFrete}">
 									<f:convertNumber pattern="R$ #,##0.00" />
@@ -207,6 +216,23 @@
 							</p:panelGrid>
 						</div>
 					</c:if>
+
+					<div class="card card-w-title">
+						<h1>Usuário</h1>
+
+						<p:panelGrid columns="2" id="usuarioCadastroGrid" layout="grid" styleClass="ui-panelgrid-blank form-group"
+							columnClasses="ui-grid-col-4, ui-grid-col-8">
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel value="E-mail" styleClass="label" />
+								<p:outputLabel value="#{pedidoController.usuarioCadastro.email}" />
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel value="Nome" styleClass="label" />
+								<p:outputLabel value="#{pedidoController.usuarioCadastro.nome}" />
+							</p:panelGrid>
+						</p:panelGrid>
+					</div>
 
 					<div class="card card-w-title">
 						<h1>Endereço Faturamento</h1>
