@@ -228,7 +228,7 @@ public class PerfilUsuarioController extends CrudBaseController<PerfilUsuario, P
 			setEntities(null);
 
 		} catch (Throwable t) {
-			returnFatalDialogMessage("Erro", "Erro ao alterar valor, contate o administrador", t);
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao alterar valor, contate o administrador", t);
 		}
 	}
 

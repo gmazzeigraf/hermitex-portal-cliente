@@ -40,8 +40,8 @@ import br.com.graflogic.hermitex.cliente.service.impl.pedido.FreteService;
 import br.com.graflogic.hermitex.cliente.service.impl.pedido.JanelaCompraService;
 import br.com.graflogic.hermitex.cliente.service.impl.pedido.PedidoService;
 import br.com.graflogic.hermitex.cliente.service.impl.produto.FormaPagamentoService;
-import br.com.graflogic.hermitex.cliente.service.model.DadosPagamentoCartaoCredito;
-import br.com.graflogic.hermitex.cliente.service.model.TipoFrete;
+import br.com.graflogic.hermitex.cliente.service.model.pedido.DadosPagamentoCartaoCredito;
+import br.com.graflogic.hermitex.cliente.service.model.pedido.TipoFrete;
 import br.com.graflogic.hermitex.cliente.web.util.SessionUtil;
 import br.com.graflogic.utilities.presentationutil.controller.BaseController;
 

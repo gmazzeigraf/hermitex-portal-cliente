@@ -15,6 +15,7 @@ import br.com.graflogic.hermitex.cliente.data.entity.auxiliar.Estado;
 import br.com.graflogic.hermitex.cliente.data.entity.auxiliar.Municipio;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Filial;
+import br.com.graflogic.hermitex.cliente.data.entity.pedido.JanelaCompra;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.Pedido;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoEndereco;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoSimple;
@@ -26,6 +27,7 @@ import br.com.graflogic.hermitex.cliente.service.impl.auxiliar.EstadoService;
 import br.com.graflogic.hermitex.cliente.service.impl.auxiliar.MunicipioService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.FilialService;
+import br.com.graflogic.hermitex.cliente.service.impl.pedido.JanelaCompraService;
 import br.com.graflogic.hermitex.cliente.service.impl.pedido.PedidoService;
 import br.com.graflogic.hermitex.cliente.service.impl.produto.FormaPagamentoService;
 import br.com.graflogic.hermitex.cliente.web.util.SessionUtil;
@@ -52,6 +54,9 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 	private FilialService filialService;
 
 	@Autowired
+	private JanelaCompraService janelaCompraService;
+
+	@Autowired
 	private EstadoService estadoService;
 
 	@Autowired
@@ -66,6 +71,8 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 	private List<Cliente> clientes;
 
 	private List<Filial> filiais;
+
+	private List<JanelaCompra> janelasCompra;
 
 	private List<Estado> estados;
 
@@ -95,6 +102,8 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 			setFilterEntity(new PedidoSimple());
 
 			filiais = new ArrayList<>();
+
+			janelasCompra = new ArrayList<>();
 
 			getFilterEntity().setIdCliente(SessionUtil.getIdCliente());
 
@@ -269,10 +278,18 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 			if (!SessionUtil.isUsuarioFilial()) {
 				getFilterEntity().setIdFilial(null);
 			}
-			filiais.clear();
 
-			if (isClienteSelecionado() && !SessionUtil.isUsuarioFilial()) {
-				filiais.addAll(filialService.consultaPorCliente(getFilterEntity().getIdCliente(), false));
+			filiais.clear();
+			janelasCompra.clear();
+
+			if (isClienteSelecionado()) {
+				if (!SessionUtil.isUsuarioFilial()) {
+					filiais.addAll(filialService.consultaPorCliente(getFilterEntity().getIdCliente(), false));
+				}
+
+				if (SessionUtil.isUsuarioAdministrador()) {
+					janelasCompra.addAll(janelaCompraService.consultaPorCliente(getFilterEntity().getIdCliente()));
+				}
 			}
 
 		} catch (Throwable t) {
@@ -310,6 +327,10 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 
 	public List<Filial> getFiliais() {
 		return filiais;
+	}
+
+	public List<JanelaCompra> getJanelasCompra() {
+		return janelasCompra;
 	}
 
 	public List<Estado> getEstados() {

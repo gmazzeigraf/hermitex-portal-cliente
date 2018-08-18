@@ -1,0 +1,53 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/pages/templates/template.xhtml"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions" xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+	<ui:define name="viewname">#{labels.menu_estoque}</ui:define>
+
+	<ui:define name="content">
+		<h:form id="mainForm">
+			<div class="ui-g">
+				<div class="ui-g-12">
+					<div class="card card-w-title">
+						<p:panelGrid columns="1" id="filterGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
+							<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid"
+									rendered="#{sessionController.usuarioAdministrador or sessionController.usuarioRepresentante}">
+									<p:outputLabel for="clienteFilter" value="Cliente *" styleClass="label" />
+									<p:selectOneMenu id="clienteFilter" value="#{estoqueController.idCliente}" styleClass="ui-grid-col-12" filter="true"
+										filterMatchMode="contains">
+										<f:selectItem itemLabel="Selecione" itemValue="" />
+										<f:selectItems value="#{estoqueController.clientes}" var="item"
+											itemLabel="#{item.id} - #{fn:length(item.nomeFantasia) > 0 ? item.nomeFantasia : item.razaoSocial}" itemValue="#{item.id}" />
+										<p:ajax process="@this" update=":mainForm" listener="#{estoqueController.changeCliente}" />
+									</p:selectOneMenu>
+								</p:panelGrid>
+							</p:panelGrid>
+						</p:panelGrid>
+
+						<p:spacer styleClass="display-desktop" />
+
+						<p:repeat value="#{estoqueController.itensRelatorio}" var="item">
+							<p:dataTable reflow="true" value="#{item.linhas}" var="linha" rowIndexVar="index">
+								<f:facet name="header">
+									<h:outputText value="#{item.codigoProduto} - #{item.tituloProduto}" />
+								</f:facet>
+								<p:column style="width: 100px;">
+									<h:outputText value="Estoque" rendered="#{index eq 0}" styleClass="label" />
+									<h:outputText value="Solicitação" rendered="#{index eq 1}" styleClass="label" />
+								</p:column>
+								<p:columns value="#{item.tamanhos}" var="tamanho">
+									<f:facet name="header">
+										<h:outputText value="#{tamanho}" />
+									</f:facet>
+									<p:inputNumber value="#{linha.get(tamanho)}" styleClass="input-number-resp" decimalPlaces="0" readonly="#{index eq 0}" />
+								</p:columns>
+							</p:dataTable>
+						</p:repeat>
+					</div>
+				</div>
+			</div>
+		</h:form>
+	</ui:define>
+
+</ui:composition>

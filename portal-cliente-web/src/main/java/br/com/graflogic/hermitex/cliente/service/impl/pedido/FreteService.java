@@ -28,7 +28,7 @@ import br.com.graflogic.hermitex.cliente.service.exception.ResultadoNaoEncontrad
 import br.com.graflogic.hermitex.cliente.service.impl.auxiliar.ConfiguracaoService;
 import br.com.graflogic.hermitex.cliente.service.impl.produto.EmbalagemService;
 import br.com.graflogic.hermitex.cliente.service.impl.produto.ProdutoService;
-import br.com.graflogic.hermitex.cliente.service.model.TipoFrete;
+import br.com.graflogic.hermitex.cliente.service.model.pedido.TipoFrete;
 
 /**
  * 

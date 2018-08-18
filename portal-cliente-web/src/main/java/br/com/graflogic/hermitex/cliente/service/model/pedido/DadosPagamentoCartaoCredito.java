@@ -1,4 +1,4 @@
-package br.com.graflogic.hermitex.cliente.service.model;
+package br.com.graflogic.hermitex.cliente.service.model.pedido;
 
 /**
  * 

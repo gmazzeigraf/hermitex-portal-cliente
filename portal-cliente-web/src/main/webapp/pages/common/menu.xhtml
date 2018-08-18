@@ -39,8 +39,6 @@
 									url="/pages/cliente/produto/setor.jsf" rendered="#{sec:isAllowed('/pages/cliente/produto/setor.jsf', '')}" />
 								<p:menuitem id="menu_cliente_produto_cadastro" icon="fa fa-fw fa-edit" value="#{labels.menu_cliente_produto_cadastro}"
 									url="/pages/cliente/produto/cadastro.jsf" rendered="#{sec:isAllowed('/pages/cliente/produto/cadastro.jsf', '')}" />
-								<p:menuitem id="menu_cliente_produto_estoque" icon="fa fa-fw fa-cubes" value="#{labels.menu_cliente_produto_estoque}"
-									url="/pages/cliente/produto/estoque.jsf" rendered="#{sec:isAllowed('/pages/cliente/produto/estoque.jsf', '')}" />
 							</p:submenu>
 
 							<p:submenu id="menu_cliente_acesso" icon="fa fa-fw fa-unlock" label="#{labels.menu_cliente_acesso}">
@@ -90,6 +88,9 @@
 
 						<p:menuitem id="menu_produtos" icon="fa fa-fw fa-barcode" value="#{labels.menu_produtos}" url="/pages/compra/produtos.jsf"
 							rendered="#{sec:isAllowed('/pages/compra/produtos.jsf', '')}" />
+
+						<p:menuitem id="menu_estoque" icon="fa fa-fw fa-cubes" value="#{labels.menu_estoque}" url="/pages/compra/estoque.jsf"
+							rendered="#{sec:isAllowed('/pages/compra/estoque.jsf', '')}" />
 
 						<p:menuitem id="menu_carrinho" icon="fa fa-fw fa-shopping-cart" value="#{fn:length(carrinhoController.pedido.itens)}"
 							rendered="#{sec:isAllowed('/pages/compra/carrinho.jsf', '')}" oncomplete="iniciaPassosCarrinho()" />

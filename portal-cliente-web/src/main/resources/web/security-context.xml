@@ -25,7 +25,6 @@
 		<intercept-url pattern="/pages/cliente/produto/categoria.jsf" access="hasAnyRole('ROLE_CLI_PRODUTO_CATEGORIA')" />
 		<intercept-url pattern="/pages/cliente/produto/setor.jsf" access="hasAnyRole('ROLE_CLI_PRODUTO_SETOR')" />
 		<intercept-url pattern="/pages/cliente/produto/cadastro.jsf" access="hasAnyRole('ROLE_CLI_PRODUTO_CADASTRO')" />
-		<intercept-url pattern="/pages/cliente/produto/estoque.jsf" access="hasAnyRole('ROLE_CLI_PRODUTO_ESTOQUE')" />
 		<intercept-url pattern="/pages/cliente/acesso/perfil.jsf" access="hasAnyRole('ROLE_CLI_ACESSO_PERFIL')" />
 		<intercept-url pattern="/pages/cliente/acesso/usuario.jsf" access="hasAnyRole('ROLE_CLI_ACESSO_USUARIO')" />
 		<intercept-url pattern="/pages/cliente/janela_compra.jsf" access="hasAnyRole('ROLE_CLI_JANELA_COMPRA')" />
@@ -43,6 +42,7 @@
 
 		<!-- Compra -->
 		<intercept-url pattern="/pages/compra/produtos.jsf" access="hasAnyRole('ROLE_PRODUTOS')" />
+		<intercept-url pattern="/pages/compra/estoque.jsf" access="hasAnyRole('ROLE_ESTOQUE')" />
 		<intercept-url pattern="/pages/compra/carrinho.jsf" access="hasAnyRole('ROLE_COMPRA')" />
 		<intercept-url pattern="/pages/compra/pagamento.jsf" access="hasAnyRole('ROLE_COMPRA')" />
 

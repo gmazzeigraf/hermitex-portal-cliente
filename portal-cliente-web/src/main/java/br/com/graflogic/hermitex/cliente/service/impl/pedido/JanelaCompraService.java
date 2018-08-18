@@ -137,6 +137,13 @@ public class JanelaCompraService {
 		return entity;
 	}
 
+	public List<JanelaCompra> consultaPorCliente(Integer idCliente) {
+		JanelaCompra filter = new JanelaCompra();
+		filter.setIdCliente(idCliente);
+
+		return consulta(filter);
+	}
+
 	public JanelaCompra consultaPorClienteData(Integer idCliente, Date data) {
 		try {
 			return repository.consultaPorClienteData(idCliente, data);

@@ -231,7 +231,7 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 			}
 
 		} catch (Throwable t) {
-			returnFatalDialogMessage("Erro", "Erro ao alterar valor, contate o administrador", t);
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao alterar valor, contate o administrador", t);
 		}
 	}
 

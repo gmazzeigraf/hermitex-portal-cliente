@@ -178,7 +178,7 @@ public class JanelaCompraController extends CrudBaseController<JanelaCompra, Jan
 			return new DefaultStreamedContent(new ByteArrayInputStream(extracao), "", "extracao.xlsx");
 
 		} catch (Throwable t) {
-			returnFatalDialogMessage("Erro", "Erro ao gerar a extração, contate o administrador", t);
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao gerar a extração, contate o administrador", t);
 			return null;
 		}
 	}

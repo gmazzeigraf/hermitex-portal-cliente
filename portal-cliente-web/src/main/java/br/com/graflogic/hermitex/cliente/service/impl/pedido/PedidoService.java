@@ -56,7 +56,7 @@ import br.com.graflogic.hermitex.cliente.service.impl.auxiliar.ConfiguracaoServi
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.FilialService;
 import br.com.graflogic.hermitex.cliente.service.impl.produto.TamanhoProdutoService;
-import br.com.graflogic.hermitex.cliente.service.model.DadosPagamentoCartaoCredito;
+import br.com.graflogic.hermitex.cliente.service.model.pedido.DadosPagamentoCartaoCredito;
 import br.com.graflogic.hermitex.cliente.service.util.ExcelUtil;
 import br.com.graflogic.mundipagg.client.MundiPaggClient;
 import br.com.graflogic.mundipagg.model.BoletoTransaction;

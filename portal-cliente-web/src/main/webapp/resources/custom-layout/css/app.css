@@ -270,6 +270,18 @@ body.exception-body .exception-bottom .exception-wrapper .logo-icon {
 	width: 200px !important; font-weight: 700;
 }
 
+.tabela-estoque {
+	border-spacing: 0px;
+}
+
+.tabela-estoque table, th, td {
+	border: 1px solid black;
+}
+
+.tabela-estoque th, .tabela-estoque td {
+	width: 60px; text-align: center;
+}
+
 .link-fita-metrica {
 	font-weight: 700 !important; font-size: 16px;
 }

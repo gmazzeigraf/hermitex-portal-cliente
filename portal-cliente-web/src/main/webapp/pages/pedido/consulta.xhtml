@@ -36,6 +36,15 @@
 									</p:selectOneMenu>
 								</p:panelGrid>
 
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{sessionController.usuarioAdministrador}">
+									<p:outputLabel for="janelaCompraFilter" value="Janela Compra" styleClass="label" />
+									<p:selectOneMenu id="janelaCompraFilter" value="#{pedidoController.filterEntity.idJanelaCompra}" styleClass="ui-grid-col-12" filter="true"
+										filterMatchMode="contains" disabled="#{!pedidoController.clienteSelecionado}">
+										<f:selectItem itemLabel="" itemValue="" />
+										<f:selectItems value="#{pedidoController.janelasCompra}" var="item" itemLabel="#{item.id} - #{item.descricao}" itemValue="#{item.id}" />
+									</p:selectOneMenu>
+								</p:panelGrid>
+
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 									<p:outputLabel for="statusFilter" value="Status" styleClass="label" />
 									<p:selectOneMenu id="statusFilter" value="#{pedidoController.filterEntity.status}" styleClass="ui-grid-col-12">
