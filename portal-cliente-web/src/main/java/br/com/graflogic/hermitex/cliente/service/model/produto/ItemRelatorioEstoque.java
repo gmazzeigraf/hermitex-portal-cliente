@@ -20,7 +20,7 @@ public class ItemRelatorioEstoque {
 
 	private List<String> tamanhos;
 
-	private List<Map<String, Integer>> linhas;
+	private List<Map<String, Object>> linhas;
 
 	public Integer getIdProduto() {
 		return idProduto;
@@ -62,11 +62,11 @@ public class ItemRelatorioEstoque {
 		this.tamanhos = tamanhos;
 	}
 
-	public List<Map<String, Integer>> getLinhas() {
+	public List<Map<String, Object>> getLinhas() {
 		return linhas;
 	}
 
-	public void setLinhas(List<Map<String, Integer>> linhas) {
+	public void setLinhas(List<Map<String, Object>> linhas) {
 		this.linhas = linhas;
 	}
 }

@@ -27,30 +27,39 @@
 
 						<p:spacer styleClass="display-desktop" />
 
-						<p:repeat value="#{estoqueController.itensRelatorio}" var="item">
-							<p:dataTable reflow="true" value="#{item.linhas}" var="linha" rowIndexVar="index">
-								<f:facet name="header">
-									<h:outputText value="#{item.codigoProduto} - #{item.tituloProduto}" />
-								</f:facet>
-								<p:column style="width: 100px;">
-									<h:outputText value="Estoque" rendered="#{index eq 0}" styleClass="label" />
-									<h:outputText value="Solicitação" rendered="#{index eq 1}" styleClass="label" />
-								</p:column>
-								<p:columns value="#{item.tamanhos}" var="tamanho">
-									<f:facet name="header">
-										<h:outputText value="#{tamanho}" />
-									</f:facet>
-									<p:inputNumber value="#{linha.get(tamanho)}" styleClass="input-number-resp" decimalPlaces="0" readonly="#{index eq 0}" />
-								</p:columns>
-							</p:dataTable>
-						</p:repeat>
+						<c:if test="#{fn:length(estoqueController.itensRelatorio) > 0}">
+							<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
+								<h:outputText
+									value="Para realizar uma solicitação, preencha a quantidade no campo Solicitação de cada produto/tamanho e clique no botão Solicitar no final da página."
+									styleClass="label" style="color: red;" rendered="#{estoqueController.solicitavel}" />
+
+								<p:repeat value="#{estoqueController.itensRelatorio}" var="item">
+									<p:dataTable reflow="true" value="#{item.linhas}" var="linha" rowIndexVar="index">
+										<f:facet name="header">
+											<h:outputText value="#{item.codigoProduto} - #{item.tituloProduto}" />
+										</f:facet>
+										<p:column style="width: 100px;">
+											<h:outputText value="Estoque" rendered="#{index eq 0}" styleClass="label" />
+											<h:outputText value="Solicitação" rendered="#{index eq 1}" styleClass="label" />
+										</p:column>
+										<p:columns value="#{item.tamanhos}" var="tamanho">
+											<f:facet name="header">
+												<h:outputText value="#{tamanho}" />
+											</f:facet>
+											<p:inputNumber value="#{linha.get(tamanho)}" styleClass="input-number-resp" decimalPlaces="0" rendered="#{index eq 0}" disabled="true" />
+											<p:inputNumber value="#{linha.get(tamanho).quantidade}" styleClass="input-number-resp" decimalPlaces="0" rendered="#{index eq 1}" />
+										</p:columns>
+									</p:dataTable>
+								</p:repeat>
+							</p:panelGrid>
+						</c:if>
 					</div>
 
 					<p:messages />
 
-					<p:panelGrid columns="6" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
-						<p:commandButton id="submitButton" icon="fa fa-fw fa-save" value="#{labels.botao_solicitar}" oncomplete="PF('solicitacaoDialog').show()"
-							process=":mainForm" update="mainForm:idSolicitacaoDialog" styleClass="ui-grid-col-12" rendered="#{estoqueController.solicitavel}" />
+					<p:panelGrid columns="6" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes" rendered="#{estoqueController.solicitavel}">
+						<p:commandButton id="submitButton" icon="fa fa-fw fa-send" value="#{labels.botao_solicitar}" oncomplete="PF('solicitacaoDialog').show()"
+							process="@this" update="mainForm:idSolicitacaoDialog" styleClass="ui-grid-col-12" rendered="#{estoqueController.solicitavel}" />
 					</p:panelGrid>
 				</div>
 			</div>
@@ -64,8 +73,8 @@
 				<p:spacer />
 
 				<p:panelGrid columns="2" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
-					<p:commandButton icon="fa fa-fw fa-check" value="#{labels.botao_sim}" actionListener="#{estoqueController.solicita}" process="@this"
-						styleClass="ui-grid-col-12" />
+					<p:commandButton icon="fa fa-fw fa-check" value="#{labels.botao_sim}" actionListener="#{estoqueController.solicita}" process=":mainForm"
+						styleClass="ui-grid-col-12" oncomplete="PF('solicitacaoDialog').hide()" update=":mainForm" />
 					<p:commandButton icon="fa fa-fw fa-close" value="#{labels.botao_nao}" styleClass="ui-grid-col-12" onclick="PF('solicitacaoDialog').hide()"
 						process="@this" />
 				</p:panelGrid>

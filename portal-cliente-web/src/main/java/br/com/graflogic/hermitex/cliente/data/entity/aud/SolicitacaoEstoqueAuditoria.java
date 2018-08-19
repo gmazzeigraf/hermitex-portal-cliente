@@ -14,10 +14,10 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name = "tb_pedido_aud")
+@Table(name = "tb_solicitacao_estoque_aud")
 public class SolicitacaoEstoqueAuditoria implements Serializable {
 
-	private static final long serialVersionUID = 2583590241649925191L;
+	private static final long serialVersionUID = 171120500216739064L;
 
 	@Id
 	@Column(name = "id", nullable = false)

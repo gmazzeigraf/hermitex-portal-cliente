@@ -120,6 +120,10 @@
 									<f:setPropertyActionListener value="#{entity}" target="#{pedidoController.selectedEntity}" />
 								</p:commandButton>
 							</p:column>
+							
+							<f:facet name="footer">
+								<h:outputText value="#{fn:length(pedidoController.entities)} pedido(s) encontrado(s)" />
+							</f:facet>
 						</p:dataTable>
 					</div>
 				</div>

@@ -17,6 +17,7 @@ import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosExcepti
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
 import br.com.graflogic.hermitex.cliente.service.impl.produto.EstoqueService;
 import br.com.graflogic.hermitex.cliente.service.model.produto.ItemRelatorioEstoque;
+import br.com.graflogic.hermitex.cliente.service.model.produto.ItemSolicitacaoEstoque;
 import br.com.graflogic.hermitex.cliente.web.util.SessionUtil;
 import br.com.graflogic.utilities.presentationutil.controller.BaseController;
 
@@ -89,7 +90,7 @@ public class EstoqueController extends BaseController implements InitializingBea
 
 			for (ItemRelatorioEstoque item : itensRelatorio) {
 				for (String codigoTamanho : item.getTamanhos()) {
-					Integer quantidadeSolicitada = item.getLinhas().get(1).get(codigoTamanho);
+					Integer quantidadeSolicitada = ((ItemSolicitacaoEstoque) item.getLinhas().get(1).get(codigoTamanho)).getQuantidade();
 
 					if (null != quantidadeSolicitada && 0 != quantidadeSolicitada) {
 						SolicitacaoEstoqueItem solicitacaoItem = new SolicitacaoEstoqueItem();
@@ -103,6 +104,11 @@ public class EstoqueController extends BaseController implements InitializingBea
 			}
 
 			service.cadastraSolicitacao(solicitacao);
+
+			returnInfoDialogMessage(I18NUtil.getLabel("sucesso"),
+					"Solicitação de número " + solicitacao.getFormattedId() + " cadastrada com sucesso");
+
+			geraRelatorio();
 
 		} catch (DadosInvalidosException e) {
 			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), e.getMessage(), null);

@@ -26,6 +26,7 @@ import br.com.graflogic.hermitex.cliente.data.impl.produto.SolicitacaoEstoqueRep
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
 import br.com.graflogic.hermitex.cliente.service.model.produto.ItemRelatorioEstoque;
+import br.com.graflogic.hermitex.cliente.service.model.produto.ItemSolicitacaoEstoque;
 import br.com.graflogic.hermitex.cliente.web.util.SessionUtil;
 import br.com.graflogic.utilities.datautil.copy.ObjectCopier;
 
@@ -60,6 +61,10 @@ public class EstoqueService {
 
 		try {
 			repository.store(entity);
+
+			for (SolicitacaoEstoqueItem item : itens) {
+				item.setIdSolicitacao(entity.getId());
+			}
 
 			entity.setItens(itens);
 
@@ -130,7 +135,7 @@ public class EstoqueService {
 				item.getTamanhos().add(tamanho.getId().getCodigoTamanho());
 				item.getLinhas().get(0).put(tamanho.getId().getCodigoTamanho(), tamanho.getQuantidadeEstoque());
 				if (geraSolicitacao) {
-					item.getLinhas().get(1).put(tamanho.getId().getCodigoTamanho(), null);
+					item.getLinhas().get(1).put(tamanho.getId().getCodigoTamanho(), new ItemSolicitacaoEstoque());
 				}
 			}
 
