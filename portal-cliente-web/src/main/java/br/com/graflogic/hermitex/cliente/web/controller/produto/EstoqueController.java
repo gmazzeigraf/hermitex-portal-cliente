@@ -9,7 +9,11 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 import br.com.graflogic.base.service.util.I18NUtil;
+import br.com.graflogic.hermitex.cliente.data.dom.DomAcesso.DomPermissaoAcesso;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
+import br.com.graflogic.hermitex.cliente.data.entity.produto.SolicitacaoEstoque;
+import br.com.graflogic.hermitex.cliente.data.entity.produto.SolicitacaoEstoqueItem;
+import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
 import br.com.graflogic.hermitex.cliente.service.impl.produto.EstoqueService;
 import br.com.graflogic.hermitex.cliente.service.model.produto.ItemRelatorioEstoque;
@@ -67,10 +71,44 @@ public class EstoqueController extends BaseController implements InitializingBea
 		try {
 			itensRelatorio.clear();
 
-			itensRelatorio.addAll(service.geraRelatorio(idCliente, SessionUtil.isUsuarioCliente()));
+			itensRelatorio.addAll(service.geraRelatorio(idCliente, isSolicitavel()));
 
 		} catch (Throwable t) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao gerar relatório, contate o administrador", t);
+		}
+	}
+
+	// Solicitacao
+	public void solicita() {
+		try {
+			List<SolicitacaoEstoqueItem> itens = new ArrayList<>();
+
+			SolicitacaoEstoque solicitacao = new SolicitacaoEstoque();
+			solicitacao.setIdCliente(idCliente);
+			solicitacao.setItens(itens);
+
+			for (ItemRelatorioEstoque item : itensRelatorio) {
+				for (String codigoTamanho : item.getTamanhos()) {
+					Integer quantidadeSolicitada = item.getLinhas().get(1).get(codigoTamanho);
+
+					if (null != quantidadeSolicitada && 0 != quantidadeSolicitada) {
+						SolicitacaoEstoqueItem solicitacaoItem = new SolicitacaoEstoqueItem();
+						solicitacaoItem.setCodigoTamanho(codigoTamanho);
+						solicitacaoItem.setIdProduto(item.getIdProduto());
+						solicitacaoItem.setQuantidade(quantidadeSolicitada);
+
+						solicitacao.getItens().add(solicitacaoItem);
+					}
+				}
+			}
+
+			service.cadastraSolicitacao(solicitacao);
+
+		} catch (DadosInvalidosException e) {
+			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), e.getMessage(), null);
+
+		} catch (Throwable t) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao solicitar estoque, contate o administrador", t);
 		}
 	}
 
@@ -91,6 +129,10 @@ public class EstoqueController extends BaseController implements InitializingBea
 	// Condicoes
 	public boolean isClienteSelecionado() {
 		return null != idCliente && 0 != idCliente;
+	}
+
+	public boolean isSolicitavel() {
+		return SessionUtil.possuiPermissao(DomPermissaoAcesso.ROLE_ESTOQUE_SOLICITACAO);
 	}
 
 	// Getters e Setters

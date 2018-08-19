@@ -199,6 +199,16 @@ public class DomAuditoria {
 		}
 	}
 
+	public static class DomEventoAuditoriaSolicitacaoEstoque extends DomBase {
+		public static final String CADASTRO = "C";
+		public static final String FINALIZACAO = "F";
+
+		DomEventoAuditoriaSolicitacaoEstoque() {
+			mapa.put(CADASTRO, "Cadastro");
+			mapa.put(FINALIZACAO, "Finalização");
+		}
+	}
+
 	public static class DomEventoAuditoriaJanelaCompra extends DomBase {
 		public static final String CADASTRO = "C";
 		public static final String FECHAMENTO = "F";

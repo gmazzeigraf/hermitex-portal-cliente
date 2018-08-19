@@ -45,8 +45,31 @@
 							</p:dataTable>
 						</p:repeat>
 					</div>
+
+					<p:messages />
+
+					<p:panelGrid columns="6" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
+						<p:commandButton id="submitButton" icon="fa fa-fw fa-save" value="#{labels.botao_solicitar}" oncomplete="PF('solicitacaoDialog').show()"
+							process=":mainForm" update="mainForm:idSolicitacaoDialog" styleClass="ui-grid-col-12" rendered="#{estoqueController.solicitavel}" />
+					</p:panelGrid>
 				</div>
 			</div>
+
+			<p:dialog header="Confirmar solicitação de estoque?" id="idSolicitacaoDialog" widgetVar="solicitacaoDialog" height="90%" modal="true"
+				draggable="false" resizable="false" responsive="true">
+
+				<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" styleClass="ui-panelgrid-blank form-group">
+				</p:panelGrid>
+
+				<p:spacer />
+
+				<p:panelGrid columns="2" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
+					<p:commandButton icon="fa fa-fw fa-check" value="#{labels.botao_sim}" actionListener="#{estoqueController.solicita}" process="@this"
+						styleClass="ui-grid-col-12" />
+					<p:commandButton icon="fa fa-fw fa-close" value="#{labels.botao_nao}" styleClass="ui-grid-col-12" onclick="PF('solicitacaoDialog').hide()"
+						process="@this" />
+				</p:panelGrid>
+			</p:dialog>
 		</h:form>
 	</ui:define>
 

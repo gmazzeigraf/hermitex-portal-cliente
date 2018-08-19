@@ -10,6 +10,8 @@ import java.util.Map;
  */
 public class ItemRelatorioEstoque {
 
+	private Integer idProduto;
+
 	private String codigoProduto;
 
 	private String tituloProduto;
@@ -19,6 +21,14 @@ public class ItemRelatorioEstoque {
 	private List<String> tamanhos;
 
 	private List<Map<String, Integer>> linhas;
+
+	public Integer getIdProduto() {
+		return idProduto;
+	}
+
+	public void setIdProduto(Integer idProduto) {
+		this.idProduto = idProduto;
+	}
 
 	public String getCodigoProduto() {
 		return codigoProduto;

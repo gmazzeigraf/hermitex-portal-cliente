@@ -32,7 +32,7 @@ public class DomProduto {
 	}
 
 	public static DomStatusTamanho domStatusTamanho = new DomStatusTamanho();
-	
+
 	public static class DomStatusEmbalagem extends DomBase {
 		public static final String ATIVO = "A";
 		public static final String INATIVO = "I";
@@ -82,8 +82,7 @@ public class DomProduto {
 	}
 
 	public static DomGenero domGenero = new DomGenero();
-	
-	
+
 	public static class DomTipo extends DomBase {
 		public static final String ROUPA = "R";
 		public static final String SAPATO = "S";
@@ -97,5 +96,16 @@ public class DomProduto {
 	}
 
 	public static DomTipo domTipo = new DomTipo();
-	
+
+	public static class DomStatusSolicitacaoEstoque extends DomBase {
+		public static final String CADASTRADA = "C";
+		public static final String FINALIZADA = "F";
+
+		DomStatusSolicitacaoEstoque() {
+			mapa.put(CADASTRADA, "Cadastrada");
+			mapa.put(FINALIZADA, "Finalizada");
+		}
+	}
+
+	public static DomStatusSolicitacaoEstoque domStatusSolicitacaoEstoque = new DomStatusSolicitacaoEstoque();
 }
