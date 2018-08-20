@@ -42,11 +42,11 @@
 											<h:outputText value="Estoque" rendered="#{index eq 0}" styleClass="label" />
 											<h:outputText value="Solicitação" rendered="#{index eq 1}" styleClass="label" />
 										</p:column>
-										<p:columns value="#{item.tamanhos}" var="tamanho">
+										<p:columns value="#{item.tamanhos}" var="tamanho" style="text-align: center;" styleClass="label">
 											<f:facet name="header">
 												<h:outputText value="#{tamanho}" />
 											</f:facet>
-											<p:inputNumber value="#{linha.get(tamanho)}" styleClass="input-number-resp" decimalPlaces="0" rendered="#{index eq 0}" disabled="true" />
+											<h:outputText value="#{linha.get(tamanho)}" rendered="#{index eq 0}" />
 											<p:inputNumber value="#{linha.get(tamanho).quantidade}" styleClass="input-number-resp" decimalPlaces="0" rendered="#{index eq 1}" />
 										</p:columns>
 									</p:dataTable>
