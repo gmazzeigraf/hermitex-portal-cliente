@@ -302,6 +302,7 @@ public class PedidoService {
 		return pedido;
 	}
 
+	@Transactional(readOnly = true)
 	public Pedido consultaPorId(Long id) {
 		Pedido entity = repository.findById(id);
 

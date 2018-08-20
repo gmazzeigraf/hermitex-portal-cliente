@@ -168,6 +168,7 @@ public class FilialService {
 		return repository.consulta(entity);
 	}
 
+	@Transactional(readOnly = true)
 	public Filial consultaPorId(Integer id) {
 		Object cacheObj = cacheUtil.findOnCache(CACHE_NAME, id.toString());
 

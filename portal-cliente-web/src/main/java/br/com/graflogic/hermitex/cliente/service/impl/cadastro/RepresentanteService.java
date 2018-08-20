@@ -150,6 +150,7 @@ public class RepresentanteService {
 		return repository.consulta(entity);
 	}
 
+	@Transactional(readOnly = true)
 	public Representante consultaPorId(Integer id) {
 		Object cacheObj = cacheUtil.findOnCache(CACHE_NAME, id.toString());
 

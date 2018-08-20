@@ -162,6 +162,7 @@ public class ClienteService {
 		return consulta(filter);
 	}
 
+	@Transactional(readOnly = true)
 	public Cliente consultaPorId(Integer id) {
 		Object cacheObj = cacheUtil.findOnCache(CACHE_NAME, id.toString());
 

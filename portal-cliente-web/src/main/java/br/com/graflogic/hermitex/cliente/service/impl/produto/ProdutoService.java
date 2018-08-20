@@ -197,6 +197,7 @@ public class ProdutoService {
 		return repository.consultaApresentacaoLista(filter);
 	}
 
+	@Transactional(readOnly = true)
 	public Produto consultaCompletoPorId(Integer id) {
 		Object cacheObj = cacheUtil.findOnCache(CACHE_NAME, id.toString());
 
