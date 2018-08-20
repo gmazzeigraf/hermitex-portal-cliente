@@ -120,7 +120,7 @@
 									<f:setPropertyActionListener value="#{entity}" target="#{pedidoController.selectedEntity}" />
 								</p:commandButton>
 							</p:column>
-							
+
 							<f:facet name="footer">
 								<h:outputText value="#{fn:length(pedidoController.entities)} pedido(s) encontrado(s)" />
 							</f:facet>
@@ -151,9 +151,35 @@
 								</h:outputText>
 							</p:panelGrid>
 
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{sessionController.usuarioAdministrador}">
+								<h:outputText value="Peso" styleClass="label" />
+								<h:outputText value="#{pedidoController.entity.pesoTotal}">
+									<f:convertNumber pattern="#,##0.000" />
+								</h:outputText>
+							</p:panelGrid>
+							
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{sessionController.usuarioAdministrador}">
+								<h:outputText value="Status" styleClass="label" />
+								<h:outputText value="#{pedidoController.entity.deStatus}" />
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{sessionController.usuarioAdministrador}">
+								<h:outputText value="Produtos" styleClass="label" />
+								<h:outputText value="#{pedidoController.entity.valorProdutos}">
+									<f:convertNumber pattern="R$ #,##0.00" />
+								</h:outputText>
+							</p:panelGrid>
+
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 								<h:outputText value="Frete" styleClass="label" />
 								<h:outputText value="#{pedidoController.entity.valorFrete}">
+									<f:convertNumber pattern="R$ #,##0.00" />
+								</h:outputText>
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{sessionController.usuarioAdministrador}">
+								<h:outputText value="Desconto" styleClass="label" />
+								<h:outputText value="#{pedidoController.entity.valorDesconto}">
 									<f:convertNumber pattern="R$ #,##0.00" />
 								</h:outputText>
 							</p:panelGrid>
@@ -162,13 +188,6 @@
 								<h:outputText value="Total" styleClass="label" />
 								<h:outputText value="#{pedidoController.entity.valorTotal}">
 									<f:convertNumber pattern="R$ #,##0.00" />
-								</h:outputText>
-							</p:panelGrid>
-
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{sessionController.usuarioAdministrador}">
-								<h:outputText value="Peso" styleClass="label" />
-								<h:outputText value="#{pedidoController.entity.pesoTotal}">
-									<f:convertNumber pattern="#,##0.000" />
 								</h:outputText>
 							</p:panelGrid>
 
@@ -187,11 +206,6 @@
 								rendered="#{sessionController.usuarioAdministrador and pedidoController.formaPagamento.cartaoCredito}">
 								<h:outputText value="ID Transação Pagamento" styleClass="label" />
 								<h:outputText value="#{pedidoController.entity.idTransacaoPagamento}" />
-							</p:panelGrid>
-
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{sessionController.usuarioAdministrador}">
-								<h:outputText value="Status" styleClass="label" />
-								<h:outputText value="#{pedidoController.entity.deStatus}" />
 							</p:panelGrid>
 						</p:panelGrid>
 					</div>
@@ -416,14 +430,6 @@
 										<f:convertNumber pattern="R$ #,##0.00" />
 									</h:outputText>
 								</p:column>
-
-								<f:facet name="footer">
-									<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
-										<h:outputText value="#{pedidoController.entity.valorTotal}">
-											<f:convertNumber pattern="Total do pedido: R$ #,##0.00" />
-										</h:outputText>
-									</p:panelGrid>
-								</f:facet>
 							</p:dataTable>
 						</p:panelGrid>
 					</div>

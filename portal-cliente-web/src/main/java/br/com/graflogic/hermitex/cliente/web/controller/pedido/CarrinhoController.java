@@ -450,6 +450,8 @@ public class CarrinhoController extends BaseController implements InitializingBe
 				dadosPagamentoCartaoCredito.setParcelas(null);
 			}
 
+			atualizaPedido();
+
 		} catch (Throwable t) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao alterar forma de pagamento, contate o administrador", t);
 		}
