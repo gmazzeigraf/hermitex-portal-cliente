@@ -19,7 +19,7 @@
 
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 									<p:outputLabel for="nomeFantasiaFilter" value="Nome Fantasia" styleClass="label" />
-									<p:inputText id="nomeFantasiaFilter" value="#{filialController.filterEntity.nomeFantasia}" maxlength="100" styleClass="ui-grid-col-12" />
+									<p:inputText id="nomeFantasiaFilter" value="#{representanteController.filterEntity.nomeFantasia}" maxlength="100" styleClass="ui-grid-col-12" />
 								</p:panelGrid>
 
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
@@ -220,6 +220,35 @@
 							</p:column>
 						</p:dataTable>
 					</div>
+
+					<c:if test="#{representanteController.editing}">
+						<div class="card card-w-title">
+							<h1>Clientes</h1>
+							<p:dataTable var="entity" value="#{representanteController.clientes}" rowKey="#{entity.id}" paginator="true" paginatorPosition="bottom"
+								reflow="true" rows="10" emptyMessage="Nenhum cliente cadastrado">
+
+								<p:column headerText="#" sortBy="#{entity.id}" styleClass="id-column">
+									<h:outputText value="#{entity.id}" />
+								</p:column>
+
+								<p:column headerText="CNPJ" sortBy="#{entity.formattedCnpj}" styleClass="valor-column">
+									<h:outputText value="#{entity.formattedCnpj}" />
+								</p:column>
+
+								<p:column headerText="Razão Social" sortBy="#{entity.razaoSocial}">
+									<h:outputText value="#{entity.razaoSocial}" />
+								</p:column>
+
+								<p:column headerText="Nome Fantasia" sortBy="#{entity.nomeFantasia}">
+									<h:outputText value="#{entity.nomeFantasia}" />
+								</p:column>
+
+								<f:facet name="footer">
+									<h:outputText value="#{fn:length(representanteController.clientes)} cliente(s) cadastrado(s)" />
+								</f:facet>
+							</p:dataTable>
+						</div>
+					</c:if>
 
 					<p:messages />
 

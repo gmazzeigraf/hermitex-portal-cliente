@@ -38,6 +38,39 @@
 					</p:panelGrid>
 				</div>
 
+				<c:if test="#{usuarioController.editing and usuarioController.isView('proprietario/acesso/usuario')}">
+					<div class="card card-w-title">
+						<h1>Filiais</h1>
+						<p:dataTable var="entity" value="#{usuarioController.entidadesRelacionadas}" rowKey="#{entity.id}" paginator="true" paginatorPosition="bottom"
+							reflow="true" rows="10" emptyMessage="Nenhuma filial cadastrada">
+
+							<p:column headerText="#" sortBy="#{entity.id}" styleClass="id-column">
+								<h:outputText value="#{entity.id}" />
+							</p:column>
+
+							<p:column headerText="CNPJ" sortBy="#{entity.formattedCnpj}" styleClass="valor-column">
+								<h:outputText value="#{entity.formattedCnpj}" />
+							</p:column>
+
+							<p:column headerText="Razão Social" sortBy="#{entity.razaoSocial}">
+								<h:outputText value="#{entity.razaoSocial}" />
+							</p:column>
+
+							<p:column headerText="Nome Fantasia" sortBy="#{entity.nomeFantasia}">
+								<h:outputText value="#{entity.nomeFantasia}" />
+							</p:column>
+
+							<p:column headerText="Tipo" sortBy="#{entity.deTipo}" styleClass="valor-column">
+								<h:outputText value="#{entity.deTipo}" />
+							</p:column>
+
+							<f:facet name="footer">
+								<h:outputText value="#{fn:length(usuarioController.entidadesRelacionadas)} filial(is) cadastrada(s)" />
+							</f:facet>
+						</p:dataTable>
+					</div>
+				</c:if>
+
 				<p:messages />
 
 				<p:panelGrid columns="6" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">

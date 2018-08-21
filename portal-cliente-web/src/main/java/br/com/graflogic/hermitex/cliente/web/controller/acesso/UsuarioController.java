@@ -78,10 +78,13 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 
 	private Integer idEntidade;
 
+	private List<Object> entidadesRelacionadas;
+
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		try {
 			entidades = new ArrayList<>();
+			entidadesRelacionadas = new ArrayList<>();
 
 			if (isView(VIEW_ALTERACAO_SENHA)) {
 				setEntity(SessionUtil.getAuthenticatedUsuario());
@@ -181,6 +184,8 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 
 	@Override
 	protected void beforeAdd() {
+		entidadesRelacionadas.clear();
+
 		if (isViewAdministrador()) {
 			setEntity(new UsuarioAdministrador());
 
@@ -205,6 +210,12 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 	@Override
 	protected void executeEdit(Usuario entity) {
 		setEntity(service.consultaPorId(entity.getId()));
+
+		entidadesRelacionadas.clear();
+
+		if (isView(VIEW_PROPRIETARIO)) {
+			entidadesRelacionadas.addAll(filialService.consultaPorUsuarioProprietario(entity.getId(), false));
+		}
 	}
 
 	@Override
@@ -401,5 +412,9 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 
 	public List<Object> getEntidades() {
 		return entidades;
+	}
+
+	public List<Object> getEntidadesRelacionadas() {
+		return entidadesRelacionadas;
 	}
 }

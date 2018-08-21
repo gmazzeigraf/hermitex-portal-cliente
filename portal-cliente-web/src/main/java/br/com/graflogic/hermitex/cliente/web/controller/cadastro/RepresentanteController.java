@@ -14,6 +14,7 @@ import br.com.graflogic.commonutil.util.StringUtil;
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomTipoEndereco;
 import br.com.graflogic.hermitex.cliente.data.entity.auxiliar.Estado;
 import br.com.graflogic.hermitex.cliente.data.entity.auxiliar.Municipio;
+import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Representante;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.RepresentanteContato;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.RepresentanteEndereco;
@@ -23,6 +24,7 @@ import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosExcepti
 import br.com.graflogic.hermitex.cliente.service.exception.ResultadoNaoEncontradoException;
 import br.com.graflogic.hermitex.cliente.service.impl.auxiliar.EstadoService;
 import br.com.graflogic.hermitex.cliente.service.impl.auxiliar.MunicipioService;
+import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.RepresentanteService;
 import br.com.graflogic.utilities.cep.CEPClient;
 import br.com.graflogic.utilities.cep.exception.CEPNotFoundException;
@@ -52,6 +54,9 @@ public class RepresentanteController extends CrudBaseController<Representante, R
 	private MunicipioService municipioService;
 
 	@Autowired
+	private ClienteService clienteService;
+
+	@Autowired
 	private CEPClient cepClient;
 
 	private List<Estado> estadosCadastro;
@@ -64,6 +69,8 @@ public class RepresentanteController extends CrudBaseController<Representante, R
 
 	private int indexRelacionado;
 
+	private List<Cliente> clientes;
+
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		try {
@@ -71,6 +78,8 @@ public class RepresentanteController extends CrudBaseController<Representante, R
 
 			estadosCadastro = estadoService.consulta();
 			municipiosCadastro = new ArrayList<Municipio>();
+
+			clientes = new ArrayList<>();
 
 		} catch (Throwable t) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao inicializar tela, contate o administrador", t);
@@ -126,6 +135,8 @@ public class RepresentanteController extends CrudBaseController<Representante, R
 		enderecoCadastro = new RepresentanteEndereco(new RepresentanteEnderecoPK(null, DomTipoEndereco.CADASTRO));
 
 		changeEstadoCadastro();
+
+		clientes.clear();
 	}
 
 	@Override
@@ -135,6 +146,10 @@ public class RepresentanteController extends CrudBaseController<Representante, R
 		enderecoCadastro = getEntity().getEnderecoCadastro();
 
 		changeEstadoCadastro();
+
+		clientes.clear();
+
+		clientes.addAll(clienteService.consultaPorRepresentante(entity.getId()));
 	}
 
 	@Override
@@ -321,5 +336,9 @@ public class RepresentanteController extends CrudBaseController<Representante, R
 
 	public RepresentanteEndereco getEnderecoCadastro() {
 		return enderecoCadastro;
+	}
+
+	public List<Cliente> getClientes() {
+		return clientes;
 	}
 }
