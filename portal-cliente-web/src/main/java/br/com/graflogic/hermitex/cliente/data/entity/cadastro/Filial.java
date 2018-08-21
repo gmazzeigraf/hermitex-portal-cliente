@@ -71,6 +71,9 @@ public class Filial implements Serializable {
 	@Column(name = "in_compra_bloqueada", nullable = false)
 	private String compraBloqueada;
 
+	@Column(name = "id_usuario_proprietario", nullable = false)
+	private Integer idUsuarioProprietario;
+
 	@Column(name = "status", nullable = false)
 	private String status;
 
@@ -178,6 +181,14 @@ public class Filial implements Serializable {
 
 	public void setCompraBloqueada(String compraBloqueada) {
 		this.compraBloqueada = compraBloqueada;
+	}
+
+	public Integer getIdUsuarioProprietario() {
+		return idUsuarioProprietario;
+	}
+
+	public void setIdUsuarioProprietario(Integer idUsuarioProprietario) {
+		this.idUsuarioProprietario = idUsuarioProprietario;
 	}
 
 	public String getStatus() {

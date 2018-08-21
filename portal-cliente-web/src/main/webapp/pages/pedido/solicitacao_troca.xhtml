@@ -23,7 +23,8 @@
 									</p:selectOneMenu>
 								</p:panelGrid>
 
-								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{!sessionController.usuarioFilial}">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid"
+									rendered="#{!sessionController.usuarioFilial and !sessionController.usuarioProprietario}">
 									<p:outputLabel for="filialFilter" value="Filial" styleClass="label" />
 									<p:selectOneMenu id="filialFilter" value="#{solicitacaoTrocaController.filterEntity.idFilial}" styleClass="ui-grid-col-12" filter="true"
 										filterMatchMode="contains" disabled="#{!solicitacaoTrocaController.clienteSelecionado}">
@@ -60,7 +61,7 @@
 								<p:spacer styleClass="display-desktop" />
 								<p:commandButton value="#{labels.botao_pesquisar}" id="searchButton" icon="fa fa-fw fa-search" update="dtbEntities searchMessages"
 									actionListener="#{solicitacaoTrocaController.search}" process="@this, filterGrid" oncomplete="PF('dtb').getPaginator().setPage(0);"
-									styleClass="ui-grid-col-4 botao-pesquisar" disabled="#{!solicitacaoTrocaController.clienteSelecionado}" />
+									styleClass="ui-grid-col-4 botao-pesquisar" disabled="#{!solicitacaoTrocaController.pesquisavel}" />
 							</p:panelGrid>
 
 							<p:messages id="searchMessages" />
@@ -71,7 +72,8 @@
 
 							<p:commandButton value="#{labels.botao_adicionar}" icon="fa fa-fw fa-plus" actionListener="#{solicitacaoTrocaController.add}"
 								update=":searchForm :editForm" process="@this" resetValues="true" styleClass="ui-grid-col-12 botao-adicionar"
-								disabled="#{!solicitacaoTrocaController.clienteSelecionado}" rendered="#{sessionController.usuarioCliente or sessionController.usuarioFilial}" />
+								disabled="#{!solicitacaoTrocaController.adicionavel}"
+								rendered="#{sessionController.usuarioCliente or sessionController.usuarioFilial or sessionController.usuarioProprietario}" />
 						</p:panelGrid>
 
 						<p:dataTable id="dtbEntities" widgetVar="dtb" var="entity" value="#{solicitacaoTrocaController.entities}" rowKey="#{entity.id}" paginator="true"

@@ -1,6 +1,6 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:po="http://primefaces.org/poseidon"
-	xmlns:c="http://java.sun.com/jsp/jstl/core">
+	xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:fn="http://java.sun.com/jsp/jstl/functions">
 
 	<div class="topbar clearfix">
 		<div class="topbar-left">
@@ -29,8 +29,10 @@
 							</form>
 						</ul></li>
 					<li class="topbar-item-name-web"><c:if test="#{null != sessionController.authenticatedUser.principal.empresa}">
-							<span>Empresa: #{sessionController.authenticatedUser.principal.empresa.razaoSocial}</span>
-						</c:if><span>E-mail: #{sessionController.authenticatedUser.principal.usuario.email}</span> <span>Nome: #{sessionController.authenticatedUser.principal.usuario.nome}</span></li>
+							<span>Empresa: #{fn:length(sessionController.authenticatedUser.principal.empresa.nomeFantasia) > 0 ?
+								sessionController.authenticatedUser.principal.empresa.nomeFantasia : sessionController.authenticatedUser.principal.empresa.razaoSocial}</span>
+						</c:if><span>E-mail: #{sessionController.authenticatedUser.principal.usuario.email}</span> <span>Nome:
+							#{sessionController.authenticatedUser.principal.usuario.nome}</span></li>
 				</ul>
 			</div>
 		</c:if>

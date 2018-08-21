@@ -6,21 +6,17 @@ import java.util.List;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 
 import br.com.graflogic.base.service.util.I18NUtil;
 import br.com.graflogic.hermitex.cliente.data.dom.DomAcesso.DomStatusSenhaUsuario;
 import br.com.graflogic.hermitex.cliente.data.dom.DomAcesso.DomTipoUsuario;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuario;
-import br.com.graflogic.hermitex.cliente.data.entity.acesso.PermissaoAcesso;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.Usuario;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioAdministrador;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioCliente;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioFilial;
+import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioProprietario;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioRepresentante;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Filial;
@@ -28,11 +24,11 @@ import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Representante;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
 import br.com.graflogic.hermitex.cliente.service.impl.acesso.PerfilUsuarioService;
-import br.com.graflogic.hermitex.cliente.service.impl.acesso.PermissaoAcessoService;
 import br.com.graflogic.hermitex.cliente.service.impl.acesso.UsuarioService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.FilialService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.RepresentanteService;
+import br.com.graflogic.hermitex.cliente.web.controller.SessionController;
 import br.com.graflogic.hermitex.cliente.web.util.SessionUtil;
 import br.com.graflogic.utilities.presentationutil.controller.CrudBaseController;
 
@@ -52,15 +48,13 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 	private static final String VIEW_CLIENTE = "cliente/acesso/usuario.xhtml";
 	private static final String VIEW_FILIAL = "filial/acesso/usuario.xhtml";
 	private static final String VIEW_REPRESENTANTE = "representante/acesso/usuario.xhtml";
+	private static final String VIEW_PROPRIETARIO = "proprietario/acesso/usuario.xhtml";
 
 	@Autowired
 	private UsuarioService service;
 
 	@Autowired
 	private PerfilUsuarioService perfilService;
-
-	@Autowired
-	private PermissaoAcessoService permissaoAcessoService;
 
 	@Autowired
 	private ClienteService clienteService;
@@ -70,6 +64,9 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 
 	@Autowired
 	private RepresentanteService representanteService;
+
+	@Autowired
+	private SessionController sessionController;
 
 	private List<PerfilUsuario> perfis;
 
@@ -119,7 +116,7 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 				} else if (SessionUtil.isUsuarioCliente()) {
 					entidades.addAll(filialService.consultaPorCliente(SessionUtil.getIdCliente(), false));
 
-				} else if (SessionUtil.isUsuarioFilial()) {
+				} else if (SessionUtil.isUsuarioFilial() || SessionUtil.isUsuarioProprietario()) {
 					idEntidade = SessionUtil.getIdFilial();
 
 					changeEntidade();
@@ -137,6 +134,11 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 
 					changeEntidade();
 				}
+
+			} else if (isViewProprietario()) {
+				setFilterEntity(new UsuarioProprietario());
+
+				perfis = perfilService.consulta(DomTipoUsuario.PROPRIETARIO, null);
 			}
 
 		} catch (Throwable t) {
@@ -193,6 +195,9 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 		} else if (isViewRepresentante()) {
 			setEntity(new UsuarioRepresentante());
 			((UsuarioRepresentante) getEntity()).setIdRepresentante(idEntidade);
+
+		} else if (isViewProprietario()) {
+			setEntity(new UsuarioProprietario());
 
 		}
 	}
@@ -315,16 +320,7 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 
 			// Caso fosse senha temporaria, adiciona as permissoes no usuario logado
 			if (senhaTemporaria) {
-				List<PermissaoAcesso> permissoesPerfil = permissaoAcessoService.consultaPorPerfilUsuario(getEntity().getIdPerfil());
-
-				List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-
-				for (PermissaoAcesso permissao : permissoesPerfil) {
-					authorities.add(new SimpleGrantedAuthority(permissao.getCodigo()));
-				}
-
-				SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(getAuthenticatedUser().getPrincipal(),
-						getAuthenticatedUser().getCredentials(), authorities));
+				sessionController.carregaPermissoes();
 
 				returnInfoMessage("Senha alterada com sucesso, o acesso completo foi liberado", getApplicationUrl() + "/pages/home.jsf");
 
@@ -368,6 +364,10 @@ public class UsuarioController extends CrudBaseController<Usuario, Usuario> impl
 
 	public boolean isViewRepresentante() {
 		return isView(VIEW_REPRESENTANTE);
+	}
+
+	public boolean isViewProprietario() {
+		return isView(VIEW_PROPRIETARIO);
 	}
 
 	// Getters e Setters

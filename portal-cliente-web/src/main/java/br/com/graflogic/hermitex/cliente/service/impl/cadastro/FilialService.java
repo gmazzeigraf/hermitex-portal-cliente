@@ -164,6 +164,16 @@ public class FilialService {
 		return consulta(filter);
 	}
 
+	public List<Filial> consultaPorUsuarioProprietario(Integer idUsuarioProprietario, boolean somenteAtivos) {
+		Filial filter = new Filial();
+		filter.setIdUsuarioProprietario(idUsuarioProprietario);
+		if (somenteAtivos) {
+			filter.setStatus(DomStatusFilial.ATIVO);
+		}
+
+		return consulta(filter);
+	}
+
 	public List<Filial> consulta(Filial entity) {
 		return repository.consulta(entity);
 	}

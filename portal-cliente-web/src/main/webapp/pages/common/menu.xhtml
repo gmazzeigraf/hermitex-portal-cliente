@@ -7,7 +7,7 @@
 			<div class="nano">
 				<div class="nano-content menu-scroll-content">
 					<f:event type="preRenderView" listener="#{permissaoMenuFilter.filtraMenuVazio}" />
-					<f:event type="preRenderView" listener="#{sessionController.verificaSenhaTemporaria}" />
+					<f:event type="preRenderView" listener="#{sessionController.verificaRedirecionamento}" />
 
 					<pp:menu widgetVar="menu" id="menu">
 						<p:menuitem id="inicio" icon="fa fa-fw fa-home" value="#{labels.menu_inicio}" url="/pages/home.jsf" />
@@ -76,6 +76,15 @@
 									url="/pages/representante/acesso/perfil.jsf" rendered="#{sec:isAllowed('/pages/representante/acesso/perfil.jsf', '')}" />
 								<p:menuitem id="menu_representante_acesso_usuario" icon="fa fa-fw fa-user" value="#{labels.menu_representante_acesso_usuario}"
 									url="/pages/representante/acesso/usuario.jsf" rendered="#{sec:isAllowed('/pages/representante/acesso/usuario.jsf', '')}" />
+							</p:submenu>
+						</p:submenu>
+
+						<p:submenu id="menu_proprietario" icon="fa fa-fw fa-gavel" label="#{labels.menu_proprietario}">
+							<p:submenu id="menu_proprietario_acesso" icon="fa fa-fw fa-unlock" label="#{labels.menu_proprietario_acesso}">
+								<p:menuitem id="menu_proprietario_acesso_perfil" icon="fa fa-fw fa-magic" value="#{labels.menu_proprietario_acesso_perfil}"
+									url="/pages/proprietario/acesso/perfil.jsf" rendered="#{sec:isAllowed('/pages/proprietario/acesso/perfil.jsf', '')}" />
+								<p:menuitem id="menu_proprietario_acesso_usuario" icon="fa fa-fw fa-user" value="#{labels.menu_proprietario_acesso_usuario}"
+									url="/pages/proprietario/acesso/usuario.jsf" rendered="#{sec:isAllowed('/pages/proprietario/acesso/usuario.jsf', '')}" />
 							</p:submenu>
 						</p:submenu>
 

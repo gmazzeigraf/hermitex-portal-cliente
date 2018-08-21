@@ -1,0 +1,35 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/pages/templates/template.xhtml"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+	<ui:define name="viewname">#{labels.menu_filial} / #{labels.menu_filial_seleciona}</ui:define>
+
+	<ui:define name="content">
+		<h:form id="mainForm">
+			<div class="ui-g">
+				<div class="ui-g-12">
+					<div class="card card-w-title">
+						<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
+							<p:outputLabel value="Filial" for="filial" styleClass="label" />
+							<p:selectOneMenu id="filial" value="#{filialController.entity.id}" styleClass="ui-grid-col-12" filter="true" filterMatchMode="contains"
+								required="true" requiredMessage="Favor selecionar a filial">
+								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItems value="#{filialController.entities}" var="item"
+									itemLabel="#{item.id} - #{fn:length(item.nomeFantasia) > 0 ? item.nomeFantasia : item.razaoSocial}" itemValue="#{item.id}" />
+							</p:selectOneMenu>
+
+							<p:spacer />
+
+							<p:commandButton value="Confirmar" icon="fa fa-fw fa-check" actionListener="#{filialController.seleciona}" process=":mainForm"
+								oncomplete="carregaClose();" styleClass="ui-grid-col-2" update=":mainForm" />
+
+							<p:spacer />
+
+							<p:messages />
+						</p:panelGrid>
+					</div>
+				</div>
+			</div>
+		</h:form>
+	</ui:define>
+</ui:composition>

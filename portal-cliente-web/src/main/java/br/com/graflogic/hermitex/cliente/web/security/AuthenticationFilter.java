@@ -32,6 +32,7 @@ import br.com.graflogic.hermitex.cliente.data.entity.acesso.Usuario;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioAdministrador;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioCliente;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioFilial;
+import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioProprietario;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioRepresentante;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Filial;
@@ -156,7 +157,7 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
 
 			List<GrantedAuthority> authorities = new ArrayList<>();
 
-			if (DomStatusSenhaUsuario.DEFINITIVA.equals(usuario.getStatusSenha())) {
+			if (DomStatusSenhaUsuario.DEFINITIVA.equals(usuario.getStatusSenha()) && !(usuario instanceof UsuarioProprietario)) {
 				// Caso seja a tenha definita, adiciona as permissoes
 				authorities.addAll(autenticacao.getAuthorities());
 			}
@@ -169,6 +170,12 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
 
 			} else if (usuario instanceof UsuarioFilial) {
 				authorities.add(new SimpleGrantedAuthority(UsuarioFilial.PERMISSAO));
+
+			} else if (usuario instanceof UsuarioRepresentante) {
+				authorities.add(new SimpleGrantedAuthority(UsuarioRepresentante.PERMISSAO));
+
+			} else if (usuario instanceof UsuarioProprietario) {
+				authorities.add(new SimpleGrantedAuthority(UsuarioProprietario.PERMISSAO));
 
 			}
 

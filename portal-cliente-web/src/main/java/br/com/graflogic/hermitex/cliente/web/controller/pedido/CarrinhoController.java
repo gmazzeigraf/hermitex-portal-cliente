@@ -122,7 +122,8 @@ public class CarrinhoController extends BaseController implements InitializingBe
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		try {
-			if (SessionUtil.isUsuarioCliente() || SessionUtil.isUsuarioFilial()) {
+			if (SessionUtil.isUsuarioCliente() || SessionUtil.isUsuarioFilial()
+					|| (SessionUtil.isUsuarioProprietario() && null != SessionUtil.getIdFilial())) {
 				cliente = clienteService.consultaPorId(SessionUtil.getIdCliente());
 
 			} else {
@@ -216,7 +217,7 @@ public class CarrinhoController extends BaseController implements InitializingBe
 	}
 
 	private void preparaNovoPedido() {
-		if (!SessionUtil.isUsuarioCliente() && !SessionUtil.isUsuarioFilial()) {
+		if (!SessionUtil.isUsuarioCliente() && !SessionUtil.isUsuarioFilial() && !SessionUtil.isUsuarioProprietario()) {
 			return;
 		}
 
@@ -266,7 +267,7 @@ public class CarrinhoController extends BaseController implements InitializingBe
 			enderecoEntrega.setNumero(cliente.getEnderecoEntrega().getNumero());
 			enderecoEntrega.setComplemento(cliente.getEnderecoEntrega().getComplemento());
 
-		} else if (SessionUtil.isUsuarioFilial()) {
+		} else if (SessionUtil.isUsuarioFilial() || SessionUtil.isUsuarioProprietario()) {
 			pedido.setIdCliente(cliente.getId());
 			pedido.setIdFilial(SessionUtil.getIdFilial());
 

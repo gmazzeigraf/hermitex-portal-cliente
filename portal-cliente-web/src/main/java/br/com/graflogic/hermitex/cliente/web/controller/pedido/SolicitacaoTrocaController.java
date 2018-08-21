@@ -69,8 +69,9 @@ public class SolicitacaoTrocaController extends CrudBaseController<SolicitacaoTr
 
 			} else if (SessionUtil.isUsuarioCliente()) {
 
-			} else if (SessionUtil.isUsuarioFilial()) {
+			} else if (SessionUtil.isUsuarioFilial() || SessionUtil.isUsuarioProprietario()) {
 				getFilterEntity().setIdFilial(SessionUtil.getIdFilial());
+
 			}
 
 			if (null != getFilterEntity().getIdCliente()) {
@@ -105,14 +106,23 @@ public class SolicitacaoTrocaController extends CrudBaseController<SolicitacaoTr
 
 	@Override
 	protected void beforeAdd() {
-		if (!isClienteSelecionado()) {
-			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Favor selecionar o cliente", null);
+		if (!isAdicionavel()) {
+			if (SessionUtil.isUsuarioFilial() || SessionUtil.isUsuarioProprietario()) {
+				returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Favor selecionar a filial", null);
+			}
+			if (SessionUtil.isUsuarioCliente()) {
+				returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Favor selecionar o cliente", null);
+			}
+
 			return;
 		}
 
 		setEntity(new SolicitacaoTroca());
 		getEntity().setIdCliente(getFilterEntity().getIdCliente());
-		getEntity().setIdFilial(getFilterEntity().getIdFilial());
+
+		if (SessionUtil.isUsuarioFilial() || SessionUtil.isUsuarioProprietario()) {
+			getEntity().setIdFilial(getFilterEntity().getIdFilial());
+		}
 
 		pedido = null;
 	}
@@ -126,11 +136,16 @@ public class SolicitacaoTrocaController extends CrudBaseController<SolicitacaoTr
 
 	@Override
 	protected void executeSearch() {
-		if (!isClienteSelecionado()) {
-			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Favor selecionar o cliente", null);
+		if (!isPesquisavel()) {
+			if (SessionUtil.isUsuarioFilial() || SessionUtil.isUsuarioProprietario()) {
+				returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Favor selecionar a filial", null);
+			}
+			if (SessionUtil.isUsuarioCliente()) {
+				returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Favor selecionar o cliente", null);
+			}
+
 			return;
 		}
-
 		setEntities(service.consulta(getFilterEntity()));
 	}
 
@@ -186,12 +201,14 @@ public class SolicitacaoTrocaController extends CrudBaseController<SolicitacaoTr
 	public void changeCliente() {
 		try {
 			setEntities(null);
-			if (!SessionUtil.isUsuarioFilial()) {
+
+			if (!SessionUtil.isUsuarioFilial() && !SessionUtil.isUsuarioProprietario()) {
 				getFilterEntity().setIdFilial(null);
 			}
+
 			filiais.clear();
 
-			if (isClienteSelecionado() && !SessionUtil.isUsuarioFilial()) {
+			if (isClienteSelecionado() && (!SessionUtil.isUsuarioFilial() && !SessionUtil.isUsuarioProprietario())) {
 				filiais.addAll(filialService.consultaPorCliente(getFilterEntity().getIdCliente(), false));
 			}
 
@@ -205,9 +222,22 @@ public class SolicitacaoTrocaController extends CrudBaseController<SolicitacaoTr
 		return null != getFilterEntity().getIdCliente() && 0 != getFilterEntity().getIdCliente();
 	}
 
+	public boolean isFilialSelecionada() {
+		return null != getFilterEntity().getIdFilial() && 0 != getFilterEntity().getIdFilial();
+	}
+
 	public boolean isFinalizavel() {
 		return null != getEntity() && getEntity().isCadastrada()
 				&& SessionUtil.possuiPermissao(DomPermissaoAcesso.ROLE_PEDIDO_SOLICITACAO_TROCA_FINALIZACAO);
+	}
+
+	public boolean isPesquisavel() {
+		return isClienteSelecionado() || ((SessionUtil.isUsuarioFilial() || SessionUtil.isUsuarioProprietario()) && isFilialSelecionada());
+	}
+
+	public boolean isAdicionavel() {
+		return (SessionUtil.isUsuarioCliente() && isClienteSelecionado())
+				|| ((SessionUtil.isUsuarioFilial() || SessionUtil.isUsuarioProprietario()) && isFilialSelecionada());
 	}
 
 	// Getters e Setters

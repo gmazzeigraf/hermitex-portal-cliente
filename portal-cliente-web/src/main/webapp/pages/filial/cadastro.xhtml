@@ -23,6 +23,15 @@
 									</p:selectOneMenu>
 								</p:panelGrid>
 
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{sessionController.usuarioAdministrador}">
+									<p:outputLabel for="proprietarioFilter" value="Usuário Proprietário" styleClass="label" />
+									<p:selectOneMenu id="proprietarioFilter" value="#{filialController.filterEntity.idUsuarioProprietario}" styleClass="ui-grid-col-12"
+										filter="true" filterMatchMode="contains">
+										<f:selectItem itemLabel="" itemValue="" />
+										<f:selectItems value="#{filialController.usuariosProprietarios}" var="item" itemLabel="#{item.id} - #{item.nome}" itemValue="#{item.id}" />
+									</p:selectOneMenu>
+								</p:panelGrid>
+
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 									<p:outputLabel for="razaoSocialFilter" value="Razão Social" styleClass="label" />
 									<p:inputText id="razaoSocialFilter" value="#{filialController.filterEntity.razaoSocial}" maxlength="100" styleClass="ui-grid-col-12" />
@@ -179,6 +188,16 @@
 									requiredMessage="Favor selecionar o tipo">
 									<f:selectItem itemLabel="Selecione" itemValue="" />
 									<f:selectItems value="#{domCadastroController.tipoFilialMap}" />
+								</p:selectOneMenu>
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{sessionController.usuarioAdministrador}">
+								<p:outputLabel for="proprietario" value="Usuário Proprietário" styleClass="label" />
+								<p:selectOneMenu id="proprietario" value="#{filialController.entity.idUsuarioProprietario}" styleClass="ui-grid-col-12" filter="true"
+									filterMatchMode="contains">
+									<f:selectItem itemLabel="" itemValue="" />
+									<f:selectItems value="#{filialController.usuariosProprietarios}" var="item" itemLabel="#{item.id} - #{item.nome}" itemValue="#{item.id}"
+										itemDisabled="#{item.inativo}" />
 								</p:selectOneMenu>
 							</p:panelGrid>
 

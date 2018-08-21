@@ -74,7 +74,7 @@ public class ProdutoApresentacaoController extends SearchBaseController<ProdutoA
 	private ProdutoApresentacaoLista produtoApresentacao;
 
 	private String tabelaMedidas;
-	
+
 	private Integer quantidadeEstoque;
 
 	@Override
@@ -92,8 +92,9 @@ public class ProdutoApresentacaoController extends SearchBaseController<ProdutoA
 			} else if (SessionUtil.isUsuarioRepresentante()) {
 				clientes = clienteService.consultaPorRepresentante(SessionUtil.getIdRepresentante());
 
-			} else if (SessionUtil.isUsuarioCliente() || SessionUtil.isUsuarioFilial()) {
+			} else if (SessionUtil.isUsuarioCliente() || SessionUtil.isUsuarioFilial() || SessionUtil.isUsuarioProprietario()) {
 				getFilterEntity().setIdCliente(SessionUtil.getIdCliente());
+
 			}
 
 			if (null != getFilterEntity().getIdCliente()) {
@@ -163,7 +164,7 @@ public class ProdutoApresentacaoController extends SearchBaseController<ProdutoA
 	public void changeTamanho() {
 		try {
 			itemPedido.setValorCorrigidoTamanho(itemPedido.getValorUnitario());
-			
+
 			quantidadeEstoque = 0;
 
 			// Caso o tamanho esteja selecionado calcula o valor pelo fato

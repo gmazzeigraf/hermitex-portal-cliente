@@ -58,6 +58,10 @@ public class FilialRepository extends BaseRepository<Filial> {
 		if (null != entity.getIdCliente() && 0 != entity.getIdCliente()) {
 			predicateList.add(builder.and(builder.equal(table.get("idCliente"), entity.getIdCliente())));
 		}
+		
+		if (null != entity.getIdUsuarioProprietario() && 0 != entity.getIdUsuarioProprietario()) {
+			predicateList.add(builder.and(builder.equal(table.get("idUsuarioProprietario"), entity.getIdUsuarioProprietario())));
+		}
 
 		if (StringUtils.isNotEmpty(entity.getSiglaEstadoFaturamento())) {
 			Join<Filial, FilialEndereco> join = table.join("enderecos");

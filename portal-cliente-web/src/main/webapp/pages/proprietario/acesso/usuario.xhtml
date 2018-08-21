@@ -2,7 +2,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/pages/templates/crud_template.xhtml"
 	xmlns:fn="http://java.sun.com/jsp/jstl/functions" xmlns:c="http://java.sun.com/jsp/jstl/core">
 
-	<ui:define name="viewname">#{labels.menu_filial} / #{labels.menu_filial_acesso} / #{labels.menu_filial_acesso_usuario} 
+	<ui:define name="viewname">#{labels.menu_proprietario} / #{labels.menu_proprietario_acesso} / #{labels.menu_proprietario_acesso_usuario} 
 			</ui:define>
 
 	<ui:define name="search">
@@ -12,36 +12,18 @@
 					<div class="card card-w-title">
 						<h1>#{labels.consulta}</h1>
 						<p:panelGrid columns="1" id="filterGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
-							<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group">
-								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid"
-									rendered="#{!sessionController.usuarioFilial and !sessionController.usuarioProprietario}">
-									<p:outputLabel for="entidadeFilter" value="Filial *" styleClass="label" />
-									<p:selectOneMenu id="entidadeFilter" value="#{usuarioController.idEntidade}" styleClass="ui-grid-col-12" filter="true"
-										filterMatchMode="contains">
-										<f:selectItem itemLabel="Selecione" itemValue="" />
-										<f:selectItems value="#{usuarioController.entidades}" var="item"
-											itemLabel="#{item.id} - #{fn:length(item.nomeFantasia) > 0 ? item.nomeFantasia : item.razaoSocial}" itemValue="#{item.id}" />
-										<p:ajax process="@this" update="searchForm" listener="#{usuarioController.changeEntidade}" />
-									</p:selectOneMenu>
+							<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="nomeFilter" value="Nome" styleClass="label" />
+									<p:inputText id="nomeFilter" value="#{usuarioController.filterEntity.nome}" maxlength="50" styleClass="ui-grid-col-12" />
 								</p:panelGrid>
 
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 									<p:outputLabel for="perfilFilter" value="Perfil" styleClass="label" />
-									<p:selectOneMenu id="perfilFilter" value="#{usuarioController.filterEntity.idPerfil}" styleClass="ui-grid-col-12"
-										disabled="#{!usuarioController.entidadeSelecionada}">
+									<p:selectOneMenu id="perfilFilter" value="#{usuarioController.filterEntity.idPerfil}" styleClass="ui-grid-col-12">
 										<f:selectItem itemLabel="" itemValue="" />
 										<f:selectItems value="#{usuarioController.perfis}" var="item" itemLabel="#{item.nome}" itemValue="#{item.id}" />
 									</p:selectOneMenu>
-								</p:panelGrid>
-
-								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-									<p:outputLabel for="emailFilter" value="E-mail" styleClass="label" />
-									<p:inputText id="emailFilter" value="#{usuarioController.filterEntity.email}" maxlength="50" styleClass="ui-grid-col-12" />
-								</p:panelGrid>
-
-								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-									<p:outputLabel for="nomeFilter" value="Nome" styleClass="label" />
-									<p:inputText id="nomeFilter" value="#{usuarioController.filterEntity.nome}" maxlength="50" styleClass="ui-grid-col-12" />
 								</p:panelGrid>
 
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
@@ -57,7 +39,7 @@
 								<p:spacer styleClass="display-desktop" />
 								<p:commandButton value="#{labels.botao_pesquisar}" id="searchButton" icon="fa fa-fw fa-search" update="dtbEntities searchMessages"
 									actionListener="#{usuarioController.search}" process="@this, filterGrid" oncomplete="PF('dtb').getPaginator().setPage(0);"
-									styleClass="ui-grid-col-4 botao-pesquisar" disabled="#{!usuarioController.entidadeSelecionada}" />
+									styleClass="ui-grid-col-4 botao-pesquisar" />
 							</p:panelGrid>
 
 							<p:messages id="searchMessages" />
@@ -67,8 +49,7 @@
 							<p:defaultCommand target="searchButton" scope="filterGrid" />
 
 							<p:commandButton value="#{labels.botao_adicionar}" icon="fa fa-fw fa-plus" actionListener="#{usuarioController.add}"
-								update=":searchForm :editForm" process="@this" resetValues="true" styleClass="ui-grid-col-12 botao-adicionar"
-								disabled="#{!usuarioController.entidadeSelecionada}" />
+								update=":searchForm :editForm" process="@this" resetValues="true" styleClass="ui-grid-col-12 botao-adicionar" />
 						</p:panelGrid>
 
 						<ui:include src="/pages/inc/usuario_lista.xhtml" />

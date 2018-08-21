@@ -12,8 +12,11 @@ import org.springframework.stereotype.Controller;
 import br.com.graflogic.base.service.util.I18NUtil;
 import br.com.graflogic.commonutil.util.StringUtil;
 import br.com.graflogic.hermitex.cliente.data.dom.DomAcesso.DomPermissaoAcesso;
+import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomStatusFilial;
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomTipoEndereco;
 import br.com.graflogic.hermitex.cliente.data.dom.DomGeral.DomBoolean;
+import br.com.graflogic.hermitex.cliente.data.entity.acesso.Usuario;
+import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioProprietario;
 import br.com.graflogic.hermitex.cliente.data.entity.auxiliar.Estado;
 import br.com.graflogic.hermitex.cliente.data.entity.auxiliar.Municipio;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
@@ -24,10 +27,13 @@ import br.com.graflogic.hermitex.cliente.data.entity.cadastro.FilialEnderecoPK;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
 import br.com.graflogic.hermitex.cliente.service.exception.ResultadoNaoEncontradoException;
+import br.com.graflogic.hermitex.cliente.service.impl.acesso.UsuarioService;
 import br.com.graflogic.hermitex.cliente.service.impl.auxiliar.EstadoService;
 import br.com.graflogic.hermitex.cliente.service.impl.auxiliar.MunicipioService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.FilialService;
+import br.com.graflogic.hermitex.cliente.web.controller.SessionController;
+import br.com.graflogic.hermitex.cliente.web.controller.pedido.CarrinhoController;
 import br.com.graflogic.hermitex.cliente.web.util.SessionUtil;
 import br.com.graflogic.utilities.cep.CEPClient;
 import br.com.graflogic.utilities.cep.exception.CEPNotFoundException;
@@ -54,6 +60,9 @@ public class FilialController extends CrudBaseController<Filial, Filial> impleme
 	private ClienteService clienteService;
 
 	@Autowired
+	private UsuarioService usuarioService;
+
+	@Autowired
 	private EstadoService estadoService;
 
 	@Autowired
@@ -62,7 +71,15 @@ public class FilialController extends CrudBaseController<Filial, Filial> impleme
 	@Autowired
 	private CEPClient cepClient;
 
+	@Autowired
+	private SessionController sessionController;
+
+	@Autowired
+	private CarrinhoController carrinhoController;
+
 	private List<Cliente> clientes;
+
+	private List<Usuario> usuariosProprietarios;
 
 	private List<Estado> estados;
 
@@ -83,15 +100,29 @@ public class FilialController extends CrudBaseController<Filial, Filial> impleme
 		try {
 			setFilterEntity(new Filial());
 
-			estados = estadoService.consulta();
-			municipiosFaturamento = new ArrayList<Municipio>();
-			municipiosEntrega = new ArrayList<>();
+			// Verifica se e proprietario e precisa selecionar a filial
+			if (SessionUtil.isUsuarioProprietario() && isView("pages/filial/seleciona")) {
+				getFilterEntity().setIdUsuarioProprietario(SessionUtil.getAuthenticatedUsuario().getId());
+				getFilterEntity().setStatus(DomStatusFilial.ATIVO);
 
-			if (SessionUtil.isUsuarioAdministrador()) {
-				clientes = clienteService.consulta(new Cliente());
+				search();
 
-			} else if (SessionUtil.isUsuarioCliente()) {
-				getFilterEntity().setIdCliente(SessionUtil.getIdCliente());
+				setEntity(new Filial());
+
+			} else {
+				estados = estadoService.consulta();
+				municipiosFaturamento = new ArrayList<Municipio>();
+				municipiosEntrega = new ArrayList<>();
+
+				if (SessionUtil.isUsuarioAdministrador()) {
+					clientes = clienteService.consulta(new Cliente());
+
+				} else if (SessionUtil.isUsuarioCliente()) {
+					getFilterEntity().setIdCliente(SessionUtil.getIdCliente());
+
+				}
+
+				usuariosProprietarios = usuarioService.consulta(new UsuarioProprietario());
 			}
 
 		} catch (Throwable t) {
@@ -454,6 +485,28 @@ public class FilialController extends CrudBaseController<Filial, Filial> impleme
 		}
 	}
 
+	public void seleciona() {
+		try {
+			if (null == getEntity().getId() || 0 == getEntity().getId()) {
+				returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Favor selecionar a filial", null);
+				return;
+			}
+
+			Filial filial = service.consultaPorId(getEntity().getId());
+
+			SessionUtil.getAuthenticatedUser().setEmpresa(filial);
+
+			sessionController.carregaPermissoes();
+
+			carrinhoController.afterPropertiesSet();
+
+			redirectView(getApplicationUrl() + "/pages/home.jsf");
+
+		} catch (Throwable t) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao selecionar filial, contate o administrador", t);
+		}
+	}
+
 	// Condicoes
 	public boolean isClienteSelecionado() {
 		return null != getFilterEntity().getIdCliente() && 0 != getFilterEntity().getIdCliente();
@@ -480,6 +533,10 @@ public class FilialController extends CrudBaseController<Filial, Filial> impleme
 
 	public List<Cliente> getClientes() {
 		return clientes;
+	}
+
+	public List<Usuario> getUsuariosProprietarios() {
+		return usuariosProprietarios;
 	}
 
 	public List<Estado> getEstados() {

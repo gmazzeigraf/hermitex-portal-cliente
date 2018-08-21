@@ -110,11 +110,12 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 			if (SessionUtil.isUsuarioAdministrador()) {
 				clientes = clienteService.consulta(new Cliente());
 
-			} else if (SessionUtil.isUsuarioFilial()) {
+			} else if (SessionUtil.isUsuarioFilial() || SessionUtil.isUsuarioProprietario()) {
 				getFilterEntity().setIdFilial(SessionUtil.getIdFilial());
 
 			} else if (SessionUtil.isUsuarioRepresentante()) {
 				clientes = clienteService.consultaPorRepresentante(SessionUtil.getIdRepresentante());
+
 			}
 
 			if (null != getFilterEntity().getIdCliente()) {
@@ -125,7 +126,7 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 			municipiosFaturamento = new ArrayList<Municipio>();
 			municipiosEntrega = new ArrayList<>();
 
-			if (SessionUtil.isUsuarioFilial()) {
+			if (SessionUtil.isUsuarioFilial() || SessionUtil.isUsuarioProprietario()) {
 				search();
 			}
 
@@ -275,7 +276,8 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 	public void changeCliente() {
 		try {
 			setEntities(null);
-			if (!SessionUtil.isUsuarioFilial()) {
+
+			if (!SessionUtil.isUsuarioFilial() && !SessionUtil.isUsuarioProprietario()) {
 				getFilterEntity().setIdFilial(null);
 			}
 
@@ -283,7 +285,7 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 			janelasCompra.clear();
 
 			if (isClienteSelecionado()) {
-				if (!SessionUtil.isUsuarioFilial()) {
+				if (!SessionUtil.isUsuarioFilial() && !SessionUtil.isUsuarioProprietario()) {
 					filiais.addAll(filialService.consultaPorCliente(getFilterEntity().getIdCliente(), false));
 				}
 
@@ -318,6 +320,10 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 	public boolean isCancelavel() {
 		return null != getEntity() && (getEntity().isPagamentoPendente() || getEntity().isPago())
 				&& SessionUtil.possuiPermissao(DomPermissaoAcesso.ROLE_PEDIDO_CANCELAMENTO);
+	}
+
+	public boolean isPesquisavel() {
+		return isClienteSelecionado();
 	}
 
 	// Getters e Setters

@@ -1,15 +1,25 @@
 package br.com.graflogic.hermitex.cliente.web.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.faces.application.Resource;
 import javax.faces.context.FacesContext;
 
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 
 import br.com.graflogic.base.service.util.I18NUtil;
 import br.com.graflogic.hermitex.cliente.data.dom.DomAcesso.DomStatusSenhaUsuario;
+import br.com.graflogic.hermitex.cliente.data.entity.acesso.PermissaoAcesso;
+import br.com.graflogic.hermitex.cliente.service.impl.acesso.PermissaoAcessoService;
 import br.com.graflogic.hermitex.cliente.web.util.SessionUtil;
 import br.com.graflogic.utilities.presentationutil.controller.BaseController;
 
@@ -24,6 +34,9 @@ public class SessionController extends BaseController implements InitializingBea
 
 	private static final long serialVersionUID = 8303028606794937818L;
 
+	@Autowired
+	private PermissaoAcessoService permissaoAcessoService;
+
 	@Value("${version}")
 	private String versaoSistema;
 
@@ -31,8 +44,6 @@ public class SessionController extends BaseController implements InitializingBea
 	private String dataBuild;
 
 	private String parametrosYoutube;
-
-	private Object empresa;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -45,26 +56,50 @@ public class SessionController extends BaseController implements InitializingBea
 	}
 
 	// Util
-	public void verificaSenhaTemporaria() {
+	public void verificaRedirecionamento() {
 		try {
-			if (!isView("/acesso/alteracao_senha") && null != SessionUtil.getAuthenticatedUsuario() && !isSenhaUsuarioDefinitiva()) {
-				SessionUtil.redirecionaView("/pages/usuario/acesso/alteracao_senha.jsf");
+			if (SessionUtil.isAutenticado()) {
+
+				// Verifica se precisa alterar a senha
+				if (!isSenhaUsuarioDefinitiva()) {
+					if (!isView("acesso/alteracao_senha")) {
+						SessionUtil.redirecionaView("/pages/usuario/acesso/alteracao_senha.jsf");
+					}
+
+					return;
+				}
+
+				// Verifica se e proprietario e precisa selecionar a filial
+				if (!isView("filial/seleciona") && SessionUtil.isUsuarioProprietario() && null == SessionUtil.getIdFilial()) {
+					SessionUtil.redirecionaView("/pages/filial/seleciona.jsf");
+					return;
+				}
+
+				// Verifica se precisa redirecionar a pagina inicial
+				if (isView("pages/home")) {
+					if (isSenhaUsuarioDefinitiva() && (SessionUtil.isUsuarioFilial() || SessionUtil.isUsuarioProprietario())) {
+						SessionUtil.redirecionaView("/pages/compra/produtos.jsf");
+						return;
+					}
+				}
 			}
 
 		} catch (Throwable t) {
-			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao verificar senha temporária, contate o administrador", null);
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao verificar redirecionamento, contate o administrador", null);
 		}
 	}
 
-	public void direcionaPaginaInicial() {
-		try {
-			if (SessionUtil.isUsuarioFilial() && isSenhaUsuarioDefinitiva()) {
-				SessionUtil.redirecionaView("/pages/compra/produtos.jsf");
-			}
+	public void carregaPermissoes() {
+		List<PermissaoAcesso> permissoesPerfil = permissaoAcessoService.consultaPorPerfilUsuario(SessionUtil.getAuthenticatedUsuario().getIdPerfil());
 
-		} catch (Throwable t) {
-			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao direcionar pagina inicial, contate o administrador", null);
+		List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+
+		for (PermissaoAcesso permissao : permissoesPerfil) {
+			authorities.add(new SimpleGrantedAuthority(permissao.getCodigo()));
 		}
+
+		SecurityContextHolder.getContext().setAuthentication(
+				new UsernamePasswordAuthenticationToken(getAuthenticatedUser().getPrincipal(), getAuthenticatedUser().getCredentials(), authorities));
 	}
 
 	// Condicoes
@@ -90,6 +125,10 @@ public class SessionController extends BaseController implements InitializingBea
 
 	public boolean isUsuarioRepresentante() {
 		return SessionUtil.isUsuarioRepresentante();
+	}
+
+	public boolean isUsuarioProprietario() {
+		return SessionUtil.isUsuarioProprietario();
 	}
 
 	// Produto
@@ -131,9 +170,5 @@ public class SessionController extends BaseController implements InitializingBea
 
 	public String getParametrosYoutube() {
 		return parametrosYoutube;
-	}
-
-	public Object getEmpresa() {
-		return empresa;
 	}
 }

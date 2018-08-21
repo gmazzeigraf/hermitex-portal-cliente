@@ -23,22 +23,25 @@ INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_CL
 
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_FIL_CADASTRO', 'Filial / Cadastro', 'AC');
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_FIL_CADASTRO_BLOQUEIO_COMPRA', 'Filial / Cadastro - Bloqueio Compra', 'A');
-INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_FIL_ACESSO_PERFIL', 'Filial / Acesso / Perfil', 'ACF');
-INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_FIL_ACESSO_USUARIO', 'Filial / Acesso / Usuário', 'ACF');
+INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_FIL_ACESSO_PERFIL', 'Filial / Acesso / Perfil', 'ACFP');
+INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_FIL_ACESSO_USUARIO', 'Filial / Acesso / Usuário', 'ACFP');
 
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_REP_CADASTRO', 'Representante / Cadastro', 'A');
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_REP_ACESSO_PERFIL', 'Representante / Acesso / Perfil', 'AR');
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_REP_ACESSO_USUARIO', 'Representante / Acesso / Usuário', 'AR');
 
-INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_PRODUTOS', 'Produtos', 'ACFR');
+INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_PRO_ACESSO_PERFIL', 'Proprietário / Acesso / Perfil', 'A');
+INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_PRO_ACESSO_USUARIO', 'Proprietário / Acesso / Usuário', 'A');
+
+INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_PRODUTOS', 'Produtos', 'ACFRP');
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_ESTOQUE', 'Estoque', 'ACR');
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_ESTOQUE_SOLICITACAO', 'Estoque - Solicitação', 'C');
 
-INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_COMPRA', 'Compra', 'CF');
-INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_COMPRA_VISUALIZACAO_ESTOQUE', 'Compra - Visualização Estoque', 'ACFR');
+INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_COMPRA', 'Compra', 'CFP');
+INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_COMPRA_VISUALIZACAO_ESTOQUE', 'Compra - Visualização Estoque', 'ACFRP');
 
-INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_PEDIDO_CONSULTA', 'Pedido / Consulta', 'ACFR');
-INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_PEDIDO_SOLICITACAO_TROCA', 'Pedido / Solicitação Troca', 'ACF');
+INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_PEDIDO_CONSULTA', 'Pedido / Consulta', 'ACFRP');
+INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_PEDIDO_SOLICITACAO_TROCA', 'Pedido / Solicitação Troca', 'ACFP');
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_PEDIDO_SOLICITACAO_TROCA_FINALIZACAO', 'Pedido / Solicitação Troca - Finalização', 'A');
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_PEDIDO_BAIXA_PAGAMENTO', 'Pedido / Consulta - Baixa Pagamento', 'A');
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_PEDIDO_ENVIO', 'Pedido / Consulta - Envio', 'A');

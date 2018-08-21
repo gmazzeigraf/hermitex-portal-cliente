@@ -12,7 +12,8 @@
 				<div class="ui-g-12">
 					<div class="card card-w-title">
 						<h1>#{labels.consulta}</h1>
-						<p:panelGrid columns="1" id="filterGrid" layout="grid" styleClass="ui-panelgrid-blank form-group" rendered="#{!sessionController.usuarioFilial}">
+						<p:panelGrid columns="1" id="filterGrid" layout="grid" styleClass="ui-panelgrid-blank form-group"
+							rendered="#{!sessionController.usuarioFilial and !sessionController.usuarioProprietario}">
 							<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid"
 									rendered="#{sessionController.usuarioAdministrador or sessionController.usuarioRepresentante}">
@@ -26,7 +27,7 @@
 									</p:selectOneMenu>
 								</p:panelGrid>
 
-								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{!sessionController.usuarioFilial}">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 									<p:outputLabel for="filialFilter" value="Filial" styleClass="label" />
 									<p:selectOneMenu id="filialFilter" value="#{pedidoController.filterEntity.idFilial}" styleClass="ui-grid-col-12" filter="true"
 										filterMatchMode="contains" disabled="#{!pedidoController.clienteSelecionado}">
@@ -72,7 +73,7 @@
 								<p:spacer styleClass="display-desktop" />
 								<p:commandButton value="#{labels.botao_pesquisar}" id="searchButton" icon="fa fa-fw fa-search" update="dtbEntities searchMessages"
 									actionListener="#{pedidoController.search}" process="@this, filterGrid" oncomplete="PF('dtb').getPaginator().setPage(0);"
-									styleClass="ui-grid-col-4 botao-pesquisar" disabled="#{!pedidoController.clienteSelecionado}" />
+									styleClass="ui-grid-col-4 botao-pesquisar" disabled="#{!pedidoController.pesquisavel}" />
 							</p:panelGrid>
 
 							<p:messages id="searchMessages" />
@@ -90,7 +91,8 @@
 								<h:outputText value="#{entity.formattedId}" />
 							</p:column>
 
-							<p:column headerText="# Filial" sortBy="#{entity.idFilial}" styleClass="coluna-center" rendered="#{!sessionController.usuarioFilial}">
+							<p:column headerText="# Filial" sortBy="#{entity.idFilial}" styleClass="coluna-center"
+								rendered="#{!sessionController.usuarioFilial and !sessionController.usuarioProprietario}">
 								<h:outputText value="#{entity.idFilial}" />
 							</p:column>
 
@@ -157,7 +159,7 @@
 									<f:convertNumber pattern="#,##0.000" />
 								</h:outputText>
 							</p:panelGrid>
-							
+
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{sessionController.usuarioAdministrador}">
 								<h:outputText value="Status" styleClass="label" />
 								<h:outputText value="#{pedidoController.entity.deStatus}" />

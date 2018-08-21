@@ -15,6 +15,7 @@ import br.com.graflogic.hermitex.cliente.data.entity.acesso.Usuario;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioCliente;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioFilial;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioRepresentante;
+import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Filial;
 import br.com.graflogic.hermitex.cliente.web.security.UserInfo;
 
 /**
@@ -87,6 +88,10 @@ public class SessionUtil {
 		return isTipo(DomTipoUsuario.REPRESENTANTE);
 	}
 
+	public static boolean isUsuarioProprietario() {
+		return isTipo(DomTipoUsuario.PROPRIETARIO);
+	}
+
 	public static Integer getIdCliente() {
 		Integer id = null;
 
@@ -96,6 +101,12 @@ public class SessionUtil {
 		} else if (SessionUtil.isUsuarioFilial()) {
 			id = ((UsuarioFilial) getAuthenticatedUsuario()).getIdCliente();
 
+		} else if (SessionUtil.isUsuarioProprietario()) {
+			Filial filial = (Filial) SessionUtil.getAuthenticatedUser().getEmpresa();
+
+			if (null != filial) {
+				id = (filial).getIdCliente();
+			}
 		}
 
 		return id;
@@ -106,6 +117,13 @@ public class SessionUtil {
 
 		if (SessionUtil.isUsuarioFilial()) {
 			id = ((UsuarioFilial) getAuthenticatedUsuario()).getIdFilial();
+
+		} else if (SessionUtil.isUsuarioProprietario()) {
+			Filial filial = (Filial) SessionUtil.getAuthenticatedUser().getEmpresa();
+
+			if (null != filial) {
+				id = (filial).getId();
+			}
 
 		}
 

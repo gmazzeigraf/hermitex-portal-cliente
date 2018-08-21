@@ -14,6 +14,7 @@ import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuario;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuarioAdministrador;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuarioCliente;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuarioFilial;
+import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuarioProprietario;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuarioRepresentante;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.PermissaoAcesso;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
@@ -44,6 +45,7 @@ public class PerfilUsuarioController extends CrudBaseController<PerfilUsuario, P
 	private static final String VIEW_CLIENTE = "cliente/acesso/perfil.xhtml";
 	private static final String VIEW_FILIAL = "filial/acesso/perfil.xhtml";
 	private static final String VIEW_REPRESENTANTE = "representante/acesso/perfil.xhtml";
+	private static final String VIEW_PROPRIETARIO = "proprietario/acesso/perfil.xhtml";
 
 	@Autowired
 	private PerfilUsuarioService service;
@@ -95,7 +97,7 @@ public class PerfilUsuarioController extends CrudBaseController<PerfilUsuario, P
 				} else if (SessionUtil.isUsuarioCliente()) {
 					entidades.addAll(filialService.consultaPorCliente(SessionUtil.getIdCliente(), false));
 
-				} else if (SessionUtil.isUsuarioFilial()) {
+				} else if (SessionUtil.isUsuarioFilial() || SessionUtil.isUsuarioProprietario()) {
 					idEntidade = SessionUtil.getIdFilial();
 
 				}
@@ -108,6 +110,9 @@ public class PerfilUsuarioController extends CrudBaseController<PerfilUsuario, P
 				} else if (SessionUtil.isUsuarioRepresentante()) {
 					idEntidade = SessionUtil.getIdRepresentante();
 				}
+
+			} else if (isViewProprietario()) {
+				setFilterEntity(new PerfilUsuarioProprietario());
 
 			}
 
@@ -170,6 +175,9 @@ public class PerfilUsuarioController extends CrudBaseController<PerfilUsuario, P
 		} else if (isViewRepresentante()) {
 			setEntity(new PerfilUsuarioRepresentante());
 			((PerfilUsuarioRepresentante) getEntity()).setIdRepresentante(idEntidade);
+
+		} else if (isViewProprietario()) {
+			setEntity(new PerfilUsuarioProprietario());
 
 		}
 
@@ -291,6 +299,10 @@ public class PerfilUsuarioController extends CrudBaseController<PerfilUsuario, P
 
 	public boolean isViewRepresentante() {
 		return isView(VIEW_REPRESENTANTE);
+	}
+
+	public boolean isViewProprietario() {
+		return isView(VIEW_PROPRIETARIO);
 	}
 
 	// Getters e Setters
