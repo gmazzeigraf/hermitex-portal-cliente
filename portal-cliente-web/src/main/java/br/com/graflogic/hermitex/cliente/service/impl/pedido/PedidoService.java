@@ -13,6 +13,7 @@ import java.util.UUID;
 
 import javax.persistence.OptimisticLockException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -63,6 +64,7 @@ import br.com.graflogic.mundipagg.model.BoletoTransaction;
 import br.com.graflogic.mundipagg.model.Buyer;
 import br.com.graflogic.mundipagg.model.CreditCard;
 import br.com.graflogic.mundipagg.model.CreditCardTransaction;
+import br.com.graflogic.mundipagg.model.CreditCardTransactionResult;
 import br.com.graflogic.mundipagg.model.Options;
 import br.com.graflogic.mundipagg.model.Order;
 import br.com.graflogic.mundipagg.model.SaleRequest;
@@ -502,8 +504,16 @@ public class PedidoService {
 
 		SaleResponse response = enviaPagamento(entity, request);
 
+		// Valida o retorno
+		CreditCardTransactionResult transactionResult = response.getCreditCardTransactionResultCollection().get(0);
+
+		if (StringUtils.isEmpty(transactionResult.getAcquirerReturnCode()) || !StringUtils.isNumeric(transactionResult.getAcquirerReturnCode())
+				|| 0 != Integer.parseInt(transactionResult.getAcquirerReturnCode())) {
+			throw new PagamentoException(transactionResult.getAcquirerMessage());
+		}
+
 		entity.setIdOrdemPagamento(response.getOrderResult().getOrderKey());
-		entity.setIdTransacaoPagamento(response.getCreditCardTransactionResultCollection().get(0).getTransactionKey());
+		entity.setIdTransacaoPagamento(transactionResult.getTransactionKey());
 
 		paga(entity, null, null);
 	}
