@@ -71,7 +71,7 @@ public class Filial implements Serializable {
 	@Column(name = "in_compra_bloqueada", nullable = false)
 	private String compraBloqueada;
 
-	@Column(name = "id_usuario_proprietario", nullable = false)
+	@Column(name = "id_usuario_proprietario")
 	private Integer idUsuarioProprietario;
 
 	@Column(name = "status", nullable = false)

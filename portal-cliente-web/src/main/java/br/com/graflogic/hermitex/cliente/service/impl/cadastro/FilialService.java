@@ -68,6 +68,10 @@ public class FilialService {
 		List<FilialContato> contatos = entity.getContatos();
 		entity.setContatos(null);
 
+		if (null != entity.getIdUsuarioProprietario() && 0 == entity.getIdUsuarioProprietario()) {
+			entity.setIdUsuarioProprietario(null);
+		}
+
 		try {
 			try {
 				repository.consultaPorCnpj(entity.getCnpj());
@@ -143,6 +147,10 @@ public class FilialService {
 	}
 
 	private void executaAtualiza(Filial entity) {
+		if (null != entity.getIdUsuarioProprietario() && 0 == entity.getIdUsuarioProprietario()) {
+			entity.setIdUsuarioProprietario(null);
+		}
+
 		try {
 			repository.update(entity);
 
