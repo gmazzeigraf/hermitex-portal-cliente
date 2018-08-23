@@ -13,9 +13,9 @@
 							<p:outputLabel value="Filial" for="filial" styleClass="label" />
 							<p:selectOneMenu id="filial" value="#{filialController.entity.id}" styleClass="ui-grid-col-12" filter="true" filterMatchMode="contains"
 								required="true" requiredMessage="Favor selecionar a filial">
-								<f:selectItem itemLabel="" itemValue="" />
+								<f:selectItem itemLabel="Selecione a filial que deseja operar" itemValue="" />
 								<f:selectItems value="#{filialController.entities}" var="item"
-									itemLabel="#{item.id} - #{fn:length(item.nomeFantasia) > 0 ? item.nomeFantasia : item.razaoSocial}" itemValue="#{item.id}" />
+									itemLabel="#{item.id} - #{item.nomeApresentacao}" itemValue="#{item.id}" />
 							</p:selectOneMenu>
 
 							<p:spacer />

@@ -14,6 +14,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -181,5 +182,9 @@ public class Representante implements Serializable {
 
 	public RepresentanteEndereco getEnderecoCadastro() {
 		return enderecos.get(enderecos.indexOf(new RepresentanteEndereco(new RepresentanteEnderecoPK(id, DomTipoEndereco.CADASTRO))));
+	}
+
+	public String getNomeApresentacao() {
+		return (StringUtils.isNotBlank(nomeFantasia)) ? nomeFantasia : razaoSocial;
 	}
 }

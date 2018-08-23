@@ -95,7 +95,7 @@ public class UsuarioService {
 
 		registraAuditoria(entity.getId(), null, DomEventoAuditoriaUsuario.INATIVACAO, null);
 	}
-	
+
 	@Transactional(rollbackFor = Throwable.class)
 	public void ativa(Usuario entity) {
 		entity.setStatus(DomStatusUsuario.ATIVO);
@@ -121,6 +121,10 @@ public class UsuarioService {
 
 	public List<Usuario> consultaPorPermissao(String permissao) {
 		return repository.consultaPorPermissao(permissao);
+	}
+
+	public List<Usuario> consultaProprietariosPorFilial(Integer idFilial) {
+		return repository.consultaProprietariosPorFilial(idFilial);
 	}
 
 	public Usuario consultaPorId(Integer id) {

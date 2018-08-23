@@ -22,7 +22,7 @@
 										filterMatchMode="contains">
 										<f:selectItem itemLabel="Selecione" itemValue="" />
 										<f:selectItems value="#{pedidoController.clientes}" var="item"
-											itemLabel="#{item.id} - #{fn:length(item.nomeFantasia) > 0 ? item.nomeFantasia : item.razaoSocial}" itemValue="#{item.id}" />
+											itemLabel="#{item.id} - #{item.nomeApresentacao}" itemValue="#{item.id}" />
 										<p:ajax process="@this" update=":searchForm" listener="#{pedidoController.changeCliente}" />
 									</p:selectOneMenu>
 								</p:panelGrid>
@@ -33,7 +33,7 @@
 										filterMatchMode="contains" disabled="#{!pedidoController.clienteSelecionado}">
 										<f:selectItem itemLabel="" itemValue="" />
 										<f:selectItems value="#{pedidoController.filiais}" var="item"
-											itemLabel="#{item.id} - #{fn:length(item.nomeFantasia) > 0 ? item.nomeFantasia : item.razaoSocial}" itemValue="#{item.id}" />
+											itemLabel="#{item.id} - #{item.nomeApresentacao}" itemValue="#{item.id}" />
 									</p:selectOneMenu>
 								</p:panelGrid>
 

@@ -3,6 +3,7 @@ package br.com.graflogic.hermitex.cliente.data.entity.acesso;
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import br.com.graflogic.hermitex.cliente.data.dom.DomAcesso.DomTipoUsuario;
 
@@ -22,5 +23,16 @@ public class UsuarioProprietario extends Usuario {
 
 	public UsuarioProprietario() {
 		setTipo(DomTipoUsuario.PROPRIETARIO);
+	}
+
+	@Transient
+	private Integer idFilial;
+
+	public Integer getIdFilial() {
+		return idFilial;
+	}
+
+	public void setIdFilial(Integer idFilial) {
+		this.idFilial = idFilial;
 	}
 }

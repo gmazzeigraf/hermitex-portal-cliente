@@ -412,8 +412,8 @@ public class CarrinhoController extends BaseController implements InitializingBe
 			preparaNovoPedido();
 
 		} catch (PagamentoException e) {
-			returnFatalDialogMessage(I18NUtil.getLabel("erro"),
-					e.mensagemAmigavel() ? e.getMessage() : "Erro ao enviar o pagamento, contate o administrador", e);
+			returnWarnDialogMessage(I18NUtil.getLabel("aviso"),
+					e.mensagemAmigavel() ? ("Pagamento negado: " + e.getMessage()) : "Erro ao enviar o pagamento, contate o administrador", e);
 
 		} catch (DadosInvalidosException e) {
 			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), e.getMessage(), null);

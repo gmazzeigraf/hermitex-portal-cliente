@@ -29,6 +29,7 @@ import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosEx
 import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
 import br.com.graflogic.hermitex.cliente.service.exception.ResultadoNaoEncontradoException;
 import br.com.graflogic.hermitex.cliente.service.impl.acesso.PerfilUsuarioService;
+import br.com.graflogic.hermitex.cliente.service.impl.acesso.UsuarioService;
 import br.com.graflogic.hermitex.cliente.web.util.SessionUtil;
 import br.com.graflogic.utilities.datautil.copy.ObjectCopier;
 
@@ -58,6 +59,9 @@ public class FilialService {
 	private PerfilUsuarioService perfilUsuarioService;
 
 	@Autowired
+	private UsuarioService usuarioService;
+
+	@Autowired
 	private CacheUtil cacheUtil;
 
 	// Fluxo
@@ -67,10 +71,6 @@ public class FilialService {
 
 		List<FilialContato> contatos = entity.getContatos();
 		entity.setContatos(null);
-
-		if (null != entity.getIdUsuarioProprietario() && 0 == entity.getIdUsuarioProprietario()) {
-			entity.setIdUsuarioProprietario(null);
-		}
 
 		try {
 			try {
@@ -147,10 +147,6 @@ public class FilialService {
 	}
 
 	private void executaAtualiza(Filial entity) {
-		if (null != entity.getIdUsuarioProprietario() && 0 == entity.getIdUsuarioProprietario()) {
-			entity.setIdUsuarioProprietario(null);
-		}
-
 		try {
 			repository.update(entity);
 
@@ -247,5 +243,6 @@ public class FilialService {
 	private void preencheRelacionados(Filial entity) {
 		entity.setContatos(contatoRepository.consultaPorFilial(entity.getId()));
 		entity.setEnderecos(enderecoRepository.consultaPorFilial(entity.getId()));
+		entity.setProprietarios(usuarioService.consultaProprietariosPorFilial(entity.getId()));
 	}
 }

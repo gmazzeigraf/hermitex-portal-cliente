@@ -562,6 +562,9 @@ public class PedidoService {
 
 			return response;
 
+		} catch (PagamentoException e) {
+			throw e;
+
 		} catch (Throwable t) {
 			throw new PagamentoException(t);
 		}

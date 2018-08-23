@@ -20,8 +20,14 @@
 					</a>
 
 						<ul class="poseidon-menu animated">
+							<c:if test="#{sessionController.usuarioProprietario}">
+								<li role="menuitem"><a href="#{request.contextPath}/pages/filial/seleciona.jsf"> <i class="fa fa-fw fa-suitcase"></i> <span>Mudar Filial</span>
+								</a></li>
+							</c:if>
+							
 							<li role="menuitem"><a href="#{request.contextPath}/pages/usuario/acesso/alteracao_senha.jsf"> <i class="fa fa-fw fa-key"></i> <span>#{labels.menu_usuario_acesso_alteracao_senha}</span>
 							</a></li>
+							
 							<form action="#{request.contextPath}/j_spring_security_logout" method="post" id="logoutForm">
 								<li role="menuitem" onclick="document.getElementById('logoutForm').submit(); PF('statusDialog').show();"><a href="#"> <i
 										class="fa fa-fw fa-sign-out"></i> <span>#{labels.menu_sair}</span>
@@ -29,8 +35,7 @@
 							</form>
 						</ul></li>
 					<li class="topbar-item-name-web"><c:if test="#{null != sessionController.authenticatedUser.principal.empresa}">
-							<span>Empresa: #{fn:length(sessionController.authenticatedUser.principal.empresa.nomeFantasia) > 0 ?
-								sessionController.authenticatedUser.principal.empresa.nomeFantasia : sessionController.authenticatedUser.principal.empresa.razaoSocial}</span>
+							<span>Empresa: #{sessionController.authenticatedUser.principal.empresa.nomeApresentacao}</span>
 						</c:if><span>E-mail: #{sessionController.authenticatedUser.principal.usuario.email}</span> <span>Nome:
 							#{sessionController.authenticatedUser.principal.usuario.nome}</span></li>
 				</ul>

@@ -6,15 +6,20 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -22,6 +27,7 @@ import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro;
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomStatusFilial;
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomTipoEndereco;
 import br.com.graflogic.hermitex.cliente.data.dom.DomGeral;
+import br.com.graflogic.hermitex.cliente.data.entity.acesso.Usuario;
 import br.com.graflogic.utilities.datautil.util.FormatUtil;
 
 /**
@@ -71,9 +77,6 @@ public class Filial implements Serializable {
 	@Column(name = "in_compra_bloqueada", nullable = false)
 	private String compraBloqueada;
 
-	@Column(name = "id_usuario_proprietario")
-	private Integer idUsuarioProprietario;
-
 	@Column(name = "status", nullable = false)
 	private String status;
 
@@ -89,11 +92,20 @@ public class Filial implements Serializable {
 	@LazyCollection(LazyCollectionOption.TRUE)
 	private List<FilialContato> contatos;
 
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "tb_filial_usuario_proprietario", joinColumns = {
+			@JoinColumn(name = "id_filial", referencedColumnName = "id") }, inverseJoinColumns = {
+					@JoinColumn(name = "id_usuario", referencedColumnName = "id") })
+	private List<Usuario> proprietarios;
+
 	@Transient
 	private String siglaEstadoFaturamento;
 
 	@Transient
 	private String siglaEstadoEntrega;
+
+	@Transient
+	private Integer idUsuarioProprietario;
 
 	public Integer getId() {
 		return id;
@@ -183,14 +195,6 @@ public class Filial implements Serializable {
 		this.compraBloqueada = compraBloqueada;
 	}
 
-	public Integer getIdUsuarioProprietario() {
-		return idUsuarioProprietario;
-	}
-
-	public void setIdUsuarioProprietario(Integer idUsuarioProprietario) {
-		this.idUsuarioProprietario = idUsuarioProprietario;
-	}
-
 	public String getStatus() {
 		return status;
 	}
@@ -223,6 +227,14 @@ public class Filial implements Serializable {
 		this.contatos = contatos;
 	}
 
+	public List<Usuario> getProprietarios() {
+		return proprietarios;
+	}
+
+	public void setProprietarios(List<Usuario> proprietarios) {
+		this.proprietarios = proprietarios;
+	}
+
 	public String getSiglaEstadoFaturamento() {
 		return siglaEstadoFaturamento;
 	}
@@ -237,6 +249,14 @@ public class Filial implements Serializable {
 
 	public void setSiglaEstadoEntrega(String siglaEstadoEntrega) {
 		this.siglaEstadoEntrega = siglaEstadoEntrega;
+	}
+
+	public Integer getIdUsuarioProprietario() {
+		return idUsuarioProprietario;
+	}
+
+	public void setIdUsuarioProprietario(Integer idUsuarioProprietario) {
+		this.idUsuarioProprietario = idUsuarioProprietario;
 	}
 
 	public boolean isAtiva() {
@@ -282,5 +302,9 @@ public class Filial implements Serializable {
 		}
 
 		return null;
+	}
+
+	public String getNomeApresentacao() {
+		return (StringUtils.isNotBlank(nomeFantasia)) ? nomeFantasia : razaoSocial;
 	}
 }

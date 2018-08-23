@@ -14,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Repository;
 
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomTipoEndereco;
+import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioProprietario;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Filial;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.FilialEndereco;
 import br.com.graflogic.utilities.datautil.repository.BaseRepository;
@@ -58,9 +59,11 @@ public class FilialRepository extends BaseRepository<Filial> {
 		if (null != entity.getIdCliente() && 0 != entity.getIdCliente()) {
 			predicateList.add(builder.and(builder.equal(table.get("idCliente"), entity.getIdCliente())));
 		}
-		
+
 		if (null != entity.getIdUsuarioProprietario() && 0 != entity.getIdUsuarioProprietario()) {
-			predicateList.add(builder.and(builder.equal(table.get("idUsuarioProprietario"), entity.getIdUsuarioProprietario())));
+			Join<Filial, UsuarioProprietario> join = table.join("proprietarios");
+
+			predicateList.add(builder.and(builder.equal(join.get("id"), entity.getIdUsuarioProprietario())));
 		}
 
 		if (StringUtils.isNotEmpty(entity.getSiglaEstadoFaturamento())) {

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import br.com.graflogic.base.service.util.I18NUtil;
 import br.com.graflogic.commonutil.util.StringUtil;
 import br.com.graflogic.hermitex.cliente.data.dom.DomAcesso.DomPermissaoAcesso;
+import br.com.graflogic.hermitex.cliente.data.dom.DomAcesso.DomTipoUsuario;
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomStatusFilial;
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomTipoEndereco;
 import br.com.graflogic.hermitex.cliente.data.dom.DomGeral.DomBoolean;
@@ -88,6 +89,8 @@ public class FilialController extends CrudBaseController<Filial, Filial> impleme
 	private List<Municipio> municipiosEntrega;
 
 	private FilialContato contato;
+
+	private Usuario proprietario;
 
 	private FilialEndereco enderecoFaturamento;
 
@@ -174,10 +177,13 @@ public class FilialController extends CrudBaseController<Filial, Filial> impleme
 	protected void beforeAdd() {
 		setEntity(new Filial());
 		getEntity().setContatos(new ArrayList<FilialContato>());
+		getEntity().setProprietarios(new ArrayList<>());
 		getEntity().setEnderecos(new ArrayList<FilialEndereco>());
 		getEntity().setIdCliente(getFilterEntity().getIdCliente());
 
 		contato = new FilialContato();
+
+		proprietario = new UsuarioProprietario();
 
 		enderecoFaturamento = new FilialEndereco(new FilialEnderecoPK(null, DomTipoEndereco.FATURAMENTO));
 		enderecoEntrega = new FilialEndereco(new FilialEnderecoPK(null, DomTipoEndereco.ENTREGA));
@@ -209,6 +215,9 @@ public class FilialController extends CrudBaseController<Filial, Filial> impleme
 	protected void executeEditRelated(Object relatedEntity) throws Exception {
 		if (relatedEntity instanceof FilialContato) {
 			contato = (FilialContato) ObjectCopier.copy(relatedEntity);
+
+		} else if (relatedEntity instanceof Usuario) {
+			proprietario = (Usuario) ObjectCopier.copy(relatedEntity);
 
 		}
 	}
@@ -360,6 +369,7 @@ public class FilialController extends CrudBaseController<Filial, Filial> impleme
 			contato.setIdFilial(getEntity().getId());
 
 			showDialog("contatoDialog");
+
 		} catch (Throwable t) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao adicionar contato, contate o administrador", t);
 		}
@@ -392,6 +402,63 @@ public class FilialController extends CrudBaseController<Filial, Filial> impleme
 
 		} catch (Throwable t) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao excluir contato, contate o administrador", t);
+		}
+	}
+
+	// Proprietario
+	public void prepareAddProprietario() {
+		try {
+			setEditingRelated(false);
+
+			proprietario = new UsuarioProprietario();
+
+			showDialog("proprietarioDialog");
+
+		} catch (Throwable t) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao adicionar proprietário, contate o administrador", t);
+		}
+	}
+
+	public void saveProprietario() {
+		try {
+			Usuario usuarioExistente = usuarioService.consultaPorEmail(proprietario.getEmail());
+
+			// Verifica se o proprietario ja foi cadastrado
+			for (Usuario proprietario : getEntity().getProprietarios()) {
+				if (proprietario.getEmail().equals(usuarioExistente.getEmail())) {
+					returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Proprietário já cadastrado", null);
+					return;
+				}
+			}
+
+			// Valida o tipo do usuario consultado
+			if (!DomTipoUsuario.PROPRIETARIO.equals(usuarioExistente.getTipo())) {
+				throw new ResultadoNaoEncontradoException();
+			}
+
+			getEntity().getProprietarios().add(usuarioExistente);
+			setEditingRelated(true);
+
+			updateComponent("editForm:dtbProprietarios");
+			hideDialog("proprietarioDialog");
+
+		} catch (ResultadoNaoEncontradoException t) {
+			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Proprietário não encontrado", null);
+
+		} catch (Throwable t) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao salvar proprietário, contate o administrador", t);
+		}
+	}
+
+	public void excluiProprietario() {
+		try {
+			getEntity().getProprietarios().remove(indexRelacionado);
+
+			updateComponent("editForm:dtbProprietarios");
+			hideDialog("proprietarioDialog");
+
+		} catch (Throwable t) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao excluir proprietário, contate o administrador", t);
 		}
 	}
 
@@ -553,6 +620,10 @@ public class FilialController extends CrudBaseController<Filial, Filial> impleme
 
 	public FilialContato getContato() {
 		return contato;
+	}
+
+	public Usuario getProprietario() {
+		return proprietario;
 	}
 
 	public FilialEndereco getEnderecoFaturamento() {

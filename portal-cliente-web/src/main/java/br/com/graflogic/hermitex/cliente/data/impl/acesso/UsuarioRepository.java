@@ -42,7 +42,7 @@ public class UsuarioRepository extends BaseRepository<Usuario> {
 		if (StringUtils.isNotEmpty(entity.getNome())) {
 			predicateList.add(builder.and(builder.like(builder.upper(table.<String>get("nome")), "%" + entity.getNome().toUpperCase() + "%")));
 		}
-		
+
 		if (StringUtils.isNotEmpty(entity.getEmail())) {
 			predicateList.add(builder.and(builder.like(builder.upper(table.<String>get("email")), "%" + entity.getEmail().toUpperCase() + "%")));
 		}
@@ -68,7 +68,7 @@ public class UsuarioRepository extends BaseRepository<Usuario> {
 			if (null != idFilial && 0 != idFilial) {
 				predicateList.add(builder.and(builder.equal(table.get("idFilial"), idFilial)));
 			}
-	
+
 		} else if (entity instanceof UsuarioRepresentante) {
 			Integer idRepresentante = ((UsuarioRepresentante) entity).getIdRepresentante();
 
@@ -107,6 +107,18 @@ public class UsuarioRepository extends BaseRepository<Usuario> {
 				Usuario.class);
 
 		query.setParameter(1, permissao);
+
+		return query.getResultList();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Usuario> consultaProprietariosPorFilial(Integer idFilial) {
+		Query query = getEntityManager().createNativeQuery(
+				"SELECT usu.*, 0 AS clazz_ FROM tb_usuario usu INNER JOIN tb_filial_usuario_proprietario prop ON usu.id = prop.id_usuario"
+						+ " WHERE prop.id_filial = ?",
+				Usuario.class);
+
+		query.setParameter(1, idFilial);
 
 		return query.getResultList();
 	}

@@ -19,7 +19,7 @@
 										filterMatchMode="contains">
 										<f:selectItem itemLabel="Selecione" itemValue="" />
 										<f:selectItems value="#{perfilUsuarioController.entidades}" var="item"
-											itemLabel="#{item.id} - #{fn:length(item.nomeFantasia) > 0 ? item.nomeFantasia : item.razaoSocial}" itemValue="#{item.id}" />
+											itemLabel="#{item.id} - #{item.nomeApresentacao}" itemValue="#{item.id}" />
 										<p:ajax process="@this" update="searchForm" listener="#{perfilUsuarioController.changeEntidade}" />
 									</p:selectOneMenu>
 								</p:panelGrid>
