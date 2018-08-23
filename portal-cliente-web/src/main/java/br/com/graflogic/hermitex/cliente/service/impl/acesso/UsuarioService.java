@@ -17,7 +17,11 @@ import br.com.graflogic.hermitex.cliente.data.dom.DomAcesso.DomStatusSenhaUsuari
 import br.com.graflogic.hermitex.cliente.data.dom.DomAcesso.DomStatusUsuario;
 import br.com.graflogic.hermitex.cliente.data.dom.DomAuditoria.DomEventoAuditoriaUsuario;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.Usuario;
+import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioCliente;
+import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioFilial;
 import br.com.graflogic.hermitex.cliente.data.entity.aud.UsuarioAuditoria;
+import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
+import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Filial;
 import br.com.graflogic.hermitex.cliente.data.impl.acesso.UsuarioRepository;
 import br.com.graflogic.hermitex.cliente.data.impl.aud.UsuarioAuditoriaRepository;
 import br.com.graflogic.hermitex.cliente.data.util.ConfiguracaoEnum;
@@ -26,6 +30,8 @@ import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosExcepti
 import br.com.graflogic.hermitex.cliente.service.exception.ResultadoNaoEncontradoException;
 import br.com.graflogic.hermitex.cliente.service.impl.auxiliar.ConfiguracaoService;
 import br.com.graflogic.hermitex.cliente.service.impl.auxiliar.NotificacaoService;
+import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
+import br.com.graflogic.hermitex.cliente.service.impl.cadastro.FilialService;
 import br.com.graflogic.hermitex.cliente.service.util.EncryptHelper;
 import br.com.graflogic.hermitex.cliente.service.util.Generator;
 import br.com.graflogic.hermitex.cliente.web.util.SessionUtil;
@@ -50,6 +56,12 @@ public class UsuarioService {
 	@Autowired
 	private NotificacaoService notificacaoService;
 
+	@Autowired
+	private ClienteService clienteService;
+
+	@Autowired
+	private FilialService filialService;
+
 	// Fluxo
 	public void cadastra(Usuario entity) {
 		String senha = Generator.geraSenhaUsuario();
@@ -70,7 +82,7 @@ public class UsuarioService {
 		repository.store(entity);
 
 		//		 Envia a senha para o usuario
-		String tituloNotificacao = configuracaoService.consulta(ConfiguracaoEnum.USUARIO_EMAIL_SENHA_TITULO);
+		String tituloNotificacao = getPrefixoTituloEmail(entity) + configuracaoService.consulta(ConfiguracaoEnum.USUARIO_EMAIL_SENHA_TITULO);
 		String conteudoNotificacao = configuracaoService.consulta(ConfiguracaoEnum.USUARIO_EMAIL_SENHA_CONTEUDO);
 
 		conteudoNotificacao = conteudoNotificacao.replace("#NOME#", entity.getNome()).replace("#SENHA#", senha);
@@ -156,7 +168,7 @@ public class UsuarioService {
 		executaAtualiza(entity);
 
 		//  Envia a nova senha para o usuario
-		String tituloNotificacao = configuracaoService.consulta(ConfiguracaoEnum.USUARIO_EMAIL_NOVA_SENHA_TITULO);
+		String tituloNotificacao = getPrefixoTituloEmail(entity) + configuracaoService.consulta(ConfiguracaoEnum.USUARIO_EMAIL_NOVA_SENHA_TITULO);
 		String conteudoNotificacao = configuracaoService.consulta(ConfiguracaoEnum.USUARIO_EMAIL_NOVA_SENHA_CONTEUDO);
 
 		conteudoNotificacao = conteudoNotificacao.replace("#NOME#", entity.getNome()).replace("#SENHA#", senha);
@@ -202,5 +214,27 @@ public class UsuarioService {
 		auditoriaRepository.store(evento);
 
 		return evento.getId();
+	}
+
+	public String getPrefixoTituloEmail(Usuario entity) {
+		String prefixo = "";
+
+		if (entity instanceof UsuarioFilial) {
+			Filial filial = filialService.consultaPorId(((UsuarioFilial) entity).getIdFilial());
+
+			Cliente cliente = clienteService.consultaPorId(filial.getIdCliente());
+
+			prefixo = "Informativo " + cliente.getNomeApresentacao() + " - ";
+
+		} else if (entity instanceof UsuarioCliente) {
+			Cliente cliente = clienteService.consultaPorId(((UsuarioCliente) entity).getIdCliente());
+
+			prefixo = "Informativo " + cliente.getNomeApresentacao() + " - ";
+
+		} else {
+			prefixo = "Informativo Hermitex - ";
+		}
+
+		return prefixo;
 	}
 }
