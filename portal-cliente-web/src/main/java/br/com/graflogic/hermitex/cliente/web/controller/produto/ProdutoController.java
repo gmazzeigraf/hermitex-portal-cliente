@@ -206,7 +206,6 @@ public class ProdutoController extends CrudBaseController<Produto, Produto> impl
 				}
 
 				getEntity().getTamanhos().add(tamanho);
-				setEditingRelated(true);
 			}
 
 			updateComponent("editForm:dtbTamanhos");

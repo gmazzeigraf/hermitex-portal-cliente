@@ -12,7 +12,6 @@ import org.springframework.stereotype.Controller;
 import br.com.graflogic.base.service.util.I18NUtil;
 import br.com.graflogic.commonutil.util.StringUtil;
 import br.com.graflogic.hermitex.cliente.data.dom.DomAcesso.DomPermissaoAcesso;
-import br.com.graflogic.hermitex.cliente.data.dom.DomAcesso.DomTipoUsuario;
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomStatusFilial;
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomTipoEndereco;
 import br.com.graflogic.hermitex.cliente.data.dom.DomGeral.DomBoolean;
@@ -126,6 +125,8 @@ public class FilialController extends CrudBaseController<Filial, Filial> impleme
 				}
 
 				usuariosProprietarios = usuarioService.consulta(new UsuarioProprietario());
+
+				proprietario = new Usuario();
 			}
 
 		} catch (Throwable t) {
@@ -382,7 +383,6 @@ public class FilialController extends CrudBaseController<Filial, Filial> impleme
 
 			} else {
 				getEntity().getContatos().add(contato);
-				setEditingRelated(true);
 			}
 
 			updateComponent("editForm:dtbContatos");
@@ -421,29 +421,20 @@ public class FilialController extends CrudBaseController<Filial, Filial> impleme
 
 	public void saveProprietario() {
 		try {
-			Usuario usuarioExistente = usuarioService.consultaPorEmail(proprietario.getEmail());
+			this.proprietario = usuarioService.consultaPorId(proprietario.getId());
 
 			// Verifica se o proprietario ja foi cadastrado
-			for (Usuario proprietario : getEntity().getProprietarios()) {
-				if (proprietario.getEmail().equals(usuarioExistente.getEmail())) {
+			for (Usuario usuario : getEntity().getProprietarios()) {
+				if (proprietario.getId().equals(usuario.getId())) {
 					returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Proprietário já cadastrado", null);
 					return;
 				}
 			}
 
-			// Valida o tipo do usuario consultado
-			if (!DomTipoUsuario.PROPRIETARIO.equals(usuarioExistente.getTipo())) {
-				throw new ResultadoNaoEncontradoException();
-			}
-
-			getEntity().getProprietarios().add(usuarioExistente);
-			setEditingRelated(true);
+			getEntity().getProprietarios().add(proprietario);
 
 			updateComponent("editForm:dtbProprietarios");
 			hideDialog("proprietarioDialog");
-
-		} catch (ResultadoNaoEncontradoException t) {
-			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Proprietário não encontrado", null);
 
 		} catch (Throwable t) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao salvar proprietário, contate o administrador", t);

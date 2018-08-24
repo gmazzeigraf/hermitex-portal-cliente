@@ -249,7 +249,6 @@ public class RepresentanteController extends CrudBaseController<Representante, R
 
 			} else {
 				getEntity().getContatos().add(contato);
-				setEditingRelated(true);
 			}
 
 			updateComponent("editForm:dtbContatos");

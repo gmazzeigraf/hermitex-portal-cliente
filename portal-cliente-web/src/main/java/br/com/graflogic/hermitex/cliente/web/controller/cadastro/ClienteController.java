@@ -341,7 +341,6 @@ public class ClienteController extends CrudBaseController<Cliente, Cliente> impl
 
 			} else {
 				getEntity().getContatos().add(contato);
-				setEditingRelated(true);
 			}
 
 			updateComponent("editForm:dtbContatos");

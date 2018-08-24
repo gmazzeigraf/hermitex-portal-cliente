@@ -27,6 +27,8 @@ public class PedidoSimple implements Serializable {
 
 	private Integer quantidadeItens;
 
+	private Integer quantidadeTotalItens;
+
 	private Date dataCadastro;
 
 	private Integer idUsuarioCadastro;
@@ -74,6 +76,14 @@ public class PedidoSimple implements Serializable {
 
 	public void setQuantidadeItens(Integer quantidadeItens) {
 		this.quantidadeItens = quantidadeItens;
+	}
+
+	public Integer getQuantidadeTotalItens() {
+		return quantidadeTotalItens;
+	}
+
+	public void setQuantidadeTotalItens(Integer quantidadeTotalItens) {
+		this.quantidadeTotalItens = quantidadeTotalItens;
 	}
 
 	public Date getDataCadastro() {

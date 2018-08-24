@@ -490,11 +490,12 @@
 						<p:scrollPanel styleClass="resp-dialog">
 							<p:panelGrid columns="1" layout="grid" id="proprietarioGrid" styleClass="ui-panelgrid-blank form-group">
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-									<p:outputLabel for="emailProprietario" value="E-mail" styleClass="label" />
-									<p:inputText id="emailProprietario" styleClass="ui-grid-col-12" value="#{filialController.proprietario.email}" maxlength="50"
-										validator="checkvalidemail" validatorMessage="E-mail do proprietário inválido" required="true"
-										requiredMessage="Favor informar o e-mail do proprietário" disabled="#{filialController.editingRelated}"
-										placeholder="Informe o e-mail do proprietário que deseja cadastrar" />
+									<p:outputLabel for="proprietario" value="Proprietário" styleClass="label" />
+									<p:selectOneMenu id="proprietario" value="#{filialController.proprietario.id}" styleClass="ui-grid-col-12" filter="true"
+										filterMatchMode="contains" required="true" requiredMessage="Favor selecionar o proprietário" disabled="#{filialController.editingRelated}">
+										<f:selectItem itemLabel="" itemValue="" />
+										<f:selectItems value="#{filialController.usuariosProprietarios}" var="item" itemLabel="#{item.id} - #{item.nome}" itemValue="#{item.id}" />
+									</p:selectOneMenu>
 								</p:panelGrid>
 
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{filialController.editingRelated}">
