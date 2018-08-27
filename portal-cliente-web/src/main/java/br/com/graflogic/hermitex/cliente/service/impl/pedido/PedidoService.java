@@ -597,8 +597,10 @@ public class PedidoService {
 			for (PedidoFrete frete : objeto.getFretes()) {
 				frete.setPedido(null);
 			}
-			for (PedidoBoleto boleto : objeto.getBoletos()) {
-				boleto.setPedido(null);
+			if (null != objeto.getBoletos()) {
+				for (PedidoBoleto boleto : objeto.getBoletos()) {
+					boleto.setPedido(null);
+				}
 			}
 
 			evento.setObjeto(GsonUtil.gson.toJson(objeto));
