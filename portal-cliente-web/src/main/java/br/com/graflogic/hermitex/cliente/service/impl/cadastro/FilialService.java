@@ -183,7 +183,7 @@ public class FilialService {
 	}
 
 	@Transactional(readOnly = true)
-	public Filial consultaPorId(Integer id) {
+	public synchronized Filial consultaPorId(Integer id) {
 		Object cacheObj = cacheUtil.findOnCache(CACHE_NAME, id.toString());
 
 		if (null == cacheObj) {

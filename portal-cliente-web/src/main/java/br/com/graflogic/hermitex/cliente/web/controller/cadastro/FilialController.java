@@ -177,9 +177,6 @@ public class FilialController extends CrudBaseController<Filial, Filial> impleme
 	@Override
 	protected void beforeAdd() {
 		setEntity(new Filial());
-		getEntity().setContatos(new ArrayList<FilialContato>());
-		getEntity().setProprietarios(new ArrayList<>());
-		getEntity().setEnderecos(new ArrayList<FilialEndereco>());
 		getEntity().setIdCliente(getFilterEntity().getIdCliente());
 
 		contato = new FilialContato();

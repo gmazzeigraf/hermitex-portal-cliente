@@ -198,7 +198,7 @@ public class ProdutoService {
 	}
 
 	@Transactional(readOnly = true)
-	public Produto consultaCompletoPorId(Integer id) {
+	public synchronized Produto consultaCompletoPorId(Integer id) {
 		Object cacheObj = cacheUtil.findOnCache(CACHE_NAME, id.toString());
 
 		if (null == cacheObj) {

@@ -127,8 +127,6 @@ public class RepresentanteController extends CrudBaseController<Representante, R
 	@Override
 	protected void beforeAdd() {
 		setEntity(new Representante());
-		getEntity().setContatos(new ArrayList<RepresentanteContato>());
-		getEntity().setEnderecos(new ArrayList<RepresentanteEndereco>());
 
 		contato = new RepresentanteContato();
 

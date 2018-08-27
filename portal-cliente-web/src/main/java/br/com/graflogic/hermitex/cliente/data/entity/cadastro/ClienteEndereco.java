@@ -7,8 +7,8 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 /**
@@ -56,7 +56,7 @@ public class ClienteEndereco implements Serializable {
 	private String complemento;
 
 	@MapsId("idCliente")
-	@OneToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_cliente", referencedColumnName = "id", insertable = false, updatable = false)
 	private Cliente cliente;
 

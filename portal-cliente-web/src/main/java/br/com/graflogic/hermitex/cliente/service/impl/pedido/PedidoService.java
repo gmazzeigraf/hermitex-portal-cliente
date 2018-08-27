@@ -305,7 +305,7 @@ public class PedidoService {
 	}
 
 	@Transactional(readOnly = true)
-	public Pedido consultaPorId(Long id) {
+	public synchronized Pedido consultaPorId(Long id) {
 		Pedido entity = repository.findById(id);
 
 		if (null == entity) {

@@ -145,8 +145,6 @@ public class ClienteController extends CrudBaseController<Cliente, Cliente> impl
 	@Override
 	protected void beforeAdd() {
 		setEntity(new Cliente());
-		getEntity().setContatos(new ArrayList<ClienteContato>());
-		getEntity().setEnderecos(new ArrayList<ClienteEndereco>());
 		getEntity().setLogotipo(new ClienteLogotipo());
 
 		contato = new ClienteContato();

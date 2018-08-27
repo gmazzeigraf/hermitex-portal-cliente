@@ -163,7 +163,7 @@ public class ClienteService {
 	}
 
 	@Transactional(readOnly = true)
-	public Cliente consultaPorId(Integer id) {
+	public synchronized Cliente consultaPorId(Integer id) {
 		Object cacheObj = cacheUtil.findOnCache(CACHE_NAME, id.toString());
 
 		if (null == cacheObj) {

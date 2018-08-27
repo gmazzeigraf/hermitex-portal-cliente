@@ -1,6 +1,7 @@
 package br.com.graflogic.hermitex.cliente.data.entity.cadastro;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -40,6 +41,12 @@ import br.com.graflogic.utilities.datautil.util.FormatUtil;
 public class Filial implements Serializable {
 
 	private static final long serialVersionUID = 2671690481027833377L;
+
+	public Filial() {
+		this.enderecos = new ArrayList<>();
+		this.contatos = new ArrayList<>();
+		this.proprietarios = new ArrayList<>();
+	}
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SQ_FILIAL")
@@ -216,7 +223,10 @@ public class Filial implements Serializable {
 	}
 
 	public void setEnderecos(List<FilialEndereco> enderecos) {
-		this.enderecos = enderecos;
+		this.enderecos.clear();
+		if (null != enderecos) {
+			this.enderecos.addAll(enderecos);
+		}
 	}
 
 	public List<FilialContato> getContatos() {
@@ -224,7 +234,10 @@ public class Filial implements Serializable {
 	}
 
 	public void setContatos(List<FilialContato> contatos) {
-		this.contatos = contatos;
+		this.contatos.clear();
+		if (null != contatos) {
+			this.contatos.addAll(contatos);
+		}
 	}
 
 	public List<Usuario> getProprietarios() {
@@ -232,7 +245,10 @@ public class Filial implements Serializable {
 	}
 
 	public void setProprietarios(List<Usuario> proprietarios) {
-		this.proprietarios = proprietarios;
+		this.proprietarios.clear();
+		if (null != proprietarios) {
+			this.proprietarios.addAll(proprietarios);
+		}
 	}
 
 	public String getSiglaEstadoFaturamento() {

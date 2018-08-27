@@ -151,7 +151,7 @@ public class RepresentanteService {
 	}
 
 	@Transactional(readOnly = true)
-	public Representante consultaPorId(Integer id) {
+	public synchronized Representante consultaPorId(Integer id) {
 		Object cacheObj = cacheUtil.findOnCache(CACHE_NAME, id.toString());
 
 		if (null == cacheObj) {

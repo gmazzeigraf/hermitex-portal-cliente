@@ -1,6 +1,7 @@
 package br.com.graflogic.hermitex.cliente.data.entity.cadastro;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -35,6 +36,11 @@ import br.com.graflogic.utilities.datautil.util.FormatUtil;
 public class Cliente implements Serializable {
 
 	private static final long serialVersionUID = 8284333242118992528L;
+
+	public Cliente() {
+		this.enderecos = new ArrayList<>();
+		this.contatos = new ArrayList<>();
+	}
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SQ_CLIENTE")
@@ -177,7 +183,10 @@ public class Cliente implements Serializable {
 	}
 
 	public void setEnderecos(List<ClienteEndereco> enderecos) {
-		this.enderecos = enderecos;
+		this.enderecos.clear();
+		if (null != enderecos) {
+			this.enderecos.addAll(enderecos);
+		}
 	}
 
 	public List<ClienteContato> getContatos() {
@@ -185,7 +194,10 @@ public class Cliente implements Serializable {
 	}
 
 	public void setContatos(List<ClienteContato> contatos) {
-		this.contatos = contatos;
+		this.contatos.clear();
+		if (null != contatos) {
+			this.contatos.addAll(contatos);
+		}
 	}
 
 	public ClienteLogotipo getLogotipo() {
