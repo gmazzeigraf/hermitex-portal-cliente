@@ -4,7 +4,5 @@
 
 	<persistence-unit name="persistenceUnit" transaction-type="RESOURCE_LOCAL">
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
-		
-		<jar-file>registro-contrato-rest-interno-model-1.1.0.jar</jar-file>
 	</persistence-unit>
 </persistence>

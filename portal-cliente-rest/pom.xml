@@ -186,7 +186,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>${project.artifactId}</finalName>
+		<finalName>rest</finalName>
 
 		<plugins>
 			<plugin>
@@ -198,4 +198,13 @@
 			</plugin>
 		</plugins>
 	</build>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>1.7.20</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 </project>
