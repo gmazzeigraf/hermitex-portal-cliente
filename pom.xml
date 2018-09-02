@@ -42,5 +42,6 @@
 	</repositories>
 	<modules>
 		<module>portal-cliente-web</module>
+		<module>portal-cliente-rest</module>
 	</modules>
 </project>

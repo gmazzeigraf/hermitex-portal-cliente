@@ -9,9 +9,9 @@
 
 	<!--Daily rolling file appender -->
 	<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<File>../app_logs/web.log</File>
+		<File>../app_logs/rest.log</File>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<FileNamePattern>../app_logs/web.%d{yyyy-MM-dd}.log
+			<FileNamePattern>../app_logs/rest.%d{yyyy-MM-dd}.log
 			</FileNamePattern>
 		</rollingPolicy>
 
@@ -22,26 +22,10 @@
 		</layout>
 	</appender>
 
-	<!--Daily rolling file appender -->
-	<appender name="MUNDIPAGG" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<File>../app_logs/mundipagg.log</File>
+	<appender name="AUDIT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>../app_logs/rest-audit.log</File>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<FileNamePattern>../app_logs/mundipagg.%d{yyyy-MM-dd}.log
-			</FileNamePattern>
-		</rollingPolicy>
-
-		<layout class="ch.qos.logback.classic.PatternLayout">
-			<Pattern>
-				%d{HH:mm:ss.SSS}|%t|%msg%n
-			</Pattern>
-		</layout>
-	</appender>
-
-	<!--Daily rolling file appender -->
-	<appender name="CORREIOS" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<File>../app_logs/correios.log</File>
-		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<FileNamePattern>../app_logs/correios.%d{yyyy-MM-dd}.log
+			<FileNamePattern>../app_logs/rest-audit.%d{yyyy-MM-dd}.log
 			</FileNamePattern>
 		</rollingPolicy>
 
@@ -67,23 +51,10 @@
 		<appender-ref ref="FILE" />
 	</logger>
 
-	<logger name="MUNDIPAGG">
+	<logger name="AUDIT">
 		<level value="debug" />
-		<appender-ref ref="MUNDIPAGG" />
+		<appender-ref ref="AUDIT" />
 	</logger>
-
-	<logger name="CORREIOS">
-		<level value="debug" />
-		<appender-ref ref="CORREIOS" />
-	</logger>
-
-	<!-- <logger name="org.springframework.ws.client.MessageTracing"> -->
-	<!-- <level value="TRACE" /> -->
-	<!-- </logger> -->
-
-	<!-- <logger name="org.springframework.ws.server.MessageTracing"> -->
-	<!-- <level value="TRACE" /> -->
-	<!-- </logger> -->
 
 	<root>
 		<level value="error" />
