@@ -31,8 +31,11 @@ import br.com.graflogic.hermitex.cliente.data.dom.DomAuditoria.DomEventoAuditori
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomStatus;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomStatusBoleto;
 import br.com.graflogic.hermitex.cliente.data.entity.aud.PedidoAuditoria;
+import br.com.graflogic.hermitex.cliente.data.entity.auxiliar.Municipio;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
+import br.com.graflogic.hermitex.cliente.data.entity.cadastro.ClienteEndereco;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Filial;
+import br.com.graflogic.hermitex.cliente.data.entity.cadastro.FilialEndereco;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.JanelaCompra;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.Pedido;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoBoleto;
@@ -54,12 +57,14 @@ import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosExcepti
 import br.com.graflogic.hermitex.cliente.service.exception.PagamentoException;
 import br.com.graflogic.hermitex.cliente.service.exception.ResultadoNaoEncontradoException;
 import br.com.graflogic.hermitex.cliente.service.impl.auxiliar.ConfiguracaoService;
+import br.com.graflogic.hermitex.cliente.service.impl.auxiliar.MunicipioService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.FilialService;
 import br.com.graflogic.hermitex.cliente.service.impl.produto.TamanhoProdutoService;
 import br.com.graflogic.hermitex.cliente.service.model.pedido.DadosPagamentoCartaoCredito;
 import br.com.graflogic.hermitex.cliente.service.util.ExcelUtil;
 import br.com.graflogic.mundipagg.client.MundiPaggClient;
+import br.com.graflogic.mundipagg.model.BillingAddress;
 import br.com.graflogic.mundipagg.model.BoletoTransaction;
 import br.com.graflogic.mundipagg.model.Buyer;
 import br.com.graflogic.mundipagg.model.CreditCard;
@@ -78,6 +83,8 @@ import br.com.graflogic.utilities.datautil.copy.ObjectCopier;
  */
 @Service
 public class PedidoService {
+
+	private static final String COUNTRY_BRASIL = "Brasil";
 
 	private static final String OPERACAO_CARTAO_CREDITO = "AuthAndCapture";
 
@@ -104,6 +111,9 @@ public class PedidoService {
 
 	@Autowired
 	private TamanhoProdutoService tamanhoProdutoService;
+
+	@Autowired
+	private MunicipioService municipioService;
 
 	@Autowired
 	private ClienteService clienteService;
@@ -449,6 +459,44 @@ public class PedidoService {
 			transaction.setBankNumber(configuracaoService.consulta(ConfiguracaoEnum.PAGAMENTO_BOLETO_CODIGO_BANCO));
 			transaction.setInstructions(configuracaoService.consulta(ConfiguracaoEnum.PAGAMENTO_BOLETO_INSTRUCAO));
 			transaction.setTransactionReference(entity.getId().toString());
+
+			// Consulta o cliente
+			Cliente cliente = clienteService.consultaPorId(entity.getIdCliente());
+
+			// Endereco compra
+			BillingAddress billingAddress = new BillingAddress();
+			if (null == entity.getIdFilial()) {
+				ClienteEndereco enderecoFaturamento = cliente.getEnderecoFaturamento();
+
+				Municipio municipio = municipioService.consultaPorId(enderecoFaturamento.getIdMunicipio());
+
+				billingAddress.setCity(municipio.getNome());
+				billingAddress.setComplement(enderecoFaturamento.getComplemento());
+				billingAddress.setCountry(COUNTRY_BRASIL);
+				billingAddress.setDistrict(enderecoFaturamento.getBairro());
+				billingAddress.setNumber(enderecoFaturamento.getNumero());
+				billingAddress.setState(municipio.getSiglaEstado());
+				billingAddress.setStreet(enderecoFaturamento.getLogradouro());
+				billingAddress.setZipCode(enderecoFaturamento.getCep());
+
+			} else {
+				Filial filial = filialService.consultaPorId(entity.getIdFilial());
+
+				FilialEndereco enderecoFaturamento = filial.getEnderecoFaturamento();
+
+				Municipio municipio = municipioService.consultaPorId(enderecoFaturamento.getIdMunicipio());
+
+				billingAddress.setCity(municipio.getNome());
+				billingAddress.setComplement(enderecoFaturamento.getComplemento());
+				billingAddress.setCountry(COUNTRY_BRASIL);
+				billingAddress.setDistrict(enderecoFaturamento.getBairro());
+				billingAddress.setNumber(enderecoFaturamento.getNumero());
+				billingAddress.setState(municipio.getSiglaEstado());
+				billingAddress.setStreet(enderecoFaturamento.getLogradouro());
+				billingAddress.setZipCode(enderecoFaturamento.getCep());
+			}
+
+			transaction.setBillingAddress(billingAddress);
 
 			// Configuracao
 			Options options = new Options();
