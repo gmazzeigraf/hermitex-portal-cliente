@@ -84,7 +84,7 @@ import br.com.graflogic.utilities.datautil.copy.ObjectCopier;
 @Service
 public class PedidoService {
 
-	private static final String COUNTRY_BRASIL = "Brasil";
+	private static final String COUNTRY_BRASIL = "Brazil";
 
 	private static final String OPERACAO_CARTAO_CREDITO = "AuthAndCapture";
 
