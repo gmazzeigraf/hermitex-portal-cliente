@@ -13,6 +13,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido;
 
@@ -44,6 +46,13 @@ public class PedidoBoleto implements Serializable {
 
 	@Column(name = "id_transacao_pagamento", nullable = false)
 	private String idTransacaoPagamento;
+
+	@Column(name = "dt_notificacao_pagamento")
+	private Date dataNotificacaoPagamento;
+
+	@Temporal(TemporalType.DATE)
+	@Column(name = "dt_pagamento")
+	private Date dataPagamento;
 
 	@Column(name = "status", nullable = false)
 	private String status;
@@ -90,6 +99,22 @@ public class PedidoBoleto implements Serializable {
 
 	public void setIdTransacaoPagamento(String idTransacaoPagamento) {
 		this.idTransacaoPagamento = idTransacaoPagamento;
+	}
+
+	public Date getDataNotificacaoPagamento() {
+		return dataNotificacaoPagamento;
+	}
+
+	public void setDataNotificacaoPagamento(Date dataNotificacaoPagamento) {
+		this.dataNotificacaoPagamento = dataNotificacaoPagamento;
+	}
+
+	public Date getDataPagamento() {
+		return dataPagamento;
+	}
+
+	public void setDataPagamento(Date dataPagamento) {
+		this.dataPagamento = dataPagamento;
 	}
 
 	public String getStatus() {

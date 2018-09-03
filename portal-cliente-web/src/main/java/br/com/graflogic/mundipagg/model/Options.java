@@ -11,24 +11,27 @@ public class Options {
 
 	@SerializedName("AntiFraudServiceCode")
 	private Integer antiFraudServiceCode;
-	
+
 	@SerializedName("CurrencyIso")
 	private String currencyIso;
-	
+
 	@SerializedName("IsAntiFraudEnabled")
 	private Boolean isAntiFraudEnabled;
-	
+
 	@SerializedName("Retries")
 	private Integer retries;
-	
+
 	@SerializedName("DaysToAddInBoletoExpirationDate")
 	private Integer daysToAddInBoletoExpirationDate;
-	
+
 	@SerializedName("PaymentMethodCode")
 	private Integer paymentMethodCode;
-	
+
 	@SerializedName("SoftDescriptorText")
 	private String softDescriptorText;
+
+	@SerializedName("NotificationUrl")
+	private String notificationUrl;
 
 	public Integer getAntiFraudServiceCode() {
 		return antiFraudServiceCode;
@@ -84,5 +87,13 @@ public class Options {
 
 	public void setSoftDescriptorText(String softDescriptorText) {
 		this.softDescriptorText = softDescriptorText;
+	}
+
+	public String getNotificationUrl() {
+		return notificationUrl;
+	}
+
+	public void setNotificationUrl(String notificationUrl) {
+		this.notificationUrl = notificationUrl;
 	}
 }

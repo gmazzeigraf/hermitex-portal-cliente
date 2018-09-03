@@ -483,6 +483,16 @@
 									<p:column headerText="URL" styleClass="coluna-center">
 										<p:link href="#{entity.url}" value="Visualizar boleto" target="_blank" style="font-size: 16px; font-weight: 700;" />
 									</p:column>
+
+									<p:column headerText="Data Pagamento" styleClass="coluna-center" rendered="#{sessionController.usuarioAdministrador}">
+										<h:outputText value="#{entity.dataPagamento}">
+											<f:convertDateTime pattern="dd/MM/yyyy" timeZone="America/Sao_Paulo" />
+										</h:outputText>
+									</p:column>
+
+									<p:column headerText="Status" styleClass="coluna-center" rendered="#{sessionController.usuarioAdministrador}">
+										<h:outputText value="#{entity.deStatus}" />
+									</p:column>
 								</p:dataTable>
 							</p:panelGrid>
 						</div>

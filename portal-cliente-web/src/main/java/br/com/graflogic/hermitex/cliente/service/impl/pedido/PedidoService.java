@@ -453,6 +453,7 @@ public class PedidoService {
 			// Configuracao
 			Options options = new Options();
 			options.setDaysToAddInBoletoExpirationDate(diasVencimento);
+			options.setNotificationUrl(configuracaoService.consulta(ConfiguracaoEnum.PAGAMENTO_NOTIFICACAO_URL));
 			transaction.setOptions(options);
 
 			request.getBoletoTransactionCollection().add(transaction);

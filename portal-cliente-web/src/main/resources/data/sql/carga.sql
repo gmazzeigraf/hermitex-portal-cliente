@@ -23,6 +23,7 @@ INSERT INTO tb_configuracao VALUES ('pagamento_boleto.codigo_banco', '033');
 INSERT INTO tb_configuracao VALUES ('pagamento_boleto.instrucao', 'Após o vencimento esse boleto será cancelado e será necessário realizar uma nova compra.');
 INSERT INTO tb_configuracao VALUES ('pagamento.merchant_key', 'c0ddc16b-0ce7-43eb-bd53-582e658632ba');
 INSERT INTO tb_configuracao VALUES ('pagamento.url', 'https://sandbox.mundipaggone.com');
+INSERT INTO tb_configuracao VALUES ('pagamento.notificacao_url', 'http://181.41.197.42:8091/rest/mundipagg/pagamento');
 
 INSERT INTO tb_configuracao VALUES ('correios.codigo_empresa', '12009903');
 INSERT INTO tb_configuracao VALUES ('correios.senha', 'Y7T27');
