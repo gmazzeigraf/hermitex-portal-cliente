@@ -579,13 +579,13 @@ public class PedidoService {
 			// Cliente
 			Buyer buyer = new Buyer();
 			if (null == entity.getIdFilial()) {
-				buyer.setName(cliente.getNomeFantasia());
+				buyer.setName(cliente.getRazaoSocial());
 				buyer.setDocumentNumber(cliente.getCnpj());
 
 			} else {
 				Filial filial = filialService.consultaPorId(entity.getIdFilial());
 
-				buyer.setName(filial.getNomeFantasia());
+				buyer.setName(filial.getRazaoSocial());
 				buyer.setDocumentNumber(filial.getCnpj());
 
 			}
