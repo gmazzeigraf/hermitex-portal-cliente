@@ -180,43 +180,51 @@ public class PedidoService {
 		List<PedidoFrete> fretes = entity.getFretes();
 		entity.setFretes(null);
 
-		entity.setBoletos(null);
-
 		try {
-			repository.store(entity);
-
-			for (PedidoItem item : itens) {
-				item.setIdPedido(entity.getId());
-			}
-
-			for (PedidoFrete frete : fretes) {
-				frete.setIdPedido(entity.getId());
-			}
-
-			entity.setItens(itens);
-
-			entity.setFretes(fretes);
-
-			executaAtualiza(entity);
-
-			registraAuditoria(entity.getId(), entity, DomEventoAuditoriaPedido.CADASTRO, idUsuario, null);
-
 			// Envia o pagamento
 			if (formaPagamento.isBoleto()) {
-				entity.setBoletos(new ArrayList<>());
-
 				enviaPagamentoBoleto(entity, formaPagamento);
-
-				for (PedidoBoleto boleto : entity.getBoletos()) {
-					boleto.setIdPedido(entity.getId());
-				}
 
 			} else if (formaPagamento.isCartaoCredito()) {
 				enviaPagamentoCartaoCredito(entity, formaPagamento, dadosPagamentoCartaoCredito);
 
 			}
 
+			List<PedidoBoleto> boletos = entity.getBoletos();
+			entity.setBoletos(null);
+
+			// Cadastra
+			repository.store(entity);
+
+			// Atualiza
+			for (PedidoItem item : itens) {
+				item.setIdPedido(entity.getId());
+			}
+
+			entity.setItens(itens);
+
+			for (PedidoFrete frete : fretes) {
+				frete.setIdPedido(entity.getId());
+			}
+
+			entity.setFretes(fretes);
+
+			if (formaPagamento.isBoleto()) {
+				for (PedidoBoleto boleto : boletos) {
+					boleto.setIdPedido(entity.getId());
+				}
+
+				entity.setBoletos(boletos);
+			}
+			
+			registraAuditoria(entity.getId(), entity, DomEventoAuditoriaPedido.CADASTRO, idUsuario, null);
+
 			executaAtualiza(entity);
+
+			// Caso seja cartao paga
+			if (formaPagamento.isCartaoCredito()) {
+				paga(entity, null, null);
+			}
 
 		} catch (Throwable t) {
 			entity.setItens(itens);
@@ -458,7 +466,7 @@ public class PedidoService {
 			transaction.setAmountInCents(Long.parseLong(formaPagamento.getValorParcela().toString().replace(".", "")));
 			transaction.setBankNumber(configuracaoService.consulta(ConfiguracaoEnum.PAGAMENTO_BOLETO_CODIGO_BANCO));
 			transaction.setInstructions(configuracaoService.consulta(ConfiguracaoEnum.PAGAMENTO_BOLETO_INSTRUCAO));
-			transaction.setTransactionReference(entity.getId().toString());
+			transaction.setTransactionReference(UUID.randomUUID().toString());
 
 			// Consulta o cliente
 			Cliente cliente = clienteService.consultaPorId(entity.getIdCliente());
@@ -511,6 +519,8 @@ public class PedidoService {
 
 		entity.setIdOrdemPagamento(response.getOrderResult().getOrderKey());
 
+		entity.setBoletos(new ArrayList<>());
+
 		for (int i = 0; i < quantidadeParcelas; i++) {
 			Integer diasVencimento = Integer.parseInt(dias[i]);
 
@@ -547,7 +557,7 @@ public class PedidoService {
 		transaction.setCreditCard(creditCard);
 		transaction.setInstallmentCount(dadosPagamentoCartaoCredito.getParcelas());
 		transaction.setCreditCardOperation(OPERACAO_CARTAO_CREDITO);
-		transaction.setTransactionReference(entity.getId().toString());
+		transaction.setTransactionReference(UUID.randomUUID().toString());
 
 		request.getCreditCardTransactionCollection().add(transaction);
 
@@ -563,8 +573,6 @@ public class PedidoService {
 
 		entity.setIdOrdemPagamento(response.getOrderResult().getOrderKey());
 		entity.setIdTransacaoPagamento(transactionResult.getTransactionKey());
-
-		paga(entity, null, null);
 	}
 
 	private SaleResponse enviaPagamento(Pedido entity, SaleRequest request) {
@@ -574,7 +582,7 @@ public class PedidoService {
 
 			// Ordem
 			Order order = new Order();
-			order.setOrderReference(entity.getId().toString());
+			order.setOrderReference(UUID.randomUUID().toString());
 
 			// Cliente
 			Buyer buyer = new Buyer();

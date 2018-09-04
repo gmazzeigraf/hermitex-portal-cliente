@@ -177,7 +177,8 @@
 								<h:outputText value="#{pedidoController.entity.deStatus}" />
 							</p:panelGrid>
 
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{sessionController.usuarioAdministrador or sessionController.usuarioRepresentante}">
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid"
+								rendered="#{sessionController.usuarioAdministrador or sessionController.usuarioRepresentante}">
 								<h:outputText value="Produtos" styleClass="label" />
 								<h:outputText value="#{pedidoController.entity.valorProdutos}">
 									<f:convertNumber pattern="R$ #,##0.00" />
@@ -413,7 +414,7 @@
 							<p:dataTable id="dtbItens" widgetVar="dtb" var="entity" value="#{pedidoController.entity.itens}" reflow="true"
 								emptyMessage="#{null != pedidoController.entity.itens ? 'Nenhum item encontrado' : ''}" rowIndexVar="index">
 
-								<p:column headerText="" styleClass="id-column">
+								<p:column headerText="" styleClass="id-column" exportable="false">
 									<p:graphicImage cache="true" value="#{sessionController.getUrlImagem(entity.idImagemCapaProduto, 1)}" />
 								</p:column>
 
@@ -458,6 +459,14 @@
 										</f:facet>
 									</c:if>
 								</p:column>
+
+								<f:facet name="footer">
+									<p:commandLink title="Excel" ajax="false" onclick="liberaRefresh(); PrimeFaces.monitorDownload(showStatus, hideStatus);">
+										<i class="fa fa-fw fa-file-excel-o export-buttons"></i>
+										<p:dataExporter type="xlsx" target="dtbItens" fileName="produtos_#{pedidoController.entity.formattedId}" pageOnly="false"
+											encoding="ISO-8859-1" />
+									</p:commandLink>
+								</f:facet>
 							</p:dataTable>
 						</p:panelGrid>
 					</div>
@@ -480,7 +489,7 @@
 										</h:outputText>
 									</p:column>
 
-									<p:column headerText="URL" styleClass="coluna-center">
+									<p:column headerText="URL" styleClass="coluna-center" exportable="false">
 										<p:link href="#{entity.url}" value="Visualizar boleto" target="_blank" style="font-size: 16px; font-weight: 700;" />
 									</p:column>
 
@@ -493,6 +502,14 @@
 									<p:column headerText="Status" styleClass="coluna-center" rendered="#{sessionController.usuarioAdministrador}">
 										<h:outputText value="#{entity.deStatus}" />
 									</p:column>
+
+									<f:facet name="footer">
+										<p:commandLink title="Excel" ajax="false" onclick="liberaRefresh(); PrimeFaces.monitorDownload(showStatus, hideStatus);">
+											<i class="fa fa-fw fa-file-excel-o export-buttons"></i>
+											<p:dataExporter type="xlsx" target="dtbBoletos" fileName="boletos_#{pedidoController.entity.formattedId}" pageOnly="false"
+												encoding="ISO-8859-1" />
+										</p:commandLink>
+									</f:facet>
 								</p:dataTable>
 							</p:panelGrid>
 						</div>
@@ -532,6 +549,14 @@
 									<p:column headerText="Embalagem" styleClass="coluna-center">
 										<h:outputText value="#{entity.nomeEmbalagem}" />
 									</p:column>
+
+									<f:facet name="footer">
+										<p:commandLink title="Excel" ajax="false" onclick="liberaRefresh(); PrimeFaces.monitorDownload(showStatus, hideStatus);">
+											<i class="fa fa-fw fa-file-excel-o export-buttons"></i>
+											<p:dataExporter type="xlsx" target="dtbFretes" fileName="fretes_#{pedidoController.entity.formattedId}" pageOnly="false"
+												encoding="ISO-8859-1" />
+										</p:commandLink>
+									</f:facet>
 								</p:dataTable>
 							</p:panelGrid>
 						</div>
