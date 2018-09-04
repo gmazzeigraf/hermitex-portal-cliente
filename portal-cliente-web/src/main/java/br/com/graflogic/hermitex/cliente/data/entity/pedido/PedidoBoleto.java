@@ -1,6 +1,8 @@
 package br.com.graflogic.hermitex.cliente.data.entity.pedido;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -15,6 +17,9 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+
+import org.apache.commons.lang.StringUtils;
 
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido;
 
@@ -37,6 +42,9 @@ public class PedidoBoleto implements Serializable {
 
 	@Column(name = "id_pedido", nullable = false)
 	private Long idPedido;
+
+	@Column(name = "valor", nullable = false)
+	private BigDecimal valor;
 
 	@Column(name = "dt_vencimento", nullable = false)
 	private Date dataVencimento;
@@ -61,6 +69,19 @@ public class PedidoBoleto implements Serializable {
 	@JoinColumn(name = "id_pedido", referencedColumnName = "id", insertable = false, updatable = false)
 	private Pedido pedido;
 
+	// Filtros
+	@Transient
+	private Integer idCliente;
+
+	@Transient
+	private Integer idFilial;
+
+	@Transient
+	private Date dataVencimentoDe;
+
+	@Transient
+	private Date dataVencimentoAte;
+
 	public Long getId() {
 		return id;
 	}
@@ -75,6 +96,14 @@ public class PedidoBoleto implements Serializable {
 
 	public void setIdPedido(Long idPedido) {
 		this.idPedido = idPedido;
+	}
+
+	public BigDecimal getValor() {
+		return valor;
+	}
+
+	public void setValor(BigDecimal valor) {
+		this.valor = valor;
 	}
 
 	public Date getDataVencimento() {
@@ -133,7 +162,47 @@ public class PedidoBoleto implements Serializable {
 		this.pedido = pedido;
 	}
 
+	public Integer getIdCliente() {
+		return idCliente;
+	}
+
+	public void setIdCliente(Integer idCliente) {
+		this.idCliente = idCliente;
+	}
+
+	public Integer getIdFilial() {
+		return idFilial;
+	}
+
+	public void setIdFilial(Integer idFilial) {
+		this.idFilial = idFilial;
+	}
+
+	public Date getDataVencimentoDe() {
+		return dataVencimentoDe;
+	}
+
+	public void setDataVencimentoDe(Date dataVencimentoDe) {
+		this.dataVencimentoDe = dataVencimentoDe;
+	}
+
+	public Date getDataVencimentoAte() {
+		return dataVencimentoAte;
+	}
+
+	public void setDataVencimentoAte(Date dataVencimentoAte) {
+		this.dataVencimentoAte = dataVencimentoAte;
+	}
+
 	public String getDeStatus() {
 		return DomPedido.domStatusBoleto.getDeValor(status);
+	}
+
+	public String getFormattedIdPedido() {
+		return StringUtils.leftPad(idPedido.toString(), 10, "0");
+	}
+
+	public String getFormattedValorTotal() {
+		return new DecimalFormat("R$ #,##0.00").format(valor);
 	}
 }

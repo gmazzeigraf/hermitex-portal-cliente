@@ -24,10 +24,13 @@
 		width: 150px !important; text-align: center !important;
 	}
 	.valor-column {
-		width: 150px !important;
+		width: 150px !important; text-align: center !important; 
 	}
 	.data-column {
-		width: 200px !important;
+		width: 100px !important; text-align: center !important;
+	}
+	.data-hora-column {
+		width: 200px !important; text-align: center !important;
 	}
 	.resp-calendar input.hasDatepicker {
 		width: 83%;

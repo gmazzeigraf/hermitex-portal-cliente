@@ -1,0 +1,258 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/pages/templates/crud_template.xhtml"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions" xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+	<ui:define name="viewname">	#{labels.menu_pedido} / #{labels.menu_pedido_boletos} <c:if test="#{null != pedidoBoletoController.entity}">/ #{pedidoBoletoController.entity.idTransacaoPagamento}</c:if>
+	</ui:define>
+
+	<ui:define name="search">
+		<c:if test="#{null == pedidoBoletoController.entity}">
+			<div class="ui-g">
+				<div class="ui-g-12">
+					<div class="card card-w-title">
+						<h1>#{labels.consulta}</h1>
+						<p:panelGrid columns="1" id="filterGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
+							<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="clienteFilter" value="Cliente *" styleClass="label" />
+									<p:selectOneMenu id="clienteFilter" value="#{pedidoBoletoController.filterEntity.idCliente}" styleClass="ui-grid-col-12" filter="true"
+										filterMatchMode="contains">
+										<f:selectItem itemLabel="Selecione" itemValue="" />
+										<f:selectItems value="#{pedidoBoletoController.clientes}" var="item" itemLabel="#{item.id} - #{item.nomeApresentacao}"
+											itemValue="#{item.id}" />
+										<p:ajax process="@this" update=":searchForm" listener="#{pedidoBoletoController.changeCliente}" />
+									</p:selectOneMenu>
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="filialFilter" value="Filial" styleClass="label" />
+									<p:selectOneMenu id="filialFilter" value="#{pedidoBoletoController.filterEntity.idFilial}" styleClass="ui-grid-col-12" filter="true"
+										filterMatchMode="contains" disabled="#{!pedidoBoletoController.clienteSelecionado}">
+										<f:selectItem itemLabel="" itemValue="" />
+										<f:selectItems value="#{pedidoBoletoController.filiais}" var="item" itemLabel="#{item.id} - #{item.nomeApresentacao}" itemValue="#{item.id}" />
+									</p:selectOneMenu>
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="statusFilter" value="Status" styleClass="label" />
+									<p:selectOneMenu id="statusFilter" value="#{pedidoBoletoController.filterEntity.status}" styleClass="ui-grid-col-12">
+										<f:selectItem itemLabel="" itemValue="" />
+										<f:selectItems value="#{domPedidoController.statusBoletoMap}" />
+									</p:selectOneMenu>
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="dataVencimentoDeFilter" value="Vencimento - De" styleClass="label" />
+									<p:calendar id="dataVencimentoDeFilter" value="#{pedidoBoletoController.filterEntity.dataVencimentoDe}" pattern="dd/MM/yyyy"
+										locale="br" readonlyInput="false" navigator="true" showOn="button" styleClass="resp-calendar" mask="99/99/9999"
+										converterMessage="Vencimento de inválido" />
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="dataVencimentoAteFilter" value="Vencimento - Até" styleClass="label" />
+									<p:calendar id="dataVencimentoAteFilter" value="#{pedidoBoletoController.filterEntity.dataVencimentoAte}" pattern="dd/MM/yyyy"
+										locale="br" readonlyInput="false" navigator="true" showOn="button" styleClass="resp-calendar" mask="99/99/9999"
+										converterMessage="Vencimento até inválido" />
+								</p:panelGrid>
+							</p:panelGrid>
+
+							<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank">
+								<p:spacer styleClass="display-desktop" />
+								<p:commandButton value="#{labels.botao_pesquisar}" id="searchButton" icon="fa fa-fw fa-search" update="dtbEntities searchMessages"
+									actionListener="#{pedidoBoletoController.search}" process="@this, filterGrid" oncomplete="PF('dtb').getPaginator().setPage(0);"
+									styleClass="ui-grid-col-4 botao-pesquisar" disabled="#{!pedidoBoletoController.pesquisavel}" />
+							</p:panelGrid>
+
+							<p:messages id="searchMessages" />
+
+							<p:separator />
+
+							<p:defaultCommand target="searchButton" scope="filterGrid" />
+						</p:panelGrid>
+
+						<p:dataTable id="dtbEntities" widgetVar="dtb" var="entity" value="#{pedidoBoletoController.entities}" rowKey="#{entity.id}" paginator="true"
+							paginatorPosition="bottom" reflow="true" rows="50"
+							emptyMessage="#{null != pedidoBoletoController.entities ? messages.nenhum_resultado_encontrado : messages.realize_pesquisa}"
+							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters_1}">
+
+							<p:column headerText="ID Transação" styleClass="coluna-center">
+								<h:outputText value="#{entity.idTransacaoPagamento}" />
+							</p:column>
+
+							<p:column headerText="Pedido" sortBy="#{entity.formattedIdPedido}" styleClass="id-column">
+								<h:outputText value="#{entity.formattedIdPedido}" />
+							</p:column>
+
+							<p:column headerText="Valor" sortBy="#{entity.valor}" styleClass="valor-column">
+								<h:outputText value="#{entity.valor}">
+									<f:convertNumber pattern="R$ #,##0.00" />
+								</h:outputText>
+							</p:column>
+
+							<p:column headerText="Vencimento" styleClass="data-column">
+								<h:outputText value="#{entity.dataVencimento}">
+									<f:convertDateTime pattern="dd/MM/yyyy" timeZone="America/Sao_Paulo" />
+								</h:outputText>
+							</p:column>
+
+							<p:column headerText="URL" styleClass="coluna-center" exportable="false">
+								<p:link href="#{entity.url}" value="Visualizar boleto" target="_blank" style="font-size: 16px; font-weight: 700;" />
+							</p:column>
+
+							<p:column headerText="Pagamento" styleClass="data-column">
+								<h:outputText value="#{entity.dataPagamento}">
+									<f:convertDateTime pattern="dd/MM/yyyy" timeZone="America/Sao_Paulo" />
+								</h:outputText>
+							</p:column>
+
+							<p:column headerText="Status" styleClass="status-column">
+								<h:outputText value="#{entity.deStatus}" />
+							</p:column>
+
+							<p:column styleClass="coluna-edicao" exportable="false">
+								<p:commandButton icon="fa fa-fw fa-folder-open" title="#{labels.botao_editar}" update=":searchForm :editForm :routeBarForm" process="@this"
+									resetValues="true" styleClass="ui-grid-col-12" oncomplete="scrollPageTop();">
+									<f:setPropertyActionListener value="#{entity}" target="#{pedidoBoletoController.selectedEntity}" />
+								</p:commandButton>
+							</p:column>
+
+							<f:facet name="{Exporters_1}">
+								<p:commandLink title="Excel" ajax="false" rendered="#{not empty pedidoBoletoController.entities}"
+									onclick="liberaRefresh(); PrimeFaces.monitorDownload(showStatus, hideStatus);">
+									<i class="fa fa-fw fa-file-excel-o export-buttons"></i>
+									<p:dataExporter type="xlsx" target="dtbEntities" fileName="boletos" pageOnly="false" encoding="ISO-8859-1" />
+								</p:commandLink>
+							</f:facet>
+
+							<f:facet name="footer">
+								<h:outputText value="#{fn:length(pedidoBoletoController.entities)} boleto(s) encontrado(s)" />
+							</f:facet>
+						</p:dataTable>
+					</div>
+				</div>
+			</div>
+		</c:if>
+	</ui:define>
+
+	<ui:define name="edit">
+		<c:if test="#{null != pedidoBoletoController.entity}">
+			<div class="ui-g">
+				<div class="ui-g-12">
+					<div class="card card-w-title">
+						<h1>#{labels.informacoes}</h1>
+
+						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group">
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<h:outputText value="ID Transação Pagamento" styleClass="label" />
+								<h:outputText value="#{pedidoBoletoController.entity.idTransacaoPagamento}" />
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<h:outputText value="Pedido" styleClass="label" />
+								<h:outputText value="#{pedidoBoletoController.entity.formattedIdPedido}" />
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<h:outputText value="Valor" styleClass="label" />
+								<h:outputText value="#{pedidoBoletoController.entity.valor}">
+									<f:convertNumber pattern="R$ #,##0.00" />
+								</h:outputText>
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<h:outputText value="Vencimento" styleClass="label" />
+								<h:outputText value="#{pedidoBoletoController.entity.dataVencimento}">
+									<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" timeZone="America/Sao_Paulo" />
+								</h:outputText>
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<h:outputText value="URL" styleClass="label" />
+								<p:link href="#{pedidoBoletoController.entity.url}" value="Visualizar boleto" target="_blank" style="font-size: 16px; font-weight: 700;" />
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<h:outputText value="Pagamento" styleClass="label" />
+								<h:outputText value="#{pedidoBoletoController.entity.dataPagamento}">
+									<f:convertDateTime pattern="dd/MM/yyyy" timeZone="America/Sao_Paulo" />
+								</h:outputText>
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<h:outputText value="Status" styleClass="label" />
+								<h:outputText value="#{pedidoBoletoController.entity.deStatus}" />
+							</p:panelGrid>
+						</p:panelGrid>
+					</div>
+
+					<div class="card card-w-title">
+						<h1>Cliente</h1>
+
+						<p:panelGrid columns="4" id="clienteGrid" layout="grid" styleClass="ui-panelgrid-blank form-group"
+							columnClasses="ui-grid-col-1, ui-grid-col-2, ui-grid-col-4, ui-grid-col-5">
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel value="#" styleClass="label" />
+								<p:outputLabel value="#{pedidoBoletoController.cliente.id}" />
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel value="CNPJ" styleClass="label" />
+								<p:outputLabel value="#{pedidoBoletoController.cliente.formattedCnpj}" />
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel value="Razão Social" styleClass="label" />
+								<p:outputLabel value="#{pedidoBoletoController.cliente.razaoSocial}" />
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel value="Nome Fantasia" styleClass="label" />
+								<p:outputLabel value="#{pedidoBoletoController.cliente.nomeFantasia}" />
+							</p:panelGrid>
+						</p:panelGrid>
+					</div>
+
+					<c:if test="#{null != pedidoBoletoController.filial}">
+						<div class="card card-w-title">
+							<h1>Filial</h1>
+
+							<p:panelGrid columns="4" id="filialGrid" layout="grid" styleClass="ui-panelgrid-blank form-group"
+								columnClasses="ui-grid-col-1, ui-grid-col-2, ui-grid-col-4, ui-grid-col-5">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel value="#" styleClass="label" />
+									<p:outputLabel value="#{pedidoBoletoController.filial.id}" />
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel value="CNPJ" styleClass="label" />
+									<p:outputLabel value="#{pedidoBoletoController.filial.formattedCnpj}" />
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel value="Razão Social" styleClass="label" />
+									<p:outputLabel value="#{pedidoBoletoController.filial.razaoSocial}" />
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel value="Nome Fantasia" styleClass="label" />
+									<p:outputLabel value="#{pedidoBoletoController.filial.nomeFantasia}" />
+								</p:panelGrid>
+							</p:panelGrid>
+						</div>
+					</c:if>
+
+					<p:messages />
+
+					<p:panelGrid columns="6" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
+						<p:commandButton icon="fa fa-fw fa-close" value="#{labels.botao_fechar}" actionListener="#{pedidoBoletoController.close}" process="@this"
+							update=":searchForm :editForm :routeBarForm" styleClass="ui-grid-col-12 botao-fechar" oncomplete="scrollPageTop();" />
+					</p:panelGrid>
+				</div>
+			</div>
+		</c:if>
+	</ui:define>
+
+	<ui:define name="complement">
+	</ui:define>
+</ui:composition>

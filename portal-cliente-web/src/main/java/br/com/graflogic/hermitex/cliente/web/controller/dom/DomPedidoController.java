@@ -42,4 +42,8 @@ public class DomPedidoController implements Serializable {
 	public Map<String, Object> getStatusSolicitacaoTrocaMap() {
 		return DomPedido.domStatusSolicitacaoTroca.getMap();
 	}
+
+	public Map<String, Object> getStatusBoletoMap() {
+		return DomPedido.domStatusBoleto.getMap();
+	}
 }

@@ -82,7 +82,7 @@
 						</p:panelGrid>
 
 						<p:dataTable id="dtbEntities" widgetVar="dtb" var="entity" value="#{pedidoController.entities}" rowKey="#{entity.id}" paginator="true"
-							paginatorPosition="bottom" reflow="true" rows="10"
+							paginatorPosition="bottom" reflow="true" rows="50"
 							emptyMessage="#{null != pedidoController.entities ? messages.nenhum_resultado_encontrado : messages.realize_pesquisa}"
 							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters_1}">
 
@@ -483,7 +483,13 @@
 										<h:outputText value="#{entity.idTransacaoPagamento}" />
 									</p:column>
 
-									<p:column headerText="Data Vencimento" styleClass="coluna-center">
+									<p:column headerText="Valor" sortBy="#{entity.valor}" styleClass="valor-column">
+										<h:outputText value="#{entity.valor}">
+											<f:convertNumber pattern="R$ #,##0.00" />
+										</h:outputText>
+									</p:column>
+
+									<p:column headerText="Vencimento" styleClass="data-column">
 										<h:outputText value="#{entity.dataVencimento}">
 											<f:convertDateTime pattern="dd/MM/yyyy" timeZone="America/Sao_Paulo" />
 										</h:outputText>
@@ -493,13 +499,13 @@
 										<p:link href="#{entity.url}" value="Visualizar boleto" target="_blank" style="font-size: 16px; font-weight: 700;" />
 									</p:column>
 
-									<p:column headerText="Data Pagamento" styleClass="coluna-center" rendered="#{sessionController.usuarioAdministrador}">
+									<p:column headerText="Pagamento" styleClass="data-column" rendered="#{sessionController.usuarioAdministrador}">
 										<h:outputText value="#{entity.dataPagamento}">
 											<f:convertDateTime pattern="dd/MM/yyyy" timeZone="America/Sao_Paulo" />
 										</h:outputText>
 									</p:column>
 
-									<p:column headerText="Status" styleClass="coluna-center" rendered="#{sessionController.usuarioAdministrador}">
+									<p:column headerText="Status" styleClass="status-column" rendered="#{sessionController.usuarioAdministrador}">
 										<h:outputText value="#{entity.deStatus}" />
 									</p:column>
 

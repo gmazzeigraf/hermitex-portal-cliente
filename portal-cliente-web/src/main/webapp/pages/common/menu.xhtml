@@ -93,6 +93,8 @@
 								rendered="#{sec:isAllowed('/pages/pedido/consulta.jsf', '')}" />
 							<p:menuitem id="menu_pedido_solicitacao_troca" icon="fa fa-fw fa-exchange" value="#{labels.menu_pedido_solicitacao_troca}"
 								url="/pages/pedido/solicitacao_troca.jsf" rendered="#{sec:isAllowed('/pages/pedido/solicitacao_troca.jsf', '')}" />
+							<p:menuitem id="menu_pedido_boletos" icon="fa fa-fw fa-bank" value="#{labels.menu_pedido_boletos}" url="/pages/pedido/boletos.jsf"
+								rendered="#{sec:isAllowed('/pages/pedido/boletos.jsf', '')}" />
 						</p:submenu>
 
 						<p:menuitem id="menu_produtos" icon="fa fa-fw fa-barcode" value="#{labels.menu_produtos}" url="/pages/compra/produtos.jsf"

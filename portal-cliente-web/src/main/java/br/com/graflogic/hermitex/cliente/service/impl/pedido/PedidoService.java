@@ -216,7 +216,7 @@ public class PedidoService {
 
 				entity.setBoletos(boletos);
 			}
-			
+
 			registraAuditoria(entity.getId(), entity, DomEventoAuditoriaPedido.CADASTRO, idUsuario, null);
 
 			executaAtualiza(entity);
@@ -531,6 +531,7 @@ public class PedidoService {
 			boleto.setIdTransacaoPagamento(response.getBoletoTransactionResultCollection().get(i).getTransactionKey());
 			boleto.setUrl(response.getBoletoTransactionResultCollection().get(i).getBoletoUrl());
 			boleto.setDataVencimento(calendarVencimento.getTime());
+			boleto.setValor(formaPagamento.getValorParcela());
 			boleto.setStatus(DomStatusBoleto.PENDENTE);
 
 			entity.getBoletos().add(boleto);
