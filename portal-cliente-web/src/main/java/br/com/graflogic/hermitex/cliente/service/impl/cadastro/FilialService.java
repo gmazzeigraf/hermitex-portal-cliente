@@ -205,6 +205,7 @@ public class FilialService {
 	}
 
 	// Validacao
+	@Transactional(readOnly = true)
 	public boolean isCompraBloqueada(Integer id) {
 		Filial entity = consultaPorId(id);
 
