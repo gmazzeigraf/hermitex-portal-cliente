@@ -189,13 +189,15 @@ public class DomAuditoria {
 		}
 	}
 
-	public static class DomEventoAuditoriaSolicitacaoTroca extends DomBase {
+	public static class DomEventoAuditoriaTroca extends DomBase {
 		public static final String CADASTRO = "C";
 		public static final String FINALIZACAO = "F";
+		public static final String CANCELAMENTO = "L";
 
-		DomEventoAuditoriaSolicitacaoTroca() {
+		DomEventoAuditoriaTroca() {
 			mapa.put(CADASTRO, "Cadastro");
 			mapa.put(FINALIZACAO, "Finalização");
+			mapa.put(CANCELAMENTO, "Cancelamento");
 		}
 	}
 

@@ -2,10 +2,10 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/pages/templates/crud_template.xhtml"
 	xmlns:fn="http://java.sun.com/jsp/jstl/functions" xmlns:c="http://java.sun.com/jsp/jstl/core">
 
-	<ui:define name="viewname">#{labels.menu_pedido} / #{labels.menu_pedido_solicitacao_troca} </ui:define>
+	<ui:define name="viewname">#{labels.menu_troca} / #{labels.menu_troca_consulta} </ui:define>
 
 	<ui:define name="search">
-		<c:if test="#{null == solicitacaoTrocaController.entity}">
+		<c:if test="#{null == trocaController.entity}">
 			<div class="ui-g">
 				<div class="ui-g-12">
 					<div class="card card-w-title">
@@ -14,45 +14,43 @@
 							<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{sessionController.usuarioAdministrador}">
 									<p:outputLabel for="clienteFilter" value="Cliente *" styleClass="label" />
-									<p:selectOneMenu id="clienteFilter" value="#{solicitacaoTrocaController.filterEntity.idCliente}" styleClass="ui-grid-col-12" filter="true"
+									<p:selectOneMenu id="clienteFilter" value="#{trocaController.filterEntity.idCliente}" styleClass="ui-grid-col-12" filter="true"
 										filterMatchMode="contains">
 										<f:selectItem itemLabel="Selecione" itemValue="" />
-										<f:selectItems value="#{solicitacaoTrocaController.clientes}" var="item"
-											itemLabel="#{item.id} - #{item.nomeApresentacao}" itemValue="#{item.id}" />
-										<p:ajax process="@this" update=":searchForm" listener="#{solicitacaoTrocaController.changeCliente}" />
+										<f:selectItems value="#{trocaController.clientes}" var="item" itemLabel="#{item.id} - #{item.nomeApresentacao}" itemValue="#{item.id}" />
+										<p:ajax process="@this" update=":searchForm" listener="#{trocaController.changeCliente}" />
 									</p:selectOneMenu>
 								</p:panelGrid>
 
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid"
 									rendered="#{!sessionController.usuarioFilial and !sessionController.usuarioProprietario}">
 									<p:outputLabel for="filialFilter" value="Filial" styleClass="label" />
-									<p:selectOneMenu id="filialFilter" value="#{solicitacaoTrocaController.filterEntity.idFilial}" styleClass="ui-grid-col-12" filter="true"
-										filterMatchMode="contains" disabled="#{!solicitacaoTrocaController.clienteSelecionado}">
+									<p:selectOneMenu id="filialFilter" value="#{trocaController.filterEntity.idFilial}" styleClass="ui-grid-col-12" filter="true"
+										filterMatchMode="contains" disabled="#{!trocaController.clienteSelecionado}">
 										<f:selectItem itemLabel="" itemValue="" />
-										<f:selectItems value="#{solicitacaoTrocaController.filiais}" var="item"
-											itemLabel="#{item.id} - #{item.nomeApresentacao}" itemValue="#{item.id}" />
+										<f:selectItems value="#{trocaController.filiais}" var="item" itemLabel="#{item.id} - #{item.nomeApresentacao}" itemValue="#{item.id}" />
 									</p:selectOneMenu>
 								</p:panelGrid>
 
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 									<p:outputLabel for="statusFilter" value="Status" styleClass="label" />
-									<p:selectOneMenu id="statusFilter" value="#{solicitacaoTrocaController.filterEntity.status}" styleClass="ui-grid-col-12">
+									<p:selectOneMenu id="statusFilter" value="#{trocaController.filterEntity.status}" styleClass="ui-grid-col-12">
 										<f:selectItem itemLabel="" itemValue="" />
-										<f:selectItems value="#{domPedidoController.statusSolicitacaoTrocaMap}" />
+										<f:selectItems value="#{domPedidoController.statusTrocaMap}" />
 									</p:selectOneMenu>
 								</p:panelGrid>
 
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 									<p:outputLabel for="dataCadastroDeFilter" value="Data - De" styleClass="label" />
-									<p:calendar id="dataCadastroDeFilter" value="#{solicitacaoTrocaController.filterEntity.dataCadastroDe}" pattern="dd/MM/yyyy HH:mm:ss"
-										locale="br" readonlyInput="false" navigator="true" showOn="button" styleClass="resp-calendar" mask="99/99/9999 99:99:99"
+									<p:calendar id="dataCadastroDeFilter" value="#{trocaController.filterEntity.dataCadastroDe}" pattern="dd/MM/yyyy HH:mm:ss" locale="br"
+										readonlyInput="false" navigator="true" showOn="button" styleClass="resp-calendar" mask="99/99/9999 99:99:99"
 										converterMessage="Data de inválida" />
 								</p:panelGrid>
 
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 									<p:outputLabel for="dataCadastroAteFilter" value="Data - Até" styleClass="label" />
-									<p:calendar id="dataCadastroAteFilter" value="#{solicitacaoTrocaController.filterEntity.dataCadastroAte}" pattern="dd/MM/yyyy HH:mm:ss"
-										locale="br" readonlyInput="false" navigator="true" showOn="button" styleClass="resp-calendar" mask="99/99/9999 99:99:99"
+									<p:calendar id="dataCadastroAteFilter" value="#{trocaController.filterEntity.dataCadastroAte}" pattern="dd/MM/yyyy HH:mm:ss" locale="br"
+										readonlyInput="false" navigator="true" showOn="button" styleClass="resp-calendar" mask="99/99/9999 99:99:99"
 										converterMessage="Data até inválida" />
 								</p:panelGrid>
 							</p:panelGrid>
@@ -60,8 +58,8 @@
 							<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank">
 								<p:spacer styleClass="display-desktop" />
 								<p:commandButton value="#{labels.botao_pesquisar}" id="searchButton" icon="fa fa-fw fa-search" update="dtbEntities searchMessages"
-									actionListener="#{solicitacaoTrocaController.search}" process="@this, filterGrid" oncomplete="PF('dtb').getPaginator().setPage(0);"
-									styleClass="ui-grid-col-4 botao-pesquisar" disabled="#{!solicitacaoTrocaController.pesquisavel}" />
+									actionListener="#{trocaController.search}" process="@this, filterGrid" oncomplete="PF('dtb').getPaginator().setPage(0);"
+									styleClass="ui-grid-col-4 botao-pesquisar" disabled="#{!trocaController.pesquisavel}" />
 							</p:panelGrid>
 
 							<p:messages id="searchMessages" />
@@ -69,16 +67,11 @@
 							<p:separator />
 
 							<p:defaultCommand target="searchButton" scope="filterGrid" />
-
-							<p:commandButton value="#{labels.botao_adicionar}" icon="fa fa-fw fa-plus" actionListener="#{solicitacaoTrocaController.add}"
-								update=":searchForm :editForm" process="@this" resetValues="true" styleClass="ui-grid-col-12 botao-adicionar"
-								disabled="#{!solicitacaoTrocaController.adicionavel}"
-								rendered="#{sessionController.usuarioCliente or sessionController.usuarioFilial or sessionController.usuarioProprietario}" />
 						</p:panelGrid>
 
-						<p:dataTable id="dtbEntities" widgetVar="dtb" var="entity" value="#{solicitacaoTrocaController.entities}" rowKey="#{entity.id}" paginator="true"
+						<p:dataTable id="dtbEntities" widgetVar="dtb" var="entity" value="#{trocaController.entities}" rowKey="#{entity.id}" paginator="true"
 							paginatorPosition="bottom" reflow="true" rows="50"
-							emptyMessage="#{null != solicitacaoTrocaController.entities ? messages.nenhum_resultado_encontrado : messages.realize_pesquisa}">
+							emptyMessage="#{null != trocaController.entities ? messages.nenhum_resultado_encontrado : messages.realize_pesquisa}">
 
 							<p:column headerText="#" sortBy="#{entity.formattedId}" styleClass="id-column">
 								<h:outputText value="#{entity.formattedId}" />
@@ -109,12 +102,12 @@
 							<p:column styleClass="coluna-edicao">
 								<p:commandButton icon="fa fa-fw fa-pencil" title="#{labels.botao_editar}" update=":searchForm :editForm" process="@this" resetValues="true"
 									styleClass="ui-grid-col-12">
-									<f:setPropertyActionListener value="#{entity}" target="#{solicitacaoTrocaController.selectedEntity}" />
+									<f:setPropertyActionListener value="#{entity}" target="#{trocaController.selectedEntity}" />
 								</p:commandButton>
 							</p:column>
 
 							<f:facet name="footer">
-								<h:outputText value="#{fn:length(solicitacaoTrocaController.entities)} registro(s) encontrado(s)" />
+								<h:outputText value="#{fn:length(trocaController.entities)} registro(s) encontrado(s)" />
 							</f:facet>
 						</p:dataTable>
 					</div>
@@ -124,38 +117,38 @@
 	</ui:define>
 
 	<ui:define name="edit">
-		<c:if test="#{null != solicitacaoTrocaController.entity}">
+		<c:if test="#{null != trocaController.entity}">
 			<div class="ui-g">
 				<div class="ui-g-12">
 					<div class="card card-w-title">
 						<h1>#{labels.informacoes}</h1>
 						<p:panelGrid columns="1" id="informacoesGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
-							<p:panelGrid columns="2" columnClasses="ui-grid-col-10, ui-grid-col-2" layout="grid">
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-10, ui-grid-col-2" layout="grid">
 								<p:outputLabel for="pedido" value="Pedido" styleClass="label" />
-								<p:spacer />
-
-								<p:inputNumber id="pedido" value="#{solicitacaoTrocaController.entity.idPedido}" styleClass="input-number-resp" required="true"
-									requiredMessage="Favor informar o pedido" decimalPlaces="0"
-									disabled="#{solicitacaoTrocaController.editing or null != solicitacaoTrocaController.pedido}"
-									placeholder="Informe o número do pedido e clique em Pesquisar" />
-								<p:commandButton icon="fa fa-fw fa-search" value="#{labels.botao_pesquisar}" actionListener="#{solicitacaoTrocaController.consultaPedido}"
-									process="pedido" update="informacoesGrid" styleClass="ui-grid-col-12" rendered="#{null == solicitacaoTrocaController.pedido}" />
+								<p:inputNumber id="pedido" value="#{trocaController.entity.idPedido}" styleClass="input-number-resp" required="true"
+									requiredMessage="Favor informar o pedido" decimalPlaces="0" disabled="#{trocaController.editing}" />
 							</p:panelGrid>
 
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{null != solicitacaoTrocaController.pedido}">
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 								<p:outputLabel for="item" value="Item" styleClass="label" />
-								<p:selectOneMenu id="item" value="#{solicitacaoTrocaController.entity.idPedidoItem}" styleClass="ui-grid-col-12" filter="true"
-									filterMatchMode="contains" disabled="#{solicitacaoTrocaController.editing}">
+								<p:selectOneMenu id="item" value="#{trocaController.entity.idPedidoItem}" styleClass="ui-grid-col-12" filter="true" filterMatchMode="contains"
+									disabled="#{trocaController.editing}">
 									<f:selectItem itemLabel="Selecione" itemValue="" />
-									<f:selectItems value="#{solicitacaoTrocaController.pedido.itens}" var="item"
+									<f:selectItems value="#{trocaController.pedido.itens}" var="item"
 										itemLabel="#{item.codigoProduto} - #{item.tituloProduto} - #{item.codigoTamanho}" itemValue="#{item.id}" />
 								</p:selectOneMenu>
 							</p:panelGrid>
 
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{null != solicitacaoTrocaController.pedido}">
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 								<p:outputLabel for="quantidade" value="Quantidade" styleClass="label" />
-								<p:inputNumber id="quantidade" value="#{solicitacaoTrocaController.entity.quantidade}" styleClass="input-number-resp" required="true"
-									requiredMessage="Favor informar a quantidade" decimalPlaces="0" disabled="#{solicitacaoTrocaController.editing}" />
+								<p:inputNumber id="quantidade" value="#{trocaController.entity.quantidade}" styleClass="input-number-resp" required="true"
+									requiredMessage="Favor informar a quantidade" decimalPlaces="0" disabled="#{trocaController.editing}" />
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel for="motivo" value="Motivo" styleClass="label" />
+								<p:inputTextarea id="motivo" value="#{trocaController.entity.motivo}" rows="5" maxlength="500" styleClass="ui-grid-col-12" autoResize="false"
+									disabled="true" />
 							</p:panelGrid>
 						</p:panelGrid>
 					</div>
@@ -163,15 +156,17 @@
 					<p:messages />
 
 					<p:panelGrid columns="6" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
-						<p:commandButton id="submitButton" icon="fa fa-fw fa-save" value="#{labels.botao_gravar}" actionListener="#{solicitacaoTrocaController.save}"
-							process=":editForm:informacoesGrid" update=":editForm :searchForm" styleClass="ui-grid-col-12"
-							rendered="#{!solicitacaoTrocaController.editing}" />
+						<p:commandButton id="submitButton" icon="fa fa-fw fa-save" value="#{labels.botao_gravar}" actionListener="#{trocaController.save}"
+							process=":editForm:informacoesGrid" update=":editForm :searchForm" styleClass="ui-grid-col-12" rendered="#{!trocaController.editing}" />
 
 						<p:commandButton id="finalizacaoButton" icon="fa fa-fw fa-check-square-o" value="#{labels.botao_finalizar}"
 							oncomplete="PF('finalizacaoDialog').show()" process="@this" update="editForm:idFinalizacaoDialog" styleClass="ui-grid-col-12 botao-verde"
-							rendered="#{solicitacaoTrocaController.finalizavel}" />
+							rendered="#{trocaController.finalizavel}" />
 
-						<p:commandButton icon="fa fa-fw fa-close" value="#{labels.botao_fechar}" actionListener="#{solicitacaoTrocaController.close}" process="@this"
+						<p:commandButton id="cancelamentoButton" icon="fa fa-fw fa-trash" value="#{labels.botao_cancelar}" oncomplete="PF('cancelamentoDialog').show()"
+							process="@this" update="editForm:idCancelamentoDialog" styleClass="ui-grid-col-12 botao-vermelho" rendered="#{trocaController.cancelavel}" />
+
+						<p:commandButton icon="fa fa-fw fa-close" value="#{labels.botao_fechar}" actionListener="#{trocaController.close}" process="@this"
 							update=":searchForm :editForm" styleClass="ui-grid-col-12 botao-fechar" />
 					</p:panelGrid>
 				</div>
@@ -180,21 +175,38 @@
 	</ui:define>
 
 	<ui:define name="complement">
-		<p:dialog header="Confirmar finalização da solicitação de troca?" id="idFinalizacaoDialog" widgetVar="finalizacaoDialog" height="90%" modal="true"
+		<p:dialog header="Confirmar finalização da troca?" id="idFinalizacaoDialog" widgetVar="finalizacaoDialog" height="90%" modal="true"
 			draggable="false" resizable="false" responsive="true">
 
 			<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" styleClass="ui-panelgrid-blank form-group">
 				<p:outputLabel value="Observação" styleClass="label" />
-				<p:inputTextarea id="observacaoFinalizacao" rows="3" cols="40" value="#{solicitacaoTrocaController.observacao}" styleClass="ui-grid-col-12"
-					maxlength="200" />
+				<p:inputTextarea id="observacaoFinalizacao" rows="3" cols="40" value="#{trocaController.observacao}" styleClass="ui-grid-col-12" maxlength="200" />
 			</p:panelGrid>
 
 			<p:spacer />
 
 			<p:panelGrid columns="2" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
-				<p:commandButton icon="fa fa-fw fa-check" value="#{labels.botao_sim}" actionListener="#{solicitacaoTrocaController.finaliza}"
+				<p:commandButton icon="fa fa-fw fa-check" value="#{labels.botao_sim}" actionListener="#{trocaController.finaliza}"
 					process="@this editForm:observacaoFinalizacao" styleClass="ui-grid-col-12" />
 				<p:commandButton icon="fa fa-fw fa-close" value="#{labels.botao_nao}" styleClass="ui-grid-col-12" onclick="PF('finalizacaoDialog').hide()"
+					process="@this" />
+			</p:panelGrid>
+		</p:dialog>
+
+		<p:dialog header="Confirmar cancelamento da troca?" id="idCancelamentoDialog" widgetVar="cancelamentoDialog" height="90%" modal="true"
+			draggable="false" resizable="false" responsive="true">
+
+			<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" styleClass="ui-panelgrid-blank form-group">
+				<p:outputLabel value="Observação" styleClass="label" />
+				<p:inputTextarea id="observacaoCancelamento" rows="3" cols="40" value="#{trocaController.observacao}" styleClass="ui-grid-col-12" maxlength="200" />
+			</p:panelGrid>
+
+			<p:spacer />
+
+			<p:panelGrid columns="2" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
+				<p:commandButton icon="fa fa-fw fa-check" value="#{labels.botao_sim}" actionListener="#{trocaController.cancela}"
+					process="@this editForm:observacaoCancelamento" styleClass="ui-grid-col-12" />
+				<p:commandButton icon="fa fa-fw fa-close" value="#{labels.botao_nao}" styleClass="ui-grid-col-12" onclick="PF('cancelamentoDialog').hide()"
 					process="@this" />
 			</p:panelGrid>
 		</p:dialog>

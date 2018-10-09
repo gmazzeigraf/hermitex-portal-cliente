@@ -41,13 +41,16 @@ INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_CO
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_COMPRA_VISUALIZACAO_ESTOQUE', 'Compra - Visualização Estoque', 'ACFRP');
 
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_PEDIDO_CONSULTA', 'Pedido / Consulta', 'ACFRP');
-INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_PEDIDO_SOLICITACAO_TROCA', 'Pedido / Solicitação Troca', 'ACFP');
-INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_PEDIDO_SOLICITACAO_TROCA_FINALIZACAO', 'Pedido / Solicitação Troca - Finalização', 'A');
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_PEDIDO_BAIXA_PAGAMENTO', 'Pedido / Consulta - Baixa Pagamento', 'A');
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_PEDIDO_ENVIO', 'Pedido / Consulta - Envio', 'A');
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_PEDIDO_FINALIZACAO', 'Pedido / Consulta - Finalização', 'A');
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_PEDIDO_CANCELAMENTO', 'Pedido / Consulta - Cancelamento', 'A');
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_PEDIDO_BOLETOS', 'Pedido / Boletos', 'A');
+
+INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_TROCA_SOLICITACAO', 'Troca / Solicitação', 'CFP');
+INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_TROCA_CONSULTA', 'Troca / Consulta', 'ACFP');
+INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_TROCA_FINALIZACAO', 'Troca / Consulta - Finalização', 'A');
+INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_TROCA_CANCELAMENTO', 'Troca / Consulta - Cancelamento', 'A');
 
 -- Cria  FK
 ALTER TABLE tb_perfil_usuario_permissao_acesso ADD CONSTRAINT fk_perfil_usuario_permissao_acesso_permissao

@@ -107,17 +107,19 @@ public class DomPedido {
 
 	public static DomStatusJanelaCompra domStatusJanelaCompra = new DomStatusJanelaCompra();
 
-	public static class DomStatusSolicitacaoTroca extends DomBase {
+	public static class DomStatusTroca extends DomBase {
 		public static final String CADASTRADA = "C";
 		public static final String FINALIZADA = "F";
+		public static final String CANCELADA = "L";
 
-		DomStatusSolicitacaoTroca() {
+		DomStatusTroca() {
 			mapa.put(CADASTRADA, "Cadastrada");
 			mapa.put(FINALIZADA, "Finalizada");
+			mapa.put(CANCELADA, "Cancelada");
 		}
 	}
 
-	public static DomStatusSolicitacaoTroca domStatusSolicitacaoTroca = new DomStatusSolicitacaoTroca();
+	public static DomStatusTroca domStatusTroca = new DomStatusTroca();
 
 	public static class DomServicoFrete extends DomBase {
 		public static final String RETIRADA_HERMITEX = "00001";

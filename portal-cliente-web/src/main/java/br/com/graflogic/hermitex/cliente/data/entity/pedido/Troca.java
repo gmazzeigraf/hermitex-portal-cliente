@@ -16,7 +16,7 @@ import javax.persistence.Version;
 import org.apache.commons.lang.StringUtils;
 
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido;
-import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomStatusSolicitacaoTroca;
+import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomStatusTroca;
 
 /**
  * 
@@ -24,14 +24,14 @@ import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomStatusSolicitacao
  *
  */
 @Entity
-@Table(name = "tb_solicitacao_troca")
-public class SolicitacaoTroca implements Serializable {
+@Table(name = "tb_troca")
+public class Troca implements Serializable {
 
 	private static final long serialVersionUID = 4539920995943368202L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SQ_SOLICITACAO_TROCA")
-	@SequenceGenerator(name = "SQ_SOLICITACAO_TROCA", sequenceName = "SQ_SOLICITACAO_TROCA", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SQ_TROCA")
+	@SequenceGenerator(name = "SQ_TROCA", sequenceName = "SQ_TROCA", allocationSize = 1)
 	@Column(name = "id", nullable = false)
 	private Long id;
 
@@ -40,6 +40,9 @@ public class SolicitacaoTroca implements Serializable {
 
 	@Column(name = "quantidade", nullable = false)
 	private Integer quantidade;
+
+	@Column(name = "motivo", nullable = false)
+	private String motivo;
 
 	@Column(name = "status", nullable = false)
 	private String status;
@@ -102,6 +105,14 @@ public class SolicitacaoTroca implements Serializable {
 
 	public void setQuantidade(Integer quantidade) {
 		this.quantidade = quantidade;
+	}
+
+	public String getMotivo() {
+		return motivo;
+	}
+
+	public void setMotivo(String motivo) {
+		this.motivo = motivo;
 	}
 
 	public String getStatus() {
@@ -201,7 +212,7 @@ public class SolicitacaoTroca implements Serializable {
 	}
 
 	public String getDeStatus() {
-		return DomPedido.domStatusSolicitacaoTroca.getDeValor(status);
+		return DomPedido.domStatusTroca.getDeValor(status);
 	}
 
 	public String getFormattedId() {
@@ -213,10 +224,10 @@ public class SolicitacaoTroca implements Serializable {
 	}
 
 	public boolean isCadastrada() {
-		return null != status && DomStatusSolicitacaoTroca.CADASTRADA.equals(status);
+		return null != status && DomStatusTroca.CADASTRADA.equals(status);
 	}
 
 	public boolean isFinalizada() {
-		return null != status && DomStatusSolicitacaoTroca.FINALIZADA.equals(status);
+		return null != status && DomStatusTroca.FINALIZADA.equals(status);
 	}
 }

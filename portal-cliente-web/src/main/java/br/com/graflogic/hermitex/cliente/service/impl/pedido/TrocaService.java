@@ -12,13 +12,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.graflogic.base.service.gson.GsonUtil;
-import br.com.graflogic.hermitex.cliente.data.dom.DomAuditoria.DomEventoAuditoriaSolicitacaoTroca;
-import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomStatusSolicitacaoTroca;
-import br.com.graflogic.hermitex.cliente.data.entity.aud.SolicitacaoTrocaAuditoria;
+import br.com.graflogic.hermitex.cliente.data.dom.DomAuditoria.DomEventoAuditoriaTroca;
+import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomStatusTroca;
+import br.com.graflogic.hermitex.cliente.data.entity.aud.TrocaAuditoria;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoItem;
-import br.com.graflogic.hermitex.cliente.data.entity.pedido.SolicitacaoTroca;
-import br.com.graflogic.hermitex.cliente.data.impl.aud.SolicitacaoTrocaAuditoriaRepository;
-import br.com.graflogic.hermitex.cliente.data.impl.pedido.SolicitacaoTrocaRepository;
+import br.com.graflogic.hermitex.cliente.data.entity.pedido.Troca;
+import br.com.graflogic.hermitex.cliente.data.impl.aud.TrocaAuditoriaRepository;
+import br.com.graflogic.hermitex.cliente.data.impl.pedido.TrocaRepository;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
 import br.com.graflogic.hermitex.cliente.service.exception.ResultadoNaoEncontradoException;
@@ -31,26 +31,26 @@ import br.com.graflogic.utilities.datautil.copy.ObjectCopier;
  *
  */
 @Service
-public class SolicitacaoTrocaService {
+public class TrocaService {
 
 	@Autowired
-	private SolicitacaoTrocaRepository repository;
+	private TrocaRepository repository;
 
 	@Autowired
-	private SolicitacaoTrocaAuditoriaRepository auditoriaRepository;
+	private TrocaAuditoriaRepository auditoriaRepository;
 
 	@Autowired
 	private PedidoService pedidoService;
 
 	// Fluxo
 	@Transactional(rollbackFor = Throwable.class)
-	public void cadastra(SolicitacaoTroca entity) {
-		List<SolicitacaoTroca> solicitacoes = consultaPorPedidoItem(entity.getIdPedidoItem());
+	public void cadastra(Troca entity) {
+		List<Troca> solicitacoes = consultaPorPedidoItem(entity.getIdPedidoItem());
 
 		PedidoItem pedidoItem = pedidoService.consultaItemPorId(entity.getIdPedidoItem());
 		Integer quantidadeDisponivel = pedidoItem.getQuantidade();
 
-		for (SolicitacaoTroca solicitacao : solicitacoes) {
+		for (Troca solicitacao : solicitacoes) {
 			quantidadeDisponivel -= solicitacao.getQuantidade();
 		}
 
@@ -62,27 +62,40 @@ public class SolicitacaoTrocaService {
 
 		}
 
-		entity.setStatus(DomStatusSolicitacaoTroca.CADASTRADA);
+		entity.setStatus(DomStatusTroca.CADASTRADA);
 
 		repository.store(entity);
 
-		registraAuditoria(entity.getId(), entity, DomEventoAuditoriaSolicitacaoTroca.CADASTRO, null);
+		registraAuditoria(entity.getId(), entity, DomEventoAuditoriaTroca.CADASTRO, null);
 	}
 
 	@Transactional(rollbackFor = Throwable.class)
-	public void finaliza(SolicitacaoTroca entity, String observacao) {
+	public void finaliza(Troca entity, String observacao) {
 		if (!entity.isCadastrada()) {
 			throw new DadosInvalidosException("Apenas solicitações cadastradas podem ser marcados como finalizadas");
 		}
 
-		entity.setStatus(DomStatusSolicitacaoTroca.FINALIZADA);
+		entity.setStatus(DomStatusTroca.FINALIZADA);
 
 		executaAtualiza(entity);
 
-		registraAuditoria(entity.getId(), entity, DomEventoAuditoriaSolicitacaoTroca.FINALIZACAO, observacao);
+		registraAuditoria(entity.getId(), entity, DomEventoAuditoriaTroca.FINALIZACAO, observacao);
 	}
 
-	private void executaAtualiza(SolicitacaoTroca entity) {
+	@Transactional(rollbackFor = Throwable.class)
+	public void cancela(Troca entity, String observacao) {
+		if (!entity.isCadastrada()) {
+			throw new DadosInvalidosException("Apenas solicitações cadastradas podem ser marcados como canceladas");
+		}
+
+		entity.setStatus(DomStatusTroca.CANCELADA);
+
+		executaAtualiza(entity);
+
+		registraAuditoria(entity.getId(), entity, DomEventoAuditoriaTroca.CANCELAMENTO, observacao);
+	}
+
+	private void executaAtualiza(Troca entity) {
 		try {
 			repository.update(entity);
 
@@ -92,18 +105,18 @@ public class SolicitacaoTrocaService {
 	}
 
 	// Consulta
-	public List<SolicitacaoTroca> consulta(SolicitacaoTroca entity) {
+	public List<Troca> consulta(Troca entity) {
 		return repository.consulta(entity);
 	}
 
-	public List<SolicitacaoTroca> consultaPorPedidoItem(Long idPedidoItem) {
-		SolicitacaoTroca filter = new SolicitacaoTroca();
+	public List<Troca> consultaPorPedidoItem(Long idPedidoItem) {
+		Troca filter = new Troca();
 		filter.setIdPedidoItem(idPedidoItem);
 
 		return consulta(filter);
 	}
 
-	public SolicitacaoTroca consultaPorId(Long id) {
+	public Troca consultaPorId(Long id) {
 		try {
 			return repository.consultaPorId(id);
 
@@ -113,8 +126,8 @@ public class SolicitacaoTrocaService {
 	}
 
 	// Util
-	private String registraAuditoria(Long id, SolicitacaoTroca objeto, String codigoEvento, String observacao) {
-		SolicitacaoTrocaAuditoria evento = new SolicitacaoTrocaAuditoria();
+	private String registraAuditoria(Long id, Troca objeto, String codigoEvento, String observacao) {
+		TrocaAuditoria evento = new TrocaAuditoria();
 		evento.setId(UUID.randomUUID().toString());
 		evento.setData(new Date());
 		evento.setIdRelacionado(id);
@@ -122,7 +135,7 @@ public class SolicitacaoTrocaService {
 		evento.setCodigoEvento(codigoEvento);
 		evento.setObservacao(observacao);
 		if (null != objeto) {
-			objeto = (SolicitacaoTroca) ObjectCopier.copy(objeto);
+			objeto = (Troca) ObjectCopier.copy(objeto);
 
 			evento.setObjeto(GsonUtil.gson.toJson(objeto));
 		}

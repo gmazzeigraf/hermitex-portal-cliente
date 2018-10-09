@@ -1,0 +1,116 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/pages/templates/crud_template.xhtml"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions" xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:sec="http://www.springframework.org/security/tags">
+
+	<ui:define name="viewname">	#{labels.menu_troca} / #{labels.menu_troca_solicitacao}
+	</ui:define>
+
+	<ui:define name="search">
+		<c:if test="#{null == trocaController.pedido}">
+			<div class="ui-g">
+				<div class="ui-g-12">
+					<div class="card card-w-title">
+						<h1>Pedidos</h1>
+
+						<p:dataTable id="dtbEntities" widgetVar="dtb" var="entity" value="#{trocaController.pedidos}" rowKey="#{entity.id}" paginator="true"
+							paginatorPosition="bottom" reflow="true" rows="50"
+							emptyMessage="#{null != trocaController.pedidos ? messages.nenhum_resultado_encontrado : messages.realize_pesquisa}"
+							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+
+							<p:column headerText="#" sortBy="#{entity.formattedId}" styleClass="coluna-center">
+								<h:outputText value="#{entity.formattedId}" />
+							</p:column>
+
+							<p:column headerText="# Filial" sortBy="#{entity.idFilial}" styleClass="coluna-center"
+								rendered="#{!sessionController.usuarioFilial and !sessionController.usuarioProprietario}">
+								<h:outputText value="#{entity.idFilial}" />
+							</p:column>
+
+							<p:column headerText="Data" sortBy="#{entity.dataCadastro}" styleClass="coluna-center">
+								<h:outputText value="#{entity.dataCadastro}">
+									<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" timeZone="America/Sao_Paulo" />
+								</h:outputText>
+							</p:column>
+
+							<p:column headerText="Itens" sortBy="#{entity.quantidadeItens}" styleClass="coluna-center">
+								<h:outputText value="#{entity.quantidadeItens}" />
+							</p:column>
+
+							<p:column styleClass="coluna-edicao" exportable="false">
+								<p:commandButton icon="fa fa-fw fa-folder-open" title="#{labels.botao_abrir}" update=":searchForm :editForm" process="@this"
+									resetValues="true" styleClass="ui-grid-col-12" oncomplete="scrollPageTop();">
+									<f:setPropertyActionListener value="#{entity}" target="#{trocaController.selectedPedido}" />
+								</p:commandButton>
+							</p:column>
+
+							<f:facet name="footer">
+								<h:outputText value="#{fn:length(trocaController.pedidos)} pedido(s) encontrado(s)" />
+							</f:facet>
+						</p:dataTable>
+					</div>
+				</div>
+			</div>
+		</c:if>
+	</ui:define>
+
+	<ui:define name="edit">
+		<c:if test="#{null != trocaController.pedido}">
+			<div class="ui-g">
+				<div class="ui-g-12">
+
+					<div class="card card-w-title">
+						<h1>Produto(s)</h1>
+						<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
+							<p:dataTable id="dtbItens" widgetVar="dtb" var="entity" value="#{trocaController.itensPedido}" reflow="true"
+								emptyMessage="#{null != trocaController.itensPedido ? 'Nenhum item encontrado' : ''}" rowIndexVar="index">
+
+								<p:column headerText="" styleClass="id-column" exportable="false">
+									<p:graphicImage cache="true" value="#{sessionController.getUrlImagem(entity.idImagemCapaProduto, 1)}" />
+								</p:column>
+
+								<p:column headerText="Código" styleClass="id-column">
+									<h:outputText value="#{entity.codigoProduto}" />
+								</p:column>
+
+								<p:column headerText="Título" styleClass="coluna-center">
+									<h:outputText value="#{entity.tituloProduto}" />
+								</p:column>
+
+								<p:column headerText="Tamanho" styleClass="id-column">
+									<h:outputText value="#{entity.codigoTamanho}" />
+								</p:column>
+
+								<p:column headerText="Total" styleClass="coluna-valor">
+									<h:outputText value="#{entity.valorCorrigidoTamanho}">
+										<f:convertNumber pattern="R$ #,##0.00" />
+									</h:outputText>
+								</p:column>
+
+								<p:column headerText="Peças" styleClass="id-column">
+									<h:outputText value="#{entity.quantidade}" />
+								</p:column>
+
+								<p:column headerText="Total" styleClass="coluna-valor">
+									<h:outputText value="#{entity.valorTotal}">
+										<f:convertNumber pattern="R$ #,##0.00" />
+									</h:outputText>
+								</p:column>
+							</p:dataTable>
+						</p:panelGrid>
+					</div>
+
+					<p:messages />
+
+					<p:panelGrid columns="6" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
+						<p:commandButton icon="fa fa-fw fa-close" value="#{labels.botao_fechar}" actionListener="#{trocaController.close}" process="@this"
+							update=":searchForm :editForm" styleClass="ui-grid-col-12 botao-fechar" oncomplete="scrollPageTop();" />
+					</p:panelGrid>
+				</div>
+			</div>
+		</c:if>
+	</ui:define>
+
+	<ui:define name="complement">
+	</ui:define>
+</ui:composition>

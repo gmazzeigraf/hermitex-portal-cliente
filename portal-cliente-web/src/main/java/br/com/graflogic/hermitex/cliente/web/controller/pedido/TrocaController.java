@@ -13,14 +13,16 @@ import br.com.graflogic.hermitex.cliente.data.dom.DomAcesso.DomPermissaoAcesso;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Filial;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.Pedido;
-import br.com.graflogic.hermitex.cliente.data.entity.pedido.SolicitacaoTroca;
+import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoItem;
+import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoSimple;
+import br.com.graflogic.hermitex.cliente.data.entity.pedido.Troca;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
 import br.com.graflogic.hermitex.cliente.service.exception.ResultadoNaoEncontradoException;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.FilialService;
 import br.com.graflogic.hermitex.cliente.service.impl.pedido.PedidoService;
-import br.com.graflogic.hermitex.cliente.service.impl.pedido.SolicitacaoTrocaService;
+import br.com.graflogic.hermitex.cliente.service.impl.pedido.TrocaService;
 import br.com.graflogic.hermitex.cliente.web.util.SessionUtil;
 import br.com.graflogic.utilities.presentationutil.controller.CrudBaseController;
 
@@ -31,12 +33,16 @@ import br.com.graflogic.utilities.presentationutil.controller.CrudBaseController
  */
 @Controller
 @Scope("view")
-public class SolicitacaoTrocaController extends CrudBaseController<SolicitacaoTroca, SolicitacaoTroca> implements InitializingBean {
+public class TrocaController extends CrudBaseController<Troca, Troca> implements InitializingBean {
 
 	private static final long serialVersionUID = -8717653202903739039L;
 
+	private static final String VIEW_SOLICITACAO = "troca/solicitacao";
+
+	private static final String VIEW_CONSULTA = "troca/consulta";
+
 	@Autowired
-	private SolicitacaoTrocaService service;
+	private TrocaService service;
 
 	@Autowired
 	private ClienteService clienteService;
@@ -47,25 +53,33 @@ public class SolicitacaoTrocaController extends CrudBaseController<SolicitacaoTr
 	@Autowired
 	private PedidoService pedidoService;
 
+	private List<PedidoSimple> pedidos;
+
 	private List<Cliente> clientes;
 
 	private List<Filial> filiais;
 
 	private Pedido pedido;
 
+	private List<PedidoItem> itensPedido;
+
 	private String observacao;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		try {
-			setFilterEntity(new SolicitacaoTroca());
+			setFilterEntity(new Troca());
 
 			filiais = new ArrayList<>();
+
+			itensPedido = new ArrayList<>();
 
 			getFilterEntity().setIdCliente(SessionUtil.getIdCliente());
 
 			if (SessionUtil.isUsuarioAdministrador()) {
-				clientes = clienteService.consulta(new Cliente());
+				if (isView(VIEW_CONSULTA)) {
+					clientes = clienteService.consulta(new Cliente());
+				}
 
 			} else if (SessionUtil.isUsuarioCliente()) {
 
@@ -74,8 +88,18 @@ public class SolicitacaoTrocaController extends CrudBaseController<SolicitacaoTr
 
 			}
 
-			if (null != getFilterEntity().getIdCliente()) {
+			if (null != getFilterEntity().getIdCliente() && isView(VIEW_CONSULTA)) {
 				changeCliente();
+			}
+
+			if (isView(VIEW_SOLICITACAO)) {
+				PedidoSimple pedidoFilter = new PedidoSimple();
+				pedidoFilter.setIdCliente(getFilterEntity().getIdCliente());
+				pedidoFilter.setIdFilial(getFilterEntity().getIdFilial());
+
+				pedidos = pedidoService.consulta(pedidoFilter);
+
+				beforeAdd();
 			}
 
 		} catch (Throwable t) {
@@ -89,7 +113,7 @@ public class SolicitacaoTrocaController extends CrudBaseController<SolicitacaoTr
 			if (!isEditing()) {
 				service.cadastra(getEntity());
 
-				returnInfoMessage("Solicitação de troca cadastrada com sucesso", null);
+				returnInfoDialogMessage(I18NUtil.getLabel("sucesso"), "Troca de número " + getEntity().getFormattedId() + " solicitada com sucesso");
 			}
 		} catch (DadosInvalidosException e) {
 			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), e.getMessage(), null);
@@ -106,18 +130,7 @@ public class SolicitacaoTrocaController extends CrudBaseController<SolicitacaoTr
 
 	@Override
 	protected void beforeAdd() {
-		if (!isAdicionavel()) {
-			if (SessionUtil.isUsuarioFilial() || SessionUtil.isUsuarioProprietario()) {
-				returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Favor selecionar a filial", null);
-			}
-			if (SessionUtil.isUsuarioCliente()) {
-				returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Favor selecionar o cliente", null);
-			}
-
-			return;
-		}
-
-		setEntity(new SolicitacaoTroca());
+		setEntity(new Troca());
 		getEntity().setIdCliente(getFilterEntity().getIdCliente());
 
 		if (SessionUtil.isUsuarioFilial() || SessionUtil.isUsuarioProprietario()) {
@@ -125,10 +138,11 @@ public class SolicitacaoTrocaController extends CrudBaseController<SolicitacaoTr
 		}
 
 		pedido = null;
+		itensPedido.clear();
 	}
 
 	@Override
-	protected void executeEdit(SolicitacaoTroca entity) {
+	protected void executeEdit(Troca entity) {
 		setEntity(service.consultaPorId(entity.getId()));
 
 		pedido = pedidoService.consultaPorId(getEntity().getIdPedido());
@@ -149,12 +163,17 @@ public class SolicitacaoTrocaController extends CrudBaseController<SolicitacaoTr
 		setEntities(service.consulta(getFilterEntity()));
 	}
 
+	@Override
+	public void close() {
+		beforeAdd();
+	}
+
 	// Fluxo
 	public void finaliza() {
 		try {
 			service.finaliza(getEntity(), observacao);
 
-			returnInfoDialogMessage(I18NUtil.getLabel("sucesso"), "Solicitação de troca marcada como finalizada com sucesso");
+			returnInfoDialogMessage(I18NUtil.getLabel("sucesso"), "Troca marcada como finalizada com sucesso");
 
 			afterOperacao();
 
@@ -162,12 +181,33 @@ public class SolicitacaoTrocaController extends CrudBaseController<SolicitacaoTr
 			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), e.getMessage(), null);
 
 		} catch (DadosDesatualizadosException e) {
-			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Solicitação de troca com dados desatualizados, altere novamente", null);
+			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Troca com dados desatualizados, altere novamente", null);
 
 			select(getEntity().getId());
 
 		} catch (Throwable t) {
-			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao marcar solicitação de troca como finalizada, contate o administrador", t);
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao marcar troca como finalizada, contate o administrador", t);
+		}
+	}
+
+	public void cancela() {
+		try {
+			service.cancela(getEntity(), observacao);
+
+			returnInfoDialogMessage(I18NUtil.getLabel("sucesso"), "Troca marcada como cancelada com sucesso");
+
+			afterOperacao();
+
+		} catch (DadosInvalidosException e) {
+			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), e.getMessage(), null);
+
+		} catch (DadosDesatualizadosException e) {
+			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Troca com dados desatualizados, altere novamente", null);
+
+			select(getEntity().getId());
+
+		} catch (Throwable t) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao marcar troca como cancelada, contate o administrador", t);
 		}
 	}
 
@@ -180,24 +220,20 @@ public class SolicitacaoTrocaController extends CrudBaseController<SolicitacaoTr
 		observacao = null;
 	}
 
-	// Util
-	public void consultaPedido() {
+	// Pedido
+	public void setSelectedPedido(PedidoSimple pedido) {
 		try {
-			pedido = null;
+			this.pedido = pedidoService.consultaPorId(pedido.getId());
 
-			pedido = pedidoService.consultaPorIdClienteFilial(getEntity().getIdPedido(), getEntity().getIdCliente(), getEntity().getIdFilial());
-
-		} catch (ResultadoNaoEncontradoException e) {
-			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Pedido não encontrado", null);
-
-		} catch (DadosInvalidosException e) {
-			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), e.getMessage(), null);
+			this.itensPedido.clear();
+			this.itensPedido.addAll(pedidoService.consultaItensPorPedido(pedido.getId()));
 
 		} catch (Throwable t) {
-			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao consultar pedido, contate o administrador", t);
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao selecionar pedido, contate o administrador", t);
 		}
 	}
 
+	// Util
 	public void changeCliente() {
 		try {
 			setEntities(null);
@@ -227,8 +263,11 @@ public class SolicitacaoTrocaController extends CrudBaseController<SolicitacaoTr
 	}
 
 	public boolean isFinalizavel() {
-		return null != getEntity() && getEntity().isCadastrada()
-				&& SessionUtil.possuiPermissao(DomPermissaoAcesso.ROLE_PEDIDO_SOLICITACAO_TROCA_FINALIZACAO);
+		return null != getEntity() && getEntity().isCadastrada() && SessionUtil.possuiPermissao(DomPermissaoAcesso.ROLE_TROCA_FINALIZACAO);
+	}
+
+	public boolean isCancelavel() {
+		return null != getEntity() && getEntity().isCadastrada() && SessionUtil.possuiPermissao(DomPermissaoAcesso.ROLE_TROCA_CANCELAMENTO);
 	}
 
 	public boolean isPesquisavel() {
@@ -241,6 +280,10 @@ public class SolicitacaoTrocaController extends CrudBaseController<SolicitacaoTr
 	}
 
 	// Getters e Setters
+	public List<PedidoSimple> getPedidos() {
+		return pedidos;
+	}
+
 	public List<Cliente> getClientes() {
 		return clientes;
 	}
@@ -251,6 +294,10 @@ public class SolicitacaoTrocaController extends CrudBaseController<SolicitacaoTr
 
 	public Pedido getPedido() {
 		return pedido;
+	}
+
+	public List<PedidoItem> getItensPedido() {
+		return itensPedido;
 	}
 
 	public String getObservacao() {

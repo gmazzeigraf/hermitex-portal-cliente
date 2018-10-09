@@ -14,8 +14,8 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name = "tb_solicitacao_troca_aud")
-public class SolicitacaoTrocaAuditoria implements Serializable {
+@Table(name = "tb_troca_aud")
+public class TrocaAuditoria implements Serializable {
 
 	private static final long serialVersionUID = -8282551112452789434L;
 
