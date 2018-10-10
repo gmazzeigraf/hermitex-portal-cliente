@@ -16,9 +16,9 @@ import br.com.graflogic.hermitex.cliente.data.entity.pedido.Pedido;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoItem;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoSimple;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.Troca;
+import br.com.graflogic.hermitex.cliente.data.entity.pedido.TrocaItem;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
-import br.com.graflogic.hermitex.cliente.service.exception.ResultadoNaoEncontradoException;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.FilialService;
 import br.com.graflogic.hermitex.cliente.service.impl.pedido.PedidoService;
@@ -59,11 +59,9 @@ public class TrocaController extends CrudBaseController<Troca, Troca> implements
 
 	private List<Filial> filiais;
 
-	private Pedido pedido;
-
-	private List<PedidoItem> itensPedido;
-
 	private String observacao;
+
+	private String textoAceite;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -71,8 +69,6 @@ public class TrocaController extends CrudBaseController<Troca, Troca> implements
 			setFilterEntity(new Troca());
 
 			filiais = new ArrayList<>();
-
-			itensPedido = new ArrayList<>();
 
 			getFilterEntity().setIdCliente(SessionUtil.getIdCliente());
 
@@ -99,7 +95,15 @@ public class TrocaController extends CrudBaseController<Troca, Troca> implements
 
 				pedidos = pedidoService.consulta(pedidoFilter);
 
-				beforeAdd();
+				textoAceite = "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, "
+						+ "eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo."
+						+ " Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni"
+						+ " dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, "
+						+ "consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat "
+						+ "voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? "
+						+ "Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?";
+
+				showDialog("termoDialog");
 			}
 
 		} catch (Throwable t) {
@@ -115,12 +119,15 @@ public class TrocaController extends CrudBaseController<Troca, Troca> implements
 
 				returnInfoDialogMessage(I18NUtil.getLabel("sucesso"), "Troca de número " + getEntity().getFormattedId() + " solicitada com sucesso");
 			}
+
+			close();
+			
 		} catch (DadosInvalidosException e) {
 			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), e.getMessage(), null);
 			return false;
 		}
 
-		return true;
+		return false;
 	}
 
 	@Override
@@ -130,22 +137,11 @@ public class TrocaController extends CrudBaseController<Troca, Troca> implements
 
 	@Override
 	protected void beforeAdd() {
-		setEntity(new Troca());
-		getEntity().setIdCliente(getFilterEntity().getIdCliente());
-
-		if (SessionUtil.isUsuarioFilial() || SessionUtil.isUsuarioProprietario()) {
-			getEntity().setIdFilial(getFilterEntity().getIdFilial());
-		}
-
-		pedido = null;
-		itensPedido.clear();
 	}
 
 	@Override
 	protected void executeEdit(Troca entity) {
 		setEntity(service.consultaPorId(entity.getId()));
-
-		pedido = pedidoService.consultaPorId(getEntity().getIdPedido());
 	}
 
 	@Override
@@ -161,11 +157,6 @@ public class TrocaController extends CrudBaseController<Troca, Troca> implements
 			return;
 		}
 		setEntities(service.consulta(getFilterEntity()));
-	}
-
-	@Override
-	public void close() {
-		beforeAdd();
 	}
 
 	// Fluxo
@@ -221,12 +212,28 @@ public class TrocaController extends CrudBaseController<Troca, Troca> implements
 	}
 
 	// Pedido
-	public void setSelectedPedido(PedidoSimple pedido) {
+	public void setSelectedPedido(PedidoSimple pedidoSimple) {
 		try {
-			this.pedido = pedidoService.consultaPorId(pedido.getId());
+			setEntity(new Troca());
+			getEntity().setIdCliente(getFilterEntity().getIdCliente());
+			getEntity().setItens(new ArrayList<>());
+			getEntity().setIdPedido(pedidoSimple.getId());
 
-			this.itensPedido.clear();
-			this.itensPedido.addAll(pedidoService.consultaItensPorPedido(pedido.getId()));
+			Pedido pedido = pedidoService.consultaPorId(pedidoSimple.getId());
+
+			for (PedidoItem pedidoItem : pedido.getItens()) {
+				TrocaItem item = new TrocaItem();
+				item.setIdPedidoItem(pedidoItem.getId());
+				item.setIdProduto(pedidoItem.getIdProduto());
+				item.setCodigoTamanho(pedidoItem.getCodigoTamanho());
+				item.setQuantidade(0);
+				item.setCodigoProduto(pedidoItem.getCodigoProduto());
+				item.setTituloProduto(pedidoItem.getTituloProduto());
+				item.setIdImagemCapaProduto(pedidoItem.getIdImagemCapaProduto());
+				item.setQuantidadePedido(pedidoItem.getQuantidade());
+
+				getEntity().getItens().add(item);
+			}
 
 		} catch (Throwable t) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao selecionar pedido, contate o administrador", t);
@@ -292,19 +299,15 @@ public class TrocaController extends CrudBaseController<Troca, Troca> implements
 		return filiais;
 	}
 
-	public Pedido getPedido() {
-		return pedido;
-	}
-
-	public List<PedidoItem> getItensPedido() {
-		return itensPedido;
-	}
-
 	public String getObservacao() {
 		return observacao;
 	}
 
 	public void setObservacao(String observacao) {
 		this.observacao = observacao;
+	}
+
+	public String getTextoAceite() {
+		return textoAceite;
 	}
 }

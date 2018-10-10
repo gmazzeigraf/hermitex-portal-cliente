@@ -2,18 +2,23 @@ package br.com.graflogic.hermitex.cliente.data.entity.pedido;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomStatusTroca;
@@ -35,11 +40,8 @@ public class Troca implements Serializable {
 	@Column(name = "id", nullable = false)
 	private Long id;
 
-	@Column(name = "id_pedido_item", nullable = false)
-	private Long idPedidoItem;
-
-	@Column(name = "quantidade", nullable = false)
-	private Integer quantidade;
+	@Column(name = "id_pedido", nullable = false)
+	private Long idPedido;
 
 	@Column(name = "motivo", nullable = false)
 	private String motivo;
@@ -51,24 +53,16 @@ public class Troca implements Serializable {
 	@Column(name = "versao", nullable = false)
 	private Long versao;
 
-	// Apresentacao
-	@Transient
-	private Long idPedido;
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "troca", orphanRemoval = true)
+	@LazyCollection(LazyCollectionOption.TRUE)
+	private List<TrocaItem> itens;
 
+	// Apresentacao
 	@Transient
 	private Date dataCadastro;
 
 	@Transient
-	private String codigoProduto;
-
-	@Transient
-	private String tituloProduto;
-
-	@Transient
-	private String idImagemCapaProduto;
-
-	@Transient
-	private String codigoTamanhoProduto;
+	private Integer quantidadeItens;
 
 	// Filtros
 	@Transient
@@ -91,20 +85,12 @@ public class Troca implements Serializable {
 		this.id = id;
 	}
 
-	public Long getIdPedidoItem() {
-		return idPedidoItem;
+	public Long getIdPedido() {
+		return idPedido;
 	}
 
-	public void setIdPedidoItem(Long idPedidoItem) {
-		this.idPedidoItem = idPedidoItem;
-	}
-
-	public Integer getQuantidade() {
-		return quantidade;
-	}
-
-	public void setQuantidade(Integer quantidade) {
-		this.quantidade = quantidade;
+	public void setIdPedido(Long idPedido) {
+		this.idPedido = idPedido;
 	}
 
 	public String getMotivo() {
@@ -131,12 +117,12 @@ public class Troca implements Serializable {
 		this.versao = versao;
 	}
 
-	public Long getIdPedido() {
-		return idPedido;
+	public List<TrocaItem> getItens() {
+		return itens;
 	}
 
-	public void setIdPedido(Long idPedido) {
-		this.idPedido = idPedido;
+	public void setItens(List<TrocaItem> itens) {
+		this.itens = itens;
 	}
 
 	public Date getDataCadastro() {
@@ -147,36 +133,12 @@ public class Troca implements Serializable {
 		this.dataCadastro = dataCadastro;
 	}
 
-	public String getCodigoProduto() {
-		return codigoProduto;
+	public Integer getQuantidadeItens() {
+		return quantidadeItens;
 	}
 
-	public void setCodigoProduto(String codigoProduto) {
-		this.codigoProduto = codigoProduto;
-	}
-
-	public String getTituloProduto() {
-		return tituloProduto;
-	}
-
-	public void setTituloProduto(String tituloProduto) {
-		this.tituloProduto = tituloProduto;
-	}
-
-	public String getIdImagemCapaProduto() {
-		return idImagemCapaProduto;
-	}
-
-	public void setIdImagemCapaProduto(String idImagemCapaProduto) {
-		this.idImagemCapaProduto = idImagemCapaProduto;
-	}
-
-	public String getCodigoTamanhoProduto() {
-		return codigoTamanhoProduto;
-	}
-
-	public void setCodigoTamanhoProduto(String codigoTamanhoProduto) {
-		this.codigoTamanhoProduto = codigoTamanhoProduto;
+	public void setQuantidadeItens(Integer quantidadeItens) {
+		this.quantidadeItens = quantidadeItens;
 	}
 
 	public Integer getIdCliente() {

@@ -58,8 +58,9 @@
 							<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank">
 								<p:spacer styleClass="display-desktop" />
 								<p:commandButton value="#{labels.botao_pesquisar}" id="searchButton" icon="fa fa-fw fa-search" update="dtbEntities searchMessages"
-									actionListener="#{trocaController.search}" process="@this, filterGrid" oncomplete="PF('dtb').getPaginator().setPage(0);"
-									styleClass="ui-grid-col-4 botao-pesquisar" disabled="#{!trocaController.pesquisavel}" />
+									actionListener="#{trocaController.search}" process="@this, filterGrid"
+									oncomplete="PF('dtb').getPaginator().setPage(0); PF('dtb').clearFilters();" styleClass="ui-grid-col-4 botao-pesquisar"
+									disabled="#{!trocaController.pesquisavel}" />
 							</p:panelGrid>
 
 							<p:messages id="searchMessages" />
@@ -70,41 +71,49 @@
 						</p:panelGrid>
 
 						<p:dataTable id="dtbEntities" widgetVar="dtb" var="entity" value="#{trocaController.entities}" rowKey="#{entity.id}" paginator="true"
-							paginatorPosition="bottom" reflow="true" rows="50"
-							emptyMessage="#{null != trocaController.entities ? messages.nenhum_resultado_encontrado : messages.realize_pesquisa}">
+							paginatorPosition="bottom" reflow="true"
+							emptyMessage="#{null != trocaController.entities ? messages.nenhum_resultado_encontrado : messages.realize_pesquisa}"
+							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters_1} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="20,50,100" rows="20" filterEvent="enter">
 
-							<p:column headerText="#" sortBy="#{entity.formattedId}" styleClass="id-column">
+							<p:column headerText="#" sortBy="#{entity.formattedId}" styleClass="coluna-center" filterable="true" filterBy="#{entity.formattedId}"
+								filterMatchMode="contains">
 								<h:outputText value="#{entity.formattedId}" />
 							</p:column>
 
-							<p:column headerText="Pedido" sortBy="#{entity.formattedIdPedido}" styleClass="id-column">
+							<p:column headerText="Pedido" sortBy="#{entity.formattedIdPedido}" styleClass="coluna-center" filterable="true"
+								filterBy="#{entity.formattedIdPedido}" filterMatchMode="contains">
 								<h:outputText value="#{entity.formattedIdPedido}" />
 							</p:column>
 
-							<p:column headerText="Produto" sortBy="#{entity.codigoProduto} - #{entity.tituloProduto}">
-								<h:outputText value="#{entity.codigoProduto} - #{entity.tituloProduto}" />
-							</p:column>
-
-							<p:column headerText="Tamanho" sortBy="#{entity.codigoTamanhoProduto}" styleClass="valor-column">
-								<h:outputText value="#{entity.codigoTamanhoProduto}" />
-							</p:column>
-
-							<p:column headerText="Data" sortBy="#{entity.dataCadastro}" styleClass="data-hora-column">
+							<p:column headerText="Data" sortBy="#{entity.dataCadastro}" styleClass="coluna-center">
 								<h:outputText value="#{entity.dataCadastro}">
 									<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" timeZone="America/Sao_Paulo" />
 								</h:outputText>
 							</p:column>
 
-							<p:column headerText="Status" sortBy="#{entity.deStatus}" styleClass="status-column">
+							<p:column headerText="Itens" sortBy="#{entity.quantidadeItens}" styleClass="coluna-center">
+								<h:outputText value="#{entity.quantidadeItens}" />
+							</p:column>
+
+							<p:column headerText="Status" sortBy="#{entity.deStatus}" styleClass="coluna-center">
 								<h:outputText value="#{entity.deStatus}" />
 							</p:column>
 
-							<p:column styleClass="coluna-edicao">
-								<p:commandButton icon="fa fa-fw fa-pencil" title="#{labels.botao_editar}" update=":searchForm :editForm" process="@this" resetValues="true"
-									styleClass="ui-grid-col-12">
+							<p:column styleClass="coluna-edicao" exportable="false">
+								<p:commandButton icon="fa fa-fw fa-folder-open" title="#{labels.botao_editar}" update=":searchForm :editForm" process="@this"
+									resetValues="true" styleClass="ui-grid-col-12">
 									<f:setPropertyActionListener value="#{entity}" target="#{trocaController.selectedEntity}" />
 								</p:commandButton>
 							</p:column>
+
+							<f:facet name="{Exporters_1}">
+								<p:commandLink title="Excel" ajax="false" rendered="#{not empty trocaController.entities}"
+									onclick="liberaRefresh(); PrimeFaces.monitorDownload(showStatus, hideStatus);">
+									<i class="fa fa-fw fa-file-excel-o export-buttons"></i>
+									<p:dataExporter type="xlsx" target="dtbEntities" fileName="trocas" pageOnly="false" encoding="ISO-8859-1" />
+								</p:commandLink>
+							</f:facet>
 
 							<f:facet name="footer">
 								<h:outputText value="#{fn:length(trocaController.entities)} registro(s) encontrado(s)" />
@@ -123,26 +132,10 @@
 					<div class="card card-w-title">
 						<h1>#{labels.informacoes}</h1>
 						<p:panelGrid columns="1" id="informacoesGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-10, ui-grid-col-2" layout="grid">
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-2" layout="grid">
 								<p:outputLabel for="pedido" value="Pedido" styleClass="label" />
-								<p:inputNumber id="pedido" value="#{trocaController.entity.idPedido}" styleClass="input-number-resp" required="true"
-									requiredMessage="Favor informar o pedido" decimalPlaces="0" disabled="#{trocaController.editing}" />
-							</p:panelGrid>
-
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<p:outputLabel for="item" value="Item" styleClass="label" />
-								<p:selectOneMenu id="item" value="#{trocaController.entity.idPedidoItem}" styleClass="ui-grid-col-12" filter="true" filterMatchMode="contains"
-									disabled="#{trocaController.editing}">
-									<f:selectItem itemLabel="Selecione" itemValue="" />
-									<f:selectItems value="#{trocaController.pedido.itens}" var="item"
-										itemLabel="#{item.codigoProduto} - #{item.tituloProduto} - #{item.codigoTamanho}" itemValue="#{item.id}" />
-								</p:selectOneMenu>
-							</p:panelGrid>
-
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<p:outputLabel for="quantidade" value="Quantidade" styleClass="label" />
-								<p:inputNumber id="quantidade" value="#{trocaController.entity.quantidade}" styleClass="input-number-resp" required="true"
-									requiredMessage="Favor informar a quantidade" decimalPlaces="0" disabled="#{trocaController.editing}" />
+								<p:inputNumber id="pedido" value="#{trocaController.entity.formattedIdPedido}" styleClass="input-number-resp" required="true"
+									decimalPlaces="0" disabled="true" />
 							</p:panelGrid>
 
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
@@ -150,6 +143,35 @@
 								<p:inputTextarea id="motivo" value="#{trocaController.entity.motivo}" rows="5" maxlength="500" styleClass="ui-grid-col-12" autoResize="false"
 									disabled="true" />
 							</p:panelGrid>
+						</p:panelGrid>
+					</div>
+
+					<div class="card card-w-title">
+						<h1>Produto(s)</h1>
+						<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
+							<p:dataTable id="dtbItens" widgetVar="dtb" var="entity" value="#{trocaController.entity.itens}" reflow="true"
+								emptyMessage="#{null != trocaController.entity.itens ? 'Nenhum item encontrado' : ''}" rowIndexVar="index">
+
+								<p:column headerText="" styleClass="id-column" exportable="false">
+									<p:graphicImage cache="true" value="#{sessionController.getUrlImagem(entity.idImagemCapaProduto, 1)}" />
+								</p:column>
+
+								<p:column headerText="Código" styleClass="id-column">
+									<h:outputText value="#{entity.codigoProduto}" />
+								</p:column>
+
+								<p:column headerText="Título" styleClass="coluna-center">
+									<h:outputText value="#{entity.tituloProduto}" />
+								</p:column>
+
+								<p:column headerText="Tamanho" styleClass="id-column">
+									<h:outputText value="#{entity.codigoTamanho}" />
+								</p:column>
+
+								<p:column headerText="Quantidade" styleClass="id-column">
+									<h:outputText value="#{entity.quantidade}" />
+								</p:column>
+							</p:dataTable>
 						</p:panelGrid>
 					</div>
 

@@ -1,5 +1,6 @@
 package br.com.graflogic.hermitex.cliente.service.impl.pedido;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -17,7 +18,9 @@ import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomStatusTroca;
 import br.com.graflogic.hermitex.cliente.data.entity.aud.TrocaAuditoria;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoItem;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.Troca;
+import br.com.graflogic.hermitex.cliente.data.entity.pedido.TrocaItem;
 import br.com.graflogic.hermitex.cliente.data.impl.aud.TrocaAuditoriaRepository;
+import br.com.graflogic.hermitex.cliente.data.impl.pedido.TrocaItemRepository;
 import br.com.graflogic.hermitex.cliente.data.impl.pedido.TrocaRepository;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
@@ -37,6 +40,9 @@ public class TrocaService {
 	private TrocaRepository repository;
 
 	@Autowired
+	private TrocaItemRepository itemRepository;
+
+	@Autowired
 	private TrocaAuditoriaRepository auditoriaRepository;
 
 	@Autowired
@@ -45,28 +51,59 @@ public class TrocaService {
 	// Fluxo
 	@Transactional(rollbackFor = Throwable.class)
 	public void cadastra(Troca entity) {
-		List<Troca> solicitacoes = consultaPorPedidoItem(entity.getIdPedidoItem());
+		List<TrocaItem> itens = new ArrayList<>();
 
-		PedidoItem pedidoItem = pedidoService.consultaItemPorId(entity.getIdPedidoItem());
-		Integer quantidadeDisponivel = pedidoItem.getQuantidade();
+		for (TrocaItem item : entity.getItens()) {
+			PedidoItem pedidoItem = pedidoService.consultaItemPorId(item.getIdPedidoItem());
+			Integer quantidadeDisponivel = pedidoItem.getQuantidade();
 
-		for (Troca solicitacao : solicitacoes) {
-			quantidadeDisponivel -= solicitacao.getQuantidade();
+			List<TrocaItem> solicitacoes = itemRepository.consultaPorPedidoItem(item.getIdPedidoItem());
+
+			for (TrocaItem solicitacao : solicitacoes) {
+				quantidadeDisponivel -= solicitacao.getQuantidade();
+			}
+
+			if (0 == quantidadeDisponivel) {
+				throw new DadosInvalidosException(
+						"Nenhuma unidade está disponível para troca do item " + item.getTituloProduto() + " no tamanho " + item.getCodigoTamanho());
+
+			} else if (quantidadeDisponivel < item.getQuantidade()) {
+				throw new DadosInvalidosException("Apenas " + quantidadeDisponivel + " unidades estão disponíveis para troca do item "
+						+ item.getTituloProduto() + " no tamanho " + item.getCodigoTamanho());
+
+			}
+
+			if (item.getQuantidade() > 0) {
+				itens.add(item);
+			}
 		}
 
-		if (0 == quantidadeDisponivel) {
-			throw new DadosInvalidosException("Nenhuma unidade está disponível para troca");
-
-		} else if (quantidadeDisponivel < entity.getQuantidade()) {
-			throw new DadosInvalidosException("Apenas " + quantidadeDisponivel + " unidades estão disponíveis para troca");
-
+		if (itens.isEmpty()) {
+			throw new DadosInvalidosException("Ao menos um item deve ser selecionado");
 		}
 
-		entity.setStatus(DomStatusTroca.CADASTRADA);
+		try {
+			entity.setItens(null);
 
-		repository.store(entity);
+			entity.setStatus(DomStatusTroca.CADASTRADA);
 
-		registraAuditoria(entity.getId(), entity, DomEventoAuditoriaTroca.CADASTRO, null);
+			repository.store(entity);
+
+			for (TrocaItem item : itens) {
+				item.setIdTroca(entity.getId());
+			}
+
+			entity.setItens(itens);
+
+			executaAtualiza(entity);
+
+			registraAuditoria(entity.getId(), entity, DomEventoAuditoriaTroca.CADASTRO, null);
+
+		} catch (Throwable t) {
+			entity.setItens(itens);
+
+			throw t;
+		}
 	}
 
 	@Transactional(rollbackFor = Throwable.class)
@@ -109,20 +146,21 @@ public class TrocaService {
 		return repository.consulta(entity);
 	}
 
-	public List<Troca> consultaPorPedidoItem(Long idPedidoItem) {
-		Troca filter = new Troca();
-		filter.setIdPedidoItem(idPedidoItem);
-
-		return consulta(filter);
-	}
-
 	public Troca consultaPorId(Long id) {
 		try {
-			return repository.consultaPorId(id);
+			Troca entity = repository.consultaPorId(id);
+
+			entity.setItens(consultaItens(id));
+
+			return entity;
 
 		} catch (NoResultException e) {
 			throw new ResultadoNaoEncontradoException();
 		}
+	}
+
+	public List<TrocaItem> consultaItens(Long id) {
+		return itemRepository.consultaPorTroca(id);
 	}
 
 	// Util

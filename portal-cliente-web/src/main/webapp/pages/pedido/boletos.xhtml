@@ -44,15 +44,15 @@
 
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 									<p:outputLabel for="dataVencimentoDeFilter" value="Vencimento - De" styleClass="label" />
-									<p:calendar id="dataVencimentoDeFilter" value="#{pedidoBoletoController.filterEntity.dataVencimentoDe}" pattern="dd/MM/yyyy"
-										locale="br" readonlyInput="false" navigator="true" showOn="button" styleClass="resp-calendar" mask="99/99/9999"
+									<p:calendar id="dataVencimentoDeFilter" value="#{pedidoBoletoController.filterEntity.dataVencimentoDe}" pattern="dd/MM/yyyy" locale="br"
+										readonlyInput="false" navigator="true" showOn="button" styleClass="resp-calendar" mask="99/99/9999"
 										converterMessage="Vencimento de inválido" />
 								</p:panelGrid>
 
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 									<p:outputLabel for="dataVencimentoAteFilter" value="Vencimento - Até" styleClass="label" />
-									<p:calendar id="dataVencimentoAteFilter" value="#{pedidoBoletoController.filterEntity.dataVencimentoAte}" pattern="dd/MM/yyyy"
-										locale="br" readonlyInput="false" navigator="true" showOn="button" styleClass="resp-calendar" mask="99/99/9999"
+									<p:calendar id="dataVencimentoAteFilter" value="#{pedidoBoletoController.filterEntity.dataVencimentoAte}" pattern="dd/MM/yyyy" locale="br"
+										readonlyInput="false" navigator="true" showOn="button" styleClass="resp-calendar" mask="99/99/9999"
 										converterMessage="Vencimento até inválido" />
 								</p:panelGrid>
 							</p:panelGrid>
@@ -60,8 +60,9 @@
 							<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank">
 								<p:spacer styleClass="display-desktop" />
 								<p:commandButton value="#{labels.botao_pesquisar}" id="searchButton" icon="fa fa-fw fa-search" update="dtbEntities searchMessages"
-									actionListener="#{pedidoBoletoController.search}" process="@this, filterGrid" oncomplete="PF('dtb').getPaginator().setPage(0);"
-									styleClass="ui-grid-col-4 botao-pesquisar" disabled="#{!pedidoBoletoController.pesquisavel}" />
+									actionListener="#{pedidoBoletoController.search}" process="@this, filterGrid"
+									oncomplete="PF('dtb').getPaginator().setPage(0); PF('dtb').clearFilters();" styleClass="ui-grid-col-4 botao-pesquisar"
+									disabled="#{!pedidoBoletoController.pesquisavel}" />
 							</p:panelGrid>
 
 							<p:messages id="searchMessages" />
@@ -72,15 +73,18 @@
 						</p:panelGrid>
 
 						<p:dataTable id="dtbEntities" widgetVar="dtb" var="entity" value="#{pedidoBoletoController.entities}" rowKey="#{entity.id}" paginator="true"
-							paginatorPosition="bottom" reflow="true" rows="50"
+							paginatorPosition="bottom" reflow="true"
 							emptyMessage="#{null != pedidoBoletoController.entities ? messages.nenhum_resultado_encontrado : messages.realize_pesquisa}"
-							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters_1}">
+							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters_1} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="20,50,100" rows="20" filterEvent="enter">
 
-							<p:column headerText="ID Transação" styleClass="coluna-center">
+							<p:column headerText="ID Transação" styleClass="coluna-center" filterable="true" filterBy="#{entity.idTransacaoPagamento}"
+								filterMatchMode="contains">
 								<h:outputText value="#{entity.idTransacaoPagamento}" />
 							</p:column>
 
-							<p:column headerText="Pedido" sortBy="#{entity.formattedIdPedido}" styleClass="id-column">
+							<p:column headerText="Pedido" sortBy="#{entity.formattedIdPedido}" styleClass="id-column" filterable="true"
+								filterBy="#{entity.formattedIdPedido}" filterMatchMode="contains">
 								<h:outputText value="#{entity.formattedIdPedido}" />
 							</p:column>
 

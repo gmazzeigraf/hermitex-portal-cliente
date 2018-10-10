@@ -70,8 +70,9 @@
 							<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank">
 								<p:spacer styleClass="display-desktop" />
 								<p:commandButton value="#{labels.botao_pesquisar}" id="searchButton" icon="fa fa-fw fa-search" update="dtbEntities searchMessages"
-									actionListener="#{pedidoController.search}" process="@this, filterGrid" oncomplete="PF('dtb').getPaginator().setPage(0);"
-									styleClass="ui-grid-col-4 botao-pesquisar" disabled="#{!pedidoController.pesquisavel}" />
+									actionListener="#{pedidoController.search}" process="@this, filterGrid"
+									oncomplete="PF('dtb').getPaginator().setPage(0); PF('dtb').clearFilters();" styleClass="ui-grid-col-4 botao-pesquisar"
+									disabled="#{!pedidoController.pesquisavel}" />
 							</p:panelGrid>
 
 							<p:messages id="searchMessages" />
@@ -82,11 +83,13 @@
 						</p:panelGrid>
 
 						<p:dataTable id="dtbEntities" widgetVar="dtb" var="entity" value="#{pedidoController.entities}" rowKey="#{entity.id}" paginator="true"
-							paginatorPosition="bottom" reflow="true" rows="50"
+							paginatorPosition="bottom" reflow="true"
 							emptyMessage="#{null != pedidoController.entities ? messages.nenhum_resultado_encontrado : messages.realize_pesquisa}"
-							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters_1}">
+							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters_1} {RowsPerPageDropdown}"
+							rowsPerPageTemplate="20,50,100" rows="20" filterEvent="enter">
 
-							<p:column headerText="#" sortBy="#{entity.formattedId}" styleClass="coluna-center">
+							<p:column headerText="#" sortBy="#{entity.formattedId}" styleClass="coluna-center" filterable="true" filterBy="#{entity.formattedId}"
+								filterMatchMode="contains">
 								<h:outputText value="#{entity.formattedId}" />
 							</p:column>
 

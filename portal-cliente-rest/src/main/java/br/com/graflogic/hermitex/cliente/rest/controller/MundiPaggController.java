@@ -30,16 +30,15 @@ public class MundiPaggController {
 
 	@RequestMapping(value = "/pagamento", method = RequestMethod.POST, consumes = "application/json", produces = "text/html")
 	public @ResponseBody String notificaPagamento(@RequestBody NotificacaoPagamentoRequest requisicao, HttpServletRequest request) {
-		String resposta = "OK";
-
 		try {
 			wrapper.notificaPagamento(requisicao);
 
+			return "OK";
+
 		} catch (Throwable t) {
 			LOGGER.error("Erro ao processar notificacao de pagamento", t);
-			// TODO Trata excecao
-		}
 
-		return resposta;
+			return "NOK";
+		}
 	}
 }

@@ -185,7 +185,7 @@ public class JanelaCompraService {
 				continue;
 			}
 
-			itens.addAll(pedidoService.consultaItensPorPedido(pedido.getId()));
+			itens.addAll(pedidoService.consultaItens(pedido.getId()));
 		}
 
 		// Gera a extracao

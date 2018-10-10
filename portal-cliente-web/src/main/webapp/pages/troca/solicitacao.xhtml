@@ -7,7 +7,7 @@
 	</ui:define>
 
 	<ui:define name="search">
-		<c:if test="#{null == trocaController.pedido}">
+		<c:if test="#{null == trocaController.entity}">
 			<div class="ui-g">
 				<div class="ui-g-12">
 					<div class="card card-w-title">
@@ -38,8 +38,8 @@
 							</p:column>
 
 							<p:column styleClass="coluna-edicao" exportable="false">
-								<p:commandButton icon="fa fa-fw fa-folder-open" title="#{labels.botao_abrir}" update=":searchForm :editForm" process="@this"
-									resetValues="true" styleClass="ui-grid-col-12" oncomplete="scrollPageTop();">
+								<p:commandButton icon="fa fa-fw fa-pencil" title="#{labels.botao_abrir}" update=":searchForm :editForm" process="@this" resetValues="true"
+									styleClass="ui-grid-col-12" oncomplete="scrollPageTop();">
 									<f:setPropertyActionListener value="#{entity}" target="#{trocaController.selectedPedido}" />
 								</p:commandButton>
 							</p:column>
@@ -55,15 +55,14 @@
 	</ui:define>
 
 	<ui:define name="edit">
-		<c:if test="#{null != trocaController.pedido}">
+		<c:if test="#{null != trocaController.entity}">
 			<div class="ui-g">
 				<div class="ui-g-12">
-
 					<div class="card card-w-title">
 						<h1>Produto(s)</h1>
 						<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
-							<p:dataTable id="dtbItens" widgetVar="dtb" var="entity" value="#{trocaController.itensPedido}" reflow="true"
-								emptyMessage="#{null != trocaController.itensPedido ? 'Nenhum item encontrado' : ''}" rowIndexVar="index">
+							<p:dataTable id="dtbItens" widgetVar="dtb" var="entity" value="#{trocaController.entity.itens}" reflow="true"
+								emptyMessage="#{null != trocaController.entity.itens ? 'Nenhum item encontrado' : ''}" rowIndexVar="index">
 
 								<p:column headerText="" styleClass="id-column" exportable="false">
 									<p:graphicImage cache="true" value="#{sessionController.getUrlImagem(entity.idImagemCapaProduto, 1)}" />
@@ -81,28 +80,36 @@
 									<h:outputText value="#{entity.codigoTamanho}" />
 								</p:column>
 
-								<p:column headerText="Total" styleClass="coluna-valor">
-									<h:outputText value="#{entity.valorCorrigidoTamanho}">
-										<f:convertNumber pattern="R$ #,##0.00" />
-									</h:outputText>
+								<p:column headerText="Qtde. Pedido" styleClass="id-column">
+									<h:outputText value="#{entity.quantidadePedido}" />
 								</p:column>
 
-								<p:column headerText="Peças" styleClass="id-column">
-									<h:outputText value="#{entity.quantidade}" />
-								</p:column>
-
-								<p:column headerText="Total" styleClass="coluna-valor">
-									<h:outputText value="#{entity.valorTotal}">
-										<f:convertNumber pattern="R$ #,##0.00" />
-									</h:outputText>
+								<p:column headerText="Qtde. Troca" styleClass="id-column">
+									<p:inputNumber value="#{entity.quantidade}" styleClass="input-number-resp" required="true"
+										requiredMessage="Favor informar a quantidade troca" decimalPlaces="0" />
 								</p:column>
 							</p:dataTable>
+						</p:panelGrid>
+					</div>
+
+					<div class="card card-w-title">
+						<h1>Motivo(s) *</h1>
+
+						<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:inputTextarea id="motivo" value="#{trocaController.entity.motivo}" rows="5" maxlength="500" styleClass="ui-grid-col-12" autoResize="false"
+									required="true" requiredMessage="Favor informar o motivo" validatorMessage="O motivo deve ter ao menos 10 caracteres">
+									<f:validateLength minimum="10" />
+								</p:inputTextarea>
+							</p:panelGrid>
 						</p:panelGrid>
 					</div>
 
 					<p:messages />
 
 					<p:panelGrid columns="6" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
+						<p:commandButton id="submitButton" icon="fa fa-fw fa-save" value="#{labels.botao_gravar}" actionListener="#{trocaController.save}"
+							process=":editForm" update=":editForm :searchForm" styleClass="ui-grid-col-12" />
 						<p:commandButton icon="fa fa-fw fa-close" value="#{labels.botao_fechar}" actionListener="#{trocaController.close}" process="@this"
 							update=":searchForm :editForm" styleClass="ui-grid-col-12 botao-fechar" oncomplete="scrollPageTop();" />
 					</p:panelGrid>
@@ -112,5 +119,24 @@
 	</ui:define>
 
 	<ui:define name="complement">
+		<p:dialog header="Termo" widgetVar="termoDialog" width="90%" height="90%" modal="true" draggable="false" resizable="false" responsive="true"
+			position="top" closable="false">
+			<div class="ui-g">
+				<div class="ui-g-12">
+					<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
+						<h:outputText value="#{trocaController.textoAceite}" escape="false" />
+
+						<p:spacer styleClass="display-desktop" />
+
+						<p:panelGrid columns="3" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
+							<p:spacer />
+
+							<p:commandButton icon="fa fa-fw fa-close" value="Aceito" process="@this" update="@this" onclick="PF('termoDialog').hide();"
+								styleClass="ui-grid-col-12 botao-fechar" />
+						</p:panelGrid>
+					</p:panelGrid>
+				</div>
+			</div>
+		</p:dialog>
 	</ui:define>
 </ui:composition>

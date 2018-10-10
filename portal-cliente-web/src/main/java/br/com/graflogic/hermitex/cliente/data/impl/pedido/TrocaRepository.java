@@ -11,7 +11,6 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Repository;
 
 import br.com.graflogic.hermitex.cliente.data.dom.DomAuditoria.DomEventoAuditoriaTroca;
-import br.com.graflogic.hermitex.cliente.data.dom.DomGeral.DomBoolean;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.Troca;
 import br.com.graflogic.utilities.datautil.repository.BaseRepository;
 
@@ -34,10 +33,9 @@ public class TrocaRepository extends BaseRepository<Troca> {
 		List<Object> params = new ArrayList<>();
 
 		params.add(DomEventoAuditoriaTroca.CADASTRO);
-		params.add(DomBoolean.SIM);
 
 		if (null != filter.getIdPedido() && 0 != filter.getIdPedido()) {
-			where = generateWhere(where, "ped.id = ?");
+			where = generateWhere(where, "tro.id_pedido = ?");
 			params.add(filter.getIdPedido());
 		}
 
@@ -49,11 +47,6 @@ public class TrocaRepository extends BaseRepository<Troca> {
 		if (null != filter.getIdFilial() && 0 != filter.getIdFilial()) {
 			where = generateWhere(where, "ped.id_filial = ?");
 			params.add(filter.getIdFilial());
-		}
-
-		if (null != filter.getIdPedidoItem() && 0 != filter.getIdPedidoItem()) {
-			where = generateWhere(where, "tro.id_pedido_item = ?");
-			params.add(filter.getIdPedidoItem());
 		}
 
 		if (StringUtils.isNotEmpty(filter.getStatus())) {
@@ -98,7 +91,6 @@ public class TrocaRepository extends BaseRepository<Troca> {
 		List<Object> params = new ArrayList<>();
 
 		params.add(DomEventoAuditoriaTroca.CADASTRO);
-		params.add(DomBoolean.SIM);
 
 		where = generateWhere(where, "tro.id = ?");
 		params.add(id);
@@ -115,26 +107,20 @@ public class TrocaRepository extends BaseRepository<Troca> {
 	}
 
 	private String getQuery() {
-		return "SELECT tro.id, tro.id_pedido_item, tro.quantidade, tro.status, tro.versao, ite.id_pedido, aud.data,"
-				+ " pro.codigo, pro.titulo, img.id AS id_imagem, ite.cd_tamanho"
+		return "SELECT tro.id, tro.id_pedido, tro.motivo, tro.status, tro.versao, aud.data, (SELECT COUNT(id) FROM tb_troca_item WHERE id_troca = tro.id)"
 				+ " FROM tb_troca tro INNER JOIN tb_troca_aud aud ON tro.id = aud.id_relacionado AND aud.cd_evento = ?"
-				+ " INNER JOIN tb_pedido_item ite ON ite.id = tro.id_pedido_item INNER JOIN tb_produto pro ON ite.id_produto = pro.id"
-				+ " INNER JOIN tb_produto_imagem img ON pro.id = img.id_produto AND img.in_capa = ? INNER JOIN tb_pedido ped ON ite.id_pedido = ped.id";
+				+ " INNER JOIN tb_pedido ped ON ped.id = tro.id_pedido";
 	}
 
 	private Troca parse(Object[] row) {
 		Troca entity = new Troca();
 		entity.setId(((BigInteger) row[0]).longValue());
-		entity.setIdPedidoItem(((BigInteger) row[1]).longValue());
-		entity.setQuantidade(((Short) row[2]).intValue());
+		entity.setIdPedido(((BigInteger) row[1]).longValue());
+		entity.setMotivo((String) row[2]);
 		entity.setStatus(((Character) row[3]).toString());
 		entity.setVersao(((BigInteger) row[4]).longValue());
-		entity.setIdPedido(((BigInteger) row[5]).longValue());
-		entity.setDataCadastro((Date) row[6]);
-		entity.setCodigoProduto((String) row[7]);
-		entity.setTituloProduto((String) row[8]);
-		entity.setIdImagemCapaProduto((String) row[9]);
-		entity.setCodigoTamanhoProduto((String) row[10]);
+		entity.setDataCadastro((Date) row[5]);
+		entity.setQuantidadeItens(((BigInteger) row[6]).intValue());
 
 		return entity;
 	}

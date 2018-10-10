@@ -335,7 +335,7 @@ public class PedidoService {
 		return entity;
 	}
 
-	public List<PedidoItem> consultaItensPorPedido(Long id) {
+	public List<PedidoItem> consultaItens(Long id) {
 		return itemRepository.consultaPorPedido(id);
 	}
 
@@ -670,7 +670,7 @@ public class PedidoService {
 	}
 
 	private void preencheRelacionados(Pedido entity) {
-		entity.setItens(consultaItensPorPedido(entity.getId()));
+		entity.setItens(consultaItens(entity.getId()));
 		entity.setEnderecos(enderecoRepository.consultaPorPedido(entity.getId()));
 		entity.setFretes(freteRepository.consultaPorPedido(entity.getId()));
 		entity.setBoletos(boletoRepository.consultaPorPedido(entity.getId()));
