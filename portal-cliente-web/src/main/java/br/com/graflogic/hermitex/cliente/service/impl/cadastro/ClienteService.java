@@ -23,9 +23,13 @@ import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.ClienteContato;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.ClienteEndereco;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.ClienteLogotipo;
+import br.com.graflogic.hermitex.cliente.data.entity.cadastro.ClienteParametro;
+import br.com.graflogic.hermitex.cliente.data.entity.cadastro.ClienteParametroPK;
+import br.com.graflogic.hermitex.cliente.data.enums.ParametroClienteEnum;
 import br.com.graflogic.hermitex.cliente.data.impl.aud.ClienteAuditoriaRepository;
 import br.com.graflogic.hermitex.cliente.data.impl.cadastro.ClienteContatoRepository;
 import br.com.graflogic.hermitex.cliente.data.impl.cadastro.ClienteEnderecoRepository;
+import br.com.graflogic.hermitex.cliente.data.impl.cadastro.ClienteParametroRepository;
 import br.com.graflogic.hermitex.cliente.data.impl.cadastro.ClienteRepository;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
@@ -44,6 +48,8 @@ public class ClienteService {
 
 	private static final String CACHE_NAME = "clientes";
 
+	private static final String CACHE_PARAMETRO_NAME = "parametrosClientes";
+
 	@Autowired
 	private ClienteRepository repository;
 
@@ -55,6 +61,9 @@ public class ClienteService {
 
 	@Autowired
 	private ClienteContatoRepository contatoRepository;
+
+	@Autowired
+	private ClienteParametroRepository parametroRepository;
 
 	@Autowired
 	private PerfilUsuarioService perfilUsuarioService;
@@ -182,6 +191,28 @@ public class ClienteService {
 		}
 
 		return (Cliente) ObjectCopier.copy(cacheObj);
+	}
+
+	// Parametro
+	public String consultaParametro(Integer idCliente, ParametroClienteEnum parametro) {
+		String id = idCliente + parametro.toString();
+
+		Object cacheObj = cacheUtil.findOnCache(CACHE_PARAMETRO_NAME, id);
+
+		if (null == cacheObj) {
+			ClienteParametro clienteParametro = parametroRepository.findById(new ClienteParametroPK(idCliente, parametro.toString()));
+
+			if (null == clienteParametro) {
+				throw new ResultadoNaoEncontradoException();
+			}
+
+			// Atualiza o cache
+			cacheUtil.putOnCache(CACHE_PARAMETRO_NAME, id, clienteParametro.getValor());
+
+			cacheObj = clienteParametro.getValor();
+		}
+
+		return (String) cacheObj;
 	}
 
 	// Logotipo

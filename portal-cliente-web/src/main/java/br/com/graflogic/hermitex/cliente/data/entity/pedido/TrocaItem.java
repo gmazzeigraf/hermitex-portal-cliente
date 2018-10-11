@@ -46,6 +46,9 @@ public class TrocaItem implements Serializable {
 	@Column(name = "quantidade", nullable = false)
 	private Integer quantidade;
 
+	@Column(name = "motivo", nullable = false)
+	private String motivo;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_troca", referencedColumnName = "id", insertable = false, updatable = false)
 	private Troca troca;
@@ -109,6 +112,14 @@ public class TrocaItem implements Serializable {
 
 	public void setQuantidade(Integer quantidade) {
 		this.quantidade = quantidade;
+	}
+
+	public String getMotivo() {
+		return motivo;
+	}
+
+	public void setMotivo(String motivo) {
+		this.motivo = motivo;
 	}
 
 	public Troca getTroca() {

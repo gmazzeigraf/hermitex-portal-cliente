@@ -27,6 +27,9 @@
 
 	<cache name="tabelasMedidas" eternal="false" maxElementsInMemory="0" timeToLiveSeconds="3600" overflowToDisk="false" memoryStoreEvictionPolicy="LFU" />
 
+	<cache name="parametrosClientes" eternal="false" maxElementsInMemory="0" timeToLiveSeconds="3600" overflowToDisk="false"
+		memoryStoreEvictionPolicy="LFU" />
+
 	<!-- Produto -->
 	<cache name="setoresProduto" eternal="false" maxElementsInMemory="0" timeToLiveSeconds="3600" overflowToDisk="false" memoryStoreEvictionPolicy="LFU" />
 

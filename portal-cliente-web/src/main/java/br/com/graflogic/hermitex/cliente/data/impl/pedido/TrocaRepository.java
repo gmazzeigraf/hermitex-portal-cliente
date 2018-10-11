@@ -107,7 +107,7 @@ public class TrocaRepository extends BaseRepository<Troca> {
 	}
 
 	private String getQuery() {
-		return "SELECT tro.id, tro.id_pedido, tro.motivo, tro.status, tro.versao, aud.data, (SELECT COUNT(id) FROM tb_troca_item WHERE id_troca = tro.id)"
+		return "SELECT tro.id, tro.id_pedido, tro.status, tro.versao, aud.data, (SELECT COUNT(id) FROM tb_troca_item WHERE id_troca = tro.id)"
 				+ " FROM tb_troca tro INNER JOIN tb_troca_aud aud ON tro.id = aud.id_relacionado AND aud.cd_evento = ?"
 				+ " INNER JOIN tb_pedido ped ON ped.id = tro.id_pedido";
 	}
@@ -116,11 +116,10 @@ public class TrocaRepository extends BaseRepository<Troca> {
 		Troca entity = new Troca();
 		entity.setId(((BigInteger) row[0]).longValue());
 		entity.setIdPedido(((BigInteger) row[1]).longValue());
-		entity.setMotivo((String) row[2]);
-		entity.setStatus(((Character) row[3]).toString());
-		entity.setVersao(((BigInteger) row[4]).longValue());
-		entity.setDataCadastro((Date) row[5]);
-		entity.setQuantidadeItens(((BigInteger) row[6]).intValue());
+		entity.setStatus(((Character) row[2]).toString());
+		entity.setVersao(((BigInteger) row[3]).longValue());
+		entity.setDataCadastro((Date) row[4]);
+		entity.setQuantidadeItens(((BigInteger) row[5]).intValue());
 
 		return entity;
 	}

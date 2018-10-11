@@ -3,6 +3,7 @@ package br.com.graflogic.hermitex.cliente.web.controller.pedido;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -17,8 +18,10 @@ import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoItem;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoSimple;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.Troca;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.TrocaItem;
+import br.com.graflogic.hermitex.cliente.data.enums.ParametroClienteEnum;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
+import br.com.graflogic.hermitex.cliente.service.exception.ResultadoNaoEncontradoException;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.FilialService;
 import br.com.graflogic.hermitex.cliente.service.impl.pedido.PedidoService;
@@ -61,7 +64,7 @@ public class TrocaController extends CrudBaseController<Troca, Troca> implements
 
 	private String observacao;
 
-	private String textoAceite;
+	private String politicaTroca;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -95,15 +98,15 @@ public class TrocaController extends CrudBaseController<Troca, Troca> implements
 
 				pedidos = pedidoService.consulta(pedidoFilter);
 
-				textoAceite = "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, "
-						+ "eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo."
-						+ " Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni"
-						+ " dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, "
-						+ "consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat "
-						+ "voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? "
-						+ "Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?";
+				try {
+					politicaTroca = clienteService.consultaParametro(getFilterEntity().getIdCliente(), ParametroClienteEnum.POLITICA_TROCA);
 
-				showDialog("termoDialog");
+					if (StringUtils.isNotEmpty(politicaTroca)) {
+						showDialog("politicaTrocaDialog");
+					}
+
+				} catch (ResultadoNaoEncontradoException e) {
+				}
 			}
 
 		} catch (Throwable t) {
@@ -121,7 +124,7 @@ public class TrocaController extends CrudBaseController<Troca, Troca> implements
 			}
 
 			close();
-			
+
 		} catch (DadosInvalidosException e) {
 			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), e.getMessage(), null);
 			return false;
@@ -307,7 +310,7 @@ public class TrocaController extends CrudBaseController<Troca, Troca> implements
 		this.observacao = observacao;
 	}
 
-	public String getTextoAceite() {
-		return textoAceite;
+	public String getPoliticaTroca() {
+		return politicaTroca;
 	}
 }

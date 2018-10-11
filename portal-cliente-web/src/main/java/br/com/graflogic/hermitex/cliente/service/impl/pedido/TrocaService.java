@@ -54,6 +54,10 @@ public class TrocaService {
 		List<TrocaItem> itens = new ArrayList<>();
 
 		for (TrocaItem item : entity.getItens()) {
+			if (null == item.getQuantidade() || 0 == item.getQuantidade()) {
+				continue;
+			}
+
 			PedidoItem pedidoItem = pedidoService.consultaItemPorId(item.getIdPedidoItem());
 			Integer quantidadeDisponivel = pedidoItem.getQuantidade();
 
@@ -73,9 +77,7 @@ public class TrocaService {
 
 			}
 
-			if (item.getQuantidade() > 0) {
-				itens.add(item);
-			}
+			itens.add(item);
 		}
 
 		if (itens.isEmpty()) {

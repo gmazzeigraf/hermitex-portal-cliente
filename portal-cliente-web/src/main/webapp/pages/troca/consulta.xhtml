@@ -130,18 +130,12 @@
 			<div class="ui-g">
 				<div class="ui-g-12">
 					<div class="card card-w-title">
-						<h1>#{labels.informacoes}</h1>
-						<p:panelGrid columns="1" id="informacoesGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-2" layout="grid">
-								<p:outputLabel for="pedido" value="Pedido" styleClass="label" />
-								<p:inputNumber id="pedido" value="#{trocaController.entity.formattedIdPedido}" styleClass="input-number-resp" required="true"
-									decimalPlaces="0" disabled="true" />
-							</p:panelGrid>
+						<h1>Pedido</h1>
 
+						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group">
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<p:outputLabel for="motivo" value="Motivo" styleClass="label" />
-								<p:inputTextarea id="motivo" value="#{trocaController.entity.motivo}" rows="5" maxlength="500" styleClass="ui-grid-col-12" autoResize="false"
-									disabled="true" />
+								<h:outputText value="#" styleClass="label" />
+								<h:outputText value="#{trocaController.entity.formattedIdPedido}" />
 							</p:panelGrid>
 						</p:panelGrid>
 					</div>
@@ -170,6 +164,12 @@
 
 								<p:column headerText="Quantidade" styleClass="id-column">
 									<h:outputText value="#{entity.quantidade}" />
+								</p:column>
+
+								<p:column headerText="Motivo">
+									<p:inputTextarea value="#{entity.motivo}" rows="3" maxlength="500" styleClass="ui-grid-col-12" autoResize="false" disabled="true">
+										<f:validateLength minimum="10" />
+									</p:inputTextarea>
 								</p:column>
 							</p:dataTable>
 						</p:panelGrid>
