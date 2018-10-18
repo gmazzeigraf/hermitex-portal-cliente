@@ -43,6 +43,9 @@ public class Troca implements Serializable {
 	@Column(name = "id_pedido", nullable = false)
 	private Long idPedido;
 
+	@Column(name = "motivo")
+	private String motivo;
+
 	@Column(name = "status", nullable = false)
 	private String status;
 
@@ -88,6 +91,14 @@ public class Troca implements Serializable {
 
 	public void setIdPedido(Long idPedido) {
 		this.idPedido = idPedido;
+	}
+
+	public String getMotivo() {
+		return motivo;
+	}
+
+	public void setMotivo(String motivo) {
+		this.motivo = motivo;
 	}
 
 	public String getStatus() {

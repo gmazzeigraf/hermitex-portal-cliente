@@ -10,7 +10,8 @@
 				<div class="ui-g-12">
 					<div class="card card-w-title">
 						<h1>#{labels.consulta}</h1>
-						<p:panelGrid columns="1" id="filterGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
+						<p:panelGrid columns="1" id="filterGrid" layout="grid" styleClass="ui-panelgrid-blank form-group"
+							rendered="#{!sessionController.usuarioFilial and !sessionController.usuarioProprietario}">
 							<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{sessionController.usuarioAdministrador}">
 									<p:outputLabel for="clienteFilter" value="Cliente *" styleClass="label" />
@@ -22,8 +23,7 @@
 									</p:selectOneMenu>
 								</p:panelGrid>
 
-								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid"
-									rendered="#{!sessionController.usuarioFilial and !sessionController.usuarioProprietario}">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 									<p:outputLabel for="filialFilter" value="Filial" styleClass="label" />
 									<p:selectOneMenu id="filialFilter" value="#{trocaController.filterEntity.idFilial}" styleClass="ui-grid-col-12" filter="true"
 										filterMatchMode="contains" disabled="#{!trocaController.clienteSelecionado}">

@@ -107,6 +107,11 @@ public class TrocaController extends CrudBaseController<Troca, Troca> implements
 
 				} catch (ResultadoNaoEncontradoException e) {
 				}
+
+			} else if (isView(VIEW_CONSULTA)) {
+				if (SessionUtil.isUsuarioFilial() || SessionUtil.isUsuarioProprietario()) {
+					search();
+				}
 			}
 
 		} catch (Throwable t) {

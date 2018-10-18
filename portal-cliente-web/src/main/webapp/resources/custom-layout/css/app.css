@@ -209,7 +209,7 @@ input[readonly], input[disabled], textarea[readonly], textarea[disabled] {
 }
 
 input[readonly], input[disabled], textarea[readonly], textarea[disabled], div.ui-state-disabled, div.ui-state-disabled label {
-	background-color: #F5F4F4 !important;
+	background-color: #d8d8d8 !important;
 }
 
 button[disabled] {
