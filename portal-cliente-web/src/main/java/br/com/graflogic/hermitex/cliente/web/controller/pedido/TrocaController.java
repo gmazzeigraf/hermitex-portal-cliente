@@ -1,6 +1,7 @@
 package br.com.graflogic.hermitex.cliente.web.controller.pedido;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -18,6 +19,7 @@ import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoItem;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoSimple;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.Troca;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.TrocaItem;
+import br.com.graflogic.hermitex.cliente.data.entity.produto.ProdutoTamanho;
 import br.com.graflogic.hermitex.cliente.data.enums.ParametroClienteEnum;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
@@ -26,6 +28,7 @@ import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.FilialService;
 import br.com.graflogic.hermitex.cliente.service.impl.pedido.PedidoService;
 import br.com.graflogic.hermitex.cliente.service.impl.pedido.TrocaService;
+import br.com.graflogic.hermitex.cliente.service.impl.produto.ProdutoService;
 import br.com.graflogic.hermitex.cliente.web.util.SessionUtil;
 import br.com.graflogic.utilities.presentationutil.controller.CrudBaseController;
 
@@ -56,6 +59,9 @@ public class TrocaController extends CrudBaseController<Troca, Troca> implements
 	@Autowired
 	private PedidoService pedidoService;
 
+	@Autowired
+	private ProdutoService produtoService;
+
 	private List<PedidoSimple> pedidos;
 
 	private List<Cliente> clientes;
@@ -65,6 +71,10 @@ public class TrocaController extends CrudBaseController<Troca, Troca> implements
 	private String observacao;
 
 	private String politicaTroca;
+
+	private String mensagemConclusao;
+
+	private HashMap<Integer, List<ProdutoTamanho>> tamanhos;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -87,8 +97,16 @@ public class TrocaController extends CrudBaseController<Troca, Troca> implements
 
 			}
 
-			if (null != getFilterEntity().getIdCliente() && isView(VIEW_CONSULTA)) {
-				changeCliente();
+			if (null != getFilterEntity().getIdCliente()) {
+				if (isView(VIEW_CONSULTA)) {
+					changeCliente();
+				}
+
+				try {
+					politicaTroca = clienteService.consultaParametro(getFilterEntity().getIdCliente(), ParametroClienteEnum.POLITICA_TROCA);
+
+				} catch (ResultadoNaoEncontradoException e) {
+				}
 			}
 
 			if (isView(VIEW_SOLICITACAO)) {
@@ -98,14 +116,8 @@ public class TrocaController extends CrudBaseController<Troca, Troca> implements
 
 				pedidos = pedidoService.consulta(pedidoFilter);
 
-				try {
-					politicaTroca = clienteService.consultaParametro(getFilterEntity().getIdCliente(), ParametroClienteEnum.POLITICA_TROCA);
-
-					if (StringUtils.isNotEmpty(politicaTroca)) {
-						showDialog("politicaTrocaDialog");
-					}
-
-				} catch (ResultadoNaoEncontradoException e) {
+				if (StringUtils.isNotEmpty(politicaTroca)) {
+					showDialog("politicaTrocaDialog");
 				}
 
 			} else if (isView(VIEW_CONSULTA)) {
@@ -126,6 +138,8 @@ public class TrocaController extends CrudBaseController<Troca, Troca> implements
 				service.cadastra(getEntity());
 
 				returnInfoDialogMessage(I18NUtil.getLabel("sucesso"), "Troca de número " + getEntity().getFormattedId() + " solicitada com sucesso");
+
+				// TODO Apresentar conteudo de conclusao
 			}
 
 			close();
@@ -227,20 +241,28 @@ public class TrocaController extends CrudBaseController<Troca, Troca> implements
 			getEntity().setItens(new ArrayList<>());
 			getEntity().setIdPedido(pedidoSimple.getId());
 
-			Pedido pedido = pedidoService.consultaPorId(pedidoSimple.getId());
+			Pedido pedido = pedidoService.consultaCompletoPorId(pedidoSimple.getId());
+
+			tamanhos = new HashMap<>();
 
 			for (PedidoItem pedidoItem : pedido.getItens()) {
+				Integer idProduto = pedidoItem.getIdProduto();
+
 				TrocaItem item = new TrocaItem();
 				item.setIdPedidoItem(pedidoItem.getId());
-				item.setIdProduto(pedidoItem.getIdProduto());
-				item.setCodigoTamanho(pedidoItem.getCodigoTamanho());
+				item.setIdProduto(idProduto);
 				item.setQuantidade(0);
 				item.setCodigoProduto(pedidoItem.getCodigoProduto());
 				item.setTituloProduto(pedidoItem.getTituloProduto());
 				item.setIdImagemCapaProduto(pedidoItem.getIdImagemCapaProduto());
 				item.setQuantidadePedido(pedidoItem.getQuantidade());
+				item.setCodigoTamanhoPedido(pedidoItem.getCodigoTamanho());
 
 				getEntity().getItens().add(item);
+
+				if (!tamanhos.containsKey(idProduto)) {
+					tamanhos.put(idProduto, produtoService.consultaCompletoPorId(idProduto).getTamanhos());
+				}
 			}
 
 		} catch (Throwable t) {
@@ -317,5 +339,13 @@ public class TrocaController extends CrudBaseController<Troca, Troca> implements
 
 	public String getPoliticaTroca() {
 		return politicaTroca;
+	}
+
+	public String getMensagemConclusao() {
+		return mensagemConclusao;
+	}
+
+	public List<ProdutoTamanho> getTamanhos(Integer idProduto) {
+		return tamanhos.get(idProduto);
 	}
 }

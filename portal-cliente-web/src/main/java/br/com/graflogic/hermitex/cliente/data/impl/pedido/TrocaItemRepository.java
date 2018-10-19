@@ -80,10 +80,11 @@ public class TrocaItemRepository extends BaseRepository<TrocaItem> {
 	}
 
 	private String getQuery() {
-		return "SELECT ite.id, ite.id_troca, ite.id_pedido_item, ite.id_produto, ite.cd_tamanho, ite.quantidade, ite.motivo, pei.quantidade AS quantidade_pedido, pro.codigo, pro.titulo, img.id AS id_imagem"
+		return "SELECT ite.id, ite.id_troca, ite.id_pedido_item, ite.id_produto, ite.quantidade, ite.cd_tamanho, ite.motivo, pei.quantidade AS quantidade_pedido, pei.cd_tamanho AS cd_tamanho_pedido,"
+				+ " pro.codigo, pro.titulo, img.id AS id_imagem"
 				+ " FROM tb_troca_item ite INNER JOIN tb_produto pro ON ite.id_produto = pro.id INNER JOIN tb_pedido_item pei ON pei.id = ite.id_pedido_item"
 				+ " INNER JOIN tb_produto_imagem img ON pro.id = img.id_produto AND img.in_capa = ?"
-				+ " INNER JOIN tb_tamanho_produto tam ON tam.codigo = ite.cd_tamanho";
+				+ " LEFT JOIN tb_tamanho_produto tam ON tam.codigo = ite.cd_tamanho";
 	}
 
 	private TrocaItem parseEntity(Object[] row) {
@@ -92,13 +93,14 @@ public class TrocaItemRepository extends BaseRepository<TrocaItem> {
 		entity.setIdTroca(((BigInteger) row[1]).longValue());
 		entity.setIdPedidoItem(((BigInteger) row[2]).longValue());
 		entity.setIdProduto((Integer) row[3]);
-		entity.setCodigoTamanho((String) row[4]);
-		entity.setQuantidade(((Short) row[5]).intValue());
+		entity.setQuantidade(((Short) row[4]).intValue());
+		entity.setCodigoTamanho((String) row[5]);
 		entity.setMotivo((String) row[6]);
 		entity.setQuantidadePedido(((Short) row[7]).intValue());
-		entity.setCodigoProduto((String) row[8]);
-		entity.setTituloProduto((String) row[9]);
-		entity.setIdImagemCapaProduto((String) row[10]);
+		entity.setCodigoTamanhoPedido((String) row[8]);
+		entity.setCodigoProduto((String) row[9]);
+		entity.setTituloProduto((String) row[10]);
+		entity.setIdImagemCapaProduto((String) row[11]);
 
 		return entity;
 	}

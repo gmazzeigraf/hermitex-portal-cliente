@@ -40,13 +40,13 @@ public class TrocaItem implements Serializable {
 	@Column(name = "id_produto", nullable = false)
 	private Integer idProduto;
 
-	@Column(name = "cd_tamanho", nullable = false)
-	private String codigoTamanho;
-
 	@Column(name = "quantidade", nullable = false)
 	private Integer quantidade;
 
-	@Column(name = "motivo", nullable = false)
+	@Column(name = "cd_tamanho")
+	private String codigoTamanho;
+
+	@Column(name = "motivo")
 	private String motivo;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -65,6 +65,9 @@ public class TrocaItem implements Serializable {
 
 	@Transient
 	private Integer quantidadePedido;
+
+	@Transient
+	private String codigoTamanhoPedido;
 
 	public Long getId() {
 		return id;
@@ -98,20 +101,20 @@ public class TrocaItem implements Serializable {
 		this.idProduto = idProduto;
 	}
 
-	public String getCodigoTamanho() {
-		return codigoTamanho;
-	}
-
-	public void setCodigoTamanho(String codigoTamanho) {
-		this.codigoTamanho = codigoTamanho;
-	}
-
 	public Integer getQuantidade() {
 		return quantidade;
 	}
 
 	public void setQuantidade(Integer quantidade) {
 		this.quantidade = quantidade;
+	}
+
+	public String getCodigoTamanho() {
+		return codigoTamanho;
+	}
+
+	public void setCodigoTamanho(String codigoTamanho) {
+		this.codigoTamanho = codigoTamanho;
 	}
 
 	public String getMotivo() {
@@ -160,5 +163,13 @@ public class TrocaItem implements Serializable {
 
 	public void setQuantidadePedido(Integer quantidadePedido) {
 		this.quantidadePedido = quantidadePedido;
+	}
+
+	public String getCodigoTamanhoPedido() {
+		return codigoTamanhoPedido;
+	}
+
+	public void setCodigoTamanhoPedido(String codigoTamanhoPedido) {
+		this.codigoTamanhoPedido = codigoTamanhoPedido;
 	}
 }

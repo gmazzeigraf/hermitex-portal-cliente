@@ -53,6 +53,14 @@
 										readonlyInput="false" navigator="true" showOn="button" styleClass="resp-calendar" mask="99/99/9999 99:99:99"
 										converterMessage="Data até inválida" />
 								</p:panelGrid>
+								
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="defeitoFabricacaoFilter" value="Defeito de fabricação" styleClass="label" />
+									<p:selectOneMenu id="defeitoFabricacaoFilter" value="#{trocaController.filterEntity.defeitoFabricacao}" styleClass="ui-grid-col-12">
+										<f:selectItem itemLabel="" itemValue="" />
+										<f:selectItems value="#{domGeralController.booleanMap}" />
+									</p:selectOneMenu>
+								</p:panelGrid>
 							</p:panelGrid>
 
 							<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank">
@@ -94,6 +102,10 @@
 
 							<p:column headerText="Itens" sortBy="#{entity.quantidadeItens}" styleClass="coluna-center">
 								<h:outputText value="#{entity.quantidadeItens}" />
+							</p:column>
+							
+							<p:column headerText="Defeito de fabricação" sortBy="#{entity.deDefeitoFabricacao}" styleClass="coluna-center">
+								<h:outputText value="#{entity.deDefeitoFabricacao}" />
 							</p:column>
 
 							<p:column headerText="Status" sortBy="#{entity.deStatus}" styleClass="coluna-center">
@@ -141,6 +153,25 @@
 					</div>
 
 					<div class="card card-w-title">
+						<h1>Motivo(s)</h1>
+
+						<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel for="defeitoFabricacao" value="Defeito de fabricação?" styleClass="label" />
+								<p:selectOneMenu id="defeitoFabricacao" value="#{trocaController.entity.defeitoFabricacao}" disabled="true" styleClass="ui-grid-col-12">
+									<f:selectItems value="#{domGeralController.booleanMap}" />
+								</p:selectOneMenu>
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:inputTextarea value="#{trocaController.entity.motivo}" rows="5" maxlength="500" styleClass="ui-grid-col-12" autoResize="false"
+									disabled="true" rendered="#{'S' eq trocaController.entity.defeitoFabricacao}">
+								</p:inputTextarea>
+							</p:panelGrid>
+						</p:panelGrid>
+					</div>
+
+					<div class="card card-w-title">
 						<h1>Produto(s)</h1>
 						<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
 							<p:dataTable id="dtbItens" widgetVar="dtb" var="entity" value="#{trocaController.entity.itens}" reflow="true"
@@ -158,15 +189,19 @@
 									<h:outputText value="#{entity.tituloProduto}" />
 								</p:column>
 
-								<p:column headerText="Tamanho" styleClass="id-column">
-									<h:outputText value="#{entity.codigoTamanho}" />
-								</p:column>
-
 								<p:column headerText="Quantidade" styleClass="id-column">
 									<h:outputText value="#{entity.quantidade}" />
 								</p:column>
 
-								<p:column headerText="Motivo">
+								<p:column headerText="Tamanho Pedido" styleClass="valor-column">
+									<h:outputText value="#{entity.codigoTamanhoPedido}" />
+								</p:column>
+
+								<p:column headerText="Tamanho Troca" styleClass="valor-column" rendered="#{'N' eq trocaController.entity.defeitoFabricacao}">
+									<h:outputText value="#{entity.codigoTamanho}" />
+								</p:column>
+
+								<p:column headerText="Motivo" rendered="false">
 									<p:inputTextarea value="#{entity.motivo}" rows="3" maxlength="500" styleClass="ui-grid-col-12" autoResize="false" disabled="true">
 										<f:validateLength minimum="10" />
 									</p:inputTextarea>

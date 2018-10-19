@@ -38,7 +38,7 @@ public class PedidoBoletoController extends SearchBaseController<PedidoBoleto, P
 
 	@Autowired
 	private FilialService filialService;
-	
+
 	@Autowired
 	private PedidoService pedidoService;
 
@@ -71,7 +71,7 @@ public class PedidoBoletoController extends SearchBaseController<PedidoBoleto, P
 	@Override
 	protected void select(PedidoBoleto entity) {
 		setEntity(service.consultaPorId(entity.getId()));
-		
+
 		Pedido pedido = pedidoService.consultaPorId(entity.getIdPedido());
 
 		cliente = clienteService.consultaPorId(pedido.getIdCliente());

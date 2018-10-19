@@ -308,22 +308,18 @@ public class PedidoService {
 		return consulta(filter);
 	}
 
-	public Pedido consultaPorIdClienteFilial(Long id, Integer idCliente, Integer idFilial) {
-		Pedido pedido = consultaPorId(id);
+	public Pedido consultaPorId(Long id) {
+		Pedido entity = repository.findById(id);
 
-		if (!idCliente.equals(pedido.getIdCliente())) {
+		if (null == entity) {
 			throw new ResultadoNaoEncontradoException();
 		}
 
-		if (null != idFilial && 0 != idFilial && !idFilial.equals(pedido.getIdFilial())) {
-			throw new ResultadoNaoEncontradoException();
-		}
-
-		return pedido;
+		return entity;
 	}
 
 	@Transactional(readOnly = true)
-	public synchronized Pedido consultaPorId(Long id) {
+	public synchronized Pedido consultaCompletoPorId(Long id) {
 		Pedido entity = repository.findById(id);
 
 		if (null == entity) {
