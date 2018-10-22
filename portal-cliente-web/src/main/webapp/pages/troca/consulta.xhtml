@@ -53,12 +53,12 @@
 										readonlyInput="false" navigator="true" showOn="button" styleClass="resp-calendar" mask="99/99/9999 99:99:99"
 										converterMessage="Data até inválida" />
 								</p:panelGrid>
-								
+
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-									<p:outputLabel for="defeitoFabricacaoFilter" value="Defeito de fabricação" styleClass="label" />
-									<p:selectOneMenu id="defeitoFabricacaoFilter" value="#{trocaController.filterEntity.defeitoFabricacao}" styleClass="ui-grid-col-12">
+									<p:outputLabel for="tipoFilter" value="Tipo" styleClass="label" />
+									<p:selectOneMenu id="tipoFilter" value="#{trocaController.filterEntity.tipo}" styleClass="ui-grid-col-12">
 										<f:selectItem itemLabel="" itemValue="" />
-										<f:selectItems value="#{domGeralController.booleanMap}" />
+										<f:selectItems value="#{domPedidoController.tipoTrocaMap}" />
 									</p:selectOneMenu>
 								</p:panelGrid>
 							</p:panelGrid>
@@ -103,9 +103,9 @@
 							<p:column headerText="Itens" sortBy="#{entity.quantidadeItens}" styleClass="coluna-center">
 								<h:outputText value="#{entity.quantidadeItens}" />
 							</p:column>
-							
-							<p:column headerText="Defeito de fabricação" sortBy="#{entity.deDefeitoFabricacao}" styleClass="coluna-center">
-								<h:outputText value="#{entity.deDefeitoFabricacao}" />
+
+							<p:column headerText="Tipo" sortBy="#{entity.deTipo}" styleClass="coluna-center">
+								<h:outputText value="#{entity.deTipo}" />
 							</p:column>
 
 							<p:column headerText="Status" sortBy="#{entity.deStatus}" styleClass="coluna-center">
@@ -157,15 +157,12 @@
 
 						<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<p:outputLabel for="defeitoFabricacao" value="Defeito de fabricação?" styleClass="label" />
-								<p:selectOneMenu id="defeitoFabricacao" value="#{trocaController.entity.defeitoFabricacao}" disabled="true" styleClass="ui-grid-col-12">
-									<f:selectItems value="#{domGeralController.booleanMap}" />
-								</p:selectOneMenu>
+								<h:outputText value="#{trocaController.entity.deTipo}" styleClass="label" />
 							</p:panelGrid>
 
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 								<p:inputTextarea value="#{trocaController.entity.motivo}" rows="5" maxlength="500" styleClass="ui-grid-col-12" autoResize="false"
-									disabled="true" rendered="#{'S' eq trocaController.entity.defeitoFabricacao}">
+									disabled="true" rendered="#{'F' eq trocaController.entity.tipo}">
 								</p:inputTextarea>
 							</p:panelGrid>
 						</p:panelGrid>
@@ -197,7 +194,7 @@
 									<h:outputText value="#{entity.codigoTamanhoPedido}" />
 								</p:column>
 
-								<p:column headerText="Tamanho Troca" styleClass="valor-column" rendered="#{'N' eq trocaController.entity.defeitoFabricacao}">
+								<p:column headerText="Tamanho Troca" styleClass="valor-column" rendered="#{'T' eq trocaController.entity.tipo}">
 									<h:outputText value="#{entity.codigoTamanho}" />
 								</p:column>
 

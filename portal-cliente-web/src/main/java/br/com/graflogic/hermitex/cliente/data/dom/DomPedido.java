@@ -107,6 +107,18 @@ public class DomPedido {
 
 	public static DomStatusJanelaCompra domStatusJanelaCompra = new DomStatusJanelaCompra();
 
+	public static class DomTipoTroca extends DomBase {
+		public static final String POR_TAMANHO = "T";
+		public static final String FALHA_FABRICACAO = "F";
+
+		DomTipoTroca() {
+			mapa.put(POR_TAMANHO, "Troca por tamanho");
+			mapa.put(FALHA_FABRICACAO, "Falha na fabricação (Vício ou Defeito)");
+		}
+	}
+
+	public static DomTipoTroca domTipoTroca = new DomTipoTroca();
+
 	public static class DomStatusTroca extends DomBase {
 		public static final String CADASTRADA = "C";
 		public static final String FINALIZADA = "F";

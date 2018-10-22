@@ -73,27 +73,28 @@
 						<h1>Motivo(s)</h1>
 
 						<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<p:outputLabel for="defeitoFabricacao" value="Defeito de fabricação?" styleClass="label" />
-								<p:selectOneMenu id="defeitoFabricacao" value="#{trocaController.entity.defeitoFabricacao}"
-									disabled="#{null != trocaController.entity.defeitoFabricacao}" styleClass="ui-grid-col-12">
-									<f:selectItem itemLabel="Selecione" itemValue="" />
-									<f:selectItems value="#{domGeralController.booleanMap}" />
-									<p:ajax process="@this" update=":editForm" />
-								</p:selectOneMenu>
+							<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:selectOneMenu id="tipoTroca" value="#{trocaController.entity.tipo}"
+										disabled="#{null != trocaController.entity.tipo}" styleClass="ui-grid-col-12">
+										<f:selectItem itemLabel="Selecione" itemValue="" />
+										<f:selectItems value="#{domPedidoController.tipoTrocaMap}" />
+										<p:ajax process="@this" update=":editForm" />
+									</p:selectOneMenu>
+								</p:panelGrid>
 							</p:panelGrid>
 
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 								<p:inputTextarea value="#{trocaController.entity.motivo}" rows="5" maxlength="500" styleClass="ui-grid-col-12" autoResize="false"
 									required="true" requiredMessage="Favor informar o motivo" validatorMessage="O motivo deve ter ao menos 10 caracteres"
-									rendered="#{'S' eq trocaController.entity.defeitoFabricacao}" placeholder="Descreva o motivo">
+									rendered="#{'F' eq trocaController.entity.tipo}" placeholder="Descreva o motivo">
 									<f:validateLength minimum="10" />
 								</p:inputTextarea>
 							</p:panelGrid>
 						</p:panelGrid>
 					</div>
 
-					<c:if test="#{null != trocaController.entity.defeitoFabricacao}">
+					<c:if test="#{null != trocaController.entity.tipo}">
 						<div class="card card-w-title">
 							<h1>Produto(s)</h1>
 							<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
@@ -126,7 +127,7 @@
 										<h:outputText value="#{entity.codigoTamanhoPedido}" />
 									</p:column>
 
-									<p:column headerText="Tamanho Troca" styleClass="valor-column" rendered="#{'N' eq trocaController.entity.defeitoFabricacao}">
+									<p:column headerText="Tamanho Troca" styleClass="valor-column" rendered="#{'T' eq trocaController.entity.tipo}">
 										<p:selectOneMenu value="#{entity.codigoTamanho}" styleClass="ui-grid-col-12"
 											disabled="#{null == entity.quantidade or entity.quantidade lt 1}" required="true" requiredMessage="Favor selecionar o tamanho">
 											<f:selectItem itemLabel="Selecione" itemValue="" />
@@ -151,7 +152,7 @@
 						<p:panelGrid columns="6" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
 							<p:commandButton id="submitButton" icon="fa fa-fw fa-save" value="#{labels.botao_gravar}" actionListener="#{trocaController.save}"
 								process=":editForm" update=":editForm :searchForm" styleClass="ui-grid-col-12" />
-							<p:commandButton icon="fa fa-fw fa-close" value="#{labels.botao_fechar}" actionListener="#{trocaController.close}" process="@this"
+							<p:commandButton icon="fa fa-fw fa-close" value="Pedidos" actionListener="#{trocaController.close}" process="@this"
 								update=":searchForm :editForm" styleClass="ui-grid-col-12 botao-fechar" oncomplete="scrollPageTop();" />
 						</p:panelGrid>
 
@@ -165,7 +166,7 @@
 		<p:dialog header="Política de Troca" widgetVar="politicaTrocaDialog" modal="true" draggable="false" resizable="false" responsive="true"
 			position="top" closable="false" dynamic="true">
 			<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group"
-				style="height: 70vh; width: 70vw; overflow-y: scroll; overflow-x: scroll;">
+				style="max-height: 70vh; width: 75vw; overflow-y: scroll; overflow-x: scroll;">
 				<h:outputText value="#{trocaController.politicaTroca}" escape="false" />
 
 				<p:spacer styleClass="display-desktop" />

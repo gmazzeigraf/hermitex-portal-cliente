@@ -13,14 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.graflogic.base.service.gson.GsonUtil;
-import br.com.graflogic.hermitex.cliente.data.dom.DomAcesso.DomStatusUsuario;
 import br.com.graflogic.hermitex.cliente.data.dom.DomAuditoria.DomEventoAuditoriaTroca;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomStatusTroca;
-import br.com.graflogic.hermitex.cliente.data.entity.acesso.Usuario;
-import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioCliente;
-import br.com.graflogic.hermitex.cliente.data.entity.acesso.UsuarioFilial;
 import br.com.graflogic.hermitex.cliente.data.entity.aud.TrocaAuditoria;
-import br.com.graflogic.hermitex.cliente.data.entity.pedido.Pedido;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoItem;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.Troca;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.TrocaItem;
@@ -30,8 +25,6 @@ import br.com.graflogic.hermitex.cliente.data.impl.pedido.TrocaRepository;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
 import br.com.graflogic.hermitex.cliente.service.exception.ResultadoNaoEncontradoException;
-import br.com.graflogic.hermitex.cliente.service.impl.acesso.UsuarioService;
-import br.com.graflogic.hermitex.cliente.service.impl.auxiliar.NotificacaoService;
 import br.com.graflogic.hermitex.cliente.web.util.SessionUtil;
 import br.com.graflogic.utilities.datautil.copy.ObjectCopier;
 
@@ -54,12 +47,6 @@ public class TrocaService {
 
 	@Autowired
 	private PedidoService pedidoService;
-
-	@Autowired
-	private UsuarioService usuarioService;
-
-	@Autowired
-	private NotificacaoService notificacaoService;
 
 	// Fluxo
 	@Transactional(rollbackFor = Throwable.class)
@@ -113,49 +100,6 @@ public class TrocaService {
 			executaAtualiza(entity);
 
 			registraAuditoria(entity.getId(), entity, DomEventoAuditoriaTroca.CADASTRO, null);
-
-			// Consulta o pedido
-			Pedido pedido = pedidoService.consultaPorId(entity.getIdPedido());
-
-			List<Usuario> usuariosNotificacao = new ArrayList<>();
-			if (null != pedido.getIdFilial()) {
-				// Consulta os proprietarios da filial
-				List<Usuario> proprietarios = usuarioService.consultaProprietariosPorFilial(pedido.getIdFilial());
-
-				usuariosNotificacao.addAll(proprietarios);
-
-				// Consulta os usuarios da filial
-				UsuarioFilial filter = new UsuarioFilial();
-				filter.setIdFilial(pedido.getIdFilial());
-				filter.setStatus(DomStatusUsuario.ATIVO);
-
-				List<Usuario> usuarios = usuarioService.consulta(filter);
-
-				usuariosNotificacao.addAll(usuarios);
-
-			} else {
-				// Consulta os usuarios do cliente
-				UsuarioCliente filter = new UsuarioCliente();
-				filter.setIdCliente(pedido.getIdCliente());
-				filter.setStatus(DomStatusUsuario.ATIVO);
-
-				List<Usuario> usuarios = usuarioService.consulta(filter);
-
-				usuariosNotificacao.addAll(usuarios);
-			}
-
-			// TODO Caso tenha usuarios ativos, envia notificacao
-			if (!usuariosNotificacao.isEmpty()) {
-				List<String> destinatarios = new ArrayList<>();
-				for (Usuario usuario : usuariosNotificacao) {
-					destinatarios.add(usuario.getEmail());
-				}
-
-				String titulo = "Título da troca";
-				String conteudo = "Conteúdo da troca";
-
-				notificacaoService.enviaEmail(titulo, conteudo, destinatarios, null);
-			}
 
 		} catch (Throwable t) {
 			entity.setItens(itens);

@@ -48,10 +48,10 @@ public class TrocaRepository extends BaseRepository<Troca> {
 			where = generateWhere(where, "ped.id_filial = ?");
 			params.add(filter.getIdFilial());
 		}
-		
-		if (StringUtils.isNotEmpty(filter.getDefeitoFabricacao())) {
-			where = generateWhere(where, "tro.in_defeito_fabricacao = ?");
-			params.add(filter.getDefeitoFabricacao());
+
+		if (StringUtils.isNotEmpty(filter.getTipo())) {
+			where = generateWhere(where, "tro.tipo = ?");
+			params.add(filter.getTipo());
 		}
 
 		if (StringUtils.isNotEmpty(filter.getStatus())) {
@@ -112,7 +112,7 @@ public class TrocaRepository extends BaseRepository<Troca> {
 	}
 
 	private String getQuery() {
-		return "SELECT tro.id, tro.id_pedido, tro.in_defeito_fabricacao, tro.motivo, tro.status, tro.versao, aud.data, (SELECT COUNT(id) FROM tb_troca_item WHERE id_troca = tro.id)"
+		return "SELECT tro.id, tro.id_pedido, tro.tipo, tro.motivo, tro.status, tro.versao, aud.data, (SELECT COUNT(id) FROM tb_troca_item WHERE id_troca = tro.id)"
 				+ " FROM tb_troca tro INNER JOIN tb_troca_aud aud ON tro.id = aud.id_relacionado AND aud.cd_evento = ?"
 				+ " INNER JOIN tb_pedido ped ON ped.id = tro.id_pedido";
 	}
@@ -121,7 +121,7 @@ public class TrocaRepository extends BaseRepository<Troca> {
 		Troca entity = new Troca();
 		entity.setId(((BigInteger) row[0]).longValue());
 		entity.setIdPedido(((BigInteger) row[1]).longValue());
-		entity.setDefeitoFabricacao(((Character) row[2]).toString());
+		entity.setTipo(((Character) row[2]).toString());
 		entity.setMotivo((String) row[3]);
 		entity.setStatus(((Character) row[4]).toString());
 		entity.setVersao(((BigInteger) row[5]).longValue());

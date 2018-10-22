@@ -20,7 +20,6 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
-import br.com.graflogic.hermitex.cliente.data.dom.DomGeral;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomStatusTroca;
 
@@ -44,8 +43,8 @@ public class Troca implements Serializable {
 	@Column(name = "id_pedido", nullable = false)
 	private Long idPedido;
 
-	@Column(name = "in_defeito_fabricacao", nullable = false)
-	private String defeitoFabricacao;
+	@Column(name = "tipo", nullable = false)
+	private String tipo;
 
 	@Column(name = "motivo")
 	private String motivo;
@@ -97,12 +96,12 @@ public class Troca implements Serializable {
 		this.idPedido = idPedido;
 	}
 
-	public String getDefeitoFabricacao() {
-		return defeitoFabricacao;
+	public String getTipo() {
+		return tipo;
 	}
 
-	public void setDefeitoFabricacao(String defeitoFabricacao) {
-		this.defeitoFabricacao = defeitoFabricacao;
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
 	}
 
 	public String getMotivo() {
@@ -185,8 +184,8 @@ public class Troca implements Serializable {
 		this.dataCadastroAte = dataCadastroAte;
 	}
 
-	public String getDeDefeitoFabricacao() {
-		return DomGeral.domBoolean.getDeValor(defeitoFabricacao);
+	public String getDeTipo() {
+		return DomPedido.domTipoTroca.getDeValor(tipo);
 	}
 
 	public String getDeStatus() {

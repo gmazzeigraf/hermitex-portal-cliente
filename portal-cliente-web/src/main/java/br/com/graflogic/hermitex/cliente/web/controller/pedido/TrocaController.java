@@ -72,8 +72,6 @@ public class TrocaController extends CrudBaseController<Troca, Troca> implements
 
 	private String politicaTroca;
 
-	private String mensagemConclusao;
-
 	private HashMap<Integer, List<ProdutoTamanho>> tamanhos;
 
 	@Override
@@ -137,9 +135,8 @@ public class TrocaController extends CrudBaseController<Troca, Troca> implements
 			if (!isEditing()) {
 				service.cadastra(getEntity());
 
-				returnInfoDialogMessage(I18NUtil.getLabel("sucesso"), "Troca de número " + getEntity().getFormattedId() + " solicitada com sucesso");
-
-				// TODO Apresentar conteudo de conclusao
+				returnInfoDialogMessage(I18NUtil.getLabel("sucesso"), "Obrigado pela sua solicitação de número <strong>" + getEntity().getFormattedId()
+						+ "</strong>.<br/>" + "Verifique no menu <strong>Troca</strong> as condições de envio dos seus produtos e condições gerais de Política de troca.");
 			}
 
 			close();
@@ -339,10 +336,6 @@ public class TrocaController extends CrudBaseController<Troca, Troca> implements
 
 	public String getPoliticaTroca() {
 		return politicaTroca;
-	}
-
-	public String getMensagemConclusao() {
-		return mensagemConclusao;
 	}
 
 	public List<ProdutoTamanho> getTamanhos(Integer idProduto) {
