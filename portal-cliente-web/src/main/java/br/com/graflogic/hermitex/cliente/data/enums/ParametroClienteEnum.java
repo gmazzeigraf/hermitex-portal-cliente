@@ -7,7 +7,7 @@ package br.com.graflogic.hermitex.cliente.data.enums;
  */
 public enum ParametroClienteEnum {
 
-	POLITICA_TROCA
+	POLITICA_TROCA, EMAIL_TROCA
 
 	;
 }
