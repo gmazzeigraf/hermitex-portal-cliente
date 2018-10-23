@@ -100,6 +100,10 @@
 								</h:outputText>
 							</p:column>
 
+							<p:column headerText="Nosso Número" styleClass="id-column" filterable="true" filterMatchMode="contains" filterBy="#{entity.nossoNumero}">
+								<h:outputText value="#{entity.nossoNumero}" />
+							</p:column>
+
 							<p:column headerText="URL" styleClass="coluna-center" exportable="false">
 								<p:link href="#{entity.url}" value="Visualizar boleto" target="_blank" style="font-size: 16px; font-weight: 700;" />
 							</p:column>

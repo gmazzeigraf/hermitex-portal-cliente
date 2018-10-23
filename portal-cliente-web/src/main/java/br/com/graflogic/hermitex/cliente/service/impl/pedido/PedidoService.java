@@ -66,6 +66,7 @@ import br.com.graflogic.hermitex.cliente.service.util.ExcelUtil;
 import br.com.graflogic.mundipagg.client.MundiPaggClient;
 import br.com.graflogic.mundipagg.model.BillingAddress;
 import br.com.graflogic.mundipagg.model.BoletoTransaction;
+import br.com.graflogic.mundipagg.model.BoletoTransactionResult;
 import br.com.graflogic.mundipagg.model.Buyer;
 import br.com.graflogic.mundipagg.model.CreditCard;
 import br.com.graflogic.mundipagg.model.CreditCardTransaction;
@@ -518,14 +519,16 @@ public class PedidoService {
 		entity.setBoletos(new ArrayList<>());
 
 		for (int i = 0; i < quantidadeParcelas; i++) {
+			BoletoTransactionResult boletoTransactionResult = response.getBoletoTransactionResultCollection().get(i);
 			Integer diasVencimento = Integer.parseInt(dias[i]);
 
 			Calendar calendarVencimento = Calendar.getInstance();
 			calendarVencimento.add(Calendar.DAY_OF_YEAR, diasVencimento);
 
 			PedidoBoleto boleto = new PedidoBoleto();
-			boleto.setIdTransacaoPagamento(response.getBoletoTransactionResultCollection().get(i).getTransactionKey());
-			boleto.setUrl(response.getBoletoTransactionResultCollection().get(i).getBoletoUrl());
+			boleto.setIdTransacaoPagamento(boletoTransactionResult.getTransactionKey());
+			boleto.setUrl(boletoTransactionResult.getBoletoUrl());
+			boleto.setNossoNumero(boletoTransactionResult.getNossoNumero());
 			boleto.setDataVencimento(calendarVencimento.getTime());
 			boleto.setValor(formaPagamento.getValorParcela());
 			boleto.setStatus(DomStatusBoleto.PENDENTE);

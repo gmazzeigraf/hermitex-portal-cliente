@@ -55,6 +55,9 @@ public class PedidoBoleto implements Serializable {
 	@Column(name = "id_transacao_pagamento", nullable = false)
 	private String idTransacaoPagamento;
 
+	@Column(name = "nosso_numero")
+	private String nossoNumero;
+
 	@Column(name = "dt_notificacao_pagamento")
 	private Date dataNotificacaoPagamento;
 
@@ -128,6 +131,14 @@ public class PedidoBoleto implements Serializable {
 
 	public void setIdTransacaoPagamento(String idTransacaoPagamento) {
 		this.idTransacaoPagamento = idTransacaoPagamento;
+	}
+
+	public String getNossoNumero() {
+		return nossoNumero;
+	}
+
+	public void setNossoNumero(String nossoNumero) {
+		this.nossoNumero = nossoNumero;
 	}
 
 	public Date getDataNotificacaoPagamento() {
