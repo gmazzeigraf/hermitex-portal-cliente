@@ -93,6 +93,11 @@
 								filterBy="#{entity.formattedIdPedido}" filterMatchMode="contains">
 								<h:outputText value="#{entity.formattedIdPedido}" />
 							</p:column>
+							
+							<p:column headerText="# Filial" sortBy="#{entity.idFilial}" styleClass="coluna-center"
+								rendered="#{!sessionController.usuarioFilial and !sessionController.usuarioProprietario}">
+								<h:outputText value="#{entity.idFilial}" />
+							</p:column>
 
 							<p:column headerText="Data" sortBy="#{entity.dataCadastro}" styleClass="coluna-center">
 								<h:outputText value="#{entity.dataCadastro}">
