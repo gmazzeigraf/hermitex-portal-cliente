@@ -74,6 +74,10 @@ public class TrocaController extends CrudBaseController<Troca, Troca> implements
 
 	private HashMap<Integer, List<ProdutoTamanho>> tamanhos;
 
+	private Cliente cliente;
+
+	private Filial filial;
+
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		try {
@@ -135,8 +139,9 @@ public class TrocaController extends CrudBaseController<Troca, Troca> implements
 			if (!isEditing()) {
 				service.cadastra(getEntity());
 
-				returnInfoDialogMessage(I18NUtil.getLabel("sucesso"), "Obrigado pela sua solicitação de número <strong>" + getEntity().getFormattedId()
-						+ "</strong>.<br/>" + "Verifique no menu <strong>Troca</strong> as condições de envio dos seus produtos e condições gerais de Política de troca.");
+				returnInfoDialogMessage(I18NUtil.getLabel("sucesso"), "Obrigado pela sua solicitação de número <strong>"
+						+ getEntity().getFormattedId() + "</strong>.<br/>"
+						+ "Verifique no menu <strong>Troca</strong> as condições de envio dos seus produtos e condições gerais de Política de troca.");
 			}
 
 			close();
@@ -161,6 +166,16 @@ public class TrocaController extends CrudBaseController<Troca, Troca> implements
 	@Override
 	protected void executeEdit(Troca entity) {
 		setEntity(service.consultaPorId(entity.getId()));
+
+		Pedido pedido = pedidoService.consultaPorId(entity.getIdPedido());
+
+		cliente = clienteService.consultaPorId(pedido.getIdCliente());
+
+		if (null != pedido.getIdFilial() && 0 != pedido.getIdFilial()) {
+			filial = filialService.consultaPorId(pedido.getIdFilial());
+		} else {
+			filial = null;
+		}
 	}
 
 	@Override
@@ -175,6 +190,7 @@ public class TrocaController extends CrudBaseController<Troca, Troca> implements
 
 			return;
 		}
+
 		setEntities(service.consulta(getFilterEntity()));
 	}
 
@@ -340,5 +356,13 @@ public class TrocaController extends CrudBaseController<Troca, Troca> implements
 
 	public List<ProdutoTamanho> getTamanhos(Integer idProduto) {
 		return tamanhos.get(idProduto);
+	}
+
+	public Cliente getCliente() {
+		return cliente;
+	}
+
+	public Filial getFilial() {
+		return filial;
 	}
 }
