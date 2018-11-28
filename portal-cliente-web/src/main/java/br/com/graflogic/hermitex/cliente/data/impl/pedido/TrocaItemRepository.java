@@ -9,6 +9,7 @@ import javax.persistence.Query;
 import org.springframework.stereotype.Repository;
 
 import br.com.graflogic.hermitex.cliente.data.dom.DomGeral.DomBoolean;
+import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomStatusTroca;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.TrocaItem;
 import br.com.graflogic.utilities.datautil.repository.BaseRepository;
 
@@ -55,6 +56,9 @@ public class TrocaItemRepository extends BaseRepository<TrocaItem> {
 		where = generateWhere(where, "ite.id_pedido_item = ?");
 		params.add(idPedidoItem);
 
+		where = generateWhere(where, "tro.status != ?");
+		params.add(DomStatusTroca.CANCELADA);
+
 		queryStr += where;
 
 		return query(queryStr, params);
@@ -83,7 +87,7 @@ public class TrocaItemRepository extends BaseRepository<TrocaItem> {
 		return "SELECT ite.id, ite.id_troca, ite.id_pedido_item, ite.id_produto, ite.quantidade, ite.cd_tamanho, ite.motivo, pei.quantidade AS quantidade_pedido, pei.cd_tamanho AS cd_tamanho_pedido,"
 				+ " pro.codigo, pro.titulo, img.id AS id_imagem"
 				+ " FROM tb_troca_item ite INNER JOIN tb_produto pro ON ite.id_produto = pro.id INNER JOIN tb_pedido_item pei ON pei.id = ite.id_pedido_item"
-				+ " INNER JOIN tb_produto_imagem img ON pro.id = img.id_produto AND img.in_capa = ?"
+				+ " INNER JOIN tb_troca tro ON ite.id_troca = tro.id INNER JOIN tb_produto_imagem img ON pro.id = img.id_produto AND img.in_capa = ?"
 				+ " LEFT JOIN tb_tamanho_produto tam ON tam.codigo = ite.cd_tamanho";
 	}
 
