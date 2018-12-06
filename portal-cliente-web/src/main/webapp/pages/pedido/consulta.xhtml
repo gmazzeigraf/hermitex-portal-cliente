@@ -213,6 +213,11 @@
 								<h:outputText value="Forma Pagamento" styleClass="label" />
 								<h:outputText value="#{pedidoController.entity.descricaoFormaPagamento}" />
 							</p:panelGrid>
+							
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<h:outputText value="Serviço Frete" styleClass="label" />
+								<h:outputText value="#{pedidoController.servicoFrete}" />
+							</p:panelGrid>
 
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid"
 								rendered="#{sessionController.usuarioAdministrador and (pedidoController.formaPagamento.cartaoCredito or pedidoController.formaPagamento.boleto)}">
@@ -531,7 +536,7 @@
 								<p:dataTable id="dtbFretes" widgetVar="dtb" var="entity" value="#{pedidoController.entity.fretes}" reflow="true"
 									emptyMessage="#{null != pedidoController.entity.fretes ? 'Nenhum frete encontrado' : ''}" rowIndexVar="index">
 
-									<p:column headerText="Serviço" styleClass="id-column">
+									<p:column headerText="Serviço" styleClass="id-column" rendered="false">
 										<h:outputText value="#{entity.codigoServico}" />
 									</p:column>
 

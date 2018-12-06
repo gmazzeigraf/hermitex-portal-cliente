@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 import br.com.graflogic.base.service.util.I18NUtil;
+import br.com.graflogic.hermitex.cliente.data.dom.DomPedido;
 import br.com.graflogic.hermitex.cliente.data.dom.DomAcesso.DomPermissaoAcesso;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.Usuario;
 import br.com.graflogic.hermitex.cliente.data.entity.auxiliar.Estado;
@@ -96,6 +97,8 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 
 	private Usuario usuarioCadastro;
 
+	private String servicoFrete;
+
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		try {
@@ -175,6 +178,12 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 			filial = filialService.consultaPorId(getEntity().getIdFilial());
 		} else {
 			filial = null;
+		}
+
+		servicoFrete = null;
+
+		if (!getEntity().getFretes().isEmpty()) {
+			servicoFrete = DomPedido.domServicoFrete.getDeValor(getEntity().getFretes().get(0).getCodigoServico());
 		}
 	}
 
@@ -385,5 +394,9 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 
 	public Usuario getUsuarioCadastro() {
 		return usuarioCadastro;
+	}
+
+	public String getServicoFrete() {
+		return servicoFrete;
 	}
 }
