@@ -14,6 +14,7 @@ import javax.persistence.criteria.Root;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
+import br.com.graflogic.hermitex.cliente.data.dom.DomPedido;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.Pedido;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoBoleto;
 import br.com.graflogic.utilities.datautil.repository.BaseRepository;
@@ -36,21 +37,18 @@ public class PedidoBoletoRepository extends BaseRepository<PedidoBoleto> {
 		List<Predicate> predicateList = new ArrayList<Predicate>();
 
 		Root<PedidoBoleto> table = query.from(PedidoBoleto.class);
+		Join<PedidoBoleto, Pedido> pedidoJoin = table.join("pedido");
 
 		if (null != filter.getIdPedido() && 0 != filter.getIdPedido()) {
 			predicateList.add(builder.and(builder.equal(table.get("idPedido"), filter.getIdPedido())));
 		}
 
 		if (null != filter.getIdCliente() && 0 != filter.getIdCliente()) {
-			Join<PedidoBoleto, Pedido> join = table.join("pedido");
-
-			predicateList.add(builder.and(builder.equal(join.get("idCliente"), filter.getIdCliente())));
+			predicateList.add(builder.and(builder.equal(pedidoJoin.get("idCliente"), filter.getIdCliente())));
 		}
 
 		if (null != filter.getIdFilial() && 0 != filter.getIdFilial()) {
-			Join<PedidoBoleto, Pedido> join = table.join("pedido");
-
-			predicateList.add(builder.and(builder.equal(join.get("idFilial"), filter.getIdFilial())));
+			predicateList.add(builder.and(builder.equal(pedidoJoin.get("idFilial"), filter.getIdFilial())));
 		}
 
 		if (null != filter.getDataVencimentoDe()) {
@@ -64,6 +62,8 @@ public class PedidoBoletoRepository extends BaseRepository<PedidoBoleto> {
 		if (StringUtils.isNotEmpty(filter.getStatus())) {
 			predicateList.add(builder.and(builder.equal(table.get("status"), filter.getStatus())));
 		}
+
+		predicateList.add(builder.and(builder.equal(pedidoJoin.get("status"), DomPedido.DomStatus.CANCELADO).not()));
 
 		query.orderBy(builder.asc(table.get("dataVencimento")));
 		query.where(predicateList.toArray(new Predicate[predicateList.size()]));
