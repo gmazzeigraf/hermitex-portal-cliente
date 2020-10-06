@@ -53,6 +53,9 @@ public class Produto implements Serializable {
 	@Column(name = "codigo", nullable = false)
 	private String codigo;
 
+	@Column(name = "sku")
+	private String sku;
+
 	@Column(name = "titulo", nullable = false)
 	private String titulo;
 
@@ -141,6 +144,14 @@ public class Produto implements Serializable {
 
 	public void setCodigo(String codigo) {
 		this.codigo = codigo;
+	}
+
+	public String getSku() {
+		return sku;
+	}
+
+	public void setSku(String sku) {
+		this.sku = sku;
 	}
 
 	public String getTitulo() {

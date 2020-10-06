@@ -101,6 +101,10 @@
 							<p:column headerText="Código" sortBy="#{entity.codigo}" styleClass="id-column">
 								<h:outputText value="#{entity.codigo}" />
 							</p:column>
+							
+							<p:column headerText="SKU" sortBy="#{entity.sku}" styleClass="id-column">
+								<h:outputText value="#{entity.sku}" />
+							</p:column>
 
 							<p:column headerText="Tipo" sortBy="#{entity.deTipo}" styleClass="id-column">
 								<h:outputText value="#{entity.deTipo}" />
@@ -155,6 +159,12 @@
 									<p:outputLabel for="codigo" value="Código" styleClass="label" />
 									<p:inputText id="codigo" value="#{produtoController.entity.codigo}" maxlength="20" styleClass="ui-grid-col-12" required="true"
 										requiredMessage="Favor informar o código" disabled="#{produtoController.editing}" />
+								</p:panelGrid>
+								
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel for="sku" value="SKU" styleClass="label" />
+									<p:inputText id="sku" value="#{produtoController.entity.sku}" maxlength="20" styleClass="ui-grid-col-12" required="true"
+										requiredMessage="Favor informar o SKU" disabled="#{produtoController.editing} and fn:length(#{produtoController.entity.sku}) > 0" />
 								</p:panelGrid>
 
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
