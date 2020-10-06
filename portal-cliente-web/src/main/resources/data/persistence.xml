@@ -4,5 +4,8 @@
 
 	<persistence-unit name="persistenceUnit" transaction-type="RESOURCE_LOCAL">
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+		<properties>
+			<property name="hibernate.hbm2ddl.auto" value="none" />
+		</properties>
 	</persistence-unit>
 </persistence>
