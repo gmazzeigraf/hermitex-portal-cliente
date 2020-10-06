@@ -1,4 +1,4 @@
-package br.com.graflogic.hermitex.cliente.service.impl.pedido;
+package br.com.graflogic.hermitex.cliente.service.impl.frete;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -49,6 +49,7 @@ public class FreteService {
 	@Autowired
 	private EmbalagemService embalagemService;
 
+	// TODO gerar por cotacao
 	public List<TipoFrete> geraTiposCorreios(Pedido entity) {
 		try {
 			CorreiosClient client = new CorreiosClient(configuracaoService.consulta(ConfiguracaoEnum.CORREIOS_URL),

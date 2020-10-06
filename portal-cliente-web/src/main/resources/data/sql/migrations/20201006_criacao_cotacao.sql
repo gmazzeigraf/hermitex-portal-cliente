@@ -10,6 +10,7 @@ CREATE TABLE public.tb_cotacao
     vl_total numeric(10,2) NOT NULL,
     peso_total numeric(10,3) NOT NULL,
     ds_forma_pagamento character varying(100) COLLATE pg_catalog."default" NOT NULL,
+	in_pedido_faturado character(1) COLLATE pg_catalog."default" NOT NULL,
     status character(1) COLLATE pg_catalog."default" NOT NULL,
     versao bigint NOT NULL,
     qt_total_itens smallint NOT NULL,

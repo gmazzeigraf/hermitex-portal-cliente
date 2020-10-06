@@ -56,7 +56,7 @@ public class CotacaoEndereco implements Serializable {
 	@Column(name = "complemento")
 	private String complemento;
 
-	@MapsId("idPedido")
+	@MapsId("idCotacao")
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_cotacao", referencedColumnName = "id", insertable = false, updatable = false)
 	private Cotacao cotacao;
@@ -128,11 +128,11 @@ public class CotacaoEndereco implements Serializable {
 		this.complemento = complemento;
 	}
 
-	public Cotacao getPedido() {
+	public Cotacao getCotacao() {
 		return cotacao;
 	}
 
-	public void setPedido(Cotacao cotacao) {
+	public void setCotacao(Cotacao cotacao) {
 		this.cotacao = cotacao;
 	}
 
