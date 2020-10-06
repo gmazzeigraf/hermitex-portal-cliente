@@ -65,6 +65,9 @@ public class PedidoItem implements Serializable {
 	private String codigoProduto;
 
 	@Transient
+	private String skuProduto;
+
+	@Transient
 	private String tituloProduto;
 
 	@Transient
@@ -156,6 +159,14 @@ public class PedidoItem implements Serializable {
 
 	public void setCodigoProduto(String codigoProduto) {
 		this.codigoProduto = codigoProduto;
+	}
+
+	public String getSkuProduto() {
+		return skuProduto;
+	}
+
+	public void setSkuProduto(String skuProduto) {
+		this.skuProduto = skuProduto;
 	}
 
 	public String getTituloProduto() {

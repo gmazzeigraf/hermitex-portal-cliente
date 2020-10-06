@@ -1,4 +1,4 @@
-package br.com.graflogic.hermitex.cliente.data.impl.pedido;
+package br.com.graflogic.hermitex.cliente.data.impl.cotacao;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -10,7 +10,7 @@ import javax.persistence.Query;
 import org.springframework.stereotype.Repository;
 
 import br.com.graflogic.hermitex.cliente.data.dom.DomGeral.DomBoolean;
-import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoItem;
+import br.com.graflogic.hermitex.cliente.data.entity.cotacao.CotacaoItem;
 import br.com.graflogic.utilities.datautil.repository.BaseRepository;
 
 /**
@@ -19,17 +19,17 @@ import br.com.graflogic.utilities.datautil.repository.BaseRepository;
  *
  */
 @Repository
-public class PedidoItemRepository extends BaseRepository<PedidoItem> {
+public class CotacaoItemRepository extends BaseRepository<CotacaoItem> {
 
-	public PedidoItemRepository() {
-		super(PedidoItem.class);
+	public CotacaoItemRepository() {
+		super(CotacaoItem.class);
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<PedidoItem> consultaPorPedido(Long idPedido) {
-		String queryStr = "SELECT ite.id, ite.id_pedido, ite.id_produto, ite.cd_tamanho, ite.quantidade, ite.vl_unitario, ite.vl_corrigido_tamanho, ite.vl_total, peso_total,"
+	public List<CotacaoItem> consultaPorCotacao(Long idCotacao) {
+		String queryStr = "SELECT ite.id, ite.id_cotacao, ite.id_produto, ite.cd_tamanho, ite.quantidade, ite.vl_unitario, ite.vl_corrigido_tamanho, ite.vl_total, peso_total,"
 				+ " pro.codigo, pro.sku, pro.titulo, img.id AS id_imagem"
-				+ " FROM tb_pedido_item ite INNER JOIN tb_produto pro ON ite.id_produto = pro.id INNER JOIN tb_produto_imagem img ON pro.id = img.id_produto AND img.in_capa = ?"
+				+ " FROM tb_cotacao_item ite INNER JOIN tb_produto pro ON ite.id_produto = pro.id INNER JOIN tb_produto_imagem img ON pro.id = img.id_produto AND img.in_capa = ?"
 				+ " INNER JOIN tb_tamanho_produto tam ON tam.codigo = ite.cd_tamanho";
 
 		String where = "";
@@ -38,8 +38,8 @@ public class PedidoItemRepository extends BaseRepository<PedidoItem> {
 
 		params.add(DomBoolean.SIM);
 
-		where = generateWhere(where, "ite.id_pedido = ?");
-		params.add(idPedido);
+		where = generateWhere(where, "ite.id_cotacao = ?");
+		params.add(idCotacao);
 
 		queryStr += where;
 
@@ -53,12 +53,12 @@ public class PedidoItemRepository extends BaseRepository<PedidoItem> {
 
 		List<Object[]> rows = query.getResultList();
 
-		List<PedidoItem> entities = new ArrayList<>();
+		List<CotacaoItem> entities = new ArrayList<>();
 
 		for (Object[] row : rows) {
-			PedidoItem entity = new PedidoItem();
+			CotacaoItem entity = new CotacaoItem();
 			entity.setId(((BigInteger) row[0]).longValue());
-			entity.setIdPedido(((BigInteger) row[1]).longValue());
+			entity.setIdCotacao(((BigInteger) row[1]).longValue());
 			entity.setIdProduto((Integer) row[2]);
 			entity.setCodigoTamanho((String) row[3]);
 			entity.setQuantidade(((Short) row[4]).intValue());

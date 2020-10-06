@@ -189,6 +189,18 @@ public class DomAuditoria {
 		}
 	}
 
+	public static class DomEventoAuditoriaCotacao extends DomBase {
+		public static final String CADASTRO = "C";
+		public static final String FINALIZACAO = "F";
+		public static final String CANCELAMENTO = "L";
+
+		DomEventoAuditoriaCotacao() {
+			mapa.put(CADASTRO, "Cadastro");
+			mapa.put(FINALIZACAO, "Finalização");
+			mapa.put(CANCELAMENTO, "Cancelamento");
+		}
+	}
+
 	public static class DomEventoAuditoriaTroca extends DomBase {
 		public static final String CADASTRO = "C";
 		public static final String FINALIZACAO = "F";
@@ -225,7 +237,7 @@ public class DomAuditoria {
 		}
 	}
 
-	//	Processamento
+	// Processamento
 	public static class DomStatusProcessamento extends DomBase {
 		public static final String ERRO = "E";
 		public static final String FINALIZADO = "F";
