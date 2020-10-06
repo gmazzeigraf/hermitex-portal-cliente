@@ -147,3 +147,13 @@ TABLESPACE pg_default;
 
 ALTER TABLE public.tb_cotacao_item OWNER to postgres;
 CREATE INDEX "tb_cotacao_item_id_cotacao_Idx" ON public.tb_cotacao_item USING btree (id_cotacao ASC NULLS LAST) TABLESPACE pg_default;
+
+-- Sequences
+CREATE SEQUENCE public.sq_cotacao INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1;
+ALTER SEQUENCE public.sq_cotacao OWNER TO postgres;
+
+CREATE SEQUENCE public.sq_cotacao_frete INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1;
+ALTER SEQUENCE public.sq_cotacao_frete OWNER TO postgres;
+
+CREATE SEQUENCE public.sq_cotacao_item INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1;
+ALTER SEQUENCE public.sq_cotacao_item OWNER TO postgres;
