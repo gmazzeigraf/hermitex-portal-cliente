@@ -87,6 +87,11 @@
 									url="/pages/proprietario/acesso/usuario.jsf" rendered="#{sec:isAllowed('/pages/proprietario/acesso/usuario.jsf', '')}" />
 							</p:submenu>
 						</p:submenu>
+						
+						<p:submenu id="menu_cotacao" icon="fa fa-fw fa-truck" label="#{labels.menu_cotacao}">
+							<p:menuitem id="menu_cotacao_consulta" icon="fa fa-fw fa-search" value="#{labels.menu_cotacao_consulta}" url="/pages/cotacao/consulta.jsf"
+								rendered="#{sec:isAllowed('/pages/cotacao/consulta.jsf', '')}" />
+						</p:submenu>
 
 						<p:submenu id="menu_pedido" icon="fa fa-fw fa-truck" label="#{labels.menu_pedido}">
 							<p:menuitem id="menu_pedido_consulta" icon="fa fa-fw fa-search" value="#{labels.menu_pedido_consulta}" url="/pages/pedido/consulta.jsf"

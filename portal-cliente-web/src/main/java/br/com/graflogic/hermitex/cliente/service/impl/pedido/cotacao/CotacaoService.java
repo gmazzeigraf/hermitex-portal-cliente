@@ -119,12 +119,12 @@ public class CotacaoService {
 
 			executaAtualiza(entity);
 
-		} catch (Exception t) {
+		} catch (Exception e) {
 			entity.setItens(itens);
 			entity.setFretes(fretes);
 			entity.setId(null);
 
-			throw t;
+			throw e;
 		}
 	}
 

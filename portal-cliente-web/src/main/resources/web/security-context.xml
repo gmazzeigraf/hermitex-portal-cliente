@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<b:beans xmlns="http://www.springframework.org/schema/security" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:b="http://www.springframework.org/schema/beans"
+<b:beans xmlns="http://www.springframework.org/schema/security" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:b="http://www.springframework.org/schema/beans"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
 	http://www.springframework.org/schema/beans/spring-beans.xsd
 	http://www.springframework.org/schema/security
@@ -53,6 +54,9 @@
 		<!-- Pedido -->
 		<intercept-url pattern="/pages/pedido/consulta.jsf" access="hasAnyRole('ROLE_PEDIDO_CONSULTA')" />
 		<intercept-url pattern="/pages/pedido/boletos.jsf" access="hasAnyRole('ROLE_PEDIDO_BOLETOS')" />
+
+		<!-- Cotacao -->
+		<intercept-url pattern="/pages/cotacao/consulta.jsf" access="hasAnyRole('ROLE_COTACAO_CONSULTA')" />
 
 		<!-- Troca -->
 		<intercept-url pattern="/pages/troca/solicitacao.jsf" access="hasAnyRole('ROLE_TROCA_SOLICITACAO')" />
@@ -119,7 +123,8 @@
 		<b:constructor-arg name="expiredUrl" value="/login.jsf?expired=true" />
 	</b:bean>
 
-	<b:bean id="concurrencyStrategy" class="org.springframework.security.web.authentication.session.ConcurrentSessionControlAuthenticationStrategy">
+	<b:bean id="concurrencyStrategy"
+		class="org.springframework.security.web.authentication.session.ConcurrentSessionControlAuthenticationStrategy">
 		<b:property name="maximumSessions" value="1" />
 		<b:property name="exceptionIfMaximumExceeded" value="false" />
 		<b:constructor-arg name="sessionRegistry" ref="sessionRegistry" />

@@ -1,4 +1,4 @@
-package br.com.graflogic.hermitex.cliente.web.controller.produto;
+package br.com.graflogic.hermitex.cliente.web.controller.cotacao;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,17 +9,17 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 import br.com.graflogic.base.service.util.I18NUtil;
-import br.com.graflogic.hermitex.cliente.data.dom.DomPedido;
 import br.com.graflogic.hermitex.cliente.data.dom.DomAcesso.DomPermissaoAcesso;
+import br.com.graflogic.hermitex.cliente.data.dom.DomCotacao;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.Usuario;
 import br.com.graflogic.hermitex.cliente.data.entity.auxiliar.Estado;
 import br.com.graflogic.hermitex.cliente.data.entity.auxiliar.Municipio;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Filial;
-import br.com.graflogic.hermitex.cliente.data.entity.pedido.JanelaCompra;
-import br.com.graflogic.hermitex.cliente.data.entity.pedido.Pedido;
-import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoEndereco;
-import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoSimple;
+import br.com.graflogic.hermitex.cliente.data.entity.cotacao.Cotacao;
+import br.com.graflogic.hermitex.cliente.data.entity.cotacao.CotacaoEndereco;
+import br.com.graflogic.hermitex.cliente.data.entity.cotacao.CotacaoItem;
+import br.com.graflogic.hermitex.cliente.data.entity.cotacao.CotacaoSimple;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.FormaPagamento;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
@@ -28,11 +28,10 @@ import br.com.graflogic.hermitex.cliente.service.impl.auxiliar.EstadoService;
 import br.com.graflogic.hermitex.cliente.service.impl.auxiliar.MunicipioService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.FilialService;
-import br.com.graflogic.hermitex.cliente.service.impl.pedido.JanelaCompraService;
-import br.com.graflogic.hermitex.cliente.service.impl.pedido.PedidoService;
+import br.com.graflogic.hermitex.cliente.service.impl.pedido.cotacao.CotacaoService;
 import br.com.graflogic.hermitex.cliente.service.impl.produto.FormaPagamentoService;
 import br.com.graflogic.hermitex.cliente.web.util.SessionUtil;
-import br.com.graflogic.utilities.presentationutil.controller.SearchBaseController;
+import br.com.graflogic.utilities.presentationutil.controller.CrudBaseController;
 
 /**
  * 
@@ -41,21 +40,18 @@ import br.com.graflogic.utilities.presentationutil.controller.SearchBaseControll
  */
 @Controller
 @Scope("view")
-public class PedidoController extends SearchBaseController<PedidoSimple, Pedido> implements InitializingBean {
+public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao> implements InitializingBean {
 
-	private static final long serialVersionUID = 3702814175660127874L;
+	private static final long serialVersionUID = -1506916665774731904L;
 
 	@Autowired
-	private PedidoService service;
+	private CotacaoService service;
 
 	@Autowired
 	private ClienteService clienteService;
 
 	@Autowired
 	private FilialService filialService;
-
-	@Autowired
-	private JanelaCompraService janelaCompraService;
 
 	@Autowired
 	private EstadoService estadoService;
@@ -73,19 +69,17 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 
 	private List<Filial> filiais;
 
-	private List<JanelaCompra> janelasCompra;
-
 	private List<Estado> estados;
 
 	private List<Municipio> municipiosFaturamento;
 
 	private List<Municipio> municipiosEntrega;
 
-	private PedidoSimple entitySimple;
+	private CotacaoSimple entitySimple;
 
-	private PedidoEndereco enderecoFaturamento;
+	private CotacaoEndereco enderecoFaturamento;
 
-	private PedidoEndereco enderecoEntrega;
+	private CotacaoEndereco enderecoEntrega;
 
 	private FormaPagamento formaPagamento;
 
@@ -95,46 +89,29 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 
 	private Filial filial;
 
+	private CotacaoItem item;
+
 	private Usuario usuarioCadastro;
 
 	private String servicoFrete;
 
+	private int indexRelacionado;
+
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		try {
-			setFilterEntity(new PedidoSimple());
+			setFilterEntity(new CotacaoSimple());
 
 			filiais = new ArrayList<>();
 
-			janelasCompra = new ArrayList<>();
-
-			getFilterEntity().setIdCliente(SessionUtil.getIdCliente());
-
-			if (SessionUtil.isUsuarioAdministrador()) {
-				clientes = clienteService.consulta(new Cliente());
-
-			} else if (SessionUtil.isUsuarioFilial() || SessionUtil.isUsuarioProprietario()) {
-				getFilterEntity().setIdFilial(SessionUtil.getIdFilial());
-
-			} else if (SessionUtil.isUsuarioRepresentante()) {
-				clientes = clienteService.consultaPorRepresentante(SessionUtil.getIdRepresentante());
-
-			}
-
-			if (null != getFilterEntity().getIdCliente()) {
-				changeCliente();
-			}
+			clientes = clienteService.consulta(new Cliente());
 
 			estados = estadoService.consulta();
-			municipiosFaturamento = new ArrayList<Municipio>();
+			municipiosFaturamento = new ArrayList<>();
 			municipiosEntrega = new ArrayList<>();
 
-			if (SessionUtil.isUsuarioFilial() || SessionUtil.isUsuarioProprietario()) {
-				search();
-			}
-
-		} catch (Throwable t) {
-			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao inicializar tela, contate o administrador", t);
+		} catch (Exception e) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao inicializar tela, contate o administrador", e);
 		}
 	}
 
@@ -149,7 +126,25 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 	}
 
 	@Override
-	protected void select(PedidoSimple entity) {
+	protected boolean executeSave() {
+		return false;
+	}
+
+	@Override
+	protected void beforeAdd() {
+		setEntity(new Cotacao());
+		getEntity().setItens(new ArrayList<>());
+		getEntity().setEnderecos(new ArrayList<>());
+		getEntity().setFretes(new ArrayList<>());
+
+		getEntity().setIdCliente(getFilterEntity().getIdCliente());
+
+		enderecoEntrega = new CotacaoEndereco();
+		enderecoFaturamento = new CotacaoEndereco();
+	}
+
+	@Override
+	protected void executeEdit(CotacaoSimple entity) throws Exception {
 		entitySimple = entity;
 
 		select(entity.getId());
@@ -183,58 +178,59 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 		servicoFrete = null;
 
 		if (!getEntity().getFretes().isEmpty()) {
-			servicoFrete = DomPedido.domServicoFrete.getDeValor(getEntity().getFretes().get(0).getCodigoServico());
+			servicoFrete = DomCotacao.domServicoFrete.getDeValor(getEntity().getFretes().get(0).getCodigoServico());
+		}
+	}
+
+	// Produto
+	public void prepareAddItem() {
+		try {
+			setEditingRelated(false);
+
+			item = new CotacaoItem();
+
+			showDialog("itemDialog");
+
+		} catch (Exception e) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao adicionar produto, contate o administrador", e);
+		}
+	}
+
+	public void saveItem() {
+		try {
+			if (isEditingRelated()) {
+				getEntity().getItens().set(indexRelacionado, item);
+
+			} else {
+				getEntity().getItens().add(item);
+			}
+
+			updateComponent("editForm:dtbItens");
+			hideDialog("itemDialog");
+
+		} catch (Exception e) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao salvar produto, contate o administrador", e);
+		}
+	}
+
+	public void excluiItem() {
+		try {
+			getEntity().getItens().remove(indexRelacionado);
+
+			updateComponent("editForm:dtbItens");
+			hideDialog("itemDialog");
+
+		} catch (Exception e) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao excluir produto, contate o administrador", e);
 		}
 	}
 
 	// Fluxo
-	public void baixaPagamento() {
-		try {
-			service.paga(getEntity(), SessionUtil.getAuthenticatedUsuario().getId(), observacao);
-
-			returnInfoDialogMessage(I18NUtil.getLabel("sucesso"), "Pedido marcado como pago com sucesso");
-
-			afterOperacao();
-
-		} catch (DadosInvalidosException e) {
-			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), e.getMessage(), null);
-
-		} catch (DadosDesatualizadosException e) {
-			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Pedido com dados desatualizados, altere novamente", null);
-
-			select(getEntity().getId());
-
-		} catch (Throwable t) {
-			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao marcar pedido como pago, contate o administrador", t);
-		}
-	}
-
-	public void envia() {
-		try {
-			service.envia(getEntity(), SessionUtil.getAuthenticatedUsuario().getId(), observacao);
-
-			returnInfoDialogMessage(I18NUtil.getLabel("sucesso"), "Pedido marcado como enviado com sucesso");
-
-			afterOperacao();
-
-		} catch (DadosInvalidosException e) {
-			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), e.getMessage(), null);
-
-		} catch (DadosDesatualizadosException e) {
-			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Pedido com dados desatualizados, altere novamente", null);
-
-			select(getEntity().getId());
-
-		} catch (Throwable t) {
-			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao marcar pedido como enviado, contate o administrador", t);
-		}
-	}
-
 	public void finaliza() {
 		try {
 			service.finaliza(getEntity(), SessionUtil.getAuthenticatedUsuario().getId(), observacao);
 
-			returnInfoDialogMessage(I18NUtil.getLabel("sucesso"), "Pedido marcado como finalizado com sucesso");
+			returnInfoDialogMessage(I18NUtil.getLabel("sucesso"), "Cotação marcada como finalizada com sucesso");
 
 			afterOperacao();
 
@@ -242,12 +238,12 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), e.getMessage(), null);
 
 		} catch (DadosDesatualizadosException e) {
-			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Pedido com dados desatualizados, altere novamente", null);
+			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Cotação com dados desatualizados, altere novamente", null);
 
 			select(getEntity().getId());
 
-		} catch (Throwable t) {
-			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao marcar pedido como finalizado, contate o administrador", t);
+		} catch (Exception e) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao marcar cotação como finalizada, contate o administrador", e);
 		}
 	}
 
@@ -255,7 +251,7 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 		try {
 			service.cancela(getEntity(), SessionUtil.getAuthenticatedUsuario().getId(), observacao);
 
-			returnInfoDialogMessage(I18NUtil.getLabel("sucesso"), "Pedido marcado como cancelado com sucesso");
+			returnInfoDialogMessage(I18NUtil.getLabel("sucesso"), "Cotação marcada como cancelada com sucesso");
 
 			afterOperacao();
 
@@ -263,12 +259,12 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), e.getMessage(), null);
 
 		} catch (DadosDesatualizadosException e) {
-			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Pedido com dados desatualizados, altere novamente", null);
+			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Cotação com dados desatualizados, altere novamente", null);
 
 			select(getEntity().getId());
 
-		} catch (Throwable t) {
-			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao marcar pedido como cancelado, contate o administrador", t);
+		} catch (Exception e) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao marcar cotação como cancelada, contate o administrador", e);
 		}
 	}
 
@@ -285,26 +281,39 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 	public void changeCliente() {
 		try {
 			setEntities(null);
-
-			if (!SessionUtil.isUsuarioFilial() && !SessionUtil.isUsuarioProprietario()) {
-				getFilterEntity().setIdFilial(null);
-			}
+			getFilterEntity().setIdFilial(null);
 
 			filiais.clear();
-			janelasCompra.clear();
 
-			if (isClienteSelecionado()) {
-				if (!SessionUtil.isUsuarioFilial() && !SessionUtil.isUsuarioProprietario()) {
-					filiais.addAll(filialService.consultaPorCliente(getFilterEntity().getIdCliente(), false));
-				}
+		} catch (Exception e) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao consultar dados do cliente, contate o administrador", e);
+		}
+	}
 
-				if (SessionUtil.isUsuarioAdministrador()) {
-					janelasCompra.addAll(janelaCompraService.consultaPorCliente(getFilterEntity().getIdCliente()));
-				}
+	public void changeFilial() {
+		try {
+			if (null != getEntity().getIdFilial()) {
+				filial = filialService.consultaPorId(getEntity().getIdFilial());
+
+				enderecoFaturamento.setSiglaEstado(filial.getEnderecoFaturamento().getSiglaEstado());
+				enderecoFaturamento.setIdMunicipio(filial.getEnderecoFaturamento().getIdMunicipio());
+				enderecoFaturamento.setCep(filial.getEnderecoFaturamento().getCep());
+				enderecoFaturamento.setBairro(filial.getEnderecoFaturamento().getBairro());
+				enderecoFaturamento.setLogradouro(filial.getEnderecoFaturamento().getLogradouro());
+				enderecoFaturamento.setNumero(filial.getEnderecoFaturamento().getNumero());
+				enderecoFaturamento.setComplemento(filial.getEnderecoFaturamento().getComplemento());
+
+				enderecoEntrega.setSiglaEstado(filial.getEnderecoEntrega().getSiglaEstado());
+				enderecoEntrega.setIdMunicipio(filial.getEnderecoEntrega().getIdMunicipio());
+				enderecoEntrega.setCep(filial.getEnderecoEntrega().getCep());
+				enderecoEntrega.setBairro(filial.getEnderecoEntrega().getBairro());
+				enderecoEntrega.setLogradouro(filial.getEnderecoEntrega().getLogradouro());
+				enderecoEntrega.setNumero(filial.getEnderecoEntrega().getNumero());
+				enderecoEntrega.setComplemento(filial.getEnderecoEntrega().getComplemento());
 			}
 
-		} catch (Throwable t) {
-			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao consultar dados do cliente, contate o administrador", t);
+		} catch (Exception e) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao consultar dados do cliente, contate o administrador", e);
 		}
 	}
 
@@ -313,22 +322,12 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 		return null != getFilterEntity().getIdCliente() && 0 != getFilterEntity().getIdCliente();
 	}
 
-	public boolean isPagamentoBaixavel() {
-		return null != getEntity() && getEntity().isPagamentoPendente()
-				&& SessionUtil.possuiPermissao(DomPermissaoAcesso.ROLE_PEDIDO_BAIXA_PAGAMENTO);
-	}
-
-	public boolean isEnviavel() {
-		return null != getEntity() && getEntity().isPago() && SessionUtil.possuiPermissao(DomPermissaoAcesso.ROLE_PEDIDO_ENVIO);
-	}
-
 	public boolean isFinalizavel() {
-		return null != getEntity() && getEntity().isEnviado() && SessionUtil.possuiPermissao(DomPermissaoAcesso.ROLE_PEDIDO_FINALIZACAO);
+		return null != getEntity() && getEntity().isGerada() && SessionUtil.possuiPermissao(DomPermissaoAcesso.ROLE_COTACAO_FINALIZACAO);
 	}
 
 	public boolean isCancelavel() {
-		return null != getEntity() && (getEntity().isPagamentoPendente() || getEntity().isPago())
-				&& SessionUtil.possuiPermissao(DomPermissaoAcesso.ROLE_PEDIDO_CANCELAMENTO);
+		return null != getEntity() && (getEntity().isGerada()) && SessionUtil.possuiPermissao(DomPermissaoAcesso.ROLE_COTACAO_CANCELAMENTO);
 	}
 
 	public boolean isPesquisavel() {
@@ -344,10 +343,6 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 		return filiais;
 	}
 
-	public List<JanelaCompra> getJanelasCompra() {
-		return janelasCompra;
-	}
-
 	public List<Estado> getEstados() {
 		return estados;
 	}
@@ -360,15 +355,15 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 		return municipiosEntrega;
 	}
 
-	public PedidoSimple getEntitySimple() {
+	public CotacaoSimple getEntitySimple() {
 		return entitySimple;
 	}
 
-	public PedidoEndereco getEnderecoFaturamento() {
+	public CotacaoEndereco getEnderecoFaturamento() {
 		return enderecoFaturamento;
 	}
 
-	public PedidoEndereco getEnderecoEntrega() {
+	public CotacaoEndereco getEnderecoEntrega() {
 		return enderecoEntrega;
 	}
 
@@ -392,6 +387,10 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 		return filial;
 	}
 
+	public CotacaoItem getItem() {
+		return item;
+	}
+
 	public Usuario getUsuarioCadastro() {
 		return usuarioCadastro;
 	}
@@ -399,4 +398,13 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 	public String getServicoFrete() {
 		return servicoFrete;
 	}
+
+	public int getIndexRelacionado() {
+		return indexRelacionado;
+	}
+
+	public void setIndexRelacionado(int indexRelacionado) {
+		this.indexRelacionado = indexRelacionado;
+	}
+
 }
