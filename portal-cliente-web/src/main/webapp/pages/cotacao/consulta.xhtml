@@ -134,7 +134,7 @@
 						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group">
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 								<h:outputText value="#" styleClass="label" />
-								<h:outputText value="#{cotacaoController.entity.formattedId}" />
+								<h:outputText value="#{cotacaoController.entity.formattedId}" rendered="#{cotacaoController.editing}" />
 							</p:panelGrid>
 
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
@@ -172,8 +172,8 @@
 							</p:panelGrid>
 
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{sessionController.usuarioAdministrador}">
-								<h:outputText value="Desconto" styleClass="label" />
-								<h:outputText value="#{cotacaoController.entity.valorDesconto}">
+								<h:outputText value="Desconto Pagamento" styleClass="label" />
+								<h:outputText value="#{cotacaoController.entity.valorDescontoPagamento}">
 									<f:convertNumber pattern="R$ #,##0.00" />
 								</h:outputText>
 							</p:panelGrid>
@@ -193,18 +193,6 @@
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 								<h:outputText value="Serviço Frete" styleClass="label" />
 								<h:outputText value="#{cotacaoController.servicoFrete}" />
-							</p:panelGrid>
-
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid"
-								rendered="#{sessionController.usuarioAdministrador and (cotacaoController.formaPagamento.cartaoCredito or cotacaoController.formaPagamento.boleto)}">
-								<h:outputText value="ID Ordem Pagamento" styleClass="label" />
-								<h:outputText value="#{cotacaoController.entity.idOrdemPagamento}" />
-							</p:panelGrid>
-
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid"
-								rendered="#{sessionController.usuarioAdministrador and cotacaoController.formaPagamento.cartaoCredito}">
-								<h:outputText value="ID Transação Pagamento" styleClass="label" />
-								<h:outputText value="#{cotacaoController.entity.idTransacaoPagamento}" />
 							</p:panelGrid>
 						</p:panelGrid>
 					</div>
@@ -236,12 +224,22 @@
 						</p:panelGrid>
 					</div>
 
-					<c:if test="#{null != cotacaoController.filial}">
-						<div class="card card-w-title">
-							<h1>Filial</h1>
+					<div class="card card-w-title">
+						<h1>Filial</h1>
 
-							<p:panelGrid columns="4" id="filialGrid" layout="grid" styleClass="ui-panelgrid-blank form-group"
-								columnClasses="ui-grid-col-1, ui-grid-col-2, ui-grid-col-4, ui-grid-col-5">
+						<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group" rendered="#{!cotacaoController.editing}">
+							<p:selectOneMenu id="filial" value="#{cotacaoController.entity.idFilial}" styleClass="ui-grid-col-12" filter="true" filterMatchMode="contains"
+								required="true" requiredMessage="Favor selecionar a filial">
+								<f:selectItem itemLabel="Selecione" itemValue="" />
+								<f:selectItems value="#{cotacaoController.filiais}" var="item" itemLabel="#{item.id} - #{item.nomeApresentacao}" itemValue="#{item.id}" />
+								<p:ajax process="@this" update=":editForm:filialGrid :editForm:enderecoFaturamentoGrid :editForm:enderecoEntregaGrid"
+									listener="#{cotacaoController.changeFilial}" />
+							</p:selectOneMenu>
+						</p:panelGrid>
+
+						<p:panelGrid columns="4" id="filialGrid" layout="grid" styleClass="ui-panelgrid-blank form-group"
+							columnClasses="ui-grid-col-1, ui-grid-col-2, ui-grid-col-4, ui-grid-col-5">
+							<c:if test="#{null != cotacaoController.filial}">
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 									<p:outputLabel value="#" styleClass="label" />
 									<p:outputLabel value="#{cotacaoController.filial.id}" />
@@ -261,26 +259,28 @@
 									<p:outputLabel value="Nome Fantasia" styleClass="label" />
 									<p:outputLabel value="#{cotacaoController.filial.nomeFantasia}" />
 								</p:panelGrid>
+							</c:if>
+						</p:panelGrid>
+					</div>
+
+					<c:if test="#{cotacaoController.editing}">
+						<div class="card card-w-title">
+							<h1>Usuário</h1>
+
+							<p:panelGrid columns="2" id="usuarioCadastroGrid" layout="grid" styleClass="ui-panelgrid-blank form-group"
+								columnClasses="ui-grid-col-4, ui-grid-col-8">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel value="E-mail" styleClass="label" />
+									<p:outputLabel value="#{cotacaoController.usuarioCadastro.email}" />
+								</p:panelGrid>
+
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel value="Nome" styleClass="label" />
+									<p:outputLabel value="#{cotacaoController.usuarioCadastro.nome}" />
+								</p:panelGrid>
 							</p:panelGrid>
 						</div>
 					</c:if>
-
-					<div class="card card-w-title">
-						<h1>Usuário</h1>
-
-						<p:panelGrid columns="2" id="usuarioCadastroGrid" layout="grid" styleClass="ui-panelgrid-blank form-group"
-							columnClasses="ui-grid-col-4, ui-grid-col-8">
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<p:outputLabel value="E-mail" styleClass="label" />
-								<p:outputLabel value="#{cotacaoController.usuarioCadastro.email}" />
-							</p:panelGrid>
-
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<p:outputLabel value="Nome" styleClass="label" />
-								<p:outputLabel value="#{cotacaoController.usuarioCadastro.nome}" />
-							</p:panelGrid>
-						</p:panelGrid>
-					</div>
 
 					<div class="card card-w-title">
 						<h1>Endereço Faturamento</h1>

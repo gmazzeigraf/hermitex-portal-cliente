@@ -238,6 +238,24 @@ public class ProdutoService {
 		return (Produto) ObjectCopier.copy(cacheObj);
 	}
 
+	public Produto consultaPorClienteSku(Integer idCliente, String sku) {
+		try {
+			return repository.consultaPorClienteSku(idCliente, sku);
+
+		} catch (NoResultException e) {
+			throw new ResultadoNaoEncontradoException();
+		}
+	}
+
+	public Produto consultaPorClienteCodigo(Integer idCliente, String codigo) {
+		try {
+			return repository.consultaPorClienteCodigo(idCliente, codigo);
+
+		} catch (NoResultException e) {
+			throw new ResultadoNaoEncontradoException();
+		}
+	}
+
 	// Tabela Medidas
 	public String geraTabelaMedidas(Integer idProduto) {
 		Object cacheObj = cacheUtil.findOnCache(TABELAS_MEDIDAS_CACHE_NAME, idProduto.toString());

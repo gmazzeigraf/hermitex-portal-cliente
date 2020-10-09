@@ -1,8 +1,11 @@
 package br.com.graflogic.hermitex.cliente.web.controller.cotacao;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -21,6 +24,8 @@ import br.com.graflogic.hermitex.cliente.data.entity.cotacao.CotacaoEndereco;
 import br.com.graflogic.hermitex.cliente.data.entity.cotacao.CotacaoItem;
 import br.com.graflogic.hermitex.cliente.data.entity.cotacao.CotacaoSimple;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.FormaPagamento;
+import br.com.graflogic.hermitex.cliente.data.entity.produto.Produto;
+import br.com.graflogic.hermitex.cliente.data.entity.produto.ProdutoTamanho;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
 import br.com.graflogic.hermitex.cliente.service.impl.acesso.UsuarioService;
@@ -30,6 +35,7 @@ import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.FilialService;
 import br.com.graflogic.hermitex.cliente.service.impl.pedido.cotacao.CotacaoService;
 import br.com.graflogic.hermitex.cliente.service.impl.produto.FormaPagamentoService;
+import br.com.graflogic.hermitex.cliente.service.impl.produto.ProdutoService;
 import br.com.graflogic.hermitex.cliente.web.util.SessionUtil;
 import br.com.graflogic.utilities.presentationutil.controller.CrudBaseController;
 
@@ -65,6 +71,9 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 	@Autowired
 	private UsuarioService usuarioService;
 
+	@Autowired
+	private ProdutoService produtoService;
+
 	private List<Cliente> clientes;
 
 	private List<Filial> filiais;
@@ -90,6 +99,8 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 	private Filial filial;
 
 	private CotacaoItem item;
+
+	private Produto produto;
 
 	private Usuario usuarioCadastro;
 
@@ -225,6 +236,58 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 		}
 	}
 
+	public void changeSkuProduto() {
+		try {
+			produto = produtoService.consultaPorClienteSku(getEntity().getIdCliente(), item.getSkuProduto());
+
+			changeProduto();
+
+		} catch (Exception e) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao alterar o produto, contate o administrador", e);
+		}
+	}
+
+	public void changeCodigoProduto() {
+		try {
+			produto = produtoService.consultaPorClienteCodigo(getEntity().getIdCliente(), item.getCodigoProduto());
+
+			changeProduto();
+
+		} catch (Exception e) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao alterar o produto, contate o administrador", e);
+		}
+	}
+
+	public void changeTamanhoProduto() {
+		try {
+			item.setValorCorrigidoTamanho(produto.getValor());
+
+			if (StringUtils.isNotEmpty(item.getCodigoTamanho())) {
+				BigDecimal fator = null;
+
+				for (ProdutoTamanho tamanho : produto.getTamanhos()) {
+					if (tamanho.getId().getCodigoTamanho().equals(item.getCodigoTamanho())) {
+						fator = tamanho.getFator();
+						break;
+					}
+				}
+
+				item.setValorCorrigidoTamanho(item.getValorCorrigidoTamanho().multiply(fator).setScale(2, RoundingMode.HALF_EVEN));
+			}
+
+		} catch (Exception e) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao alterar tamanho do produto, contate o administrador", e);
+		}
+	}
+
+	private void changeProduto() {
+		item.setIdProduto(produto.getId());
+		item.setCodigoProduto(produto.getCodigo());
+		item.setTituloProduto(produto.getTipo());
+		item.setValorUnitario(produto.getValor());
+		item.setValorCorrigidoTamanho(produto.getValor());
+	}
+
 	// Fluxo
 	public void finaliza() {
 		try {
@@ -283,7 +346,11 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 			setEntities(null);
 			getFilterEntity().setIdFilial(null);
 
-			filiais.clear();
+			if (null != getFilterEntity().getIdCliente() && 0 != getFilterEntity().getIdCliente()) {
+				cliente = clienteService.consultaPorId(getFilterEntity().getIdCliente());
+
+				filiais = filialService.consultaPorCliente(getFilterEntity().getIdCliente(), false);
+			}
 
 		} catch (Exception e) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao consultar dados do cliente, contate o administrador", e);
@@ -292,7 +359,7 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 
 	public void changeFilial() {
 		try {
-			if (null != getEntity().getIdFilial()) {
+			if (null != getEntity().getIdFilial() && null != getEntity()) {
 				filial = filialService.consultaPorId(getEntity().getIdFilial());
 
 				enderecoFaturamento.setSiglaEstado(filial.getEnderecoFaturamento().getSiglaEstado());
@@ -389,6 +456,10 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 
 	public CotacaoItem getItem() {
 		return item;
+	}
+
+	public Produto getProduto() {
+		return produto;
 	}
 
 	public Usuario getUsuarioCadastro() {
