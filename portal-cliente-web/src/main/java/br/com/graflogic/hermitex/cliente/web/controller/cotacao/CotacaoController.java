@@ -100,6 +100,8 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 
 	private CotacaoItem item;
 
+	private List<Produto> produtos;
+
 	private Produto produto;
 
 	private Usuario usuarioCadastro;
@@ -120,6 +122,7 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 			estados = estadoService.consulta();
 			municipiosFaturamento = new ArrayList<>();
 			municipiosEntrega = new ArrayList<>();
+			produtos = new ArrayList<>();
 
 		} catch (Exception e) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao inicializar tela, contate o administrador", e);
@@ -199,6 +202,9 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 			setEditingRelated(false);
 
 			item = new CotacaoItem();
+			item.setValorTotal(BigDecimal.ZERO);
+			item.setPesoTotal(BigDecimal.ZERO);
+			item.setQuantidade(1);
 
 			showDialog("itemDialog");
 
@@ -224,34 +230,19 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 		}
 	}
 
-	public void excluiItem() {
+	public void changeProduto() {
 		try {
-			getEntity().getItens().remove(indexRelacionado);
+			if (null != item.getIdProduto()) {
+				produto = produtoService.consultaCompletoPorId(item.getIdProduto());
 
-			updateComponent("editForm:dtbItens");
-			hideDialog("itemDialog");
+				item.setIdProduto(produto.getId());
+				item.setCodigoProduto(produto.getCodigo());
+				item.setTituloProduto(produto.getTitulo());
+				item.setValorUnitario(produto.getValor());
+				item.setValorCorrigidoTamanho(produto.getValor());
 
-		} catch (Exception e) {
-			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao excluir produto, contate o administrador", e);
-		}
-	}
-
-	public void changeSkuProduto() {
-		try {
-			produto = produtoService.consultaPorClienteSku(getEntity().getIdCliente(), item.getSkuProduto());
-
-			changeProduto();
-
-		} catch (Exception e) {
-			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao alterar o produto, contate o administrador", e);
-		}
-	}
-
-	public void changeCodigoProduto() {
-		try {
-			produto = produtoService.consultaPorClienteCodigo(getEntity().getIdCliente(), item.getCodigoProduto());
-
-			changeProduto();
+				calculaTotalItem();
+			}
 
 		} catch (Exception e) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao alterar o produto, contate o administrador", e);
@@ -273,19 +264,31 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 				}
 
 				item.setValorCorrigidoTamanho(item.getValorCorrigidoTamanho().multiply(fator).setScale(2, RoundingMode.HALF_EVEN));
-			}
 
+				calculaTotalItem();
+			}
 		} catch (Exception e) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao alterar tamanho do produto, contate o administrador", e);
 		}
 	}
 
-	private void changeProduto() {
-		item.setIdProduto(produto.getId());
-		item.setCodigoProduto(produto.getCodigo());
-		item.setTituloProduto(produto.getTipo());
-		item.setValorUnitario(produto.getValor());
-		item.setValorCorrigidoTamanho(produto.getValor());
+	public void changeQuantidadeProduto() {
+		try {
+			calculaTotalItem();
+
+		} catch (Exception e) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao quantidade do produto, contate o administrador", e);
+		}
+	}
+
+	private void calculaTotalItem() {
+		item.setValorTotal(BigDecimal.ZERO);
+		item.setPesoTotal(BigDecimal.ZERO);
+
+		if (item.getQuantidade() > 0) {
+			item.setValorTotal(item.getValorCorrigidoTamanho().multiply(new BigDecimal(item.getQuantidade())));
+			item.setPesoTotal(produto.getPeso().multiply(new BigDecimal(item.getQuantidade())));
+		}
 	}
 
 	// Fluxo
@@ -346,10 +349,16 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 			setEntities(null);
 			getFilterEntity().setIdFilial(null);
 
+			produtos.clear();
+
 			if (null != getFilterEntity().getIdCliente() && 0 != getFilterEntity().getIdCliente()) {
 				cliente = clienteService.consultaPorId(getFilterEntity().getIdCliente());
 
 				filiais = filialService.consultaPorCliente(getFilterEntity().getIdCliente(), false);
+
+				Produto produtoFilter = new Produto();
+				produtoFilter.setIdCliente(getFilterEntity().getIdCliente());
+				produtos.addAll(produtoService.consulta(produtoFilter));
 			}
 
 		} catch (Exception e) {
@@ -456,6 +465,10 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 
 	public CotacaoItem getItem() {
 		return item;
+	}
+
+	public List<Produto> getProdutos() {
+		return produtos;
 	}
 
 	public Produto getProduto() {

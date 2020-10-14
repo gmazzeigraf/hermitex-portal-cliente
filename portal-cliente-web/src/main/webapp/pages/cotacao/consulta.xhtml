@@ -90,12 +90,11 @@
 								<h:outputText value="#{entity.quantidadeItens}" />
 							</p:column>
 
-							<p:column headerText="Peças" sortBy="#{entity.quantidadeTotalItens}" styleClass="coluna-center"
-								rendered="#{sessionController.usuarioAdministrador or sessionController.usuarioRepresentante}">
+							<p:column headerText="Peças" sortBy="#{entity.quantidadeTotalItens}" styleClass="coluna-center">
 								<h:outputText value="#{entity.quantidadeTotalItens}" />
 							</p:column>
 
-							<p:column headerText="Status" sortBy="#{entity.deStatus}" styleClass="coluna-center" rendered="#{sessionController.usuarioAdministrador}">
+							<p:column headerText="Status" sortBy="#{entity.deStatus}" styleClass="coluna-center">
 								<h:outputText value="#{entity.deStatus}" />
 							</p:column>
 
@@ -144,20 +143,19 @@
 								</h:outputText>
 							</p:panelGrid>
 
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{sessionController.usuarioAdministrador}">
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 								<h:outputText value="Peso" styleClass="label" />
 								<h:outputText value="#{cotacaoController.entity.pesoTotal}">
 									<f:convertNumber pattern="#,##0.000" />
 								</h:outputText>
 							</p:panelGrid>
 
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{sessionController.usuarioAdministrador}">
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 								<h:outputText value="Status" styleClass="label" />
 								<h:outputText value="#{cotacaoController.entity.deStatus}" />
 							</p:panelGrid>
 
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid"
-								rendered="#{sessionController.usuarioAdministrador or sessionController.usuarioRepresentante}">
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 								<h:outputText value="Produtos" styleClass="label" />
 								<h:outputText value="#{cotacaoController.entity.valorProdutos}">
 									<f:convertNumber pattern="R$ #,##0.00" />
@@ -171,7 +169,7 @@
 								</h:outputText>
 							</p:panelGrid>
 
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{sessionController.usuarioAdministrador}">
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 								<h:outputText value="Desconto Pagamento" styleClass="label" />
 								<h:outputText value="#{cotacaoController.entity.valorDescontoPagamento}">
 									<f:convertNumber pattern="R$ #,##0.00" />
@@ -527,39 +525,91 @@
 	<ui:define name="complement">
 		<p:dialog header="Produto" id="idItemDialog" widgetVar="itemDialog" width="90%" height="90%" modal="true" draggable="false" resizable="false"
 			responsive="true" position="top">
-			<div class="ui-g">
-				<div class="ui-g-12">
-					<div class="card card-w-title">
-						<h1>#{labels.informacoes}</h1>
-						<p:scrollPanel styleClass="resp-dialog">
-							<p:panelGrid columns="1" layout="grid" id="contatoGrid" styleClass="ui-panelgrid-blank form-group">
-								<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group">
+			<c:if test="#{null != cotacaoController.item}">
+				<div class="ui-g">
+					<div class="ui-g-12">
+						<div class="card card-w-title">
+							<h1>#{labels.informacoes}</h1>
+							<p:scrollPanel styleClass="resp-dialog">
+								<p:panelGrid columns="1" layout="grid" id="produtoGrid" styleClass="ui-panelgrid-blank form-group">
 
+									<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group">
+										<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
+											<p:outputLabel for="produto" value="Produto" styleClass="label" />
+											<p:selectOneMenu id="produto" value="#{cotacaoController.item.idProduto}" styleClass="ui-grid-col-12" filter="true"
+												filterMatchMode="contains" required="true" requiredMessage="Favor selecionar o produto">
+												<f:selectItem itemLabel="Selecione" itemValue="" />
+												<f:selectItems value="#{cotacaoController.produtos}" var="item" itemLabel="Código: #{item.codigo} - SKU: #{item.sku} - #{item.titulo}"
+													itemValue="#{item.id}" />
+												<p:ajax process="@this" update=":editForm:produtoGrid" listener="#{cotacaoController.changeProduto}" />
+											</p:selectOneMenu>
+										</p:panelGrid>
+
+										<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
+											<p:outputLabel for="tamanho" value="Tamanho" styleClass="label" />
+											<p:selectOneMenu id="tamanho" value="#{cotacaoController.item.codigoTamanho}" styleClass="ui-grid-col-12" filter="true"
+												filterMatchMode="contains" required="true" requiredMessage="Favor selecionar o tamanho">
+												<f:selectItem itemLabel="Selecione" itemValue="" />
+												<f:selectItems value="#{cotacaoController.produto.tamanhos}" var="item" itemLabel="#{item.id.codigoTamanho}"
+													itemValue="#{item.id.codigoTamanho}" />
+												<p:ajax process="@this" update=":editForm:produtoGrid" listener="#{cotacaoController.changeTamanhoProduto}" />
+											</p:selectOneMenu>
+										</p:panelGrid>
+									</p:panelGrid>
+
+									<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group">
+										<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+											<p:outputLabel for="quantidade" value="Peso (kg)" styleClass="label" />
+											<p:inputNumber id="quantidade" value="#{cotacaoController.item.quantidade}" styleClass="input-number-resp" decimalSeparator=""
+												thousandSeparator="" decimalPlaces="0" maxValue="999" required="true" requiredMessage="Favor informar a quantidade">
+												<p:ajax process="@this" update=":editForm:produtoGrid" listener="#{cotacaoController.changeQuantidadeProduto}" />
+											</p:inputNumber>
+										</p:panelGrid>
+
+										<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+											<h:outputText value="Valor Unitário" styleClass="label" />
+											<p:inputNumber value="#{cotacaoController.item.valorCorrigidoTamanho}" styleClass="input-number-resp" decimalSeparator=","
+												thousandSeparator="." decimalPlaces="2" maxValue="9999.99" disabled="true">
+											</p:inputNumber>
+										</p:panelGrid>
+										
+										<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+											<h:outputText value="Valor Total" styleClass="label" />											
+											<p:inputNumber value="#{cotacaoController.item.valorTotal}" styleClass="input-number-resp" decimalSeparator=","
+												thousandSeparator="." decimalPlaces="2" maxValue="9999.99" disabled="true">
+											</p:inputNumber>
+										</p:panelGrid>
+
+										<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+											<h:outputText value="Peso (kg)" styleClass="label" />
+											<p:inputNumber id="peso" value="#{cotacaoController.item.pesoTotal}" styleClass="input-number-resp" decimalSeparator=","
+												thousandSeparator="." decimalPlaces="3" maxValue="9999.999" disabled="true">
+											</p:inputNumber>
+										</p:panelGrid>
+									</p:panelGrid>
 								</p:panelGrid>
-							</p:panelGrid>
-						</p:scrollPanel>
+							</p:scrollPanel>
+						</div>
+
+						<p:panelGrid columns="6" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
+							<p:commandButton id="submitProdutoButton" icon="fa fa-fw fa-save" value="#{labels.botao_gravar}" actionListener="#{cotacaoController.saveItem}"
+								process="editForm:produtoGrid" update="messagesProduto :editForm:produtoGrid" styleClass="ui-grid-col-12" />
+
+							<p:commandButton id="exclusaoButton" icon="fa fa-fw fa-trash" value="#{labels.botao_excluir}" actionListener="#{cotacaoController.excluiItem}"
+								process="editForm:produtoGrid" styleClass="ui-grid-col-12 botao-vermelho" rendered="#{cotacaoController.editingRelated}">
+								<p:confirm header="Confirmação" message="Confirmar exclusão de produto?" icon="ui-icon-alert" />
+							</p:commandButton>
+
+							<p:commandButton icon="fa fa-fw fa-close" value="#{labels.botao_fechar}" oncomplete="PF('itemDialog').hide();" process="@none" global="false"
+								styleClass="ui-grid-col-12 botao-fechar" />
+						</p:panelGrid>
+
+						<p:spacer styleClass="display-desktop" />
+
+						<p:messages id="messagesProduto" />
 					</div>
-
-					<p:panelGrid columns="6" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
-						<p:commandButton id="submitProdutoButton" icon="fa fa-fw fa-save" value="#{labels.botao_gravar}" actionListener="#{cotacaoController.saveItem}"
-							process="editForm:contatoGrid" update="messagesProduto :editForm:contatoGrid" styleClass="ui-grid-col-12"
-							rendered="#{cotacaoController.entity.gerada}" />
-
-						<p:commandButton id="exclusaoButton" icon="fa fa-fw fa-trash" value="#{labels.botao_excluir}" actionListener="#{cotacaoController.excluiItem}"
-							process="editForm:produtoGrid" styleClass="ui-grid-col-12 botao-vermelho"
-							rendered="#{cotacaoController.editingRelated and cotacaoController.entity.gerada}">
-							<p:confirm header="Confirmação" message="Confirmar exclusão de produto?" icon="ui-icon-alert" />
-						</p:commandButton>
-
-						<p:commandButton icon="fa fa-fw fa-close" value="#{labels.botao_fechar}" oncomplete="PF('itemDialog').hide();" process="@none" global="false"
-							styleClass="ui-grid-col-12 botao-fechar" />
-					</p:panelGrid>
-
-					<p:spacer styleClass="display-desktop" />
-
-					<p:messages id="messagesProduto" />
 				</div>
-			</div>
+			</c:if>
 		</p:dialog>
 	</ui:define>
 </ui:composition>
