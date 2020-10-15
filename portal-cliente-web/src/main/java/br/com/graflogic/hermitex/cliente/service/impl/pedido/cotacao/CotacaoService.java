@@ -21,7 +21,6 @@ import br.com.graflogic.hermitex.cliente.data.entity.cotacao.CotacaoEndereco;
 import br.com.graflogic.hermitex.cliente.data.entity.cotacao.CotacaoFrete;
 import br.com.graflogic.hermitex.cliente.data.entity.cotacao.CotacaoItem;
 import br.com.graflogic.hermitex.cliente.data.entity.cotacao.CotacaoSimple;
-import br.com.graflogic.hermitex.cliente.data.entity.produto.FormaPagamento;
 import br.com.graflogic.hermitex.cliente.data.impl.aud.CotacaoAuditoriaRepository;
 import br.com.graflogic.hermitex.cliente.data.impl.cotacao.CotacaoEnderecoRepository;
 import br.com.graflogic.hermitex.cliente.data.impl.cotacao.CotacaoFreteRepository;
@@ -32,7 +31,6 @@ import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosExcepti
 import br.com.graflogic.hermitex.cliente.service.exception.ResultadoNaoEncontradoException;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.FilialService;
-import br.com.graflogic.hermitex.cliente.service.model.pedido.DadosPagamentoCartaoCredito;
 import br.com.graflogic.utilities.datautil.copy.ObjectCopier;
 
 /**
@@ -66,7 +64,7 @@ public class CotacaoService {
 
 	// Fluxo
 	@Transactional(rollbackFor = Throwable.class)
-	public void cadastra(Cotacao entity, FormaPagamento formaPagamento, DadosPagamentoCartaoCredito dadosPagamentoCartaoCredito, Integer idUsuario) {
+	public void cadastra(Cotacao entity, Integer idUsuario) {
 		// Verifica se a compra esta bloqueada
 		if (null != entity.getIdFilial() && filialService.isCompraBloqueada(entity.getIdFilial())) {
 			throw new DadosInvalidosException("Não foi possível prosseguir com a cotação, contate o administrador");

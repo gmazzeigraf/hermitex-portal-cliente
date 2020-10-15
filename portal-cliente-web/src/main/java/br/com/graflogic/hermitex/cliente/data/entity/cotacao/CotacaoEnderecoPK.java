@@ -13,7 +13,7 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class CotacaoEnderecoPK implements Serializable {
 
-	private static final long serialVersionUID = -8580283902585283156L;
+	private static final long serialVersionUID = 5154457394401760933L;
 
 	public CotacaoEnderecoPK() {
 
@@ -25,7 +25,7 @@ public class CotacaoEnderecoPK implements Serializable {
 		this.tipo = tipo;
 	}
 
-	@Column(name = "id_pedido", nullable = false)
+	@Column(name = "id_cotacao", nullable = false)
 	private Long idCotacao;
 
 	@Column(name = "tipo", nullable = false)

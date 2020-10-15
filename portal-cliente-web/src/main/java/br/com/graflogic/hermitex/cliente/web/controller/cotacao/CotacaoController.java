@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 
 import br.com.graflogic.base.service.util.I18NUtil;
 import br.com.graflogic.hermitex.cliente.data.dom.DomAcesso.DomPermissaoAcesso;
+import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomTipoEndereco;
 import br.com.graflogic.hermitex.cliente.data.dom.DomCotacao;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.Usuario;
 import br.com.graflogic.hermitex.cliente.data.entity.auxiliar.Estado;
@@ -21,10 +22,12 @@ import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Filial;
 import br.com.graflogic.hermitex.cliente.data.entity.cotacao.Cotacao;
 import br.com.graflogic.hermitex.cliente.data.entity.cotacao.CotacaoEndereco;
+import br.com.graflogic.hermitex.cliente.data.entity.cotacao.CotacaoEnderecoPK;
 import br.com.graflogic.hermitex.cliente.data.entity.cotacao.CotacaoItem;
 import br.com.graflogic.hermitex.cliente.data.entity.cotacao.CotacaoSimple;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.FormaPagamento;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.Produto;
+import br.com.graflogic.hermitex.cliente.data.entity.produto.ProdutoImagem;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.ProdutoTamanho;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
@@ -37,6 +40,7 @@ import br.com.graflogic.hermitex.cliente.service.impl.pedido.cotacao.CotacaoServ
 import br.com.graflogic.hermitex.cliente.service.impl.produto.FormaPagamentoService;
 import br.com.graflogic.hermitex.cliente.service.impl.produto.ProdutoService;
 import br.com.graflogic.hermitex.cliente.web.util.SessionUtil;
+import br.com.graflogic.utilities.datautil.copy.ObjectCopier;
 import br.com.graflogic.utilities.presentationutil.controller.CrudBaseController;
 
 /**
@@ -77,6 +81,8 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 	private List<Cliente> clientes;
 
 	private List<Filial> filiais;
+
+	private List<FormaPagamento> formasPagamento;
 
 	private List<Estado> estados;
 
@@ -141,7 +147,37 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 
 	@Override
 	protected boolean executeSave() {
-		return false;
+		try {
+			enderecoFaturamento.setCotacao(getEntity());
+			enderecoEntrega.setCotacao(getEntity());
+
+			getEntity().getEnderecos().clear();
+			getEntity().getEnderecos().add(enderecoFaturamento);
+			getEntity().getEnderecos().add(enderecoEntrega);
+
+			if (isEditing()) {
+				try {
+					// TODO
+
+					returnInfoMessage("Cotação atualizada com sucesso", null);
+
+				} catch (DadosDesatualizadosException e) {
+					returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Registro com dados desatualizados, altere novamente", null);
+
+				}
+
+			} else {
+				service.cadastra(getEntity(), SessionUtil.getAuthenticatedUsuario().getId());
+
+				returnInfoMessage("Cotação cadastrada com sucesso", null);
+
+			}
+		} catch (DadosInvalidosException e) {
+			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), e.getMessage(), null);
+			return false;
+		}
+
+		return true;
 	}
 
 	@Override
@@ -150,8 +186,14 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 		getEntity().setItens(new ArrayList<>());
 		getEntity().setEnderecos(new ArrayList<>());
 		getEntity().setFretes(new ArrayList<>());
-
 		getEntity().setIdCliente(getFilterEntity().getIdCliente());
+		getEntity().setValorDescontoLivre(BigDecimal.ZERO);
+		getEntity().setValorDescontoEspecial(BigDecimal.ZERO);
+		getEntity().setPedidoFaturado(true);
+
+		formasPagamento = new ArrayList<>();
+
+		atualizaPedido();
 
 		enderecoEntrega = new CotacaoEndereco();
 		enderecoFaturamento = new CotacaoEndereco();
@@ -196,6 +238,14 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 		}
 	}
 
+	@Override
+	protected void executeEditRelated(Object relatedEntity) throws Exception {
+		if (relatedEntity instanceof CotacaoItem) {
+			item = (CotacaoItem) ObjectCopier.copy(relatedEntity);
+
+		}
+	}
+
 	// Produto
 	public void prepareAddItem() {
 		try {
@@ -222,12 +272,27 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 				getEntity().getItens().add(item);
 			}
 
+			atualizaPedido();
+
 			updateComponent("editForm:dtbItens");
+			updateComponent("editForm:informacoesGrid");
+
 			hideDialog("itemDialog");
 
 		} catch (Exception e) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao salvar produto, contate o administrador", e);
 		}
+	}
+
+	public void removeItem() {
+		getEntity().getItens().remove(indexRelacionado);
+
+		atualizaPedido();
+
+		updateComponent("editForm:dtbItens");
+		updateComponent("editForm:informacoesGrid");
+
+		hideDialog("itemDialog");
 	}
 
 	public void changeProduto() {
@@ -239,7 +304,16 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 				item.setCodigoProduto(produto.getCodigo());
 				item.setTituloProduto(produto.getTitulo());
 				item.setValorUnitario(produto.getValor());
-				item.setValorCorrigidoTamanho(produto.getValor());
+				item.setCodigoTamanho(produto.getTamanhos().get(0).getId().getCodigoTamanho());
+
+				for (ProdutoImagem imagem : produto.getImagens()) {
+					if (imagem.isCapa()) {
+						item.setIdImagemCapaProduto(imagem.getId());
+						break;
+					}
+				}
+
+				changeTamanhoProduto();
 
 				calculaTotalItem();
 			}
@@ -277,7 +351,49 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 			calculaTotalItem();
 
 		} catch (Exception e) {
-			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao quantidade do produto, contate o administrador", e);
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao alterar a quantidade do produto, contate o administrador", e);
+		}
+	}
+
+	public void changeFormaPagamento() {
+		try {
+			this.formaPagamento = null;
+
+			if (null != getEntity().getIdFormaPagamento() && 0 != getEntity().getIdFormaPagamento()) {
+				for (FormaPagamento formaPagamento : formasPagamento) {
+					if (getEntity().getIdFormaPagamento().equals(formaPagamento.getId())) {
+						this.formaPagamento = formaPagamento;
+						break;
+					}
+				}
+			}
+
+			atualizaPedido();
+
+		} catch (Exception e) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao alterar a forma de pagamento, contate o administrador", e);
+		}
+	}
+
+	public void changeDescontoLivre() {
+		try {
+			// TODO Valida valor do desconto pelo perfil
+
+			atualizaPedido();
+
+		} catch (Exception e) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao alterar o desconto livre, contate o administrador", e);
+		}
+	}
+
+	public void changeDescontoEspecial() {
+		try {
+			// TODO Valida valor do desconto pelo perfil
+
+			atualizaPedido();
+
+		} catch (Exception e) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao alterar o desconto livre, contate o administrador", e);
 		}
 	}
 
@@ -354,7 +470,7 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 			if (null != getFilterEntity().getIdCliente() && 0 != getFilterEntity().getIdCliente()) {
 				cliente = clienteService.consultaPorId(getFilterEntity().getIdCliente());
 
-				filiais = filialService.consultaPorCliente(getFilterEntity().getIdCliente(), false);
+				filiais = filialService.consultaPorCliente(getFilterEntity().getIdCliente(), true);
 
 				Produto produtoFilter = new Produto();
 				produtoFilter.setIdCliente(getFilterEntity().getIdCliente());
@@ -371,6 +487,7 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 			if (null != getEntity().getIdFilial() && null != getEntity()) {
 				filial = filialService.consultaPorId(getEntity().getIdFilial());
 
+				enderecoFaturamento = new CotacaoEndereco(new CotacaoEnderecoPK(null, DomTipoEndereco.FATURAMENTO));
 				enderecoFaturamento.setSiglaEstado(filial.getEnderecoFaturamento().getSiglaEstado());
 				enderecoFaturamento.setIdMunicipio(filial.getEnderecoFaturamento().getIdMunicipio());
 				enderecoFaturamento.setCep(filial.getEnderecoFaturamento().getCep());
@@ -379,6 +496,7 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 				enderecoFaturamento.setNumero(filial.getEnderecoFaturamento().getNumero());
 				enderecoFaturamento.setComplemento(filial.getEnderecoFaturamento().getComplemento());
 
+				enderecoEntrega = new CotacaoEndereco(new CotacaoEnderecoPK(null, DomTipoEndereco.ENTREGA));
 				enderecoEntrega.setSiglaEstado(filial.getEnderecoEntrega().getSiglaEstado());
 				enderecoEntrega.setIdMunicipio(filial.getEnderecoEntrega().getIdMunicipio());
 				enderecoEntrega.setCep(filial.getEnderecoEntrega().getCep());
@@ -389,8 +507,38 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 			}
 
 		} catch (Exception e) {
-			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao consultar dados do cliente, contate o administrador", e);
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao consultar dados da filial, contate o administrador", e);
 		}
+	}
+
+	private void atualizaPedido() {
+		formasPagamento.clear();
+
+		getEntity().setValorFrete(BigDecimal.ZERO);
+		getEntity().setValorProdutos(BigDecimal.ZERO);
+		getEntity().setValorDescontoPagamento(BigDecimal.ZERO);
+
+		getEntity().setValorTotal(BigDecimal.ZERO);
+		getEntity().setPesoTotal(BigDecimal.ZERO);
+		getEntity().setQuantidadeTotalItens(0);
+
+		for (CotacaoItem cotacaoItem : getEntity().getItens()) {
+			getEntity().setValorProdutos(getEntity().getValorProdutos().add(cotacaoItem.getValorTotal()));
+			getEntity().setPesoTotal(getEntity().getPesoTotal().add(cotacaoItem.getPesoTotal()));
+			getEntity().setQuantidadeTotalItens(getEntity().getQuantidadeTotalItens() + cotacaoItem.getQuantidade());
+		}
+
+		getEntity().setValorTotal(getEntity().getValorProdutos());
+		getEntity().setValorTotal(getEntity().getValorTotal().subtract(getEntity().getValorDescontoLivre()));
+		getEntity().setValorTotal(getEntity().getValorTotal().subtract(getEntity().getValorDescontoEspecial()));
+
+		if (null != formaPagamento) {
+			getEntity().setDescricaoFormaPagamento(formaPagamento.getDescricao());
+			getEntity().setValorDescontoPagamento(getEntity().getValorTotal().multiply(formaPagamento.getPorcentagemDesconto())
+					.divide(new BigDecimal("100"), 2, RoundingMode.HALF_EVEN));
+		}
+
+		formasPagamento = formaPagamentoService.gera(getEntity());
 	}
 
 	// Condicoes
@@ -399,11 +547,15 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 	}
 
 	public boolean isFinalizavel() {
-		return null != getEntity() && getEntity().isGerada() && SessionUtil.possuiPermissao(DomPermissaoAcesso.ROLE_COTACAO_FINALIZACAO);
+		// TODO
+		return false;
+//		return null != getEntity() && getEntity().isGerada() && SessionUtil.possuiPermissao(DomPermissaoAcesso.ROLE_COTACAO_FINALIZACAO);
 	}
 
 	public boolean isCancelavel() {
-		return null != getEntity() && (getEntity().isGerada()) && SessionUtil.possuiPermissao(DomPermissaoAcesso.ROLE_COTACAO_CANCELAMENTO);
+		// TODO
+		return false;
+//		return null != getEntity() && (getEntity().isGerada()) && SessionUtil.possuiPermissao(DomPermissaoAcesso.ROLE_COTACAO_CANCELAMENTO);
 	}
 
 	public boolean isPesquisavel() {
@@ -417,6 +569,10 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 
 	public List<Filial> getFiliais() {
 		return filiais;
+	}
+
+	public List<FormaPagamento> getFormasPagamento() {
+		return formasPagamento;
 	}
 
 	public List<Estado> getEstados() {
