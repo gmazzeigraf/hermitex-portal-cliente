@@ -469,7 +469,7 @@ public class CarrinhoController extends BaseController implements InitializingBe
 			if (isTipoFreteSelecionado()) {
 				for (TipoFrete tipoFrete : tiposFrete) {
 					if (codigoServicoFrete.equals(tipoFrete.getCodigoServico())) {
-						pedido.getFretes().addAll(tipoFrete.getFretes());
+						pedido.getFretes().addAll(tipoFrete.getFretesPedido());
 						pedido.setValorFrete(tipoFrete.getValor());
 
 						break;

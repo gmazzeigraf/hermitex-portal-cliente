@@ -154,7 +154,7 @@
 								<h:outputText value="Status" styleClass="label" />
 								<h:outputText value="#{cotacaoController.entity.deStatus}" />
 							</p:panelGrid>
-							
+
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 								<h:outputText value="Serviço Frete" styleClass="label" />
 								<h:outputText value="#{cotacaoController.servicoFrete}" />
@@ -214,16 +214,6 @@
 								</h:outputText>
 							</p:panelGrid>
 
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{!cotacaoController.editing}">
-								<p:outputLabel for="formaPagamento" value="Forma Pagamento" styleClass="label" />
-								<p:selectOneMenu id="formaPagamento" value="#{cotacaoController.entity.idFormaPagamento}" styleClass="ui-grid-col-12" filter="true"
-									filterMatchMode="contains" required="true" requiredMessage="Favor selecionar a forma de pagamento">
-									<f:selectItem itemLabel="Selecione" itemValue="" />
-									<f:selectItems value="#{cotacaoController.formasPagamento}" var="item" itemLabel="#{item.descricao}" itemValue="#{item.id}" />
-									<p:ajax process="@this" update=":editForm:informacoesGrid" listener="#{cotacaoController.changeFormaPagamento}" />
-								</p:selectOneMenu>
-							</p:panelGrid>
-							
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{cotacaoController.editing}">
 								<p:outputLabel value="Forma Pagamento" styleClass="label" />
 								<h:outputText value="#{cotacaoController.entity.descricaoFormaPagamento}" />
@@ -231,43 +221,44 @@
 						</p:panelGrid>
 					</div>
 
-					<div class="card card-w-title">
-						<h1>Cliente</h1>
+					<c:if test="#{cotacaoController.editing}">
+						<div class="card card-w-title">
+							<h1>Cliente</h1>
 
-						<p:panelGrid columns="4" id="clienteGrid" layout="grid" styleClass="ui-panelgrid-blank form-group"
-							columnClasses="ui-grid-col-1, ui-grid-col-2, ui-grid-col-4, ui-grid-col-5">
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<p:outputLabel value="#" styleClass="label" />
-								<p:outputLabel value="#{cotacaoController.cliente.id}" />
-							</p:panelGrid>
+							<p:panelGrid columns="4" id="clienteGrid" layout="grid" styleClass="ui-panelgrid-blank form-group"
+								columnClasses="ui-grid-col-1, ui-grid-col-2, ui-grid-col-4, ui-grid-col-5">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel value="#" styleClass="label" />
+									<p:outputLabel value="#{cotacaoController.cliente.id}" />
+								</p:panelGrid>
 
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<p:outputLabel value="CNPJ" styleClass="label" />
-								<p:outputLabel value="#{cotacaoController.cliente.formattedCnpj}" />
-							</p:panelGrid>
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel value="CNPJ" styleClass="label" />
+									<p:outputLabel value="#{cotacaoController.cliente.formattedCnpj}" />
+								</p:panelGrid>
 
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<p:outputLabel value="Razão Social" styleClass="label" />
-								<p:outputLabel value="#{cotacaoController.cliente.razaoSocial}" />
-							</p:panelGrid>
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel value="Razão Social" styleClass="label" />
+									<p:outputLabel value="#{cotacaoController.cliente.razaoSocial}" />
+								</p:panelGrid>
 
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<p:outputLabel value="Nome Fantasia" styleClass="label" />
-								<p:outputLabel value="#{cotacaoController.cliente.nomeFantasia}" />
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<p:outputLabel value="Nome Fantasia" styleClass="label" />
+									<p:outputLabel value="#{cotacaoController.cliente.nomeFantasia}" />
+								</p:panelGrid>
 							</p:panelGrid>
-						</p:panelGrid>
-					</div>
+						</div>
+					</c:if>
 
 					<div class="card card-w-title">
 						<h1>Filial</h1>
 
 						<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group" rendered="#{!cotacaoController.editing}">
 							<p:selectOneMenu id="filial" value="#{cotacaoController.entity.idFilial}" styleClass="ui-grid-col-12" filter="true" filterMatchMode="contains"
-								required="true" requiredMessage="Favor selecionar a filial">
+								required="true" requiredMessage="Favor selecionar a filial" disabled="#{null != cotacaoController.entity.idFilial}">
 								<f:selectItem itemLabel="Selecione" itemValue="" />
 								<f:selectItems value="#{cotacaoController.filiais}" var="item" itemLabel="#{item.id} - #{item.nomeApresentacao}" itemValue="#{item.id}" />
-								<p:ajax process="@this" update=":editForm:filialGrid :editForm:enderecoFaturamentoGrid :editForm:enderecoEntregaGrid"
-									listener="#{cotacaoController.changeFilial}" />
+								<p:ajax process="@this" update=":editForm" listener="#{cotacaoController.changeFilial}" />
 							</p:selectOneMenu>
 						</p:panelGrid>
 
@@ -316,243 +307,276 @@
 						</div>
 					</c:if>
 
-					<div class="card card-w-title">
-						<h1>Endereço Faturamento</h1>
+					<c:if test="#{null != cotacaoController.entity.idFilial}">
+						<div class="card card-w-title">
+							<h1>Endereço Faturamento</h1>
 
-						<p:panelGrid columns="1" id="enderecoFaturamentoGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
-							<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
-								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-									<p:outputLabel for="cepFaturamento" value="CEP" styleClass="label" />
-									<p:inputMask id="cepFaturamento" styleClass="ui-grid-col-12" mask="99.999-999" value="#{cotacaoController.enderecoFaturamento.cep}"
-										converter="maskConverter" validatorMessage="CEP inválido" required="true" requiredMessage="Favor informar o CEP" disabled="true" />
+							<p:panelGrid columns="1" id="enderecoFaturamentoGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
+								<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
+									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+										<p:outputLabel for="cepFaturamento" value="CEP" styleClass="label" />
+										<p:inputMask id="cepFaturamento" styleClass="ui-grid-col-12" mask="99.999-999" value="#{cotacaoController.enderecoFaturamento.cep}"
+											converter="maskConverter" validatorMessage="CEP inválido" required="true" requiredMessage="Favor informar o CEP" disabled="true" />
+									</p:panelGrid>
+
+									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+										<p:outputLabel for="logradouroFaturamento" value="Logradouro" styleClass="label" />
+										<p:inputText id="logradouroFaturamento" value="#{cotacaoController.enderecoFaturamento.logradouro}" maxlength="100"
+											styleClass="ui-grid-col-12" required="true" requiredMessage="Favor informar o logradouro" disabled="true" />
+									</p:panelGrid>
+
+									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+										<p:outputLabel for="numeroFaturamento" value="Número" styleClass="label" />
+										<p:inputText id="numeroFaturamento" value="#{cotacaoController.enderecoFaturamento.numero}" maxlength="10" styleClass="ui-grid-col-12"
+											required="true" requiredMessage="Favor informar o número" disabled="true" />
+									</p:panelGrid>
+
+									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+										<p:outputLabel for="bairroFaturamento" value="Bairro" styleClass="label" />
+										<p:inputText id="bairroFaturamento" value="#{cotacaoController.enderecoFaturamento.bairro}" maxlength="100" styleClass="ui-grid-col-12"
+											required="true" requiredMessage="Favor informar o bairro" disabled="true" />
+									</p:panelGrid>
+
+									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+										<p:outputLabel for="estadoFaturamento" value="Estado" styleClass="label" />
+										<p:selectOneMenu id="estadoFaturamento" value="#{cotacaoController.enderecoFaturamento.siglaEstado}" styleClass="ui-grid-col-12"
+											required="true" requiredMessage="Favor informar o estado" filter="true" filterMatchMode="startsWith" disabled="true">
+											<f:selectItem itemLabel="" itemValue="" />
+											<f:selectItems value="#{cotacaoController.estados}" var="item" itemLabel="#{item.nome}" itemValue="#{item.sigla}" />
+										</p:selectOneMenu>
+									</p:panelGrid>
+
+									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+										<p:outputLabel for="municipioFaturamento" value="Município" styleClass="label" />
+										<p:selectOneMenu id="municipioFaturamento" value="#{cotacaoController.enderecoFaturamento.idMunicipio}" styleClass="ui-grid-col-12"
+											required="true" requiredMessage="Favor informar o município" filter="true" filterMatchMode="startsWith" disabled="true">
+											<f:selectItem itemLabel="" itemValue="" />
+											<f:selectItems value="#{cotacaoController.municipiosFaturamento}" var="item" itemLabel="#{item.nome}" itemValue="#{item.id}" />
+										</p:selectOneMenu>
+									</p:panelGrid>
 								</p:panelGrid>
-
-								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-									<p:outputLabel for="logradouroFaturamento" value="Logradouro" styleClass="label" />
-									<p:inputText id="logradouroFaturamento" value="#{cotacaoController.enderecoFaturamento.logradouro}" maxlength="100"
-										styleClass="ui-grid-col-12" required="true" requiredMessage="Favor informar o logradouro" disabled="true" />
-								</p:panelGrid>
-
-								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-									<p:outputLabel for="numeroFaturamento" value="Número" styleClass="label" />
-									<p:inputText id="numeroFaturamento" value="#{cotacaoController.enderecoFaturamento.numero}" maxlength="10" styleClass="ui-grid-col-12"
-										required="true" requiredMessage="Favor informar o número" disabled="true" />
-								</p:panelGrid>
-
-								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-									<p:outputLabel for="bairroFaturamento" value="Bairro" styleClass="label" />
-									<p:inputText id="bairroFaturamento" value="#{cotacaoController.enderecoFaturamento.bairro}" maxlength="100" styleClass="ui-grid-col-12"
-										required="true" requiredMessage="Favor informar o bairro" disabled="true" />
-								</p:panelGrid>
-
-								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-									<p:outputLabel for="estadoFaturamento" value="Estado" styleClass="label" />
-									<p:selectOneMenu id="estadoFaturamento" value="#{cotacaoController.enderecoFaturamento.siglaEstado}" styleClass="ui-grid-col-12"
-										required="true" requiredMessage="Favor informar o estado" filter="true" filterMatchMode="startsWith" disabled="true">
-										<f:selectItem itemLabel="" itemValue="" />
-										<f:selectItems value="#{cotacaoController.estados}" var="item" itemLabel="#{item.nome}" itemValue="#{item.sigla}" />
-									</p:selectOneMenu>
-								</p:panelGrid>
-
-								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-									<p:outputLabel for="municipioFaturamento" value="Município" styleClass="label" />
-									<p:selectOneMenu id="municipioFaturamento" value="#{cotacaoController.enderecoFaturamento.idMunicipio}" styleClass="ui-grid-col-12"
-										required="true" requiredMessage="Favor informar o município" filter="true" filterMatchMode="startsWith" disabled="true">
-										<f:selectItem itemLabel="" itemValue="" />
-										<f:selectItems value="#{cotacaoController.municipiosFaturamento}" var="item" itemLabel="#{item.nome}" itemValue="#{item.id}" />
-									</p:selectOneMenu>
+								<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
+									<p:outputLabel for="complementoFaturamento" value="Complemento" styleClass="label" />
+									<p:inputText id="complementoFaturamento" value="#{cotacaoController.enderecoFaturamento.complemento}" maxlength="100"
+										styleClass="ui-grid-col-12" disabled="true" />
 								</p:panelGrid>
 							</p:panelGrid>
+						</div>
+
+						<div class="card card-w-title">
+							<h1>Endereço Entrega</h1>
+
+							<p:panelGrid columns="1" id="enderecoEntregaGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
+								<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
+									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+										<p:outputLabel for="cepEntrega" value="CEP" styleClass="label" />
+										<p:inputMask id="cepEntrega" styleClass="ui-grid-col-12" mask="99.999-999" value="#{cotacaoController.enderecoEntrega.cep}"
+											converter="maskConverter" validatorMessage="CEP inválido" required="true" requiredMessage="Favor informar o CEP" disabled="true" />
+									</p:panelGrid>
+
+									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+										<p:outputLabel for="logradouroEntrega" value="Logradouro" styleClass="label" />
+										<p:inputText id="logradouroEntrega" value="#{cotacaoController.enderecoEntrega.logradouro}" maxlength="100" styleClass="ui-grid-col-12"
+											required="true" requiredMessage="Favor informar o logradouro" disabled="true" />
+									</p:panelGrid>
+
+									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+										<p:outputLabel for="numeroEntrega" value="Número" styleClass="label" />
+										<p:inputText id="numeroEntrega" value="#{cotacaoController.enderecoEntrega.numero}" maxlength="10" styleClass="ui-grid-col-12"
+											required="true" requiredMessage="Favor informar o número" disabled="true" />
+									</p:panelGrid>
+
+									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+										<p:outputLabel for="bairroEntrega" value="Bairro" styleClass="label" />
+										<p:inputText id="bairroEntrega" value="#{cotacaoController.enderecoEntrega.bairro}" maxlength="100" styleClass="ui-grid-col-12"
+											required="true" requiredMessage="Favor informar o bairro" disabled="true" />
+									</p:panelGrid>
+
+									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+										<p:outputLabel for="estadoEntrega" value="Estado" styleClass="label" />
+										<p:selectOneMenu id="estadoEntrega" value="#{cotacaoController.enderecoEntrega.siglaEstado}" styleClass="ui-grid-col-12" required="true"
+											requiredMessage="Favor informar o estado" filter="true" filterMatchMode="startsWith" disabled="true">
+											<f:selectItem itemLabel="" itemValue="" />
+											<f:selectItems value="#{cotacaoController.estados}" var="item" itemLabel="#{item.nome}" itemValue="#{item.sigla}" />
+										</p:selectOneMenu>
+									</p:panelGrid>
+
+									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+										<p:outputLabel for="municipioEntrega" value="Município" styleClass="label" />
+										<p:selectOneMenu id="municipioEntrega" value="#{cotacaoController.enderecoEntrega.idMunicipio}" styleClass="ui-grid-col-12" required="true"
+											requiredMessage="Favor informar o município" filter="true" filterMatchMode="startsWith" disabled="true">
+											<f:selectItem itemLabel="" itemValue="" />
+											<f:selectItems value="#{cotacaoController.municipiosEntrega}" var="item" itemLabel="#{item.nome}" itemValue="#{item.id}" />
+										</p:selectOneMenu>
+									</p:panelGrid>
+								</p:panelGrid>
+								<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
+									<p:outputLabel for="complementoEntrega" value="Complemento" styleClass="label" />
+									<p:inputText id="complementoEntrega" value="#{cotacaoController.enderecoEntrega.complemento}" maxlength="100" styleClass="ui-grid-col-12"
+										disabled="true" />
+								</p:panelGrid>
+							</p:panelGrid>
+						</div>
+
+						<div class="card card-w-title">
+							<h1>Produto(s)</h1>
+
+							<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank">
+								<p:commandButton value="#{labels.botao_adicionar}" icon="fa fa-fw fa-plus" actionListener="#{cotacaoController.prepareAddItem}"
+									process="@this" resetValues="true" styleClass="ui-grid-col-12 botao-adicionar" update="editForm:idItemDialog" />
+							</p:panelGrid>
+
 							<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
-								<p:outputLabel for="complementoFaturamento" value="Complemento" styleClass="label" />
-								<p:inputText id="complementoFaturamento" value="#{cotacaoController.enderecoFaturamento.complemento}" maxlength="100"
-									styleClass="ui-grid-col-12" disabled="true" />
-							</p:panelGrid>
-						</p:panelGrid>
-					</div>
+								<p:dataTable id="dtbItens" widgetVar="dtb" var="entity" value="#{cotacaoController.entity.itens}" reflow="true"
+									emptyMessage="#{null != cotacaoController.entity.itens ? 'Nenhum item encontrado' : ''}" rowIndexVar="index">
 
-					<div class="card card-w-title">
-						<h1>Endereço Entrega</h1>
+									<p:column headerText="" styleClass="id-column" exportable="false">
+										<p:graphicImage cache="true" value="#{sessionController.getUrlImagem(entity.idImagemCapaProduto, 1)}" />
+									</p:column>
 
-						<p:panelGrid columns="1" id="enderecoEntregaGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
-							<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
-								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-									<p:outputLabel for="cepEntrega" value="CEP" styleClass="label" />
-									<p:inputMask id="cepEntrega" styleClass="ui-grid-col-12" mask="99.999-999" value="#{cotacaoController.enderecoEntrega.cep}"
-										converter="maskConverter" validatorMessage="CEP inválido" required="true" requiredMessage="Favor informar o CEP" disabled="true" />
-								</p:panelGrid>
+									<p:column headerText="SKU" styleClass="id-column">
+										<h:outputText value="#{entity.skuProduto}" />
+									</p:column>
 
-								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-									<p:outputLabel for="logradouroEntrega" value="Logradouro" styleClass="label" />
-									<p:inputText id="logradouroEntrega" value="#{cotacaoController.enderecoEntrega.logradouro}" maxlength="100" styleClass="ui-grid-col-12"
-										required="true" requiredMessage="Favor informar o logradouro" disabled="true" />
-								</p:panelGrid>
+									<p:column headerText="Código" styleClass="id-column">
+										<h:outputText value="#{entity.codigoProduto}" />
+									</p:column>
 
-								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-									<p:outputLabel for="numeroEntrega" value="Número" styleClass="label" />
-									<p:inputText id="numeroEntrega" value="#{cotacaoController.enderecoEntrega.numero}" maxlength="10" styleClass="ui-grid-col-12"
-										required="true" requiredMessage="Favor informar o número" disabled="true" />
-								</p:panelGrid>
+									<p:column headerText="Título" styleClass="coluna-center">
+										<h:outputText value="#{entity.tituloProduto}" />
+									</p:column>
 
-								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-									<p:outputLabel for="bairroEntrega" value="Bairro" styleClass="label" />
-									<p:inputText id="bairroEntrega" value="#{cotacaoController.enderecoEntrega.bairro}" maxlength="100" styleClass="ui-grid-col-12"
-										required="true" requiredMessage="Favor informar o bairro" disabled="true" />
-								</p:panelGrid>
+									<p:column headerText="Tamanho" styleClass="id-column">
+										<h:outputText value="#{entity.codigoTamanho}" />
+									</p:column>
 
-								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-									<p:outputLabel for="estadoEntrega" value="Estado" styleClass="label" />
-									<p:selectOneMenu id="estadoEntrega" value="#{cotacaoController.enderecoEntrega.siglaEstado}" styleClass="ui-grid-col-12" required="true"
-										requiredMessage="Favor informar o estado" filter="true" filterMatchMode="startsWith" disabled="true">
-										<f:selectItem itemLabel="" itemValue="" />
-										<f:selectItems value="#{cotacaoController.estados}" var="item" itemLabel="#{item.nome}" itemValue="#{item.sigla}" />
-									</p:selectOneMenu>
-								</p:panelGrid>
-
-								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-									<p:outputLabel for="municipioEntrega" value="Município" styleClass="label" />
-									<p:selectOneMenu id="municipioEntrega" value="#{cotacaoController.enderecoEntrega.idMunicipio}" styleClass="ui-grid-col-12" required="true"
-										requiredMessage="Favor informar o município" filter="true" filterMatchMode="startsWith" disabled="true">
-										<f:selectItem itemLabel="" itemValue="" />
-										<f:selectItems value="#{cotacaoController.municipiosEntrega}" var="item" itemLabel="#{item.nome}" itemValue="#{item.id}" />
-									</p:selectOneMenu>
-								</p:panelGrid>
-							</p:panelGrid>
-							<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
-								<p:outputLabel for="complementoEntrega" value="Complemento" styleClass="label" />
-								<p:inputText id="complementoEntrega" value="#{cotacaoController.enderecoEntrega.complemento}" maxlength="100" styleClass="ui-grid-col-12"
-									disabled="true" />
-							</p:panelGrid>
-						</p:panelGrid>
-					</div>
-
-					<div class="card card-w-title">
-						<h1>Produto(s)</h1>
-
-						<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank">
-							<p:commandButton value="#{labels.botao_adicionar}" icon="fa fa-fw fa-plus" actionListener="#{cotacaoController.prepareAddItem}" process="@this"
-								resetValues="true" styleClass="ui-grid-col-12 botao-adicionar" update="editForm:idItemDialog" />
-						</p:panelGrid>
-
-						<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
-							<p:dataTable id="dtbItens" widgetVar="dtb" var="entity" value="#{cotacaoController.entity.itens}" reflow="true"
-								emptyMessage="#{null != cotacaoController.entity.itens ? 'Nenhum item encontrado' : ''}" rowIndexVar="index">
-
-								<p:column headerText="" styleClass="id-column" exportable="false">
-									<p:graphicImage cache="true" value="#{sessionController.getUrlImagem(entity.idImagemCapaProduto, 1)}" />
-								</p:column>
-
-								<p:column headerText="SKU" styleClass="id-column">
-									<h:outputText value="#{entity.skuProduto}" />
-								</p:column>
-
-								<p:column headerText="Código" styleClass="id-column">
-									<h:outputText value="#{entity.codigoProduto}" />
-								</p:column>
-
-								<p:column headerText="Título" styleClass="coluna-center">
-									<h:outputText value="#{entity.tituloProduto}" />
-								</p:column>
-
-								<p:column headerText="Tamanho" styleClass="id-column">
-									<h:outputText value="#{entity.codigoTamanho}" />
-								</p:column>
-
-								<p:column headerText="Total" styleClass="coluna-valor">
-									<h:outputText value="#{entity.valorCorrigidoTamanho}">
-										<f:convertNumber pattern="R$ #,##0.00" />
-									</h:outputText>
-								</p:column>
-
-								<p:column headerText="Peças" styleClass="id-column">
-									<h:outputText value="#{entity.quantidade}" />
-
-									<f:facet name="footer">
-										<h:outputText value="#{cotacaoController.entity.quantidadeTotalItens}" />
-									</f:facet>
-								</p:column>
-
-								<p:column headerText="Total" styleClass="coluna-valor">
-									<h:outputText value="#{entity.valorTotal}">
-										<f:convertNumber pattern="R$ #,##0.00" />
-									</h:outputText>
-
-									<f:facet name="footer">
-										<h:outputText value="#{cotacaoController.entity.valorProdutos}">
+									<p:column headerText="Total" styleClass="coluna-valor">
+										<h:outputText value="#{entity.valorCorrigidoTamanho}">
 											<f:convertNumber pattern="R$ #,##0.00" />
 										</h:outputText>
+									</p:column>
+
+									<p:column headerText="Peças" styleClass="id-column">
+										<h:outputText value="#{entity.quantidade}" />
+
+										<f:facet name="footer">
+											<h:outputText value="#{cotacaoController.entity.quantidadeTotalItens}" />
+										</f:facet>
+									</p:column>
+
+									<p:column headerText="Total" styleClass="coluna-valor">
+										<h:outputText value="#{entity.valorTotal}">
+											<f:convertNumber pattern="R$ #,##0.00" />
+										</h:outputText>
+
+										<f:facet name="footer">
+											<h:outputText value="#{cotacaoController.entity.valorProdutos}">
+												<f:convertNumber pattern="R$ #,##0.00" />
+											</h:outputText>
+										</f:facet>
+									</p:column>
+
+									<p:column styleClass="coluna-edicao">
+										<p:commandButton icon="fa fa-fw fa-pencil" title="#{labels.botao_editar}" update="editForm:idItemDialog" process="@this" resetValues="true"
+											styleClass="ui-grid-col-12" oncomplete="PF('itemDialog').show();">
+											<f:setPropertyActionListener value="#{index}" target="#{cotacaoController.indexRelacionado}" />
+											<f:setPropertyActionListener value="#{entity}" target="#{cotacaoController.selectedRelatedEntity}" />
+										</p:commandButton>
+									</p:column>
+
+									<f:facet name="footer">
+										<p:commandLink title="Excel" ajax="false" onclick="liberaRefresh(); PrimeFaces.monitorDownload(showStatus, hideStatus);">
+											<i class="fa fa-fw fa-file-excel-o export-buttons"></i>
+											<p:dataExporter type="xlsx" target="dtbItens" fileName="produtos_#{cotacaoController.entity.formattedId}" pageOnly="false"
+												encoding="ISO-8859-1" />
+										</p:commandLink>
 									</f:facet>
-								</p:column>
+								</p:dataTable>
+							</p:panelGrid>
+						</div>
 
-								<p:column styleClass="coluna-edicao">
-									<p:commandButton icon="fa fa-fw fa-pencil" title="#{labels.botao_editar}" update="editForm:idItemDialog" process="@this" resetValues="true"
-										styleClass="ui-grid-col-12" oncomplete="PF('itemDialog').show();">
-										<f:setPropertyActionListener value="#{index}" target="#{cotacaoController.indexRelacionado}" />
-										<f:setPropertyActionListener value="#{entity}" target="#{cotacaoController.selectedRelatedEntity}" />
-									</p:commandButton>
-								</p:column>
+						<div class="card card-w-title">
+							<h1>Frete(s)</h1>
+							<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group" id="freteGrid">
+								<p:panelGrid columns="2" columnClasses="ui-grid-col-2, ui-grid-col-10" layout="grid" rendered="#{!cotacaoController.editing}">
+									<p:spacer></p:spacer>
+									<p:outputLabel for="tipoFrete" value="Tipo Frete" styleClass="label" />
+									<p:commandButton id="atualizaTiposFreteButton" icon="fa fa-fw fa-refresh" value="Atualizar Frete"
+										actionListener="#{cotacaoController.atualizaTiposFrete}" process="@this" update=":editForm:freteGrid"
+										styleClass="ui-grid-col-12" />
+									<p:selectOneMenu id="tipoFrete" value="#{cotacaoController.codigoServicoFrete}" styleClass="ui-grid-col-12">
+										<f:selectItem itemLabel="Selecione" itemValue="" />
+										<f:selectItems value="#{cotacaoController.tiposFrete}" var="item" itemLabel="#{item.codigoServico} - #{item.descricao}" itemValue="#{item.codigoServico}" />
+										<p:ajax process="@this" update=":editForm:informacoesGrid :editForm:pagamentoGrid" listener="#{cotacaoController.changeTipoFrete}" />
+									</p:selectOneMenu>
+								</p:panelGrid>
 
-								<f:facet name="footer">
-									<p:commandLink title="Excel" ajax="false" onclick="liberaRefresh(); PrimeFaces.monitorDownload(showStatus, hideStatus);">
-										<i class="fa fa-fw fa-file-excel-o export-buttons"></i>
-										<p:dataExporter type="xlsx" target="dtbItens" fileName="produtos_#{cotacaoController.entity.formattedId}" pageOnly="false"
-											encoding="ISO-8859-1" />
-									</p:commandLink>
-								</f:facet>
-							</p:dataTable>
-						</p:panelGrid>
-					</div>
+								<p:dataTable id="dtbFretes" widgetVar="dtb" var="entity" value="#{cotacaoController.entity.fretes}" reflow="true"
+									emptyMessage="#{null != cotacaoController.entity.fretes ? 'Nenhum frete encontrado' : ''}" rowIndexVar="index"
+									rendered="#{cotacaoController.editing}">
 
-					<div class="card card-w-title">
-						<h1>Frete(s)</h1>
-						<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
-							<p:dataTable id="dtbFretes" widgetVar="dtb" var="entity" value="#{cotacaoController.entity.fretes}" reflow="true"
-								emptyMessage="#{null != cotacaoController.entity.fretes ? 'Nenhum frete encontrado' : ''}" rowIndexVar="index">
+									<p:column headerText="Serviço" styleClass="id-column" rendered="false">
+										<h:outputText value="#{entity.codigoServico}" />
+									</p:column>
 
-								<p:column headerText="Serviço" styleClass="id-column" rendered="false">
-									<h:outputText value="#{entity.codigoServico}" />
-								</p:column>
+									<p:column headerText="Prazo (dias)" styleClass="coluna-valor">
+										<h:outputText value="#{entity.prazoDias}" />
+									</p:column>
 
-								<p:column headerText="Prazo (dias)" styleClass="coluna-valor">
-									<h:outputText value="#{entity.prazoDias}" />
-								</p:column>
+									<p:column headerText="Itens" styleClass="coluna-valor">
+										<h:outputText value="#{entity.quantidadeItens}" />
+									</p:column>
 
-								<p:column headerText="Itens" styleClass="coluna-valor">
-									<h:outputText value="#{entity.quantidadeItens}" />
-								</p:column>
+									<p:column headerText="Peso" styleClass="coluna-valor">
+										<h:outputText value="#{entity.pesoItens}">
+											<f:convertNumber pattern="#,##0.000" />
+										</h:outputText>
+									</p:column>
 
-								<p:column headerText="Peso" styleClass="coluna-valor">
-									<h:outputText value="#{entity.pesoItens}">
-										<f:convertNumber pattern="#,##0.000" />
-									</h:outputText>
-								</p:column>
+									<p:column headerText="Valor" styleClass="coluna-valor">
+										<h:outputText value="#{entity.valor}">
+											<f:convertNumber pattern="R$ #,##0.00" />
+										</h:outputText>
+									</p:column>
 
-								<p:column headerText="Valor" styleClass="coluna-valor">
-									<h:outputText value="#{entity.valor}">
-										<f:convertNumber pattern="R$ #,##0.00" />
-									</h:outputText>
-								</p:column>
+									<p:column headerText="Embalagem" styleClass="coluna-center">
+										<h:outputText value="#{entity.nomeEmbalagem}" />
+									</p:column>
 
-								<p:column headerText="Embalagem" styleClass="coluna-center">
-									<h:outputText value="#{entity.nomeEmbalagem}" />
-								</p:column>
+									<f:facet name="footer">
+										<p:commandLink title="Excel" ajax="false" onclick="liberaRefresh(); PrimeFaces.monitorDownload(showStatus, hideStatus);">
+											<i class="fa fa-fw fa-file-excel-o export-buttons"></i>
+											<p:dataExporter type="xlsx" target="dtbFretes" fileName="fretes_#{cotacaoController.entity.formattedId}" pageOnly="false"
+												encoding="ISO-8859-1" />
+										</p:commandLink>
+									</f:facet>
+								</p:dataTable>
+							</p:panelGrid>
+						</div>
 
-								<f:facet name="footer">
-									<p:commandLink title="Excel" ajax="false" onclick="liberaRefresh(); PrimeFaces.monitorDownload(showStatus, hideStatus);">
-										<i class="fa fa-fw fa-file-excel-o export-buttons"></i>
-										<p:dataExporter type="xlsx" target="dtbFretes" fileName="fretes_#{cotacaoController.entity.formattedId}" pageOnly="false"
-											encoding="ISO-8859-1" />
-									</p:commandLink>
-								</f:facet>
-							</p:dataTable>
-						</p:panelGrid>
-					</div>
+						<c:if test="#{!cotacaoController.editing}">
+							<div class="card card-w-title">
+								<h1>Pagamento</h1>
+								<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group" id="pagamentoGrid">
+									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+										<p:outputLabel for="formaPagamento" value="Forma Pagamento" styleClass="label" />
+										<p:selectOneMenu id="formaPagamento" value="#{cotacaoController.entity.idFormaPagamento}" styleClass="ui-grid-col-12" filter="true"
+											filterMatchMode="contains" required="true" requiredMessage="Favor selecionar a forma de pagamento">
+											<f:selectItem itemLabel="Selecione" itemValue="" />
+											<f:selectItems value="#{cotacaoController.formasPagamento}" var="item" itemLabel="#{item.descricao}" itemValue="#{item.id}" />
+											<p:ajax process="@this" update=":editForm:informacoesGrid" listener="#{cotacaoController.changeFormaPagamento}" />
+										</p:selectOneMenu>
+									</p:panelGrid>
+								</p:panelGrid>
+							</div>
+						</c:if>
+					</c:if>
 
 					<p:messages />
 
 					<p:panelGrid columns="6" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
 						<p:commandButton id="submitButton" icon="fa fa-fw fa-save" value="#{labels.botao_gravar}" actionListener="#{cotacaoController.save}"
-							process=":editForm:informacoesGrid" update=":editForm :searchForm" styleClass="ui-grid-col-12" rendered="#{!cotacaoController.editing}" />
+							process=":editForm:informacoesGrid :editForm:pagamentoGrid :editForm:freteGrid" update=":editForm :searchForm" styleClass="ui-grid-col-12" rendered="#{!cotacaoController.editing and null != cotacaoController.entity.idFilial}" />
 
 						<p:commandButton id="finalizacaoButton" icon="fa fa-fw fa-check-square-o" value="#{labels.botao_finalizar}"
 							oncomplete="PF('finalizacaoDialog').show()" process="@this" update="editForm:idFinalizacaoDialog" styleClass="ui-grid-col-12 botao-verde"
