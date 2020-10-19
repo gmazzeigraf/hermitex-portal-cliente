@@ -1,5 +1,6 @@
 package br.com.graflogic.hermitex.cliente.service.model.pedido;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.List;
@@ -16,7 +17,9 @@ import br.com.graflogic.hermitex.cliente.service.model.frete.Frete;
  * @author gmazz
  *
  */
-public class TipoFrete {
+public class TipoFrete implements Serializable {
+
+	private static final long serialVersionUID = 7923853314626067770L;
 
 	private String codigoServico;
 

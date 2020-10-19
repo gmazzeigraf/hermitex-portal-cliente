@@ -8,7 +8,7 @@ import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
 
-import br.com.graflogic.hermitex.cliente.data.dom.DomPedido;
+import br.com.graflogic.hermitex.cliente.data.dom.DomCotacao;
 
 /**
  * 
@@ -133,7 +133,7 @@ public class CotacaoSimple implements Serializable {
 	}
 
 	public String getDeStatus() {
-		return DomPedido.domStatus.getDeValor(status);
+		return DomCotacao.domStatus.getDeValor(status);
 	}
 
 	public String getFormattedId() {

@@ -422,7 +422,7 @@
 						<div class="card card-w-title">
 							<h1>Produto(s)</h1>
 
-							<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank">
+							<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank" rendered="#{!cotacaoController.editing}">
 								<p:commandButton value="#{labels.botao_adicionar}" icon="fa fa-fw fa-plus" actionListener="#{cotacaoController.prepareAddItem}"
 									process="@this" resetValues="true" styleClass="ui-grid-col-12 botao-adicionar" update="editForm:idItemDialog" />
 							</p:panelGrid>

@@ -15,6 +15,7 @@ import br.com.graflogic.base.service.util.I18NUtil;
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomTipoEndereco;
 import br.com.graflogic.hermitex.cliente.data.dom.DomGeral.DomBoolean;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido;
+import br.com.graflogic.hermitex.cliente.data.dom.DomAcesso.DomPermissaoAcesso;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomServicoFrete;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.Usuario;
 import br.com.graflogic.hermitex.cliente.data.entity.auxiliar.Estado;
@@ -218,7 +219,11 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 		enderecoEntrega = new CotacaoEndereco();
 		enderecoFaturamento = new CotacaoEndereco();
 
+		formaPagamento = null;
+		tipoFrete = null;
+
 		filial = null;
+		servicoFrete = null;
 	}
 
 	@Override
@@ -683,6 +688,14 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 
 	public boolean isValorFreteEditavel() {
 		return !isEditing() && null != tipoFrete && tipoFrete.isValorFreteManual();
+	}
+
+	public boolean isDescontoLivreEditavel() {
+		return !isEditing() && SessionUtil.possuiPermissao(DomPermissaoAcesso.ROLE_COTACAO_DESCONTO_LIVRE);
+	}
+
+	public boolean isDescontoEspecialEditavel() {
+		return !isEditing() && SessionUtil.possuiPermissao(DomPermissaoAcesso.ROLE_COTACAO_DESCONTO_ESPECIAL);
 	}
 
 	// Getters e Setters
