@@ -162,15 +162,16 @@
 
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 								<h:outputText value="Frete" styleClass="label" />
-								<h:outputText value="#{cotacaoController.entity.valorFrete}">
-									<f:convertNumber pattern="R$ #,##0.00" />
-								</h:outputText>
+								<p:inputNumber value="#{cotacaoController.entity.valorFrete}" styleClass="input-number-resp" decimalSeparator="," thousandSeparator="."
+									decimalPlaces="2" maxValue="999999.99" disabled="#{!cotacaoController.valorFreteEditavel}">
+									<p:ajax process="@this" update=":editForm:informacoesGrid" listener="#{cotacaoController.changeValorFrete}" />
+								</p:inputNumber>
 							</p:panelGrid>
 
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 								<p:outputLabel for="pedidoFaturado" value="Pedido Faturado" styleClass="label" />
 								<p:selectOneMenu id="pedidoFaturado" value="#{cotacaoController.entity.pedidoFaturado}" styleClass="ui-grid-col-12" required="true"
-									requiredMessage="Favor selecionar a opção de pedido faturado">
+									requiredMessage="Favor selecionar a opção de pedido faturado" disabled="#{cotacaoController.editing}">
 									<f:selectItems value="#{domGeralController.booleanMap}" />
 								</p:selectOneMenu>
 							</p:panelGrid>
@@ -478,7 +479,7 @@
 
 									<p:column styleClass="coluna-edicao">
 										<p:commandButton icon="fa fa-fw fa-pencil" title="#{labels.botao_editar}" update="editForm:idItemDialog" process="@this" resetValues="true"
-											styleClass="ui-grid-col-12" oncomplete="PF('itemDialog').show();">
+											styleClass="ui-grid-col-12" oncomplete="PF('itemDialog').show();" rendered="#{!cotacaoController.editing}">
 											<f:setPropertyActionListener value="#{index}" target="#{cotacaoController.indexRelacionado}" />
 											<f:setPropertyActionListener value="#{entity}" target="#{cotacaoController.selectedRelatedEntity}" />
 										</p:commandButton>

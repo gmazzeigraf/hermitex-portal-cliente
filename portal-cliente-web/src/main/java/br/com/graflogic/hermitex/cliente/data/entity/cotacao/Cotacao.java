@@ -24,7 +24,6 @@ import org.hibernate.annotations.LazyCollectionOption;
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomTipoEndereco;
 import br.com.graflogic.hermitex.cliente.data.dom.DomCotacao;
 import br.com.graflogic.hermitex.cliente.data.dom.DomCotacao.DomStatus;
-import br.com.graflogic.hermitex.cliente.data.dom.DomGeral.DomBoolean;
 
 /**
  * 
@@ -208,12 +207,12 @@ public class Cotacao implements Serializable {
 		this.descricaoFormaPagamento = descricaoFormaPagamento;
 	}
 
-	public boolean isPedidoFaturado() {
-		return pedidoFaturado.equals(DomBoolean.SIM);
+	public String getPedidoFaturado() {
+		return pedidoFaturado;
 	}
 
-	public void setPedidoFaturado(boolean pedidoFaturado) {
-		this.pedidoFaturado = pedidoFaturado ? DomBoolean.SIM : DomBoolean.NAO;
+	public void setPedidoFaturado(String pedidoFaturado) {
+		this.pedidoFaturado = pedidoFaturado;
 	}
 
 	public String getStatus() {

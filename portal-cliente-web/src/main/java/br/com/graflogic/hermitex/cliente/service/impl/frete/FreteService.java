@@ -301,4 +301,22 @@ public class FreteService {
 
 		return tipo;
 	}
+
+	public TipoFrete geraTipoTransportadora() {
+		TipoFrete tipo = new TipoFrete();
+		tipo.setFretes(new ArrayList<>());
+		tipo.setCodigoServico(DomServicoFrete.TRANSPORTADORA);
+		tipo.setValor(BigDecimal.ZERO);
+
+		Frete frete = new Frete();
+		frete.setCodigoServico(DomServicoFrete.TRANSPORTADORA);
+		frete.setValor(BigDecimal.ZERO);
+		frete.setPesoItens(BigDecimal.ZERO);
+		frete.setQuantidadeItens(0);
+		frete.setPrazoDias(0);
+
+		tipo.getFretes().add(frete);
+
+		return tipo;
+	}
 }

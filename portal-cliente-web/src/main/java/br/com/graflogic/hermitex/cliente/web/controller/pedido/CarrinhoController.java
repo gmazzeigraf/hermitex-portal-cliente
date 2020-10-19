@@ -338,6 +338,7 @@ public class CarrinhoController extends BaseController implements InitializingBe
 			}
 
 			tiposFrete.add(freteService.geraTipoRetirada());
+			tiposFrete.add(freteService.geraTipoTransportadora());
 
 			if (pedido.getItens().isEmpty()) {
 				redirectView(getApplicationUrl() + "/pages/compra/produtos.jsf");

@@ -13,7 +13,9 @@ import org.springframework.stereotype.Controller;
 
 import br.com.graflogic.base.service.util.I18NUtil;
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomTipoEndereco;
-import br.com.graflogic.hermitex.cliente.data.dom.DomCotacao;
+import br.com.graflogic.hermitex.cliente.data.dom.DomGeral.DomBoolean;
+import br.com.graflogic.hermitex.cliente.data.dom.DomPedido;
+import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomServicoFrete;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.Usuario;
 import br.com.graflogic.hermitex.cliente.data.entity.auxiliar.Estado;
 import br.com.graflogic.hermitex.cliente.data.entity.auxiliar.Municipio;
@@ -105,6 +107,8 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 
 	private FormaPagamento formaPagamento;
 
+	private TipoFrete tipoFrete;
+
 	private String codigoServicoFrete;
 
 	private String observacao;
@@ -189,6 +193,8 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 		setEntity(null);
 		setEditing(false);
 
+		search();
+
 		return false;
 	}
 
@@ -202,7 +208,7 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 		getEntity().setValorDescontoLivre(BigDecimal.ZERO);
 		getEntity().setValorDescontoEspecial(BigDecimal.ZERO);
 		getEntity().setValorFrete(BigDecimal.ZERO);
-		getEntity().setPedidoFaturado(true);
+		getEntity().setPedidoFaturado(DomBoolean.SIM);
 
 		formasPagamento = new ArrayList<>();
 		tiposFrete = new ArrayList<>();
@@ -211,6 +217,8 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 
 		enderecoEntrega = new CotacaoEndereco();
 		enderecoFaturamento = new CotacaoEndereco();
+
+		filial = null;
 	}
 
 	@Override
@@ -248,7 +256,7 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 		servicoFrete = null;
 
 		if (!getEntity().getFretes().isEmpty()) {
-			servicoFrete = DomCotacao.domServicoFrete.getDeValor(getEntity().getFretes().get(0).getCodigoServico());
+			servicoFrete = DomPedido.domServicoFrete.getDeValor(getEntity().getFretes().get(0).getCodigoServico());
 		}
 	}
 
@@ -411,6 +419,8 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 					if (codigoServicoFrete.equals(tipoFrete.getCodigoServico())) {
 						getEntity().getFretes().addAll(tipoFrete.getFretesCotacao());
 						getEntity().setValorFrete(tipoFrete.getValor());
+						servicoFrete = DomPedido.domServicoFrete.getDeValor(codigoServicoFrete);
+						this.tipoFrete = tipoFrete;
 
 						break;
 					}
@@ -421,6 +431,21 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 
 		} catch (Exception e) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao alterar tipo de frete, contate o administrador", e);
+		}
+	}
+
+	public void changeValorFrete() {
+		try {
+			atualizaCotacao();
+
+			if (null != tipoFrete && DomServicoFrete.TRANSPORTADORA.equals(tipoFrete.getCodigoServico())) {
+				getEntity().getFretes().get(0).setValor(getEntity().getValorFrete());
+			}
+
+			updateComponent("editForm:pagamentoGrid");
+
+		} catch (Exception e) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao alterar valor do frete, contate o administrador", e);
 		}
 	}
 
@@ -560,6 +585,14 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 		}
 	}
 
+	public void changePedidoFaturado() {
+		try {
+
+		} catch (Exception e) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao alterar pedido faturado, contate o administrador", e);
+		}
+	}
+
 	private void atualizaCotacao() {
 		formasPagamento.clear();
 
@@ -587,6 +620,7 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 		}
 
 		getEntity().setValorTotal(getEntity().getValorTotal().add(getEntity().getValorFrete()));
+		getEntity().setValorTotal(getEntity().getValorTotal().subtract(getEntity().getValorDescontoPagamento()));
 		getEntity().setValorTotal(getEntity().getValorTotal().setScale(2, RoundingMode.HALF_EVEN));
 
 		atualizaFormasPagamento();
@@ -619,6 +653,7 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 			}
 
 			tiposFrete.add(freteService.geraTipoRetirada());
+			tiposFrete.add(freteService.geraTipoTransportadora());
 
 		} catch (Exception e) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao atualizar tipos de frete, contate o administrador", e);
@@ -644,6 +679,10 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 
 	public boolean isPesquisavel() {
 		return isClienteSelecionado();
+	}
+
+	public boolean isValorFreteEditavel() {
+		return !isEditing() && null != tipoFrete && tipoFrete.isValorFreteManual();
 	}
 
 	// Getters e Setters

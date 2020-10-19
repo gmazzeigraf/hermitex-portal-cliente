@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido;
+import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomServicoFrete;
 import br.com.graflogic.hermitex.cliente.data.entity.cotacao.CotacaoFrete;
 import br.com.graflogic.hermitex.cliente.data.entity.pedido.PedidoFrete;
 import br.com.graflogic.hermitex.cliente.service.model.frete.Frete;
@@ -61,5 +62,9 @@ public class TipoFrete {
 
 	public List<CotacaoFrete> getFretesCotacao() {
 		return getFretes().stream().map(Frete::asCotacaoFrete).collect(Collectors.toList());
+	}
+
+	public boolean isValorFreteManual() {
+		return DomServicoFrete.TRANSPORTADORA.equals(codigoServico);
 	}
 }
