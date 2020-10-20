@@ -4,3 +4,4 @@ INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_CO
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_COTACAO_CANCELAMENTO', 'Cotação / Consulta - Cancelamento', 'A');
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_COTACAO_DESCONTO_LIVRE', 'Cotação / Consulta - Desconto Livre', 'A');
 INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_COTACAO_DESCONTO_ESPECIAL', 'Cotação / Consulta - Desconto Especial', 'A');
+INSERT INTO tb_permissao_acesso (codigo, descricao, tp_usuario) VALUES ('ROLE_COTACAO_DESCONTO_GERENCIAL', 'Cotação / Consulta - Desconto Gerencial', 'A');

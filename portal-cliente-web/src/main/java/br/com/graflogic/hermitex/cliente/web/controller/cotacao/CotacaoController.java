@@ -17,6 +17,8 @@ import br.com.graflogic.hermitex.cliente.data.dom.DomGeral.DomBoolean;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido;
 import br.com.graflogic.hermitex.cliente.data.dom.DomAcesso.DomPermissaoAcesso;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomServicoFrete;
+import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuario;
+import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuarioAdministrador;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.Usuario;
 import br.com.graflogic.hermitex.cliente.data.entity.auxiliar.Estado;
 import br.com.graflogic.hermitex.cliente.data.entity.auxiliar.Municipio;
@@ -34,6 +36,7 @@ import br.com.graflogic.hermitex.cliente.data.entity.produto.ProdutoTamanho;
 import br.com.graflogic.hermitex.cliente.service.exception.CorreiosException;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosDesatualizadosException;
 import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosException;
+import br.com.graflogic.hermitex.cliente.service.impl.acesso.PerfilUsuarioService;
 import br.com.graflogic.hermitex.cliente.service.impl.acesso.UsuarioService;
 import br.com.graflogic.hermitex.cliente.service.impl.auxiliar.EstadoService;
 import br.com.graflogic.hermitex.cliente.service.impl.auxiliar.MunicipioService;
@@ -79,6 +82,9 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 
 	@Autowired
 	private UsuarioService usuarioService;
+
+	@Autowired
+	private PerfilUsuarioService perfilUsuarioService;
 
 	@Autowired
 	private ProdutoService produtoService;
@@ -134,6 +140,8 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 
 	private String servicoFrete;
 
+	private PerfilUsuarioAdministrador perfilUsuario;
+
 	private int indexRelacionado;
 
 	@Override
@@ -149,6 +157,8 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 			municipiosFaturamento = new ArrayList<>();
 			municipiosEntrega = new ArrayList<>();
 			produtos = new ArrayList<>();
+
+			perfilUsuario = (PerfilUsuarioAdministrador) perfilUsuarioService.consultaPorId(SessionUtil.getAuthenticatedUsuario().getId());
 
 		} catch (Exception e) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao inicializar tela, contate o administrador", e);
@@ -485,6 +495,11 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 	// Desconto
 	public void changePorcentagemDescontoLivre() {
 		try {
+			if (null != porcentagemDescontoLivre && porcentagemDescontoLivre.compareTo(perfilUsuario.getPorcentagemDescontoLivreMaximo()) > 0) {
+				porcentagemDescontoLivre = BigDecimal.ZERO;
+				returnWarnDialogMessage("Aviso", "Desconto livre superior ao permitido", null);
+			}
+
 			changeDesconto();
 
 		} catch (Exception e) {
@@ -527,6 +542,12 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 
 	public void changePorcentagemDescontoGerencial() {
 		try {
+			if (null != porcentagemDescontoGerencial
+					&& porcentagemDescontoGerencial.compareTo(perfilUsuario.getPorcentagemDescontoGerencialMaximo()) > 0) {
+				porcentagemDescontoGerencial = BigDecimal.ZERO;
+				returnWarnDialogMessage("Aviso", "Desconto gerencial superior ao permitido", null);
+			}
+
 			changeDesconto();
 
 		} catch (Exception e) {
@@ -780,6 +801,10 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 		return !isEditing() && SessionUtil.possuiPermissao(DomPermissaoAcesso.ROLE_COTACAO_DESCONTO_ESPECIAL);
 	}
 
+	public boolean isDescontoGerencialEditavel() {
+		return !isEditing() && SessionUtil.possuiPermissao(DomPermissaoAcesso.ROLE_COTACAO_DESCONTO_GERENCIAL);
+	}
+
 	// Getters e Setters
 	public List<Cliente> getClientes() {
 		return clientes;
@@ -891,6 +916,10 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 
 	public String getServicoFrete() {
 		return servicoFrete;
+	}
+
+	public PerfilUsuario getPerfilUsuario() {
+		return perfilUsuario;
 	}
 
 	public int getIndexRelacionado() {

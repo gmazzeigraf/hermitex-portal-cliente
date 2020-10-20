@@ -565,7 +565,7 @@
 									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 										<h:outputText value="% Desconto Livre" styleClass="label" />
 										<p:inputNumber value="#{cotacaoController.porcentagemDescontoLivre}" styleClass="input-number-resp" decimalSeparator=","
-											thousandSeparator="." decimalPlaces="2" maxValue="99.99">
+											thousandSeparator="." decimalPlaces="2" maxValue="99.99" disabled="#{!cotacaoController.descontoLivreEditavel}">
 											<p:ajax process="@this" listener="#{cotacaoController.changePorcentagemDescontoLivre}" />
 										</p:inputNumber>
 									</p:panelGrid>
@@ -573,7 +573,7 @@
 									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 										<h:outputText value="% Desconto Especial" styleClass="label" />
 										<p:inputNumber value="#{cotacaoController.porcentagemDescontoEspecial}" styleClass="input-number-resp" decimalSeparator=","
-											thousandSeparator="." decimalPlaces="2" maxValue="99.99">
+											thousandSeparator="." decimalPlaces="2" maxValue="99.99" disabled="#{!cotacaoController.descontoEspecialEditavel}">
 											<p:ajax process="@this" listener="#{cotacaoController.changePorcentagemDescontoEspecial}" />
 										</p:inputNumber>
 									</p:panelGrid>
@@ -581,7 +581,7 @@
 									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 										<h:outputText value="% Desconto Gerencial" styleClass="label" />
 										<p:inputNumber value="#{cotacaoController.porcentagemDescontoGerencial}" styleClass="input-number-resp" decimalSeparator=","
-											thousandSeparator="." decimalPlaces="2" maxValue="99.99">
+											thousandSeparator="." decimalPlaces="2" maxValue="99.99" disabled="#{!cotacaoController.descontoGerencialEditavel}">
 											<p:ajax process="@this" listener="#{cotacaoController.changePorcentagemDescontoGerencial}" />
 										</p:inputNumber>
 									</p:panelGrid>

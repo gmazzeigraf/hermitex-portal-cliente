@@ -24,6 +24,25 @@
 					</p:pickList>
 				</div>
 
+				<div class="card card-w-title">
+					<h1>Desconto</h1>
+					<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group" id="descontoGrid">
+						<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+							<h:outputText value="% Desconto Livre Máximo" styleClass="label" />
+							<p:inputNumber value="#{perfilUsuarioController.entity.porcentagemDescontoLivreMaximo}" styleClass="input-number-resp" decimalSeparator="," thousandSeparator="."
+								decimalPlaces="2" maxValue="99.99">
+							</p:inputNumber>
+						</p:panelGrid>
+
+						<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+							<h:outputText value="% Desconto Gerencial Máximo" styleClass="label" />
+							<p:inputNumber value="#{perfilUsuarioController.entity.porcentagemDescontoGerencialMaximo}" styleClass="input-number-resp" decimalSeparator=","
+								thousandSeparator="." decimalPlaces="2" maxValue="99.99">
+							</p:inputNumber>
+						</p:panelGrid>
+					</p:panelGrid>
+				</div>
+
 				<p:messages />
 
 				<p:panelGrid columns="6" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
