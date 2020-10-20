@@ -63,6 +63,9 @@ public class Cotacao implements Serializable {
 	@Column(name = "vl_desconto_especial", nullable = false)
 	private BigDecimal valorDescontoEspecial;
 
+	@Column(name = "vl_desconto_gerencial", nullable = false)
+	private BigDecimal valorDescontoGerencial;
+
 	@Column(name = "vl_total", nullable = false)
 	private BigDecimal valorTotal;
 
@@ -165,6 +168,14 @@ public class Cotacao implements Serializable {
 
 	public void setValorDescontoEspecial(BigDecimal valorDescontoEspecial) {
 		this.valorDescontoEspecial = valorDescontoEspecial;
+	}
+
+	public BigDecimal getValorDescontoGerencial() {
+		return valorDescontoGerencial;
+	}
+
+	public void setValorDescontoGerencial(BigDecimal valorDescontoGerencial) {
+		this.valorDescontoGerencial = valorDescontoGerencial;
 	}
 
 	public BigDecimal getValorTotal() {

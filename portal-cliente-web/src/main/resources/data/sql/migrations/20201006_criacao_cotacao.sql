@@ -17,6 +17,7 @@ CREATE TABLE public.tb_cotacao
     vl_desconto_pagamento numeric(10,2) NOT NULL,
 	vl_desconto_livre numeric(10,2) NOT NULL,
 	vl_desconto_especial numeric(10,2) NOT NULL,
+	vl_desconto_gerencial numeric(10,2) NOT NULL,
     id_forma_pagamento integer NOT NULL,
     CONSTRAINT pktb_cotacao PRIMARY KEY (id),
     CONSTRAINT fk_cotacao_cliente FOREIGN KEY (id_cliente) REFERENCES public.tb_cliente (id) MATCH SIMPLE

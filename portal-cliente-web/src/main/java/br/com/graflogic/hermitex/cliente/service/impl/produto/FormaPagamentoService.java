@@ -157,7 +157,7 @@ public class FormaPagamentoService {
 			// Consulta a filial
 			filial = filialService.consultaPorId(pedido.getIdFilial());
 
-			// Verifica se a compra esta bloqueada 
+			// Verifica se a compra esta bloqueada
 			if (filialService.isCompraBloqueada(pedido.getIdFilial())) {
 				return entities;
 			}
@@ -233,7 +233,7 @@ public class FormaPagamentoService {
 
 		return entities;
 	}
-	
+
 	public List<FormaPagamento> gera(Cotacao cotacao) {
 		List<FormaPagamento> entities = new ArrayList<>();
 
@@ -245,7 +245,7 @@ public class FormaPagamentoService {
 			// Consulta a filial
 			filial = filialService.consultaPorId(cotacao.getIdFilial());
 
-			// Verifica se a compra esta bloqueada 
+			// Verifica se a compra esta bloqueada
 			if (filialService.isCompraBloqueada(cotacao.getIdFilial())) {
 				return entities;
 			}

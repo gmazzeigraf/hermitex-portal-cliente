@@ -112,6 +112,12 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 
 	private String codigoServicoFrete;
 
+	private BigDecimal porcentagemDescontoLivre;
+
+	private BigDecimal porcentagemDescontoEspecial;
+
+	private BigDecimal porcentagemDescontoGerencial;
+
 	private String observacao;
 
 	private Cliente cliente;
@@ -208,8 +214,15 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 		getEntity().setIdCliente(getFilterEntity().getIdCliente());
 		getEntity().setValorDescontoLivre(BigDecimal.ZERO);
 		getEntity().setValorDescontoEspecial(BigDecimal.ZERO);
+		getEntity().setValorDescontoGerencial(BigDecimal.ZERO);
 		getEntity().setValorFrete(BigDecimal.ZERO);
 		getEntity().setPedidoFaturado(DomBoolean.SIM);
+
+		porcentagemDescontoLivre = BigDecimal.ZERO;
+		porcentagemDescontoEspecial = BigDecimal.ZERO;
+		porcentagemDescontoGerencial = BigDecimal.ZERO;
+
+		codigoServicoFrete = null;
 
 		formasPagamento = new ArrayList<>();
 		tiposFrete = new ArrayList<>();
@@ -294,7 +307,6 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 		try {
 			if (isEditingRelated()) {
 				getEntity().getItens().set(indexRelacionado, item);
-
 			} else {
 				getEntity().getItens().add(item);
 			}
@@ -306,6 +318,7 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 			updateComponent("editForm:dtbItens");
 			updateComponent("editForm:informacoesGrid");
 			updateComponent("editForm:pagamentoGrid");
+			updateComponent("editForm:descontoGrid");
 			updateComponent("editForm:freteGrid");
 
 			hideDialog("itemDialog");
@@ -325,6 +338,7 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 		updateComponent("editForm:dtbItens");
 		updateComponent("editForm:informacoesGrid");
 		updateComponent("editForm:pagamentoGrid");
+		updateComponent("editForm:descontoGrid");
 		updateComponent("editForm:freteGrid");
 
 		hideDialog("itemDialog");
@@ -394,19 +408,23 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 		try {
 			this.formaPagamento = null;
 
-			if (null != getEntity().getIdFormaPagamento() && 0 != getEntity().getIdFormaPagamento()) {
-				for (FormaPagamento formaPagamento : formasPagamento) {
-					if (getEntity().getIdFormaPagamento().equals(formaPagamento.getId())) {
-						this.formaPagamento = formaPagamento;
-						break;
-					}
-				}
-			}
+			atualizaFormaPagamento();
 
-			atualizaCotacao();
+			atualizaValores();
 
 		} catch (Exception e) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao alterar a forma de pagamento, contate o administrador", e);
+		}
+	}
+
+	private void atualizaFormaPagamento() {
+		if (null != getEntity().getIdFormaPagamento() && 0 != getEntity().getIdFormaPagamento()) {
+			for (FormaPagamento formaPagamento : formasPagamento) {
+				if (getEntity().getIdFormaPagamento().equals(formaPagamento.getId())) {
+					this.formaPagamento = formaPagamento;
+					break;
+				}
+			}
 		}
 	}
 
@@ -441,7 +459,7 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 
 	public void changeValorFrete() {
 		try {
-			atualizaCotacao();
+			atualizaValores();
 
 			if (null != tipoFrete && DomServicoFrete.TRANSPORTADORA.equals(tipoFrete.getCodigoServico())) {
 				getEntity().getFretes().get(0).setValor(getEntity().getValorFrete());
@@ -454,28 +472,6 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 		}
 	}
 
-	public void changeDescontoLivre() {
-		try {
-			// TODO Valida valor do desconto pelo perfil
-
-			atualizaCotacao();
-
-		} catch (Exception e) {
-			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao alterar o desconto livre, contate o administrador", e);
-		}
-	}
-
-	public void changeDescontoEspecial() {
-		try {
-			// TODO Valida valor do desconto pelo perfil
-
-			atualizaCotacao();
-
-		} catch (Exception e) {
-			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao alterar o desconto livre, contate o administrador", e);
-		}
-	}
-
 	private void calculaTotalItem() {
 		item.setValorTotal(BigDecimal.ZERO);
 		item.setPesoTotal(BigDecimal.ZERO);
@@ -484,6 +480,90 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 			item.setValorTotal(item.getValorCorrigidoTamanho().multiply(new BigDecimal(item.getQuantidade())));
 			item.setPesoTotal(produto.getPeso().multiply(new BigDecimal(item.getQuantidade())));
 		}
+	}
+
+	// Desconto
+	public void changePorcentagemDescontoLivre() {
+		try {
+			changeDesconto();
+
+		} catch (Exception e) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao alterar porcentagem de desconto livre, contate o administrador", e);
+		}
+	}
+
+	private void calculaDescontoLivre() {
+		if (null != porcentagemDescontoLivre && BigDecimal.ZERO.compareTo(porcentagemDescontoLivre) < 0
+				&& BigDecimal.ZERO.compareTo(getEntity().getValorProdutos()) < 0) {
+			getEntity().setValorDescontoLivre(
+					getEntity().getValorProdutos().multiply(porcentagemDescontoLivre).divide(BigDecimal.valueOf(100.0), 2, RoundingMode.HALF_EVEN));
+		} else {
+			getEntity().setValorDescontoLivre(BigDecimal.ZERO);
+		}
+
+		getEntity().setValorTotal(getEntity().getValorTotal().subtract(getEntity().getValorDescontoLivre()));
+	}
+
+	public void changePorcentagemDescontoEspecial() {
+		try {
+			changeDesconto();
+
+		} catch (Exception e) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao alterar porcentagem de desconto especial, contate o administrador", e);
+		}
+	}
+
+	private void calculaDescontoEspecial() {
+		if (null != porcentagemDescontoEspecial && BigDecimal.ZERO.compareTo(porcentagemDescontoEspecial) < 0
+				&& BigDecimal.ZERO.compareTo(getEntity().getValorProdutos()) < 0) {
+			getEntity().setValorDescontoEspecial(getEntity().getValorProdutos().multiply(porcentagemDescontoEspecial)
+					.divide(BigDecimal.valueOf(100.0), 2, RoundingMode.HALF_EVEN));
+		} else {
+			getEntity().setValorDescontoEspecial(BigDecimal.ZERO);
+		}
+
+		getEntity().setValorTotal(getEntity().getValorTotal().subtract(getEntity().getValorDescontoEspecial()));
+	}
+
+	public void changePorcentagemDescontoGerencial() {
+		try {
+			changeDesconto();
+
+		} catch (Exception e) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao alterar porcentagem de desconto gerencial, contate o administrador", e);
+		}
+	}
+
+	private void calculaDescontoGerencial() {
+		if (null != porcentagemDescontoGerencial && BigDecimal.ZERO.compareTo(porcentagemDescontoGerencial) < 0
+				&& BigDecimal.ZERO.compareTo(getEntity().getValorProdutos()) < 0) {
+			getEntity().setValorDescontoGerencial(getEntity().getValorProdutos().multiply(porcentagemDescontoGerencial)
+					.divide(BigDecimal.valueOf(100.0), 2, RoundingMode.HALF_EVEN));
+		} else {
+			getEntity().setValorDescontoGerencial(BigDecimal.ZERO);
+		}
+
+		getEntity().setValorTotal(getEntity().getValorTotal().subtract(getEntity().getValorDescontoGerencial()));
+	}
+
+	private void changeDesconto() {
+		atualizaValores();
+
+		updateComponent("editForm:informacoesGrid");
+		updateComponent("editForm:pagamentoGrid");
+		updateComponent("editForm:descontoGrid");
+	}
+
+	private void calculaDescontoFormaPagamento() {
+		if (null != formaPagamento) {
+			getEntity().setDescricaoFormaPagamento(formaPagamento.getDescricao());
+			getEntity().setValorDescontoPagamento(getEntity().getValorProdutos().multiply(formaPagamento.getPorcentagemDesconto())
+					.divide(BigDecimal.valueOf(100.0), 2, RoundingMode.HALF_EVEN));
+		} else {
+			getEntity().setValorDescontoPagamento(BigDecimal.ZERO);
+		}
+
+		getEntity().setValorTotal(getEntity().getValorTotal().subtract(getEntity().getValorDescontoPagamento()));
 	}
 
 	// Fluxo
@@ -599,12 +679,28 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 	}
 
 	private void atualizaCotacao() {
-		formasPagamento.clear();
+		atualizaItens();
 
+		atualizaValores();
+	}
+
+	private void atualizaValores() {
+		getEntity().setValorTotal(getEntity().getValorProdutos());
+
+		calculaDescontoEspecial();
+		calculaDescontoLivre();
+		calculaDescontoGerencial();
+
+		getEntity().setValorTotal(getEntity().getValorTotal().add(getEntity().getValorFrete()));
+		getEntity().setValorTotal(getEntity().getValorTotal().setScale(2, RoundingMode.HALF_EVEN));
+
+		atualizaFormasPagamento();
+
+		calculaDescontoFormaPagamento();
+	}
+
+	private void atualizaItens() {
 		getEntity().setValorProdutos(BigDecimal.ZERO);
-		getEntity().setValorDescontoPagamento(BigDecimal.ZERO);
-
-		getEntity().setValorTotal(BigDecimal.ZERO);
 		getEntity().setPesoTotal(BigDecimal.ZERO);
 		getEntity().setQuantidadeTotalItens(0);
 
@@ -613,27 +709,13 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 			getEntity().setPesoTotal(getEntity().getPesoTotal().add(cotacaoItem.getPesoTotal()));
 			getEntity().setQuantidadeTotalItens(getEntity().getQuantidadeTotalItens() + cotacaoItem.getQuantidade());
 		}
-
-		getEntity().setValorTotal(getEntity().getValorProdutos());
-		getEntity().setValorTotal(getEntity().getValorTotal().subtract(getEntity().getValorDescontoLivre()));
-		getEntity().setValorTotal(getEntity().getValorTotal().subtract(getEntity().getValorDescontoEspecial()));
-
-		if (null != formaPagamento) {
-			getEntity().setDescricaoFormaPagamento(formaPagamento.getDescricao());
-			getEntity().setValorDescontoPagamento(getEntity().getValorProdutos().multiply(formaPagamento.getPorcentagemDesconto())
-					.divide(new BigDecimal("100"), 2, RoundingMode.HALF_EVEN));
-		}
-
-		getEntity().setValorTotal(getEntity().getValorTotal().add(getEntity().getValorFrete()));
-		getEntity().setValorTotal(getEntity().getValorTotal().subtract(getEntity().getValorDescontoPagamento()));
-		getEntity().setValorTotal(getEntity().getValorTotal().setScale(2, RoundingMode.HALF_EVEN));
-
-		atualizaFormasPagamento();
 	}
 
 	public void atualizaFormasPagamento() {
 		try {
 			formasPagamento = formaPagamentoService.gera(getEntity());
+
+			atualizaFormaPagamento();
 
 		} catch (Exception e) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao atualizar formas de pagamento, contate o administrador", e);
@@ -749,6 +831,30 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 
 	public void setCodigoServicoFrete(String codigoServicoFrete) {
 		this.codigoServicoFrete = codigoServicoFrete;
+	}
+
+	public BigDecimal getPorcentagemDescontoLivre() {
+		return porcentagemDescontoLivre;
+	}
+
+	public void setPorcentagemDescontoLivre(BigDecimal porcentagemDescontoLivre) {
+		this.porcentagemDescontoLivre = porcentagemDescontoLivre;
+	}
+
+	public BigDecimal getPorcentagemDescontoEspecial() {
+		return porcentagemDescontoEspecial;
+	}
+
+	public void setPorcentagemDescontoEspecial(BigDecimal porcentagemDescontoEspecial) {
+		this.porcentagemDescontoEspecial = porcentagemDescontoEspecial;
+	}
+
+	public BigDecimal getPorcentagemDescontoGerencial() {
+		return porcentagemDescontoGerencial;
+	}
+
+	public void setPorcentagemDescontoGerencial(BigDecimal porcentagemDescontoGerencial) {
+		this.porcentagemDescontoGerencial = porcentagemDescontoGerencial;
 	}
 
 	public String getObservacao() {
