@@ -55,6 +55,9 @@ public class FormaPagamento implements Serializable {
 	@Column(name = "in_credito_obrigatorio", nullable = false)
 	private String creditoObrigatorio;
 
+	@Column(name = "in_desconto_especial", nullable = false)
+	private String descontoEspecial;
+
 	@Column(name = "in_loja_propria", nullable = false)
 	private String lojaPropria;
 
@@ -148,6 +151,14 @@ public class FormaPagamento implements Serializable {
 
 	public void setCreditoObrigatorio(String creditoObrigatorio) {
 		this.creditoObrigatorio = creditoObrigatorio;
+	}
+
+	public String getDescontoEspecial() {
+		return descontoEspecial;
+	}
+
+	public void setDescontoEspecial(String descontoEspecial) {
+		this.descontoEspecial = descontoEspecial;
 	}
 
 	public String getLojaPropria() {

@@ -33,6 +33,13 @@
 								decimalPlaces="2" maxValue="99.99">
 							</p:inputNumber>
 						</p:panelGrid>
+						
+						<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+							<h:outputText value="% Desconto Especial Máximo" styleClass="label" />
+							<p:inputNumber value="#{perfilUsuarioController.entity.porcentagemDescontoEspecialMaximo}" styleClass="input-number-resp" decimalSeparator="," thousandSeparator="."
+								decimalPlaces="2" maxValue="99.99">
+							</p:inputNumber>
+						</p:panelGrid>
 
 						<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 							<h:outputText value="% Desconto Gerencial Máximo" styleClass="label" />

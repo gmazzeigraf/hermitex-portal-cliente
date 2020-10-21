@@ -28,6 +28,9 @@ public class PerfilUsuarioAdministrador extends PerfilUsuario {
 	@Column(name = "pc_desconto_livre_maximo", nullable = false)
 	private BigDecimal porcentagemDescontoLivreMaximo;
 
+	@Column(name = "pc_desconto_especial_maximo", nullable = false)
+	private BigDecimal porcentagemDescontoEspecialMaximo;
+
 	@Column(name = "pc_desconto_gerencial_maximo", nullable = false)
 	private BigDecimal porcentagemDescontoGerencialMaximo;
 
@@ -37,6 +40,14 @@ public class PerfilUsuarioAdministrador extends PerfilUsuario {
 
 	public void setPorcentagemDescontoLivreMaximo(BigDecimal porcentagemDescontoLivreMaximo) {
 		this.porcentagemDescontoLivreMaximo = porcentagemDescontoLivreMaximo;
+	}
+
+	public BigDecimal getPorcentagemDescontoEspecialMaximo() {
+		return porcentagemDescontoEspecialMaximo;
+	}
+
+	public void setPorcentagemDescontoEspecialMaximo(BigDecimal porcentagemDescontoEspecialMaximo) {
+		this.porcentagemDescontoEspecialMaximo = porcentagemDescontoEspecialMaximo;
 	}
 
 	public BigDecimal getPorcentagemDescontoGerencialMaximo() {

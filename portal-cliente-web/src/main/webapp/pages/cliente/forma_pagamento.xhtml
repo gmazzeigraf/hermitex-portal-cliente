@@ -170,6 +170,14 @@
 							</p:panelGrid>
 
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+								<p:outputLabel for="descontoEspecial" value="Desconto Especial" styleClass="label" />
+								<p:selectOneMenu id="descontoEspecial" value="#{formaPagamentoController.entity.descontoEspecial}" styleClass="ui-grid-col-12" required="true"
+									requiredMessage="Favor selecionar desconto especial">
+									<f:selectItems value="#{domGeralController.booleanMap}" />
+								</p:selectOneMenu>
+							</p:panelGrid>
+
+							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 								<p:outputLabel for="lojaPropria" value="Loja Própria" styleClass="label" />
 								<p:selectOneMenu id="lojaPropria" value="#{formaPagamentoController.entity.lojaPropria}" styleClass="ui-grid-col-12" required="true"
 									requiredMessage="Favor selecionar a opção para loja própria">

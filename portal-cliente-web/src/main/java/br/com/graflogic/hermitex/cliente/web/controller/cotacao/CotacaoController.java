@@ -422,6 +422,8 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 
 			atualizaValores();
 
+			updateComponent("editForm:descontoGrid");
+
 		} catch (Exception e) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao alterar a forma de pagamento, contate o administrador", e);
 		}
@@ -521,6 +523,12 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 
 	public void changePorcentagemDescontoEspecial() {
 		try {
+			if (null != porcentagemDescontoEspecial
+					&& porcentagemDescontoEspecial.compareTo(perfilUsuario.getPorcentagemDescontoEspecialMaximo()) > 0) {
+				porcentagemDescontoEspecial = BigDecimal.ZERO;
+				returnWarnDialogMessage("Aviso", "Desconto especial superior ao permitido", null);
+			}
+
 			changeDesconto();
 
 		} catch (Exception e) {
@@ -529,6 +537,10 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 	}
 
 	private void calculaDescontoEspecial() {
+		if (!isDescontoEspecialEditavel()) {
+			porcentagemDescontoEspecial = BigDecimal.ZERO;
+		}
+
 		if (null != porcentagemDescontoEspecial && BigDecimal.ZERO.compareTo(porcentagemDescontoEspecial) < 0
 				&& BigDecimal.ZERO.compareTo(getEntity().getValorProdutos()) < 0) {
 			getEntity().setValorDescontoEspecial(getEntity().getValorProdutos().multiply(porcentagemDescontoEspecial)
@@ -693,6 +705,7 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 
 	public void changePedidoFaturado() {
 		try {
+			changePorcentagemDescontoLivre();
 
 		} catch (Exception e) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao alterar pedido faturado, contate o administrador", e);
@@ -708,8 +721,8 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 	private void atualizaValores() {
 		getEntity().setValorTotal(getEntity().getValorProdutos());
 
-		calculaDescontoEspecial();
 		calculaDescontoLivre();
+		calculaDescontoEspecial();
 		calculaDescontoGerencial();
 
 		getEntity().setValorTotal(getEntity().getValorTotal().add(getEntity().getValorFrete()));
@@ -798,7 +811,9 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 	}
 
 	public boolean isDescontoEspecialEditavel() {
-		return !isEditing() && SessionUtil.possuiPermissao(DomPermissaoAcesso.ROLE_COTACAO_DESCONTO_ESPECIAL);
+		return !isEditing() && SessionUtil.possuiPermissao(DomPermissaoAcesso.ROLE_COTACAO_DESCONTO_ESPECIAL)
+				&& DomBoolean.NAO.equals(getEntity().getPedidoFaturado()) && null != formaPagamento
+				&& DomBoolean.SIM.equals(formaPagamento.getDescontoEspecial());
 	}
 
 	public boolean isDescontoGerencialEditavel() {

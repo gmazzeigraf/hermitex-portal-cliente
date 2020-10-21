@@ -173,6 +173,7 @@
 								<p:selectOneMenu id="pedidoFaturado" value="#{cotacaoController.entity.pedidoFaturado}" styleClass="ui-grid-col-12" required="true"
 									requiredMessage="Favor selecionar a opção de pedido faturado" disabled="#{cotacaoController.editing}">
 									<f:selectItems value="#{domGeralController.booleanMap}" />
+									<p:ajax process="@this" update=":editForm:informacoesGrid" listener="#{cotacaoController.changePedidoFaturado}" />
 								</p:selectOneMenu>
 							</p:panelGrid>
 
