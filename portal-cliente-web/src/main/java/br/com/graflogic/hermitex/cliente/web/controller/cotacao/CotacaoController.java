@@ -12,10 +12,10 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
 import br.com.graflogic.base.service.util.I18NUtil;
+import br.com.graflogic.hermitex.cliente.data.dom.DomAcesso.DomPermissaoAcesso;
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomTipoEndereco;
 import br.com.graflogic.hermitex.cliente.data.dom.DomGeral.DomBoolean;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido;
-import br.com.graflogic.hermitex.cliente.data.dom.DomAcesso.DomPermissaoAcesso;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomServicoFrete;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuario;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuarioAdministrador;
@@ -787,15 +787,11 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 	}
 
 	public boolean isFinalizavel() {
-		// TODO
-		return false;
-//		return null != getEntity() && getEntity().isGerada() && SessionUtil.possuiPermissao(DomPermissaoAcesso.ROLE_COTACAO_FINALIZACAO);
+		return null != getEntity() && getEntity().isGerada() && SessionUtil.possuiPermissao(DomPermissaoAcesso.ROLE_COTACAO_FINALIZACAO);
 	}
 
 	public boolean isCancelavel() {
-		// TODO
-		return false;
-//		return null != getEntity() && (getEntity().isGerada()) && SessionUtil.possuiPermissao(DomPermissaoAcesso.ROLE_COTACAO_CANCELAMENTO);
+		return null != getEntity() && (getEntity().isGerada()) && SessionUtil.possuiPermissao(DomPermissaoAcesso.ROLE_COTACAO_CANCELAMENTO);
 	}
 
 	public boolean isPesquisavel() {

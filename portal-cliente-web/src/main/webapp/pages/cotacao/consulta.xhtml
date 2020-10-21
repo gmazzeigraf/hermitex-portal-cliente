@@ -739,5 +739,46 @@
 				</div>
 			</c:if>
 		</p:dialog>
+	
+		<p:dialog header="Confirmar finalização da cotação?" id="idFinalizacaoDialog" widgetVar="finalizacaoDialog" height="90%" modal="true"
+			draggable="false" resizable="false" responsive="true">
+			
+			
+			<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" styleClass="ui-panelgrid-blank form-group">
+				<p:outputLabel value="A cotação será convertida em pedido." styleClass="label" />
+				
+				<p:spacer />
+				
+				<p:outputLabel value="Observação" styleClass="label" />
+				<p:inputTextarea id="observacaoFinalizacao" rows="3" cols="40" value="#{cotacaoController.observacao}" styleClass="ui-grid-col-12" maxlength="200" />
+			</p:panelGrid>
+
+			<p:spacer />
+
+			<p:panelGrid columns="2" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
+				<p:commandButton icon="fa fa-fw fa-check" value="#{labels.botao_sim}" actionListener="#{cotacaoController.finaliza}"
+					process="@this editForm:observacaoFinalizacao" styleClass="ui-grid-col-12" />
+				<p:commandButton icon="fa fa-fw fa-close" value="#{labels.botao_nao}" styleClass="ui-grid-col-12" onclick="PF('finalizacaoDialog').hide()"
+					process="@this" />
+			</p:panelGrid>
+		</p:dialog>
+
+		<p:dialog header="Confirmar cancelamento da cotação?" id="idCancelamentoDialog" widgetVar="cancelamentoDialog" height="90%" modal="true"
+			draggable="false" resizable="false" responsive="true">
+			
+			<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" styleClass="ui-panelgrid-blank form-group">				
+				<p:outputLabel value="Observação" styleClass="label" />
+				<p:inputTextarea id="observacaoCancelamento" rows="3" cols="40" value="#{cotacaoController.observacao}" styleClass="ui-grid-col-12" maxlength="200" />
+			</p:panelGrid>
+
+			<p:spacer />
+
+			<p:panelGrid columns="2" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
+				<p:commandButton icon="fa fa-fw fa-check" value="#{labels.botao_sim}" actionListener="#{cotacaoController.cancela}"
+					process="@this editForm:observacaoCancelamento" styleClass="ui-grid-col-12" />
+				<p:commandButton icon="fa fa-fw fa-close" value="#{labels.botao_nao}" styleClass="ui-grid-col-12" onclick="PF('cancelamentoDialog').hide()"
+					process="@this" />
+			</p:panelGrid>
+		</p:dialog>
 	</ui:define>
 </ui:composition>
