@@ -287,6 +287,35 @@
 							</p:column>
 						</p:dataTable>
 					</div>
+					
+					<div class="card card-w-title">
+						<h1>Cores</h1>
+
+						<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank">
+							<p:commandButton value="#{labels.botao_adicionar}" icon="fa fa-fw fa-plus" actionListener="#{produtoController.prepareAddCor}"
+								process="@this" resetValues="true" styleClass="ui-grid-col-12 botao-adicionar" update="editForm:idTamanhoDialog" />
+						</p:panelGrid>
+
+						<p:dataTable id="dtbCores" widgetVar="dtbCor" var="entity" value="#{produtoController.entity.cores}" rowKey="#{entity.id}"
+							reflow="true" emptyMessage="Nenhuma cor encontrada" rowIndexVar="index">
+
+							<p:column headerText="Código">
+								<h:outputText value="#{entity.id.codigoCor}" />
+							</p:column>
+
+							<p:column headerText="Nome">
+								<h:outputText value="#{entity.nomeCor}" />
+							</p:column>
+
+							<p:column styleClass="coluna-edicao">
+								<p:commandButton icon="fa fa-fw fa-pencil" title="#{labels.botao_editar}" update="editForm:idCorDialog" process="@this" resetValues="true"
+									styleClass="ui-grid-col-12" oncomplete="PF('corDialog').show();">
+									<f:setPropertyActionListener value="#{index}" target="#{produtoController.indexRelacionado}" />
+									<f:setPropertyActionListener value="#{entity}" target="#{produtoController.selectedRelatedEntity}" />
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+					</div>
 
 					<div class="card card-w-title">
 						<h1>Tabela Medidas</h1>
@@ -430,7 +459,7 @@
 							actionListener="#{produtoController.saveTamanho}" process="editForm:tamanhoGrid" update="messagesTamanho :editForm:tamanhoGrid"
 							styleClass="ui-grid-col-12" />
 
-						<p:commandButton id="exclusaoButton" icon="fa fa-fw fa-trash" value="#{labels.botao_excluir}"
+						<p:commandButton id="exclusaoTamanhoButton" icon="fa fa-fw fa-trash" value="#{labels.botao_excluir}"
 							actionListener="#{produtoController.excluiTamanho}" process="editForm:tamanhoGrid" styleClass="ui-grid-col-12 botao-vermelho"
 							rendered="#{produtoController.editingRelated}">
 							<p:confirm header="Confirmação" message="Confirmar exclusão do tamanho?" icon="ui-icon-alert" />
@@ -443,6 +472,50 @@
 					<p:spacer styleClass="display-desktop" />
 
 					<p:messages id="messagesTamanho" />
+				</div>
+			</div>
+		</p:dialog>
+		
+		<p:dialog header="Cor" id="idCorDialog" widgetVar="corDialog" width="90%" height="90%" modal="true" draggable="false" resizable="false"
+			responsive="true" position="top">
+			<div class="ui-g">
+				<div class="ui-g-12">
+					<div class="card card-w-title">
+						<h1>#{labels.informacoes}</h1>
+						<p:scrollPanel styleClass="resp-dialog">
+							<p:panelGrid columns="1" layout="grid" id="corGrid" styleClass="ui-panelgrid-blank form-group">
+								<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group">
+									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+										<p:outputLabel for="cor" value="Cor" styleClass="label" />
+										<p:selectOneMenu id="cor" value="#{produtoController.cor.id.codigoCor}" styleClass="ui-grid-col-12" required="true"
+											requiredMessage="Favor selecionar a cor" disabled="#{produtoController.editingRelated}">
+											<f:selectItem itemLabel="Selecione" itemValue="" />
+											<f:selectItems value="#{produtoController.cores}" var="item" itemLabel="#{item.codigo} - #{item.nome}" itemValue="#{item.codigo}" />
+										</p:selectOneMenu>
+									</p:panelGrid>
+								</p:panelGrid>
+							</p:panelGrid>
+						</p:scrollPanel>
+					</div>
+
+					<p:panelGrid columns="6" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
+						<p:commandButton id="submitCorButton" icon="fa fa-fw fa-save" value="#{labels.botao_gravar}"
+							actionListener="#{produtoController.saveCor}" process="editForm:corGrid" update="messagesCor :editForm:corGrid"
+							styleClass="ui-grid-col-12" />
+
+						<p:commandButton id="exclusaoCorButton" icon="fa fa-fw fa-trash" value="#{labels.botao_excluir}"
+							actionListener="#{produtoController.excluiCor}" process="editForm:corGrid" styleClass="ui-grid-col-12 botao-vermelho"
+							rendered="#{produtoController.editingRelated}">
+							<p:confirm header="Confirmação" message="Confirmar exclusão da cor" icon="ui-icon-alert" />
+						</p:commandButton>
+
+						<p:commandButton icon="fa fa-fw fa-close" value="#{labels.botao_fechar}" oncomplete="PF('corDialog').hide();" process="@none" global="false"
+							styleClass="ui-grid-col-12 botao-fechar" />
+					</p:panelGrid>
+
+					<p:spacer styleClass="display-desktop" />
+
+					<p:messages id="messagesCor" />
 				</div>
 			</div>
 		</p:dialog>

@@ -19,7 +19,10 @@ import br.com.graflogic.base.service.gson.GsonUtil;
 import br.com.graflogic.base.service.util.I18NUtil;
 import br.com.graflogic.hermitex.cliente.data.entity.cadastro.Cliente;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.CategoriaProduto;
+import br.com.graflogic.hermitex.cliente.data.entity.produto.CorProduto;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.Produto;
+import br.com.graflogic.hermitex.cliente.data.entity.produto.ProdutoCor;
+import br.com.graflogic.hermitex.cliente.data.entity.produto.ProdutoCorPK;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.ProdutoImagem;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.ProdutoTamanho;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.ProdutoTamanhoPK;
@@ -30,6 +33,7 @@ import br.com.graflogic.hermitex.cliente.service.exception.DadosInvalidosExcepti
 import br.com.graflogic.hermitex.cliente.service.impl.cadastro.ClienteService;
 import br.com.graflogic.hermitex.cliente.service.impl.model.LinhaTabelaMedidas;
 import br.com.graflogic.hermitex.cliente.service.impl.produto.CategoriaProdutoService;
+import br.com.graflogic.hermitex.cliente.service.impl.produto.CorProdutoService;
 import br.com.graflogic.hermitex.cliente.service.impl.produto.ProdutoService;
 import br.com.graflogic.hermitex.cliente.service.impl.produto.SetorProdutoService;
 import br.com.graflogic.hermitex.cliente.service.impl.produto.TamanhoProdutoService;
@@ -62,6 +66,9 @@ public class ProdutoController extends CrudBaseController<Produto, Produto> impl
 	@Autowired
 	private TamanhoProdutoService tamanhoService;
 
+	@Autowired
+	private CorProdutoService corService;
+
 	private List<Cliente> clientes;
 
 	private List<CategoriaProduto> categorias;
@@ -70,7 +77,11 @@ public class ProdutoController extends CrudBaseController<Produto, Produto> impl
 
 	private List<TamanhoProduto> tamanhos;
 
+	private List<CorProduto> cores;
+
 	private ProdutoTamanho tamanho;
+
+	private ProdutoCor cor;
 
 	private int indexRelacionado;
 
@@ -88,6 +99,7 @@ public class ProdutoController extends CrudBaseController<Produto, Produto> impl
 			setores = new ArrayList<>();
 
 			tamanhos = tamanhoService.consulta(true);
+			cores = corService.consulta(true);
 
 		} catch (Throwable t) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao inicializar tela, contate o administrador", t);
@@ -137,6 +149,7 @@ public class ProdutoController extends CrudBaseController<Produto, Produto> impl
 
 		setEntity(new Produto());
 		getEntity().setTamanhos(new ArrayList<>());
+		getEntity().setCores(new ArrayList<>());
 		getEntity().setImagens(new ArrayList<>());
 		getEntity().setIdCliente(getFilterEntity().getIdCliente());
 
@@ -172,6 +185,9 @@ public class ProdutoController extends CrudBaseController<Produto, Produto> impl
 	protected void executeEditRelated(Object relatedEntity) throws Exception {
 		if (relatedEntity instanceof ProdutoTamanho) {
 			tamanho = (ProdutoTamanho) ObjectCopier.copy(relatedEntity);
+
+		} else if (relatedEntity instanceof ProdutoCor) {
+			cor = (ProdutoCor) ObjectCopier.copy(relatedEntity);
 
 		}
 	}
@@ -225,6 +241,64 @@ public class ProdutoController extends CrudBaseController<Produto, Produto> impl
 
 		} catch (Throwable t) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao excluir tamanho, contate o administrador", t);
+		}
+	}
+
+	// Cor
+	public void prepareAddCor() {
+		try {
+			setEditingRelated(false);
+
+			cor = new ProdutoCor();
+			cor.setId(new ProdutoCorPK());
+			cor.setProduto(getEntity());
+
+			showDialog("corDialog");
+
+		} catch (Throwable t) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao adicionar cor, contate o administrador", t);
+		}
+	}
+
+	public void saveCor() {
+		try {
+			if (isEditingRelated()) {
+				getEntity().getCores().set(indexRelacionado, cor);
+
+			} else {
+				for (ProdutoCor produtoCor : getEntity().getCores()) {
+					if (produtoCor.getId().getCodigoCor().equals(cor.getId().getCodigoCor())) {
+						returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Cor já cadastrada", null);
+						return;
+					}
+				}
+
+				for (CorProduto corProduto : cores) {
+					if (corProduto.getCodigo().equals(cor.getId().getCodigoCor())) {
+						cor.setNomeCor(corProduto.getNome());
+					}
+				}
+
+				getEntity().getCores().add(cor);
+			}
+
+			updateComponent("editForm:dtbCores");
+			hideDialog("corDialog");
+
+		} catch (Throwable t) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao salvar cor, contate o administrador", t);
+		}
+	}
+
+	public void excluiCor() {
+		try {
+			getEntity().getCores().remove(indexRelacionado);
+
+			updateComponent("editForm:dtbCores");
+			hideDialog("corDialog");
+
+		} catch (Throwable t) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao excluir cor, contate o administrador", t);
 		}
 	}
 
@@ -382,8 +456,16 @@ public class ProdutoController extends CrudBaseController<Produto, Produto> impl
 		return tamanhos;
 	}
 
+	public List<CorProduto> getCores() {
+		return cores;
+	}
+
 	public ProdutoTamanho getTamanho() {
 		return tamanho;
+	}
+
+	public ProdutoCor getCor() {
+		return cor;
 	}
 
 	public int getIndexRelacionado() {

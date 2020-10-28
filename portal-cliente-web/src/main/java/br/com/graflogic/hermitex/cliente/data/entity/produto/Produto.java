@@ -96,6 +96,10 @@ public class Produto implements Serializable {
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "produto", orphanRemoval = true)
 	@LazyCollection(LazyCollectionOption.TRUE)
+	private List<ProdutoCor> cores;
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "produto", orphanRemoval = true)
+	@LazyCollection(LazyCollectionOption.TRUE)
 	private List<ProdutoImagem> imagens;
 
 	public Integer getId() {
@@ -248,6 +252,14 @@ public class Produto implements Serializable {
 
 	public void setTamanhos(List<ProdutoTamanho> tamanhos) {
 		this.tamanhos = tamanhos;
+	}
+
+	public List<ProdutoCor> getCores() {
+		return cores;
+	}
+
+	public void setCores(List<ProdutoCor> cores) {
+		this.cores = cores;
 	}
 
 	public List<ProdutoImagem> getImagens() {

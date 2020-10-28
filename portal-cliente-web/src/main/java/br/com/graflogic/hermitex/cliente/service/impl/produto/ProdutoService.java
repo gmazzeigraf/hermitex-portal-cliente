@@ -23,9 +23,11 @@ import br.com.graflogic.hermitex.cliente.data.dom.DomProduto.DomStatus;
 import br.com.graflogic.hermitex.cliente.data.entity.aud.ProdutoAuditoria;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.Produto;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.ProdutoApresentacaoLista;
+import br.com.graflogic.hermitex.cliente.data.entity.produto.ProdutoCor;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.ProdutoImagem;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.ProdutoTamanho;
 import br.com.graflogic.hermitex.cliente.data.impl.aud.ProdutoAuditoriaRepository;
+import br.com.graflogic.hermitex.cliente.data.impl.produto.ProdutoCorRepository;
 import br.com.graflogic.hermitex.cliente.data.impl.produto.ProdutoImagemRepository;
 import br.com.graflogic.hermitex.cliente.data.impl.produto.ProdutoRepository;
 import br.com.graflogic.hermitex.cliente.data.impl.produto.ProdutoTamanhoRepository;
@@ -56,6 +58,9 @@ public class ProdutoService {
 
 	@Autowired
 	private ProdutoTamanhoRepository tamanhoRepository;
+
+	@Autowired
+	private ProdutoCorRepository corRepository;
 
 	@Autowired
 	private ProdutoImagemRepository imagemRepository;
@@ -342,6 +347,10 @@ public class ProdutoService {
 			throw new DadosInvalidosException("Ao menos um tamanho deve ser cadastrado");
 		}
 
+		if (entity.getCores().isEmpty()) {
+			throw new DadosInvalidosException("Ao menos uma cor deve ser cadastrada");
+		}
+
 		boolean possuiCapa = false;
 		for (ProdutoImagem imagem : entity.getImagens()) {
 			if (imagem.isCapa()) {
@@ -370,6 +379,10 @@ public class ProdutoService {
 				tamanho.setProduto(null);
 				tamanho.setTamanho(null);
 			}
+			for (ProdutoCor cor : objeto.getCores()) {
+				cor.setProduto(null);
+				cor.setCor(null);
+			}
 			objeto.setImagens(null);
 
 			evento.setObjeto(GsonUtil.gson.toJson(objeto));
@@ -382,6 +395,7 @@ public class ProdutoService {
 
 	private void preencheRelacionados(Produto entity) {
 		entity.setTamanhos(tamanhoRepository.consultaPorProduto(entity.getId()));
+		entity.setCores(corRepository.consultaPorProduto(entity.getId()));
 		entity.setImagens(imagemRepository.consultaPorProduto(entity.getId()));
 	}
 }
