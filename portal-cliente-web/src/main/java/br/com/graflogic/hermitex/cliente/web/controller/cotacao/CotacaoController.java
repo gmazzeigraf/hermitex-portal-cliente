@@ -158,7 +158,7 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 			municipiosEntrega = new ArrayList<>();
 			produtos = new ArrayList<>();
 
-			perfilUsuario = (PerfilUsuarioAdministrador) perfilUsuarioService.consultaPorId(SessionUtil.getAuthenticatedUsuario().getId());
+			perfilUsuario = (PerfilUsuarioAdministrador) perfilUsuarioService.consultaPorId(SessionUtil.getAuthenticatedUsuario().getIdPerfil());
 
 		} catch (Exception e) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao inicializar tela, contate o administrador", e);
