@@ -33,6 +33,18 @@ public class DomProduto {
 
 	public static DomStatusTamanho domStatusTamanho = new DomStatusTamanho();
 
+	public static class DomStatusCor extends DomBase {
+		public static final String ATIVO = "A";
+		public static final String INATIVO = "I";
+
+		DomStatusCor() {
+			mapa.put(ATIVO, "Ativo");
+			mapa.put(INATIVO, "Inativo");
+		}
+	}
+
+	public static DomStatusCor domStatusCor = new DomStatusCor();
+
 	public static class DomStatusEmbalagem extends DomBase {
 		public static final String ATIVO = "A";
 		public static final String INATIVO = "I";

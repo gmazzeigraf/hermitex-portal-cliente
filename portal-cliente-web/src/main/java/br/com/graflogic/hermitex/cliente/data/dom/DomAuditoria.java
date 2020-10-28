@@ -117,6 +117,20 @@ public class DomAuditoria {
 		}
 	}
 
+	public static class DomEventoAuditoriaCorProduto extends DomBase {
+		public static final String CADASTRO = "C";
+		public static final String ATUALIZACAO = "A";
+		public static final String INATIVACAO = "I";
+		public static final String ATIVACAO = "T";
+
+		DomEventoAuditoriaCorProduto() {
+			mapa.put(CADASTRO, "Cadastro");
+			mapa.put(ATUALIZACAO, "Atualização");
+			mapa.put(INATIVACAO, "Inativação");
+			mapa.put(ATIVACAO, "Ativação");
+		}
+	}
+
 	public static class DomEventoAuditoriaEmbalagem extends DomBase {
 		public static final String CADASTRO = "C";
 		public static final String ATUALIZACAO = "A";
