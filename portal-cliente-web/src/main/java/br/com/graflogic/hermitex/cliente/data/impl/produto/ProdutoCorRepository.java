@@ -25,7 +25,8 @@ public class ProdutoCorRepository extends BaseRepository<ProdutoCor> {
 
 	@SuppressWarnings("unchecked")
 	public List<ProdutoCor> consultaPorProduto(Integer idProduto) {
-		String queryStr = "SELECT pro_cor.id_produto, pro_cor.cd_cor, cor.nome"
+		String queryStr = "SELECT pro_cor.id_produto, pro_cor.cd_cor, cor.nome,"
+				+ " (SELECT COUNT(id) FROM tb_produto_imagem WHERE cd_cor = cor.codigo) > 0 AS possui_imagem"
 				+ " FROM tb_produto_cor pro_cor INNER JOIN tb_cor_produto cor ON pro_cor.cd_cor = cor.codigo";
 
 		String where = "";
@@ -55,6 +56,7 @@ public class ProdutoCorRepository extends BaseRepository<ProdutoCor> {
 			entity.getId().setIdProduto((Integer) row[0]);
 			entity.getId().setCodigoCor((String) row[1]);
 			entity.setNomeCor((String) row[2]);
+			entity.setPossuiImagem((boolean) row[3]);
 
 			entities.add(entity);
 		}

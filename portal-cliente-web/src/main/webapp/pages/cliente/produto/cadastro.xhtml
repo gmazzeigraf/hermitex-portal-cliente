@@ -364,9 +364,16 @@
 									<p:graphicImage cache="true" value="#{sessionController.getUrlImagem(imagem.id, 3)}" title="" rendered="#{!imagem.temporaria}" />
 								</p:column>
 
+								<p:column headerText="Cor" style="text-align: center;">
+									<p:selectOneMenu value="#{imagem.codigoCor}" styleClass="ui-grid-col-12">
+										<f:selectItem itemLabel="" itemValue="" />
+										<f:selectItems value="#{produtoController.entity.cores}" var="item" itemLabel="#{item.id.codigoCor} - #{item.nomeCor}" itemValue="#{item.id.codigoCor}" />
+									</p:selectOneMenu>
+								</p:column>
+
 								<p:column headerText="Capa" style="text-align: center;">
 									<p:selectBooleanCheckbox value="#{imagem.capa}">
-										<p:ajax process="@this" update="dtbImagens" listener="#{produtoController.selecionaImagemCapa(index)}" />
+										<p:ajax process="@this" update="dtbImagens" listener="#{produtoController.selecionaImagemCapa(index, imagem.codigoCor)}" />
 									</p:selectBooleanCheckbox>
 								</p:column>
 
@@ -393,7 +400,7 @@
 
 					<p:panelGrid columns="6" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
 						<p:commandButton id="submitButton" icon="fa fa-fw fa-save" value="#{labels.botao_gravar}" actionListener="#{produtoController.save}"
-							process=":editForm:informacoesGrid :editForm:tabelaMedidasGrid" update=":editForm :searchForm" styleClass="ui-grid-col-12" />
+							process=":editForm:informacoesGrid :editForm:tabelaMedidasGrid :editForm:imagensGrid" update=":editForm :searchForm" styleClass="ui-grid-col-12" />
 
 						<p:commandButton id="inativacaoButton" icon="fa fa-fw fa-ban" value="#{labels.botao_inativar}" actionListener="#{produtoController.inativa}"
 							process="@this" update=":searchForm :editForm" styleClass="ui-grid-col-12 botao-vermelho"

@@ -38,6 +38,9 @@ public class ProdutoImagem implements Serializable {
 	@Column(name = "conteudo", nullable = false)
 	private String conteudo;
 
+	@Column(name = "cd_cor")
+	private String codigoCor;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_produto", referencedColumnName = "id", insertable = false, updatable = false)
 	private Produto produto;
@@ -75,6 +78,14 @@ public class ProdutoImagem implements Serializable {
 
 	public void setConteudo(String conteudo) {
 		this.conteudo = conteudo;
+	}
+
+	public String getCodigoCor() {
+		return codigoCor;
+	}
+
+	public void setCodigoCor(String codigoCor) {
+		this.codigoCor = codigoCor;
 	}
 
 	public Produto getProduto() {

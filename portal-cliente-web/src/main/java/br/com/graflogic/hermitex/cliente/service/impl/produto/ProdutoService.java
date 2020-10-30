@@ -94,6 +94,9 @@ public class ProdutoService {
 
 			for (ProdutoImagem imagem : imagens) {
 				imagem.setIdProduto(entity.getId());
+				if (StringUtils.isBlank(imagem.getCodigoCor())) {
+					imagem.setCodigoCor(null);
+				}
 			}
 
 			entity.setImagens(imagens);
@@ -138,6 +141,12 @@ public class ProdutoService {
 
 	private void executaAtualiza(Produto entity) {
 		try {
+			for (ProdutoImagem imagem : entity.getImagens()) {
+				if (StringUtils.isBlank(imagem.getCodigoCor())) {
+					imagem.setCodigoCor(null);
+				}
+			}
+
 			repository.update(entity);
 
 			limpaCache(entity.getId());

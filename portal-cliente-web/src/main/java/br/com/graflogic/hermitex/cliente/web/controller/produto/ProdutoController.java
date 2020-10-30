@@ -7,6 +7,7 @@ import java.util.List;
 import javax.faces.context.FacesContext;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -421,11 +422,14 @@ public class ProdutoController extends CrudBaseController<Produto, Produto> impl
 		}
 	}
 
-	public void selecionaImagemCapa(Integer index) {
+	public void selecionaImagemCapa(Integer index, String codigoCor) {
 		try {
 			for (int i = 0; i < getEntity().getImagens().size(); i++) {
-				if (i != index) {
-					getEntity().getImagens().get(i).setCapa(false);
+				ProdutoImagem imagem = getEntity().getImagens().get(i);
+
+				if (i != index && ((StringUtils.isBlank(codigoCor) && StringUtils.isBlank(imagem.getCodigoCor()))
+						|| (StringUtils.isNotBlank(codigoCor) && codigoCor.equals(imagem.getCodigoCor())))) {
+					imagem.setCapa(false);
 				}
 			}
 

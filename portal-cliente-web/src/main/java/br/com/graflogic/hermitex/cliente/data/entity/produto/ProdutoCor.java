@@ -37,6 +37,9 @@ public class ProdutoCor implements Serializable {
 	@Transient
 	private String nomeCor;
 
+	@Transient
+	private boolean possuiImagem;
+
 	public ProdutoCorPK getId() {
 		return id;
 	}
@@ -67,5 +70,13 @@ public class ProdutoCor implements Serializable {
 
 	public void setNomeCor(String nomeCor) {
 		this.nomeCor = nomeCor;
+	}
+
+	public boolean isPossuiImagem() {
+		return possuiImagem;
+	}
+
+	public void setPossuiImagem(boolean possuiImagem) {
+		this.possuiImagem = possuiImagem;
 	}
 }
