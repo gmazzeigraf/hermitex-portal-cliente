@@ -440,7 +440,7 @@
 									</p:column>
 
 									<p:column headerText="SKU" styleClass="id-column">
-										<h:outputText value="#{entity.skuProduto}" />
+										<h:outputText value="#{entity.skuCompletoProduto}" />
 									</p:column>
 
 									<p:column headerText="Código" styleClass="id-column">
@@ -453,6 +453,10 @@
 
 									<p:column headerText="Tamanho" styleClass="id-column">
 										<h:outputText value="#{entity.codigoTamanho}" />
+									</p:column>
+									
+									<p:column headerText="Cor" styleClass="id-column">
+										<h:outputText value="#{entity.nomeCor}" />
 									</p:column>
 
 									<p:column headerText="Total" styleClass="coluna-valor">
@@ -661,8 +665,8 @@
 							<p:scrollPanel styleClass="resp-dialog">
 								<p:panelGrid columns="1" layout="grid" id="produtoGrid" styleClass="ui-panelgrid-blank form-group">
 
-									<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group">
-										<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
+									<p:panelGrid columns="3" columnClasses="ui-grid-col-6 ui-grid-col-3 ui-grid-col-3" layout="grid">
+										<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 											<p:outputLabel for="produto" value="Produto" styleClass="label" />
 											<p:selectOneMenu id="produto" value="#{cotacaoController.item.idProduto}" styleClass="ui-grid-col-12" filter="true"
 												filterMatchMode="contains" required="true" requiredMessage="Favor selecionar o produto">
@@ -673,7 +677,7 @@
 											</p:selectOneMenu>
 										</p:panelGrid>
 
-										<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group">
+										<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 											<p:outputLabel for="tamanho" value="Tamanho" styleClass="label" />
 											<p:selectOneMenu id="tamanho" value="#{cotacaoController.item.codigoTamanho}" styleClass="ui-grid-col-12" filter="true"
 												filterMatchMode="contains" required="true" requiredMessage="Favor selecionar o tamanho">
@@ -681,6 +685,15 @@
 												<f:selectItems value="#{cotacaoController.produto.tamanhos}" var="item" itemLabel="#{item.id.codigoTamanho}"
 													itemValue="#{item.id.codigoTamanho}" />
 												<p:ajax process="@this" update=":editForm:produtoGrid" listener="#{cotacaoController.changeTamanhoProduto}" />
+											</p:selectOneMenu>
+										</p:panelGrid>
+
+										<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+											<p:outputLabel for="cor" value="Cor" styleClass="label" />
+											<p:selectOneMenu id="cor" value="#{cotacaoController.item.codigoCor}" styleClass="ui-grid-col-12" filter="true" filterMatchMode="contains">
+												<f:selectItem itemLabel="Selecione" itemValue="" />
+												<f:selectItems value="#{cotacaoController.produto.cores}" var="item" itemLabel="#{item.id.codigoCor} - #{item.nomeCor}" itemValue="#{item.id.codigoCor}" />
+												<p:ajax process="@this" update=":editForm:produtoGrid" listener="#{cotacaoController.changeCorProduto}" />
 											</p:selectOneMenu>
 										</p:panelGrid>
 									</p:panelGrid>

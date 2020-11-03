@@ -31,6 +31,7 @@ import br.com.graflogic.hermitex.cliente.data.entity.cotacao.CotacaoItem;
 import br.com.graflogic.hermitex.cliente.data.entity.cotacao.CotacaoSimple;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.FormaPagamento;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.Produto;
+import br.com.graflogic.hermitex.cliente.data.entity.produto.ProdutoCor;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.ProdutoImagem;
 import br.com.graflogic.hermitex.cliente.data.entity.produto.ProdutoTamanho;
 import br.com.graflogic.hermitex.cliente.service.exception.CorreiosException;
@@ -362,6 +363,7 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 				item.setIdProduto(produto.getId());
 				item.setCodigoProduto(produto.getCodigo());
 				item.setTituloProduto(produto.getTitulo());
+				item.setSkuProduto(produto.getSku());
 				item.setValorUnitario(produto.getValor());
 				item.setCodigoTamanho(produto.getTamanhos().get(0).getId().getCodigoTamanho());
 
@@ -400,6 +402,24 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 
 				calculaTotalItem();
 			}
+		} catch (Exception e) {
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao alterar tamanho do produto, contate o administrador", e);
+		}
+	}
+
+	public void changeCorProduto() {
+		try {
+			item.setNomeCor(null);
+
+			if (StringUtils.isNotEmpty(item.getCodigoCor())) {
+				for (ProdutoCor cor : produto.getCores()) {
+					if (cor.getId().getCodigoCor().equals(item.getCodigoCor())) {
+						item.setNomeCor(cor.getNomeCor());
+						break;
+					}
+				}
+			}
+
 		} catch (Exception e) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao alterar tamanho do produto, contate o administrador", e);
 		}

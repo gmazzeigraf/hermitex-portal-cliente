@@ -27,10 +27,11 @@ public class CotacaoItemRepository extends BaseRepository<CotacaoItem> {
 
 	@SuppressWarnings("unchecked")
 	public List<CotacaoItem> consultaPorCotacao(Long idCotacao) {
-		String queryStr = "SELECT ite.id, ite.id_cotacao, ite.id_produto, ite.cd_tamanho, ite.quantidade, ite.vl_unitario, ite.vl_corrigido_tamanho, ite.vl_total, peso_total,"
-				+ " pro.codigo, pro.sku, pro.titulo, img.id AS id_imagem"
-				+ " FROM tb_cotacao_item ite INNER JOIN tb_produto pro ON ite.id_produto = pro.id INNER JOIN tb_produto_imagem img ON pro.id = img.id_produto AND img.in_capa = ?"
-				+ " INNER JOIN tb_tamanho_produto tam ON tam.codigo = ite.cd_tamanho";
+		String queryStr = "SELECT ite.id, ite.id_cotacao, ite.id_produto, ite.cd_tamanho, ite.cd_cor, ite.quantidade, ite.vl_unitario, ite.vl_corrigido_tamanho, ite.vl_total, peso_total,"
+				+ " pro.codigo, pro.sku, pro.titulo, img.id AS id_imagem, cor.nome AS nm_cor"
+				+ " FROM tb_cotacao_item ite INNER JOIN tb_produto pro ON ite.id_produto = pro.id"
+				+ " INNER JOIN tb_tamanho_produto tam ON tam.codigo = ite.cd_tamanho LEFT JOIN tb_cor_produto cor ON cor.codigo = ite.cd_cor"
+				+ " INNER JOIN tb_produto_imagem img ON pro.id = img.id_produto AND img.in_capa = ? AND (CASE WHEN cor.codigo IS NOT NULL THEN img.cd_cor = cor.codigo ELSE true END)";
 
 		String where = "";
 
@@ -61,15 +62,17 @@ public class CotacaoItemRepository extends BaseRepository<CotacaoItem> {
 			entity.setIdCotacao(((BigInteger) row[1]).longValue());
 			entity.setIdProduto((Integer) row[2]);
 			entity.setCodigoTamanho((String) row[3]);
-			entity.setQuantidade(((Short) row[4]).intValue());
-			entity.setValorUnitario((BigDecimal) row[5]);
-			entity.setValorCorrigidoTamanho((BigDecimal) row[6]);
-			entity.setValorTotal((BigDecimal) row[7]);
-			entity.setPesoTotal((BigDecimal) row[8]);
-			entity.setCodigoProduto((String) row[9]);
-			entity.setSkuProduto((String) row[10]);
-			entity.setTituloProduto((String) row[11]);
-			entity.setIdImagemCapaProduto((String) row[12]);
+			entity.setCodigoCor((String) row[4]);
+			entity.setQuantidade(((Short) row[5]).intValue());
+			entity.setValorUnitario((BigDecimal) row[6]);
+			entity.setValorCorrigidoTamanho((BigDecimal) row[7]);
+			entity.setValorTotal((BigDecimal) row[8]);
+			entity.setPesoTotal((BigDecimal) row[9]);
+			entity.setCodigoProduto((String) row[10]);
+			entity.setSkuProduto((String) row[11]);
+			entity.setTituloProduto((String) row[12]);
+			entity.setIdImagemCapaProduto((String) row[13]);
+			entity.setNomeCor((String) row[14]);
 
 			entities.add(entity);
 		}

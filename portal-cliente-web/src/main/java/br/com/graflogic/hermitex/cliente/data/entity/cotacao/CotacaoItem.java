@@ -15,6 +15,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * 
  * @author gmazz
@@ -41,6 +43,9 @@ public class CotacaoItem implements Serializable {
 	@Column(name = "cd_tamanho", nullable = false)
 	private String codigoTamanho;
 
+	@Column(name = "cd_cor", nullable = false)
+	private String codigoCor;
+
 	@Column(name = "quantidade", nullable = false)
 	private Integer quantidade;
 
@@ -63,6 +68,9 @@ public class CotacaoItem implements Serializable {
 	// Apresentacao
 	@Transient
 	private String codigoProduto;
+
+	@Transient
+	private String nomeCor;
 
 	@Transient
 	private String skuProduto;
@@ -103,6 +111,14 @@ public class CotacaoItem implements Serializable {
 
 	public void setCodigoTamanho(String codigoTamanho) {
 		this.codigoTamanho = codigoTamanho;
+	}
+
+	public String getCodigoCor() {
+		return codigoCor;
+	}
+
+	public void setCodigoCor(String codigoCor) {
+		this.codigoCor = codigoCor;
 	}
 
 	public Integer getQuantidade() {
@@ -161,8 +177,24 @@ public class CotacaoItem implements Serializable {
 		this.codigoProduto = codigoProduto;
 	}
 
+	public String getNomeCor() {
+		return nomeCor;
+	}
+
+	public void setNomeCor(String nomeCor) {
+		this.nomeCor = nomeCor;
+	}
+
 	public String getSkuProduto() {
 		return skuProduto;
+	}
+
+	public String getSkuCompletoProduto() {
+		String skuCompleto = StringUtils.defaultString(skuProduto);
+		skuCompleto += StringUtils.defaultString(codigoCor);
+		skuCompleto += StringUtils.defaultString(codigoTamanho);
+
+		return skuCompleto;
 	}
 
 	public void setSkuProduto(String skuProduto) {
