@@ -469,7 +469,7 @@
 										<h:outputText value="#{entity.quantidade}" />
 
 										<f:facet name="footer">
-											<h:outputText value="#{cotacaoController.entity.quantidadeTotalItens}" />
+											<h:outputText value="#{cotacaoController.entity.quantidadeTotalItens}" style="font-weight: bold; font-size: 16px;" />
 										</f:facet>
 									</p:column>
 
@@ -479,7 +479,7 @@
 										</h:outputText>
 
 										<f:facet name="footer">
-											<h:outputText value="#{cotacaoController.entity.valorProdutos}">
+											<h:outputText value="#{cotacaoController.entity.valorProdutos}" style="font-weight: bold; font-size: 15px;">
 												<f:convertNumber pattern="R$ #,##0.00" />
 											</h:outputText>
 										</f:facet>
@@ -513,9 +513,11 @@
 									<p:commandButton id="atualizaTiposFreteButton" icon="fa fa-fw fa-refresh" value="Atualizar Frete"
 										actionListener="#{cotacaoController.atualizaTiposFrete}" process="@this" update=":editForm:freteGrid"
 										styleClass="ui-grid-col-12" />
-									<p:selectOneMenu id="tipoFrete" value="#{cotacaoController.codigoServicoFrete}" styleClass="ui-grid-col-12">
+									<p:selectOneMenu id="tipoFrete" value="#{cotacaoController.codigoServicoFrete}" styleClass="ui-grid-col-12" required="true"
+										requiredMessage="Favor selecionar o frete">
 										<f:selectItem itemLabel="Selecione" itemValue="" />
-										<f:selectItems value="#{cotacaoController.tiposFrete}" var="item" itemLabel="#{item.codigoServico} - #{item.descricao}" itemValue="#{item.codigoServico}" />
+										<f:selectItems value="#{cotacaoController.tiposFrete}" var="item" itemLabel="#{item.codigoServico} - #{item.descricao}"
+											itemValue="#{item.codigoServico}" />
 										<p:ajax process="@this" update=":editForm:informacoesGrid :editForm:pagamentoGrid" listener="#{cotacaoController.changeTipoFrete}" />
 									</p:selectOneMenu>
 								</p:panelGrid>
@@ -690,9 +692,11 @@
 
 										<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 											<p:outputLabel for="cor" value="Cor" styleClass="label" />
-											<p:selectOneMenu id="cor" value="#{cotacaoController.item.codigoCor}" styleClass="ui-grid-col-12" filter="true" filterMatchMode="contains">
+											<p:selectOneMenu id="cor" value="#{cotacaoController.item.codigoCor}" styleClass="ui-grid-col-12" filter="true" filterMatchMode="contains"
+												required="true" requiredMessage="Favor selecionar a cor">
 												<f:selectItem itemLabel="Selecione" itemValue="" />
-												<f:selectItems value="#{cotacaoController.produto.cores}" var="item" itemLabel="#{item.id.codigoCor} - #{item.nomeCor}" itemValue="#{item.id.codigoCor}" />
+												<f:selectItems value="#{cotacaoController.produto.cores}" var="item" itemLabel="#{item.id.codigoCor} - #{item.nomeCor}"
+													itemValue="#{item.id.codigoCor}" />
 												<p:ajax process="@this" update=":editForm:produtoGrid" listener="#{cotacaoController.changeCorProduto}" />
 											</p:selectOneMenu>
 										</p:panelGrid>
