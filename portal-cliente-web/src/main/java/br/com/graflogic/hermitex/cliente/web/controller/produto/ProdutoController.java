@@ -3,6 +3,9 @@ package br.com.graflogic.hermitex.cliente.web.controller.produto;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import javax.faces.context.FacesContext;
 
@@ -110,6 +113,10 @@ public class ProdutoController extends CrudBaseController<Produto, Produto> impl
 	@Override
 	protected boolean executeSave() {
 		try {
+			if (!imagensValidas()) {
+				return false;
+			}
+
 			getEntity().setConteudoTabelaMedidas(GsonUtil.gson.toJson(conteudoTabelaMedidas));
 
 			if (isEditing()) {
@@ -378,11 +385,6 @@ public class ProdutoController extends CrudBaseController<Produto, Produto> impl
 	// Imagem
 	public void uploadImagem(FileUploadEvent event) {
 		try {
-			if (getEntity().getImagens().size() >= 4) {
-				returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Apenas 4 imagens podem ser enviadas por produto", null);
-				return;
-			}
-
 			byte[] conteudoImagem = IOUtils.toByteArray(event.getFile().getInputstream());
 
 			ProdutoImagem imagem = service.geraImagem(conteudoImagem);
@@ -436,6 +438,20 @@ public class ProdutoController extends CrudBaseController<Produto, Produto> impl
 		} catch (Throwable t) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao selecionar a imagem de capa, contate o administrador", t);
 		}
+	}
+
+	private boolean imagensValidas() {
+		Map<String, List<ProdutoImagem>> imagensProdutoCor = getEntity().getImagens().stream()
+				.collect(Collectors.groupingBy(imagem -> StringUtils.defaultString(imagem.getCodigoCor())));
+
+		for (Entry<String, List<ProdutoImagem>> imagensCor : imagensProdutoCor.entrySet()) {
+			if (imagensCor.getValue().size() > 4) {
+				returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Apenas 4 imagens podem ser enviadas por produto e cor", null);
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	// Condicoes
