@@ -57,8 +57,8 @@ public class Filial implements Serializable {
 	@Column(name = "id_cliente", nullable = false)
 	private Integer idCliente;
 
-	@Column(name = "cnpj", nullable = false)
-	private String cnpj;
+	@Column(name = "documento", nullable = false)
+	private String documento;
 
 	@Column(name = "razao_social", nullable = false)
 	private String razaoSocial;
@@ -130,12 +130,12 @@ public class Filial implements Serializable {
 		this.idCliente = idCliente;
 	}
 
-	public String getCnpj() {
-		return cnpj;
+	public String getDocumento() {
+		return documento;
 	}
 
-	public void setCnpj(String cnpj) {
-		this.cnpj = cnpj;
+	public void setDocumento(String documento) {
+		this.documento = documento;
 	}
 
 	public String getRazaoSocial() {
@@ -298,8 +298,8 @@ public class Filial implements Serializable {
 		return DomCadastro.domStatusFilial.getDeValor(status);
 	}
 
-	public String getFormattedCnpj() {
-		return FormatUtil.formatCNPJ(cnpj);
+	public String getFormattedDocumento() {
+		return documento.length() == 14 ? FormatUtil.formatCNPJ(documento) : FormatUtil.formatCPF(documento);
 	}
 
 	public FilialEndereco getEnderecoFaturamento() {

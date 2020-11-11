@@ -149,7 +149,7 @@ public class PedidoService {
 			}
 		}
 
-		// Caso seja compra com carta, valida o documento do portador
+		// Caso seja compra com cartao, valida o documento do portador
 		if (formaPagamento.isCartaoCredito()) {
 			String documentoPortador = dadosPagamentoCartaoCredito.getDocumentoPortador();
 
@@ -594,12 +594,12 @@ public class PedidoService {
 				Filial filial = filialService.consultaPorId(entity.getIdFilial());
 
 				buyer.setName(filial.getRazaoSocial());
-				buyer.setDocumentNumber(filial.getCnpj());
+				buyer.setDocumentNumber(filial.getDocumento());
 
 			}
 
-			buyer.setDocumentType("CNPJ");
-			buyer.setPersonType("Company");
+			buyer.setDocumentType(buyer.getDocumentNumber().length() == 14 ? "CNPJ" : "CPF");
+			buyer.setPersonType(buyer.getDocumentNumber().length() == 14 ? "Company" : "Person");
 			buyer.setAddressCollection(new ArrayList<>());
 
 			request.setBuyer(buyer);

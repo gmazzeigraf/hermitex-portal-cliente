@@ -101,8 +101,8 @@
 								<h:outputText value="#{entity.id}" />
 							</p:column>
 
-							<p:column headerText="CNPJ" sortBy="#{entity.formattedCnpj}" styleClass="valor-column">
-								<h:outputText value="#{entity.formattedCnpj}" />
+							<p:column headerText="CPF/CNPJ" sortBy="#{entity.formattedDocumento}" styleClass="valor-column">
+								<h:outputText value="#{entity.formattedDocumento}" />
 							</p:column>
 
 							<p:column headerText="Razão Social" sortBy="#{entity.razaoSocial}">
@@ -146,11 +146,9 @@
 						<h1>#{labels.informacoes}</h1>
 						<p:panelGrid columns="2" id="informacoesGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<p:outputLabel for="cnpj" value="CNPJ" styleClass="label" />
-								<p:inputMask id="cnpj" styleClass="ui-grid-col-12" mask="99.999.999/9999-99" value="#{filialController.entity.cnpj}" converter="maskConverter"
-									validatorMessage="CNPJ inválido" readonly="#{filialController.editing}" required="true" requiredMessage="Favor informar o CNPJ">
-									<f:validator validatorId="checkvalidcnpj" />
-								</p:inputMask>
+								<p:outputLabel for="documento" value="CPF/CNPJ" styleClass="label" />
+								<p:inputText id="documento" value="#{filialController.entity.documento}" styleClass="ui-grid-col-12" readonly="#{filialController.editing}"
+										required="true" requiredMessage="Favor informar o CPF/CNPJ" maxlength="14" onkeypress="mascara(this, inteiro);" />
 							</p:panelGrid>
 
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">

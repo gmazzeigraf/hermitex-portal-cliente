@@ -87,14 +87,14 @@ public class FilialRepository extends BaseRepository<Filial> {
 		return (List<Filial>) typedQuery.getResultList();
 	}
 
-	public Filial consultaPorCnpj(String cnpj) {
+	public Filial consultaPorDocumento(String documento) {
 		CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
 		CriteriaQuery<Filial> query = builder.createQuery(Filial.class);
-		List<Predicate> predicateList = new ArrayList<Predicate>();
+		List<Predicate> predicateList = new ArrayList<>();
 
 		Root<Filial> table = query.from(Filial.class);
 
-		predicateList.add(builder.and(builder.equal(table.get("cnpj"), cnpj)));
+		predicateList.add(builder.and(builder.equal(table.get("documento"), documento)));
 
 		query.where(predicateList.toArray(new Predicate[predicateList.size()]));
 		TypedQuery<Filial> typedQuery = getEntityManager().createQuery(query);

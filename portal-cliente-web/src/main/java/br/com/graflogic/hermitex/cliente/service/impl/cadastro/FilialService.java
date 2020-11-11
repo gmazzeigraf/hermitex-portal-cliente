@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.graflogic.base.service.gson.GsonUtil;
 import br.com.graflogic.base.service.util.CacheUtil;
+import br.com.graflogic.commonutil.util.PessoaFisicaValidator;
+import br.com.graflogic.commonutil.util.PessoaJuridicaValidator;
 import br.com.graflogic.hermitex.cliente.data.dom.DomAcesso.DomTipoUsuario;
 import br.com.graflogic.hermitex.cliente.data.dom.DomAuditoria.DomEventoAuditoriaFilial;
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomStatusFilial;
@@ -73,10 +75,22 @@ public class FilialService {
 		entity.setContatos(null);
 
 		try {
+			if (11 == entity.getDocumento().length()) {
+				if (!PessoaFisicaValidator.validateCPF(entity.getDocumento())) {
+					throw new DadosInvalidosException("CPF inválido");
+				}
+			} else if (14 == entity.getDocumento().length()) {
+				if (!PessoaJuridicaValidator.validateCNPJ(entity.getDocumento())) {
+					throw new DadosInvalidosException("CNPJ inválido");
+				}
+			} else {
+				throw new DadosInvalidosException("CPF/CNPJ inválido");
+			}
+			
 			try {
-				repository.consultaPorCnpj(entity.getCnpj());
+				repository.consultaPorDocumento(entity.getDocumento());
 
-				throw new DadosInvalidosException("CNPJ já cadastrado");
+				throw new DadosInvalidosException("CPF/CNPJ já cadastrado");
 
 			} catch (NoResultException e) {
 			}
