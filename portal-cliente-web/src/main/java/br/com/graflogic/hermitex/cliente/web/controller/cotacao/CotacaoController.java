@@ -17,6 +17,7 @@ import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomTipoEndereco;
 import br.com.graflogic.hermitex.cliente.data.dom.DomGeral.DomBoolean;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomServicoFrete;
+import br.com.graflogic.hermitex.cliente.data.dom.DomProduto.DomStatus;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuario;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.PerfilUsuarioAdministrador;
 import br.com.graflogic.hermitex.cliente.data.entity.acesso.Usuario;
@@ -685,6 +686,9 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 
 				Produto produtoFilter = new Produto();
 				produtoFilter.setIdCliente(getFilterEntity().getIdCliente());
+				if (!isEditing()) {
+					produtoFilter.setStatus(DomStatus.ATIVO);
+				}
 				produtos.addAll(produtoService.consulta(produtoFilter));
 			}
 
