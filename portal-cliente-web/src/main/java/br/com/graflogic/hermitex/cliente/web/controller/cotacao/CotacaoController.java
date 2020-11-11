@@ -327,7 +327,6 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 			tiposFrete.clear();
 
 			updateComponent("editForm:dtbItens");
-			updateComponent("editForm:informacoesGrid");
 			updateComponent("editForm:pagamentoGrid");
 			updateComponent("editForm:descontoGrid");
 			updateComponent("editForm:freteGrid");
@@ -347,7 +346,6 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 		tiposFrete.clear();
 
 		updateComponent("editForm:dtbItens");
-		updateComponent("editForm:informacoesGrid");
 		updateComponent("editForm:pagamentoGrid");
 		updateComponent("editForm:descontoGrid");
 		updateComponent("editForm:freteGrid");
@@ -443,6 +441,7 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 			atualizaValores();
 
 			updateComponent("editForm:descontoGrid");
+			updateComponent("editForm:freteGrid");
 
 		} catch (Exception e) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao alterar a forma de pagamento, contate o administrador", e);
@@ -602,7 +601,7 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 	private void changeDesconto() {
 		atualizaValores();
 
-		updateComponent("editForm:informacoesGrid");
+		updateComponent("editForm:freteGrid");
 		updateComponent("editForm:pagamentoGrid");
 		updateComponent("editForm:descontoGrid");
 	}

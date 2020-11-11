@@ -127,106 +127,96 @@
 		<c:if test="#{null != cotacaoController.entity}">
 			<div class="ui-g">
 				<div class="ui-g-12">
-					<div class="card card-w-title">
-						<h1>#{labels.informacoes}</h1>
-
-						<p:panelGrid id="informacoesGrid" columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group">
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<h:outputText value="#" styleClass="label" />
-								<h:outputText value="#{cotacaoController.entity.formattedId}" rendered="#{cotacaoController.editing}" />
-							</p:panelGrid>
-
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<h:outputText value="Data" styleClass="label" />
-								<h:outputText value="#{cotacaoController.entitySimple.dataCadastro}">
-									<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" timeZone="America/Sao_Paulo" />
-								</h:outputText>
-							</p:panelGrid>
-
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<h:outputText value="Peso" styleClass="label" />
-								<h:outputText value="#{cotacaoController.entity.pesoTotal}">
-									<f:convertNumber pattern="#,##0.000" />
-								</h:outputText>
-							</p:panelGrid>
-
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<h:outputText value="Status" styleClass="label" />
-								<h:outputText value="#{cotacaoController.entity.deStatus}" />
-							</p:panelGrid>
-
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<h:outputText value="Serviço Frete" styleClass="label" />
-								<h:outputText value="#{cotacaoController.servicoFrete}" />
-							</p:panelGrid>
-
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<h:outputText value="Frete" styleClass="label" />
-								<p:inputNumber value="#{cotacaoController.entity.valorFrete}" styleClass="input-number-resp" decimalSeparator="," thousandSeparator="."
-									decimalPlaces="2" maxValue="999999.99" disabled="#{!cotacaoController.valorFreteEditavel}">
-									<p:ajax process="@this" update=":editForm:informacoesGrid" listener="#{cotacaoController.changeValorFrete}" />
-								</p:inputNumber>
-							</p:panelGrid>
-
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<p:outputLabel for="pedidoFaturado" value="Pedido Faturado" styleClass="label" />
-								<p:selectOneMenu id="pedidoFaturado" value="#{cotacaoController.entity.pedidoFaturado}" styleClass="ui-grid-col-12" required="true"
-									requiredMessage="Favor selecionar a opção de pedido faturado" disabled="#{cotacaoController.editing}">
-									<f:selectItems value="#{domGeralController.booleanMap}" />
-									<p:ajax process="@this" update=":editForm:informacoesGrid" listener="#{cotacaoController.changePedidoFaturado}" />
-								</p:selectOneMenu>
-							</p:panelGrid>
-
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<h:outputText value="Produtos" styleClass="label" />
-								<p:inputNumber value="#{cotacaoController.entity.valorProdutos}" styleClass="input-number-resp" decimalSeparator="," thousandSeparator="."
-									decimalPlaces="2" maxValue="999999.99" disabled="true">
-								</p:inputNumber>
-							</p:panelGrid>
-
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<h:outputText value="Desconto Pagamento" styleClass="label" />
-								<p:inputNumber value="#{cotacaoController.entity.valorDescontoPagamento}" styleClass="input-number-resp" decimalSeparator=","
-									thousandSeparator="." decimalPlaces="2" maxValue="999999.99" disabled="true">
-								</p:inputNumber>
-							</p:panelGrid>
-
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<h:outputText value="Desconto Livre" styleClass="label" />
-								<p:inputNumber value="#{cotacaoController.entity.valorDescontoLivre}" styleClass="input-number-resp" decimalSeparator=","
-									thousandSeparator="." decimalPlaces="2" maxValue="999999.99" disabled="true">
-								</p:inputNumber>
-							</p:panelGrid>
-
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<h:outputText value="Desconto Especial" styleClass="label" />
-								<p:inputNumber value="#{cotacaoController.entity.valorDescontoEspecial}" styleClass="input-number-resp" decimalSeparator=","
-									thousandSeparator="." decimalPlaces="2" maxValue="999999.99" disabled="true">
-								</p:inputNumber>
-							</p:panelGrid>
-							
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<h:outputText value="Desconto Gerencial" styleClass="label" />
-								<p:inputNumber value="#{cotacaoController.entity.valorDescontoGerencial}" styleClass="input-number-resp" decimalSeparator=","
-									thousandSeparator="." decimalPlaces="2" maxValue="999999.99" disabled="true">
-								</p:inputNumber>
-							</p:panelGrid>
-
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<h:outputText value="Total" styleClass="label" />
-								<h:outputText value="#{cotacaoController.entity.valorTotal}">
-									<f:convertNumber pattern="R$ #,##0.00" />
-								</h:outputText>
-							</p:panelGrid>
-
-							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{cotacaoController.editing}">
-								<p:outputLabel value="Forma Pagamento" styleClass="label" />
-								<h:outputText value="#{cotacaoController.entity.descricaoFormaPagamento}" />
-							</p:panelGrid>
-						</p:panelGrid>
-					</div>
-
 					<c:if test="#{cotacaoController.editing}">
+						<div class="card card-w-title">
+							<h1>#{labels.informacoes}</h1>
+	
+							<p:panelGrid id="informacoesGrid" columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<h:outputText value="#" styleClass="label" />
+									<h:outputText value="#{cotacaoController.entity.formattedId}" rendered="#{cotacaoController.editing}" />
+								</p:panelGrid>
+	
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<h:outputText value="Data" styleClass="label" />
+									<h:outputText value="#{cotacaoController.entitySimple.dataCadastro}">
+										<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" timeZone="America/Sao_Paulo" />
+									</h:outputText>
+								</p:panelGrid>
+	
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<h:outputText value="Peso" styleClass="label" />
+									<h:outputText value="#{cotacaoController.entity.pesoTotal}">
+										<f:convertNumber pattern="#,##0.000" />
+									</h:outputText>
+								</p:panelGrid>
+	
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<h:outputText value="Status" styleClass="label" />
+									<h:outputText value="#{cotacaoController.entity.deStatus}" />
+								</p:panelGrid>
+	
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<h:outputText value="Serviço Frete" styleClass="label" />
+									<h:outputText value="#{cotacaoController.servicoFrete}" />
+								</p:panelGrid>
+	
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<h:outputText value="Frete" styleClass="label" />
+									<p:inputNumber value="#{cotacaoController.entity.valorFrete}" styleClass="input-number-resp" decimalSeparator="," thousandSeparator="."
+										decimalPlaces="2" maxValue="999999.99" disabled="true">
+									</p:inputNumber>
+								</p:panelGrid>
+	
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<h:outputText value="Produtos" styleClass="label" />
+									<p:inputNumber value="#{cotacaoController.entity.valorProdutos}" styleClass="input-number-resp" decimalSeparator="," thousandSeparator="."
+										decimalPlaces="2" maxValue="999999.99" disabled="true">
+									</p:inputNumber>
+								</p:panelGrid>
+	
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<h:outputText value="Desconto Pagamento" styleClass="label" />
+									<p:inputNumber value="#{cotacaoController.entity.valorDescontoPagamento}" styleClass="input-number-resp" decimalSeparator=","
+										thousandSeparator="." decimalPlaces="2" maxValue="999999.99" disabled="true">
+									</p:inputNumber>
+								</p:panelGrid>
+	
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<h:outputText value="Desconto Livre" styleClass="label" />
+									<p:inputNumber value="#{cotacaoController.entity.valorDescontoLivre}" styleClass="input-number-resp" decimalSeparator=","
+										thousandSeparator="." decimalPlaces="2" maxValue="999999.99" disabled="true">
+									</p:inputNumber>
+								</p:panelGrid>
+	
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<h:outputText value="Desconto Especial" styleClass="label" />
+									<p:inputNumber value="#{cotacaoController.entity.valorDescontoEspecial}" styleClass="input-number-resp" decimalSeparator=","
+										thousandSeparator="." decimalPlaces="2" maxValue="999999.99" disabled="true">
+									</p:inputNumber>
+								</p:panelGrid>
+								
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<h:outputText value="Desconto Gerencial" styleClass="label" />
+									<p:inputNumber value="#{cotacaoController.entity.valorDescontoGerencial}" styleClass="input-number-resp" decimalSeparator=","
+										thousandSeparator="." decimalPlaces="2" maxValue="999999.99" disabled="true">
+									</p:inputNumber>
+								</p:panelGrid>
+	
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<h:outputText value="Total" styleClass="label" />
+									<h:outputText value="#{cotacaoController.entity.valorTotal}">
+										<f:convertNumber pattern="R$ #,##0.00" />
+									</h:outputText>
+								</p:panelGrid>
+	
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" rendered="#{cotacaoController.editing}">
+									<p:outputLabel value="Forma Pagamento" styleClass="label" />
+									<h:outputText value="#{cotacaoController.entity.descricaoFormaPagamento}" />
+								</p:panelGrid>
+							</p:panelGrid>
+						</div>
+
 						<div class="card card-w-title">
 							<h1>Cliente</h1>
 
@@ -507,9 +497,15 @@
 						<div class="card card-w-title">
 							<h1>Frete(s)</h1>
 							<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group" id="freteGrid">
-								<p:panelGrid columns="2" columnClasses="ui-grid-col-2, ui-grid-col-10" layout="grid" rendered="#{!cotacaoController.editing}">
+								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+									<h:outputText value="Serviço" styleClass="label" />
+									<h:outputText value="#{cotacaoController.servicoFrete}" />
+								</p:panelGrid>
+								
+								<p:panelGrid columns="3" columnClasses="ui-grid-col-2, ui-grid-col-5, ui-grid-col-5" layout="grid" rendered="#{!cotacaoController.editing}">
 									<p:spacer></p:spacer>
 									<p:outputLabel for="tipoFrete" value="Tipo Frete" styleClass="label" />
+									<h:outputText value="Frete" styleClass="label" />
 									<p:commandButton id="atualizaTiposFreteButton" icon="fa fa-fw fa-refresh" value="Atualizar Frete"
 										actionListener="#{cotacaoController.atualizaTiposFrete}" process="@this" update=":editForm:freteGrid"
 										styleClass="ui-grid-col-12" />
@@ -518,8 +514,12 @@
 										<f:selectItem itemLabel="Selecione" itemValue="" />
 										<f:selectItems value="#{cotacaoController.tiposFrete}" var="item" itemLabel="#{item.codigoServico} - #{item.descricao}"
 											itemValue="#{item.codigoServico}" />
-										<p:ajax process="@this" update=":editForm:informacoesGrid :editForm:pagamentoGrid" listener="#{cotacaoController.changeTipoFrete}" />
+										<p:ajax process="@this" update=":editForm:pagamentoGrid" listener="#{cotacaoController.changeTipoFrete}" />
 									</p:selectOneMenu>
+									<p:inputNumber value="#{cotacaoController.entity.valorFrete}" styleClass="input-number-resp" decimalSeparator="," thousandSeparator="."
+										decimalPlaces="2" maxValue="999999.99" disabled="#{!cotacaoController.valorFreteEditavel}">
+										<p:ajax process="@this" update=":editForm:freteGrid" listener="#{cotacaoController.changeValorFrete}" />
+									</p:inputNumber>
 								</p:panelGrid>
 
 								<p:dataTable id="dtbFretes" widgetVar="dtb" var="entity" value="#{cotacaoController.entity.fretes}" reflow="true"
@@ -566,6 +566,20 @@
 						</div>
 
 						<c:if test="#{!cotacaoController.editing}">
+							<div class="card card-w-title">
+								<h1>Faturamento</h1>
+								<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group" id="faturamentoGrid">
+									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
+										<p:outputLabel for="pedidoFaturado" value="Pedido Faturado" styleClass="label" />
+										<p:selectOneMenu id="pedidoFaturado" value="#{cotacaoController.entity.pedidoFaturado}" styleClass="ui-grid-col-12" required="true"
+											requiredMessage="Favor selecionar a opção de pedido faturado" disabled="#{cotacaoController.editing}">
+											<f:selectItems value="#{domGeralController.booleanMap}" />
+											<p:ajax process="@this" update=":editForm:faturamentoGrid" listener="#{cotacaoController.changePedidoFaturado}" />
+										</p:selectOneMenu>
+									</p:panelGrid>
+								</p:panelGrid>
+							</div>
+						
 							<div class="card card-w-title">
 								<h1>Desconto</h1>
 								<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group" id="descontoGrid">
@@ -617,7 +631,7 @@
 									</p:panelGrid>
 								</p:panelGrid>
 							</div>
-
+							
 							<div class="card card-w-title">
 								<h1>Pagamento</h1>
 								<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group" id="pagamentoGrid">
@@ -627,7 +641,7 @@
 											filterMatchMode="contains" required="true" requiredMessage="Favor selecionar a forma de pagamento">
 											<f:selectItem itemLabel="Selecione" itemValue="" />
 											<f:selectItems value="#{cotacaoController.formasPagamento}" var="item" itemLabel="#{item.descricao}" itemValue="#{item.id}" />
-											<p:ajax process="@this" update=":editForm:informacoesGrid" listener="#{cotacaoController.changeFormaPagamento}" />
+											<p:ajax process="@this" listener="#{cotacaoController.changeFormaPagamento}" />
 										</p:selectOneMenu>
 									</p:panelGrid>
 								</p:panelGrid>
@@ -639,7 +653,7 @@
 
 					<p:panelGrid columns="6" layout="grid" styleClass="ui-grid-col-12 ui-panelgrid-blank div-botoes">
 						<p:commandButton id="submitButton" icon="fa fa-fw fa-save" value="#{labels.botao_gravar}" actionListener="#{cotacaoController.save}"
-							process=":editForm:informacoesGrid :editForm:pagamentoGrid :editForm:descontoGrid :editForm:freteGrid" update=":editForm :searchForm" styleClass="ui-grid-col-12" rendered="#{!cotacaoController.editing and null != cotacaoController.entity.idFilial}" />
+							process=":editForm:faturamentoGrid :editForm:pagamentoGrid :editForm:descontoGrid :editForm:freteGrid" update=":editForm :searchForm" styleClass="ui-grid-col-12" rendered="#{!cotacaoController.editing and null != cotacaoController.entity.idFilial}" />
 
 						<p:commandButton id="finalizacaoButton" icon="fa fa-fw fa-check-square-o" value="#{labels.botao_finalizar}"
 							oncomplete="PF('finalizacaoDialog').show()" process="@this" update="editForm:idFinalizacaoDialog" styleClass="ui-grid-col-12 botao-verde"
