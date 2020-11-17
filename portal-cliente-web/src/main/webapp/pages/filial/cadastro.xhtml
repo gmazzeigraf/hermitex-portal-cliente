@@ -101,7 +101,7 @@
 								<h:outputText value="#{entity.id}" />
 							</p:column>
 
-							<p:column headerText="CPF/CNPJ" sortBy="#{entity.formattedDocumento}" styleClass="valor-column">
+							<p:column headerText="CNPJ/CPF" sortBy="#{entity.formattedDocumento}" styleClass="valor-column">
 								<h:outputText value="#{entity.formattedDocumento}" />
 							</p:column>
 
@@ -146,13 +146,13 @@
 						<h1>#{labels.informacoes}</h1>
 						<p:panelGrid columns="2" id="informacoesGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<p:outputLabel for="documento" value="CPF/CNPJ" styleClass="label" />
+								<p:outputLabel for="documento" value="CNPJ/CPF" styleClass="label" />
 								<p:inputText id="documento" value="#{filialController.entity.documento}" styleClass="ui-grid-col-12" readonly="#{filialController.editing}"
-									required="true" requiredMessage="Favor informar o CPF/CNPJ" maxlength="14" onkeypress="mascara(this, inteiro);" />
+									required="true" requiredMessage="Favor informar o CNPJ/CPF" maxlength="14" onkeypress="mascara(this, inteiro);" />
 							</p:panelGrid>
 
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<p:outputLabel for="inscricaoEstadual" value="Inscrição Estadual/RG" styleClass="label" />
+								<p:outputLabel for="inscricaoEstadual" value="Inscrição Estadual" styleClass="label" />
 								<p:inputText id="inscricaoEstadual" value="#{filialController.entity.inscricaoEstadual}" maxlength="20" styleClass="ui-grid-col-12"
 									required="true" requiredMessage="Favor informar a Inscrição Estadual/RG" />
 							</p:panelGrid>

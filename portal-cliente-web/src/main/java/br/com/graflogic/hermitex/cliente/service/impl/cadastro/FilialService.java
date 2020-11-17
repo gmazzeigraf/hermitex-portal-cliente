@@ -84,13 +84,13 @@ public class FilialService {
 					throw new DadosInvalidosException("CNPJ inválido");
 				}
 			} else {
-				throw new DadosInvalidosException("CPF/CNPJ inválido");
+				throw new DadosInvalidosException("CNPJ/CPF inválido");
 			}
 			
 			try {
 				repository.consultaPorDocumento(entity.getDocumento());
 
-				throw new DadosInvalidosException("CPF/CNPJ já cadastrado");
+				throw new DadosInvalidosException("CNPJ/CPF já cadastrado");
 
 			} catch (NoResultException e) {
 			}
