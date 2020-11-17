@@ -105,11 +105,11 @@
 								<h:outputText value="#{entity.formattedDocumento}" />
 							</p:column>
 
-							<p:column headerText="Razão Social" sortBy="#{entity.razaoSocial}">
+							<p:column headerText="Razão Social/Nome Completo" sortBy="#{entity.razaoSocial}">
 								<h:outputText value="#{entity.razaoSocial}" />
 							</p:column>
 
-							<p:column headerText="Nome Fantasia" sortBy="#{entity.nomeFantasia}">
+							<p:column headerText="Nome Fantasia/Nome Completo" sortBy="#{entity.nomeFantasia}">
 								<h:outputText value="#{entity.nomeFantasia}" />
 							</p:column>
 
@@ -148,23 +148,25 @@
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 								<p:outputLabel for="documento" value="CPF/CNPJ" styleClass="label" />
 								<p:inputText id="documento" value="#{filialController.entity.documento}" styleClass="ui-grid-col-12" readonly="#{filialController.editing}"
-										required="true" requiredMessage="Favor informar o CPF/CNPJ" maxlength="14" onkeypress="mascara(this, inteiro);" />
+									required="true" requiredMessage="Favor informar o CPF/CNPJ" maxlength="14" onkeypress="mascara(this, inteiro);" />
 							</p:panelGrid>
 
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<p:outputLabel for="inscricaoEstadual" value="Inscrição Estadual" styleClass="label" />
-								<p:inputText id="inscricaoEstadual" value="#{filialController.entity.inscricaoEstadual}" maxlength="20" styleClass="ui-grid-col-12" />
+								<p:outputLabel for="inscricaoEstadual" value="Inscrição Estadual/RG" styleClass="label" />
+								<p:inputText id="inscricaoEstadual" value="#{filialController.entity.inscricaoEstadual}" maxlength="20" styleClass="ui-grid-col-12"
+									required="true" requiredMessage="Favor informar a Inscrição Estadual/RG" />
 							</p:panelGrid>
 
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<p:outputLabel for="razaoSocial" value="Razão Social" styleClass="label" />
+								<p:outputLabel for="razaoSocial" value="Razão Social/Nome Completo" styleClass="label" />
 								<p:inputText id="razaoSocial" value="#{filialController.entity.razaoSocial}" maxlength="100" styleClass="ui-grid-col-12" required="true"
-									requiredMessage="Favor informar a razão social" />
+									requiredMessage="Favor informar a Razão Social/Nome Completo" />
 							</p:panelGrid>
 
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-								<p:outputLabel for="nomeFantasia" value="Nome Fantasia" styleClass="label" />
-								<p:inputText id="nomeFantasia" value="#{filialController.entity.nomeFantasia}" maxlength="100" styleClass="ui-grid-col-12" />
+								<p:outputLabel for="nomeFantasia" value="Nome Fantasia/Nome Completo" styleClass="label" />
+								<p:inputText id="nomeFantasia" value="#{filialController.entity.nomeFantasia}" maxlength="100" styleClass="ui-grid-col-12" required="true"
+									requiredMessage="Favor informar o Nome Fantasia/Nome Completo" />
 							</p:panelGrid>
 
 							<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
