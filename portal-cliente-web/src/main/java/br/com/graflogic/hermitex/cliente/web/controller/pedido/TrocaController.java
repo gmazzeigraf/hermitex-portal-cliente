@@ -182,10 +182,10 @@ public class TrocaController extends CrudBaseController<Troca, Troca> implements
 	protected void executeSearch() {
 		if (!isPesquisavel()) {
 			if (SessionUtil.isUsuarioFilial() || SessionUtil.isUsuarioProprietario()) {
-				returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Favor selecionar a filial", null);
+				returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Favor selecionar o cliente", null);
 			}
 			if (SessionUtil.isUsuarioCliente()) {
-				returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Favor selecionar o cliente", null);
+				returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Favor selecionar a coleção", null);
 			}
 
 			return;
@@ -299,7 +299,7 @@ public class TrocaController extends CrudBaseController<Troca, Troca> implements
 			}
 
 		} catch (Throwable t) {
-			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao consultar dados do cliente, contate o administrador", t);
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao consultar dados da coleção, contate o administrador", t);
 		}
 	}
 

@@ -102,7 +102,7 @@ public class FilialController extends CrudBaseController<Filial, Filial> impleme
 		try {
 			setFilterEntity(new Filial());
 
-			// Verifica se e proprietario e precisa selecionar a filial
+			// Verifica se e proprietario e precisa selecionar o cliente
 			if (SessionUtil.isUsuarioProprietario() && isView("pages/filial/seleciona")) {
 				getFilterEntity().setIdUsuarioProprietario(SessionUtil.getAuthenticatedUsuario().getId());
 				getFilterEntity().setStatus(DomStatusFilial.ATIVO);
@@ -145,7 +145,7 @@ public class FilialController extends CrudBaseController<Filial, Filial> impleme
 				try {
 					service.atualiza(getEntity());
 
-					returnInfoMessage("Filial atualizada com sucesso", null);
+					returnInfoMessage("Cliente atualizado com sucesso", null);
 
 				} catch (DadosDesatualizadosException e) {
 					returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Registro com dados desatualizados, altere novamente", null);
@@ -158,7 +158,7 @@ public class FilialController extends CrudBaseController<Filial, Filial> impleme
 
 				service.cadastra(getEntity());
 
-				returnInfoMessage("Filial cadastrada com sucesso", null);
+				returnInfoMessage("Cliente cadastrado com sucesso", null);
 
 			}
 		} catch (DadosInvalidosException e) {
@@ -456,7 +456,7 @@ public class FilialController extends CrudBaseController<Filial, Filial> impleme
 			setEntities(null);
 
 		} catch (Throwable t) {
-			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao consultar dados do cliente, contate o administrador", t);
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao consultar dados da coleção, contate o administrador", t);
 		}
 	}
 
@@ -464,7 +464,7 @@ public class FilialController extends CrudBaseController<Filial, Filial> impleme
 		try {
 			service.inativa(getEntity());
 
-			returnInfoMessage("Filial inativada com sucesso", null);
+			returnInfoMessage("Cliente inativado com sucesso", null);
 
 			edit(getEntity());
 
@@ -476,7 +476,7 @@ public class FilialController extends CrudBaseController<Filial, Filial> impleme
 			edit(getEntity());
 
 		} catch (Throwable t) {
-			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao inativar filial, contate o administrador", t);
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao inativar cliente, contate o administrador", t);
 		}
 	}
 
@@ -484,7 +484,7 @@ public class FilialController extends CrudBaseController<Filial, Filial> impleme
 		try {
 			service.ativa(getEntity());
 
-			returnInfoMessage("Filial ativada com sucesso", null);
+			returnInfoMessage("Cliente ativado com sucesso", null);
 
 			edit(getEntity());
 
@@ -496,7 +496,7 @@ public class FilialController extends CrudBaseController<Filial, Filial> impleme
 			edit(getEntity());
 
 		} catch (Throwable t) {
-			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao ativar filial, contate o administrador", t);
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao ativar cliente, contate o administrador", t);
 		}
 	}
 
@@ -543,7 +543,7 @@ public class FilialController extends CrudBaseController<Filial, Filial> impleme
 	public void seleciona() {
 		try {
 			if (null == getEntity().getId() || 0 == getEntity().getId()) {
-				returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Favor selecionar a filial", null);
+				returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Favor selecionar o cliente", null);
 				return;
 			}
 
@@ -558,7 +558,7 @@ public class FilialController extends CrudBaseController<Filial, Filial> impleme
 			redirectView(getApplicationUrl() + "/pages/home.jsf");
 
 		} catch (Throwable t) {
-			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao selecionar filial, contate o administrador", t);
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao selecionar cliente, contate o administrador", t);
 		}
 	}
 

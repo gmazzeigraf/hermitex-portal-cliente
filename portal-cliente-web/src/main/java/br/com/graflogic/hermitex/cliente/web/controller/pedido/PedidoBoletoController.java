@@ -97,7 +97,7 @@ public class PedidoBoletoController extends SearchBaseController<PedidoBoleto, P
 			}
 
 		} catch (Throwable t) {
-			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao consultar dados do cliente, contate o administrador", t);
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao consultar dados da coleção, contate o administrador", t);
 		}
 	}
 

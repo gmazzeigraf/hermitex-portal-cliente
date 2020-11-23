@@ -14,7 +14,7 @@
 						<p:panelGrid columns="1" id="filterGrid" layout="grid" styleClass="ui-panelgrid-blank form-group">
 							<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group">
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-									<p:outputLabel for="clienteFilter" value="Cliente *" styleClass="label" />
+									<p:outputLabel for="clienteFilter" value="Coleção *" styleClass="label" />
 									<p:selectOneMenu id="clienteFilter" value="#{cotacaoController.filterEntity.idCliente}" styleClass="ui-grid-col-12" filter="true"
 										filterMatchMode="contains">
 										<f:selectItem itemLabel="Selecione" itemValue="" />
@@ -24,7 +24,7 @@
 								</p:panelGrid>
 
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
-									<p:outputLabel for="filialFilter" value="Filial" styleClass="label" />
+									<p:outputLabel for="filialFilter" value="Cliente" styleClass="label" />
 									<p:selectOneMenu id="filialFilter" value="#{cotacaoController.filterEntity.idFilial}" styleClass="ui-grid-col-12" filter="true"
 										filterMatchMode="contains">
 										<f:selectItem itemLabel="" itemValue="" />
@@ -69,7 +69,7 @@
 								<h:outputText value="#{entity.formattedId}" />
 							</p:column>
 
-							<p:column headerText="# Filial" sortBy="#{entity.idFilial}" styleClass="coluna-center"
+							<p:column headerText="# Cliente" sortBy="#{entity.idFilial}" styleClass="coluna-center"
 								rendered="#{!sessionController.usuarioFilial and !sessionController.usuarioProprietario}">
 								<h:outputText value="#{entity.idFilial}" />
 							</p:column>
@@ -218,7 +218,7 @@
 						</div>
 
 						<div class="card card-w-title">
-							<h1>Cliente</h1>
+							<h1>Coleção</h1>
 
 							<p:panelGrid columns="4" id="clienteGrid" layout="grid" styleClass="ui-panelgrid-blank form-group"
 								columnClasses="ui-grid-col-1, ui-grid-col-2, ui-grid-col-4, ui-grid-col-5">
@@ -246,7 +246,7 @@
 					</c:if>
 
 					<div class="card card-w-title">
-						<h1>Filial</h1>
+						<h1>Cliente</h1>
 
 						<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group" rendered="#{!cotacaoController.editing}">
 							<p:selectOneMenu id="filial" value="#{cotacaoController.entity.idFilial}" styleClass="ui-grid-col-12" filter="true" filterMatchMode="contains"

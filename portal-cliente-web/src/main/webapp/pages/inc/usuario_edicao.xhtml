@@ -40,7 +40,7 @@
 
 				<c:if test="#{usuarioController.editing and usuarioController.isView('proprietario/acesso/usuario')}">
 					<div class="card card-w-title">
-						<h1>Filiais</h1>
+						<h1>Clientes</h1>
 						<p:dataTable var="entity" value="#{usuarioController.entidadesRelacionadas}" rowKey="#{entity.id}" paginator="true" paginatorPosition="bottom"
 							reflow="true" rows="10" emptyMessage="Nenhuma filial cadastrada">
 
@@ -48,15 +48,15 @@
 								<h:outputText value="#{entity.id}" />
 							</p:column>
 
-							<p:column headerText="CNPJ" sortBy="#{entity.formattedCnpj}" styleClass="valor-column">
-								<h:outputText value="#{entity.formattedCnpj}" />
+							<p:column headerText="CNPJ/CPF" sortBy="#{entity.formattedDocumento}" styleClass="valor-column">
+								<h:outputText value="#{entity.formattedDocumento}" />
 							</p:column>
 
-							<p:column headerText="Razão Social" sortBy="#{entity.razaoSocial}">
+							<p:column headerText="Razão Social/Nome Completo" sortBy="#{entity.razaoSocial}">
 								<h:outputText value="#{entity.razaoSocial}" />
 							</p:column>
 
-							<p:column headerText="Nome Fantasia" sortBy="#{entity.nomeFantasia}">
+							<p:column headerText="Nome Fantasia/Nome Completo" sortBy="#{entity.nomeFantasia}">
 								<h:outputText value="#{entity.nomeFantasia}" />
 							</p:column>
 

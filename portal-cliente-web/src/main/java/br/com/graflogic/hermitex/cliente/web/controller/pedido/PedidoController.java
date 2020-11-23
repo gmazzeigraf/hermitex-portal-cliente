@@ -141,7 +141,7 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 	@Override
 	protected void executeSearch() {
 		if (!isClienteSelecionado()) {
-			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Favor selecionar o cliente", null);
+			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Favor selecionar a coleção", null);
 			return;
 		}
 
@@ -304,7 +304,7 @@ public class PedidoController extends SearchBaseController<PedidoSimple, Pedido>
 			}
 
 		} catch (Throwable t) {
-			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao consultar dados do cliente, contate o administrador", t);
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao consultar dados da coleção, contate o administrador", t);
 		}
 	}
 

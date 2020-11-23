@@ -14,7 +14,7 @@
 							<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group">
 								<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid"
 									rendered="#{!sessionController.usuarioFilial and !sessionController.usuarioProprietario}">
-									<p:outputLabel for="filialFilter" value="Filial *" styleClass="label" />
+									<p:outputLabel for="filialFilter" value="Cliente *" styleClass="label" />
 									<p:selectOneMenu id="filialFilter" value="#{perfilUsuarioController.idEntidade}" styleClass="ui-grid-col-12" filter="true"
 										filterMatchMode="contains">
 										<f:selectItem itemLabel="Selecione" itemValue="" />

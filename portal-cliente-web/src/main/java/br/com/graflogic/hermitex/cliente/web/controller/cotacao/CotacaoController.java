@@ -171,7 +171,7 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 	@Override
 	protected void executeSearch() {
 		if (!isClienteSelecionado()) {
-			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Favor selecionar o cliente", null);
+			returnWarnDialogMessage(I18NUtil.getLabel("aviso"), "Favor selecionar a coleção", null);
 			return;
 		}
 
@@ -701,7 +701,7 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 			}
 
 		} catch (Exception e) {
-			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao consultar dados do cliente, contate o administrador", e);
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao consultar dados da coleção, contate o administrador", e);
 		}
 	}
 
@@ -730,7 +730,7 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 			}
 
 		} catch (Exception e) {
-			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao consultar dados da filial, contate o administrador", e);
+			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao consultar dados do cliente, contate o administrador", e);
 		}
 	}
 
