@@ -572,7 +572,8 @@
 									<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid">
 										<p:outputLabel for="pedidoFaturado" value="Pedido Faturado" styleClass="label" />
 										<p:selectOneMenu id="pedidoFaturado" value="#{cotacaoController.entity.pedidoFaturado}" styleClass="ui-grid-col-12" required="true"
-											requiredMessage="Favor selecionar a opção de pedido faturado" disabled="#{cotacaoController.editing}">
+											requiredMessage="Favor selecionar a opção de pedido faturado"
+											disabled="#{cotacaoController.editing || 'T' != cotacaoController.formaPagamento.pedidoFaturado}">
 											<f:selectItems value="#{domGeralController.booleanMap}" />
 											<p:ajax process="@this" update=":editForm:faturamentoGrid" listener="#{cotacaoController.changePedidoFaturado}" />
 										</p:selectOneMenu>

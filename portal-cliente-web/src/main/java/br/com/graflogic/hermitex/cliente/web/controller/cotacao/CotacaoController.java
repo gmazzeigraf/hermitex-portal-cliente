@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import br.com.graflogic.base.service.util.I18NUtil;
 import br.com.graflogic.hermitex.cliente.data.dom.DomAcesso.DomPermissaoAcesso;
 import br.com.graflogic.hermitex.cliente.data.dom.DomCadastro.DomTipoEndereco;
+import br.com.graflogic.hermitex.cliente.data.dom.DomCotacao.DomPedidoFaturado;
 import br.com.graflogic.hermitex.cliente.data.dom.DomGeral.DomBoolean;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido;
 import br.com.graflogic.hermitex.cliente.data.dom.DomPedido.DomServicoFrete;
@@ -443,6 +444,7 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 
 			updateComponent("editForm:descontoGrid");
 			updateComponent("editForm:freteGrid");
+			updateComponent("editForm:faturamentoGrid");
 
 		} catch (Exception e) {
 			returnFatalDialogMessage(I18NUtil.getLabel("erro"), "Erro ao alterar a forma de pagamento, contate o administrador", e);
@@ -450,12 +452,18 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 	}
 
 	private void atualizaFormaPagamento() {
+		getEntity().setPedidoFaturado(null);
+
 		if (null != getEntity().getIdFormaPagamento() && 0 != getEntity().getIdFormaPagamento()) {
 			for (FormaPagamento formaPagamento : formasPagamento) {
 				if (getEntity().getIdFormaPagamento().equals(formaPagamento.getId())) {
 					this.formaPagamento = formaPagamento;
 					break;
 				}
+			}
+
+			if (!DomPedidoFaturado.TODOS.equals(formaPagamento.getPedidoFaturado())) {
+				getEntity().setPedidoFaturado(formaPagamento.getPedidoFaturado());
 			}
 		}
 	}

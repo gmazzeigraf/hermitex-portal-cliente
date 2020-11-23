@@ -26,4 +26,8 @@ public class DomCotacaoController implements Serializable {
 	public Map<String, Object> getTipoFormaPagamentoMap() {
 		return DomCotacao.domTipoFormaPagamento.getMap();
 	}
+
+	public Map<String, Object> getPedidoFaturadoMap() {
+		return DomCotacao.domPedidoFaturado.getMap();
+	}
 }

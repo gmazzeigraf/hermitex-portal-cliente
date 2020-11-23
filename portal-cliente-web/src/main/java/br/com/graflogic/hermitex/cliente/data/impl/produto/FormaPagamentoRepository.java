@@ -30,7 +30,7 @@ public class FormaPagamentoRepository extends BaseRepository<FormaPagamento> {
 	public List<FormaPagamento> consulta(FormaPagamento entity) {
 		CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
 		CriteriaQuery<FormaPagamento> query = builder.createQuery(FormaPagamento.class);
-		List<Predicate> predicateList = new ArrayList<Predicate>();
+		List<Predicate> predicateList = new ArrayList<>();
 
 		Root<FormaPagamento> table = query.from(FormaPagamento.class);
 
@@ -46,10 +46,14 @@ public class FormaPagamentoRepository extends BaseRepository<FormaPagamento> {
 			predicateList.add(builder.and(builder.equal(table.get("status"), entity.getStatus())));
 		}
 
+		if (StringUtils.isNotEmpty(entity.getPedidoFaturado())) {
+			predicateList.add(builder.and(builder.equal(table.get("pedidoFaturado"), entity.getPedidoFaturado())));
+		}
+
 		query.orderBy(builder.asc(table.get("tipo")));
 		query.where(predicateList.toArray(new Predicate[predicateList.size()]));
 		TypedQuery<FormaPagamento> typedQuery = getEntityManager().createQuery(query);
 
-		return (List<FormaPagamento>) typedQuery.getResultList();
+		return typedQuery.getResultList();
 	}
 }

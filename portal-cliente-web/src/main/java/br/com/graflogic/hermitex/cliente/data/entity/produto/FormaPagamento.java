@@ -73,6 +73,9 @@ public class FormaPagamento implements Serializable {
 	@Column(name = "in_cliente", nullable = false)
 	private String cliente;
 
+	@Column(name = "in_pedido_faturado", nullable = false)
+	private String pedidoFaturado;
+
 	@Column(name = "status", nullable = false)
 	private String status;
 
@@ -199,6 +202,14 @@ public class FormaPagamento implements Serializable {
 
 	public void setCliente(String cliente) {
 		this.cliente = cliente;
+	}
+
+	public String getPedidoFaturado() {
+		return pedidoFaturado;
+	}
+
+	public void setPedidoFaturado(String pedidoFaturado) {
+		this.pedidoFaturado = pedidoFaturado;
 	}
 
 	public String getStatus() {

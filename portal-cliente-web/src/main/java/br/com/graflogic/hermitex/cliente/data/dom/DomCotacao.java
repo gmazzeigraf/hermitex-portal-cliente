@@ -34,4 +34,18 @@ public class DomCotacao {
 	}
 
 	public static DomTipoFormaPagamento domTipoFormaPagamento = new DomTipoFormaPagamento();
+
+	public static class DomPedidoFaturado extends DomBase {
+		public static final String SIM = "S";
+		public static final String NAO = "N";
+		public static final String TODOS = "T";
+
+		DomPedidoFaturado() {
+			mapa.put(SIM, "Sim");
+			mapa.put(NAO, "Não");
+			mapa.put(TODOS, "Todos");
+		}
+	}
+
+	public static DomPedidoFaturado domPedidoFaturado = new DomPedidoFaturado();
 }
