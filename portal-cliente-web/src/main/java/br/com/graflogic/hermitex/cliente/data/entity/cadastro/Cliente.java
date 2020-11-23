@@ -246,6 +246,7 @@ public class Cliente implements Serializable {
 	}
 
 	public String getNomeApresentacao() {
-		return (StringUtils.isNotBlank(nomeFantasia)) ? nomeFantasia : razaoSocial;
+		return StringUtils.leftPad(id.toString(), 6, "0") + " - " + StringUtils.defaultString(cnpj) + " - " + StringUtils.defaultString(razaoSocial)
+				+ " - " + StringUtils.defaultString(nomeFantasia);
 	}
 }

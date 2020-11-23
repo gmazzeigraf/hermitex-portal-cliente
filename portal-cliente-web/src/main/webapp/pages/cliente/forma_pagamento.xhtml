@@ -17,7 +17,7 @@
 									<p:selectOneMenu id="clienteFilter" value="#{formaPagamentoController.filterEntity.idCliente}" styleClass="ui-grid-col-12" filter="true"
 										filterMatchMode="contains">
 										<f:selectItem itemLabel="Selecione" itemValue="" />
-										<f:selectItems value="#{formaPagamentoController.clientes}" var="item" itemLabel="#{item.id} - #{item.nomeApresentacao}"
+										<f:selectItems value="#{formaPagamentoController.clientes}" var="item" itemLabel="#{item.nomeApresentacao}"
 											itemValue="#{item.id}" />
 										<p:ajax process="@this" update=":searchForm" listener="#{formaPagamentoController.changeCliente}" />
 									</p:selectOneMenu>

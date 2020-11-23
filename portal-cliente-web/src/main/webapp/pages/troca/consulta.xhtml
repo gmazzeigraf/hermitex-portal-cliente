@@ -18,7 +18,7 @@
 									<p:selectOneMenu id="clienteFilter" value="#{trocaController.filterEntity.idCliente}" styleClass="ui-grid-col-12" filter="true"
 										filterMatchMode="contains">
 										<f:selectItem itemLabel="Selecione" itemValue="" />
-										<f:selectItems value="#{trocaController.clientes}" var="item" itemLabel="#{item.id} - #{item.nomeApresentacao}" itemValue="#{item.id}" />
+										<f:selectItems value="#{trocaController.clientes}" var="item" itemLabel="#{item.nomeApresentacao}" itemValue="#{item.id}" />
 										<p:ajax process="@this" update=":searchForm" listener="#{trocaController.changeCliente}" />
 									</p:selectOneMenu>
 								</p:panelGrid>
@@ -28,7 +28,7 @@
 									<p:selectOneMenu id="filialFilter" value="#{trocaController.filterEntity.idFilial}" styleClass="ui-grid-col-12" filter="true"
 										filterMatchMode="contains" disabled="#{!trocaController.clienteSelecionado}">
 										<f:selectItem itemLabel="" itemValue="" />
-										<f:selectItems value="#{trocaController.filiais}" var="item" itemLabel="#{item.id} - #{item.nomeApresentacao}" itemValue="#{item.id}" />
+										<f:selectItems value="#{trocaController.filiais}" var="item" itemLabel="#{item.nomeApresentacao}" itemValue="#{item.id}" />
 									</p:selectOneMenu>
 								</p:panelGrid>
 

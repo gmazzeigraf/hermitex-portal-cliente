@@ -17,7 +17,7 @@
 									<p:selectOneMenu id="representanteFilter" value="#{clienteController.filterEntity.idRepresentante}" styleClass="ui-grid-col-12" filter="true"
 										filterMatchMode="startsWith">
 										<f:selectItem itemLabel="" itemValue="" />
-										<f:selectItems value="#{clienteController.representantes}" var="item" itemLabel="#{item.id} - #{item.nomeApresentacao}"
+										<f:selectItems value="#{clienteController.representantes}" var="item" itemLabel="#{item.nomeApresentacao}"
 											itemValue="#{item.id}" />
 									</p:selectOneMenu>
 								</p:panelGrid>
@@ -147,7 +147,7 @@
 								<p:selectOneMenu id="representante" value="#{clienteController.entity.idRepresentante}" styleClass="ui-grid-col-12" filter="true"
 									filterMatchMode="startsWith">
 									<f:selectItem itemLabel="" itemValue="" />
-									<f:selectItems value="#{clienteController.representantes}" var="item" itemLabel="#{item.id} - #{item.nomeApresentacao}"
+									<f:selectItems value="#{clienteController.representantes}" var="item" itemLabel="#{item.nomeApresentacao}"
 										itemValue="#{item.id}" itemDisabled="#{item.inativo}" />
 								</p:selectOneMenu>
 							</p:panelGrid>

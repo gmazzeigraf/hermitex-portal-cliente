@@ -19,7 +19,7 @@
 									<p:selectOneMenu id="clienteFilter" value="#{pedidoBoletoController.filterEntity.idCliente}" styleClass="ui-grid-col-12" filter="true"
 										filterMatchMode="contains">
 										<f:selectItem itemLabel="Selecione" itemValue="" />
-										<f:selectItems value="#{pedidoBoletoController.clientes}" var="item" itemLabel="#{item.id} - #{item.nomeApresentacao}"
+										<f:selectItems value="#{pedidoBoletoController.clientes}" var="item" itemLabel="#{item.nomeApresentacao}"
 											itemValue="#{item.id}" />
 										<p:ajax process="@this" update=":searchForm" listener="#{pedidoBoletoController.changeCliente}" />
 									</p:selectOneMenu>
@@ -30,7 +30,7 @@
 									<p:selectOneMenu id="filialFilter" value="#{pedidoBoletoController.filterEntity.idFilial}" styleClass="ui-grid-col-12" filter="true"
 										filterMatchMode="contains" disabled="#{!pedidoBoletoController.clienteSelecionado}">
 										<f:selectItem itemLabel="" itemValue="" />
-										<f:selectItems value="#{pedidoBoletoController.filiais}" var="item" itemLabel="#{item.id} - #{item.nomeApresentacao}" itemValue="#{item.id}" />
+										<f:selectItems value="#{pedidoBoletoController.filiais}" var="item" itemLabel="#{item.nomeApresentacao}" itemValue="#{item.id}" />
 									</p:selectOneMenu>
 								</p:panelGrid>
 

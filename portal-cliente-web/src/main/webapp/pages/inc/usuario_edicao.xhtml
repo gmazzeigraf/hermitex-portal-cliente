@@ -42,7 +42,7 @@
 					<div class="card card-w-title">
 						<h1>Clientes</h1>
 						<p:dataTable var="entity" value="#{usuarioController.entidadesRelacionadas}" rowKey="#{entity.id}" paginator="true" paginatorPosition="bottom"
-							reflow="true" rows="10" emptyMessage="Nenhuma filial cadastrada">
+							reflow="true" rows="10" emptyMessage="Nenhum cliente cadastrado">
 
 							<p:column headerText="#" sortBy="#{entity.id}" styleClass="id-column">
 								<h:outputText value="#{entity.id}" />

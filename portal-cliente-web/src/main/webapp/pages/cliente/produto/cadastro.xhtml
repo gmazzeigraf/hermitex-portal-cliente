@@ -18,7 +18,7 @@
 										filterMatchMode="contains">
 										<f:selectItem itemLabel="Selecione" itemValue="" />
 										<f:selectItems value="#{produtoController.clientes}" var="item"
-											itemLabel="#{item.id} - #{item.nomeApresentacao}" itemValue="#{item.id}" />
+											itemLabel="#{item.nomeApresentacao}" itemValue="#{item.id}" />
 										<p:ajax process="@this" update=":searchForm" listener="#{produtoController.changeCliente}" />
 									</p:selectOneMenu>
 								</p:panelGrid>
