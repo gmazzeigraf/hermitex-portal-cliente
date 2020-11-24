@@ -442,6 +442,8 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 
 			atualizaValores();
 
+			changePedidoFaturado();
+
 			updateComponent("editForm:descontoGrid");
 			updateComponent("editForm:freteGrid");
 			updateComponent("editForm:faturamentoGrid");
@@ -452,8 +454,6 @@ public class CotacaoController extends CrudBaseController<CotacaoSimple, Cotacao
 	}
 
 	private void atualizaFormaPagamento() {
-		getEntity().setPedidoFaturado(null);
-
 		if (null != getEntity().getIdFormaPagamento() && 0 != getEntity().getIdFormaPagamento()) {
 			for (FormaPagamento formaPagamento : formasPagamento) {
 				if (getEntity().getIdFormaPagamento().equals(formaPagamento.getId())) {
